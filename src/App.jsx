@@ -1598,7 +1598,7 @@ function LoginPage({setPage,bp}){
   const handleKakao=async()=>{
     const {error:err}=await supabase.auth.signInWithOAuth({
       provider:"kakao",
-      options:{redirectTo:"https://yoon-kyoung.github.io/youthsupportpolicy/"}
+      options:{redirectTo:"https://yoon-kyoung.github.io/youthpolicy_contest/"}
     });
     if(err) setError("카카오 로그인 중 오류가 발생했습니다.");
   };
@@ -1739,7 +1739,7 @@ function SignupPage({setPage,bp}){
   const handleKakao=async()=>{
     const {error:err}=await supabase.auth.signInWithOAuth({
       provider:"kakao",
-      options:{redirectTo:"https://yoon-kyoung.github.io/youthsupportpolicy/"}
+      options:{redirectTo:"https://yoon-kyoung.github.io/youthpolicy_contest/"}
     });
     if(err) setErrors({form:"카카오 로그인 중 오류가 발생했습니다."});
   };

@@ -2,8 +2,8 @@
 
 조건을 직접 고르거나, **AI 챗봇에게 말로 물어보면** 맞춤 청년지원정책을 찾아주는 웹 서비스입니다.
 
-👉 **서비스 바로가기: https://yoon-kyoung.github.io/youthsupportpolicy/**
-🔧 관리자 페이지: https://yoon-kyoung.github.io/youthsupportpolicy/#admin (비밀번호 필요 — 팀 카톡 문의)
+👉 **서비스 바로가기: https://yoon-kyoung.github.io/youthpolicy_contest/**
+🔧 관리자 페이지: https://yoon-kyoung.github.io/youthpolicy_contest/#admin (비밀번호 필요 — 팀 카톡 문의)
 
 ---
 
@@ -152,7 +152,7 @@ AI가 2,600개 정책 중에서 맞는 거 골라줌
 [사용자 브라우저]
    │
    ├─ 화면(프론트엔드)  ← GitHub Pages
-   │     https://yoon-kyoung.github.io/youthsupportpolicy/
+   │     https://yoon-kyoung.github.io/youthpolicy_contest/
    │
    └─ AI 챗봇 요청 (POST /api/chat)  ← Vercel (AI 백엔드)
          https://youth-policy-chatbot-kappa.vercel.app
