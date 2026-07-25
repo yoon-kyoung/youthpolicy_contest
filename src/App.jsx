@@ -262,6 +262,7 @@ const NAV_ITEMS = [
   { page:"chatbot",   icon:"smart_toy", label:"AI챗봇" },
   { page:"mypage",    icon:"person",    label:"마이페이지", hasSub:true },
   { page:"community", icon:"forum",     label:"커뮤니티" },
+  { page:"proposal",  icon:"campaign",  label:"정책제안" },
 ];
 
 const THEMES = [
@@ -1586,6 +1587,73 @@ function CommunityView({bp,user}){
   );
 }
 
+// ─── 청년정책 제안 페이지 ──────────────────────────────────────────────────
+
+function PolicyProposalPage({bp,user}){
+  const [proposals,setProposals]=useLocalStorage("yoa:proposals",[]);
+  const [title,setTitle]=useState("");
+  const [content,setContent]=useState("");
+
+  const handleSubmit=e=>{
+    e.preventDefault();
+    if(!user){alert("로그인 후 제안을 등록할 수 있어요.");return;}
+    if(!title.trim()||!content.trim())return;
+    const proposal={
+      id:Date.now(),
+      title:title.trim(),
+      content:content.trim(),
+      author:user.user_metadata?.name||user.email||"익명",
+      createdAt:new Date().toISOString(),
+    };
+    setProposals(prev=>[proposal,...prev]);
+    setTitle("");
+    setContent("");
+  };
+
+  return(
+    <div style={{background:"#f8fafc",minHeight:"100%"}}>
+      <div style={{background:"linear-gradient(160deg,#0f172a 0%,var(--accent-dark) 60%,var(--accent) 100%)",padding:bp.isDesktop?"36px 40px 28px":bp.isTablet?"28px 24px 20px":"22px 16px 16px",color:"white"}}>
+        <div style={{maxWidth:860,margin:"0 auto"}}>
+          <div style={{fontSize:12,opacity:0.6,marginBottom:8}}>청년 정책 제안</div>
+          <h1 style={{fontSize:bp.isDesktop?32:bp.isTablet?24:20,fontWeight:900,margin:"0 0 8px",letterSpacing:"-0.02em",display:"flex",alignItems:"center",gap:10}}>필요한 정책을 직접 제안해보세요 <Icon name="campaign" size={bp.isDesktop?28:bp.isTablet?22:18} color="rgba(255,255,255,0.75)"/></h1>
+          <p style={{fontSize:bp.isDesktop?15:13,opacity:0.7,margin:0}}>여러분의 목소리가 새로운 청년정책으로 이어질 수 있어요</p>
+        </div>
+      </div>
+      <div style={{padding:bp.isDesktop?"28px 40px 60px":bp.isTablet?"20px 24px 60px":"14px 14px 80px"}}>
+        <div style={{maxWidth:860,margin:"0 auto",display:"flex",flexDirection:"column",gap:20}}>
+          <form onSubmit={handleSubmit} style={{background:"white",borderRadius:16,border:"1.5px solid #E2E8F0",padding:bp.isDesktop?24:16,display:"flex",flexDirection:"column",gap:12}}>
+            <input value={title} onChange={e=>setTitle(e.target.value)} placeholder="제안 제목을 입력하세요" style={{padding:"11px 14px",borderRadius:10,border:"1.5px solid #E2E8F0",fontSize:14,fontFamily:"inherit"}}/>
+            <textarea value={content} onChange={e=>setContent(e.target.value)} placeholder="어떤 정책이 필요한지, 왜 필요한지 자유롭게 적어주세요" rows={5} style={{padding:"11px 14px",borderRadius:10,border:"1.5px solid #E2E8F0",fontSize:14,fontFamily:"inherit",resize:"vertical"}}/>
+            <button type="submit" style={{alignSelf:"flex-end",padding:"9px 20px",borderRadius:20,background:"var(--accent)",border:"none",color:"white",fontSize:13,fontWeight:600,cursor:"pointer",transition:"opacity 0.15s"}}
+              onMouseEnter={e=>e.currentTarget.style.opacity="0.85"} onMouseLeave={e=>e.currentTarget.style.opacity="1"}
+            >제안하기</button>
+          </form>
+
+          <div style={{display:"flex",flexDirection:"column",gap:10}}>
+            {proposals.length===0&&(
+              <div style={{display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",padding:"64px 20px",gap:10,background:"white",borderRadius:16,border:"1.5px solid #E2E8F0"}}>
+                <Icon name="campaign" size={44} color="#d1d5db"/>
+                <div style={{fontSize:16,fontWeight:700,color:"#1E293B",marginTop:4}}>아직 등록된 제안이 없어요</div>
+                <div style={{fontSize:13,color:"#9ca3af"}}>첫 번째 정책 제안을 남겨보세요</div>
+              </div>
+            )}
+            {proposals.map(p=>(
+              <div key={p.id} style={{background:"white",borderRadius:16,border:"1.5px solid #E2E8F0",padding:bp.isDesktop?"18px 20px":"14px 16px"}}>
+                <div style={{fontWeight:700,fontSize:bp.isDesktop?15:14,color:"#111827",marginBottom:6}}>{p.title}</div>
+                <div style={{fontSize:13,color:"#6b7280",lineHeight:1.6,whiteSpace:"pre-wrap"}}>{p.content}</div>
+                <div style={{display:"flex",alignItems:"center",gap:8,marginTop:12,paddingTop:12,borderTop:"1px solid #E2E8F0",fontSize:12,color:"#9ca3af"}}>
+                  <span>by <span style={{color:"#374151",fontWeight:600}}>{maskName(p.author)}</span></span>
+                  <span style={{marginLeft:"auto"}}>{(p.createdAt||"").slice(0,10)}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // ─── 로그인 페이지 ────────────────────────────────────────────────────────
 
 function LoginPage({setPage,bp}){
@@ -1957,6 +2025,7 @@ function Sidebar({page,setPage,favIds,user,open,setOpen}){
     {id:"search",  icon:"search",    label:"검색"},
     ...(user?[{id:"mypage", icon:"person", label:"마이페이지"}]:[]),
     {id:"community",icon:"forum",    label:"커뮤니티"},
+    {id:"proposal",icon:"campaign", label:"청년정책 제안"},
   ];
 
   return(
@@ -2418,7 +2487,7 @@ function FontSizeControl({scale,onInc,onDec}){
 }
 
 function TopNav({page,setPage,favIds,user,onLogout,themeKey,onThemeChange,fontScale,onFontInc,onFontDec}){
-  const mainPage=page==="detail"?"":["search","chatbot","mypage","community"].find(p=>page.startsWith(p))||"search";
+  const mainPage=page==="detail"?"":["search","chatbot","mypage","community","proposal"].find(p=>page.startsWith(p))||"search";
   return(
     <header style={{background:'var(--header-bg,white)',borderBottom:"1px solid #e5e7eb",padding:"0 20px",position:"sticky",top:0,zIndex:50}}>
       <div style={{height:56,display:"flex",alignItems:"center",gap:0}}>
@@ -2458,7 +2527,7 @@ function TopNav({page,setPage,favIds,user,onLogout,themeKey,onThemeChange,fontSc
 }
 
 function BottomNav({page,setPage,user}){
-  const mainPage=["search","chatbot","mypage","community"].find(p=>page.startsWith(p))||"search";
+  const mainPage=["search","chatbot","mypage","community","proposal"].find(p=>page.startsWith(p))||"search";
   const visibleItems=NAV_ITEMS.filter(n=>n.page!=="mypage"||user);
   return(
     <nav style={{position:"fixed",bottom:0,left:0,right:0,background:'var(--header-bg,white)',borderTop:"1px solid #e5e7eb",display:"flex",zIndex:50,paddingBottom:"env(safe-area-inset-bottom)"}}>
@@ -2676,6 +2745,7 @@ export default function App(){
                       {page==="chatbot"&&<><Icon name="auto_awesome" size={16} color="#111827"/> AI 챗봇</>}
                       {page==="mypage"&&<><Icon name="person" size={16} color="#111827"/> 마이페이지</>}
                       {page==="community"&&<><Icon name="forum" size={16} color="#111827"/> 커뮤니티</>}
+                      {page==="proposal"&&<><Icon name="campaign" size={16} color="#111827"/> 청년정책 제안</>}
                     </>
                   ):(
                     <span onClick={()=>window.location.reload()} style={{cursor:"pointer"}}>청년ON</span>
@@ -2717,6 +2787,7 @@ export default function App(){
               :page==="chatbot"   ?<div style={{flex:1,overflow:"hidden"}}><ChatBotView bp={bp.isDesktop?'desktop':bp.isTablet?'tablet':'mobile'} favIds={favIds} onToggleFav={toggleFav}/></div>
               :page==="mypage"    ?<div style={{flex:1,overflowY:"auto"}}><MyPageContainer supabaseUser={user} onLogout={handleLogout} initialTab={mySub||"info"} favIds={favIds} policies={policies} onToggleFav={toggleFav} onGoDetail={goDetail}/></div>
               :page==="community" ?<div style={{flex:1,overflowY:"auto"}}><CommunityView bp={bp} user={user}/></div>
+              :page==="proposal"  ?<div style={{flex:1,overflowY:"auto"}}><PolicyProposalPage bp={bp} user={user}/></div>
               :null
             }
           </div>
@@ -2774,6 +2845,7 @@ export default function App(){
           :page==="chatbot"   ?<ChatBotView bp={bp.isDesktop?'desktop':bp.isTablet?'tablet':'mobile'} favIds={favIds} onToggleFav={toggleFav}/>
           :page==="mypage"    ?<MyPageContainer supabaseUser={user} onLogout={handleLogout} initialTab={mySub||"info"} favIds={favIds} policies={policies} onToggleFav={toggleFav} onGoDetail={goDetail}/>
           :page==="community" ?<CommunityView bp={bp} user={user}/>
+          :page==="proposal"  ?<PolicyProposalPage bp={bp} user={user}/>
           :null
         }
       </main>

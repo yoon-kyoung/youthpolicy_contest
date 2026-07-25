@@ -54,3 +54,4 @@ import { Icon } from "./Icon"; // 상대경로 조정
 | `celebration` | 완료 |
 | `admin_panel_settings` | 관리자 |
 | `notifications` | 알림 |
+| `campaign` | 청년정책 제안 |
