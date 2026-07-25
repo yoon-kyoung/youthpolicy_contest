@@ -1,36 +1,192 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 청년ON — 청년지원정책 안내 서비스
 
-## Getting Started
+조건을 직접 고르거나, **AI 챗봇에게 말로 물어보면** 맞춤 청년지원정책을 찾아주는 웹 서비스입니다.
 
-First, run the development server:
+👉 **서비스 바로가기: https://yoon-kyoung.github.io/youthsupportpolicy/**
+🔧 관리자 페이지: https://yoon-kyoung.github.io/youthsupportpolicy/#admin (비밀번호 필요 — 팀 카톡 문의)
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+---
+
+## 서비스 소개
+
+청년이 **"27살 서울 사는데 월세 지원 있을까?"** 처럼 자연어로 물어보면,
+AI가 상황을 파악해 **전국 청년지원정책 2,600+건** 중에서 맞는 정책을 골라 추천합니다.
+기존의 나이·지역·분야 버튼 검색도 그대로 사용할 수 있습니다.
+
+> 📌 **2026.06.10 팀 회의**에서 "정책 비교 기능을 따로 만들기보다 챗봇이 비교·추천하게 하자"는 결론이 나와,
+> AI 챗봇 + 관리자 페이지를 추가했고 `feature/chatbot-admin` 브랜치가 main에 병합되어 현재 라이브로 운영 중입니다.
+
+---
+
+## 주요 기능
+
+### 정책 검색
+| 기능 | 설명 |
+|------|------|
+| **AI 챗봇** | "27살 서울인데 월세 지원 있어?" 같이 말로 물어보면 AI가 맞춤 정책을 찾아줘요 |
+| **실시간 답변** | ChatGPT처럼 글자가 하나씩 나와요 (답변 기다리는 동안 안 답답함) |
+| **AI가 직접 정책 선별** | AI가 "이 사람한테 이 정책이 맞겠다" 판단해서 골라줘요 (최대 4개, 지역까지 정확히) |
+| **부처·지역 필터** | 정책 목록에서 주관부처(고용부·국토부 등)와 지역(서울·경기 등)으로 필터링 가능 |
+| **마감 제외 필터 유지** | "마감 제외" 체크박스 상태가 페이지 이동 후에도 유지됨 (localStorage 저장) |
+| **정책 상세 내용 정제** | 공문서 특수기호·대상 섹션·불릿 레이블 등을 자동으로 제거해 읽기 좋게 표시 |
+| **정책 공유하기** | 정책 상세 페이지에서 URL 복사 버튼으로 특정 정책을 바로 공유 가능 |
+| **청년센터 안내** | 추천할 정책이 없는 지역이면 지어내지 않고 그 지역 청년센터(이름·전화번호)를 대신 안내해요 (전국 246곳 실데이터) |
+| **상담전화·주의 문구** | 입력창 아래에 온통청년 상담전화(☎ 1670-1839)와 "신청 전 공고 확인" 안내가 항상 표시돼요 |
+
+### 회원 · 커뮤니티
+| 기능 | 설명 |
+|------|------|
+| **회원가입 / 로그인** | 이메일+비밀번호 또는 카카오 소셜 로그인 지원 (Supabase Auth) |
+| **커뮤니티 게시판** | 후기·정보·Q&A 카테고리로 글 작성, 댓글, 공감(좋아요) 기능 (로그인 필요) |
+| **공감 토글** | 공감 버튼을 다시 누르면 취소 가능 |
+| **관리자 계정** | 관리자로 지정된 계정은 사이드바·모바일 헤더에 관리자 대시보드 버튼 표시 |
+| **관리자 페이지** | 오늘 AI 챗봇 사용 횟수, 비용, 모델별 통계 확인 가능 (비밀번호 보호) |
+
+---
+
+## 어떻게 작동하나요?
+
+```
+사용자가 질문 입력 (예: "서울 25살 월세 지원 있어?")
+    ↓
+우리 서버(Vercel)가 AI한테 질문을 전달
+    ↓
+AI가 2,600개 정책 중에서 맞는 거 골라줌
+    ↓
+답변 + 정책 카드를 화면에 표시
+    ↓
+사용 기록이 구글시트에 자동 저장 (관리자 페이지에서 확인 가능)
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+- 모든 API 키는 서버에만 있어서 **보안 걱정 없음**
+- 무료 모델 사용이라 **비용 0원**
+- 하루 900회, 분당 20회 제한 있음 (남용 방지 — 연속으로 빠르게 질문하면 "잠시 후 재시도" 안내가 떠요)
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## AI 챗봇 도입 전 / 후
 
-## Learn More
+#### 도입 전 — 버튼 검색만 가능했던 버전
 
-To learn more about Next.js, take a look at the following resources:
+![도입 전 - 정책 검색 페이지](docs/before-search.jpg)
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- 나이, 지역, 분야를 직접 선택해야 함
+- 정해진 조건으로만 검색 가능
+- "월세 지원 뭐 있어?" 같은 자유로운 질문 불가능
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+#### 도입 후 — 현재 라이브 (AI 챗봇)
 
-## Deploy on Vercel
+![도입 후 - AI 챗봇 페이지](docs/after-chatbot.jpg)
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- 자유롭게 말로 질문 가능
+- AI가 상황을 이해하고 맞춤 정책 추천
+- 추천된 정책이 카드로 표시됨
+- 기존 버튼 검색도 그대로 남아있음
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+> ⏱ AI 답변까지 **20~40초** 걸려요. 점 세 개(●●●)가 깜빡이고 있으면 멈춘 게 아니라 생각 중인 거예요!
+
+---
+
+## 업데이트 내역
+
+| 날짜 | 내용 |
+|------|------|
+| 2026.06.14 | 카카오 소셜 로그인 구현 |
+| 2026.06.14 | 관리자 계정 지정 — 사이드바·모바일 헤더에 관리자 대시보드 버튼 추가 |
+| 2026.06.13 | 커뮤니티 공감 토글 기능 (취소 가능) |
+| 2026.06.13 | Supabase 연동 — 회원가입·로그인·커뮤니티 게시판·댓글 구현 |
+| 2026.06.12 | 마감 제외 체크박스 상태 localStorage 저장으로 유지 |
+| 2026.06.12 | 정책 상세 공유하기 버튼 (URL 복사 + 토스트 메시지) |
+| 2026.06.12 | 정책 상세 내용 정제 — 공문서 기호·대상 섹션·불릿 레이블 자동 제거 |
+| 2026.06.11 | 정책 목록 부처·지역 필터 추가 |
+
+---
+
+## 사용한 기술 쉽게 설명
+
+#### Vercel이 뭔가요?
+
+**Vercel** = 우리 웹사이트와 AI 서버를 인터넷에 올려주는 서비스 (무료)
+
+- 화면(프론트엔드)은 GitHub Pages로 배포되고, AI 챗봇은 서버가 필요해서 **AI 백엔드만 Vercel**에서 돌립니다
+- GitHub에 코드를 올리면 자동으로 인터넷에 반영됨
+
+#### OpenRouter가 뭔가요?
+
+**OpenRouter** = 여러 AI 모델을 한 곳에서 쓸 수 있는 서비스
+
+- 원래 강사님이 주신 **OpenAI API 키**를 쓰려고 했는데, 그게 **유료**이고 **충전량을 다 써버렸습니다**
+- 그래서 **무료 대안**을 찾았는데, 그게 OpenRouter입니다 — 무료 모델만 쓰기 때문에 **비용이 0원**입니다
+- 처음엔 "무료 모델 자동 선택" 기능을 썼는데, 어떤 날은 좋은 모델 / 어떤 날은 나쁜 모델이 걸려서 **답변 품질이 들쑥날쑥**했어요
+- 그래서 지금은 테스트 결과 한국어를 가장 잘하는 **구글의 무료 모델(Gemma)로 고정**했고, 이 모델이 일시적으로 안 되면 다른 무료 모델로 자동 교체됩니다
+- 단점: 무료라서 답변까지 보통 20~40초 정도 걸려요
+
+#### 온통청년 API가 뭔가요?
+
+**온통청년** = 정부가 운영하는 청년정책 통합 사이트 (youthcenter.go.kr)
+
+- 전국 청년지원정책 **2,600건 이상**의 데이터를 제공하는 공공 API입니다
+- 우리 사이트는 이 API에서 정책 데이터를 받아와서 사용합니다
+- 일자리, 주거, 교육, 금융/복지, 참여 등 분야별 정책을 모두 포함
+- 청년센터(청년공간) 정보도 같은 기관 API에서 받아 옵니다 (전국 246곳)
+
+#### Google Sheets를 DB로 쓴다고요?
+
+보통 데이터를 저장하려면 별도 **데이터베이스(DB)** 서비스가 필요한데, 유료이거나 설정이 복잡합니다.
+우리 프로젝트 규모에서는 **구글 스프레드시트**로 충분해서, DB 대신 사용하고 있습니다.
+
+- 구글시트의 **Apps Script(앱스크립트)** 기능을 이용해서 서버와 자동 연동
+- 챗봇이 사용될 때마다 → 시각, 질문 내용, AI 모델, 비용 등이 시트에 자동 기록됨
+- 관리자 페이지에서 보이는 사용량/비용 통계가 이 시트에서 나옵니다
+- 관리자 페이지 설정값(모델 선택 등)도 여기에 저장됨
+
+> [구글시트 바로가기](https://docs.google.com/spreadsheets/d/1vKSirUpGTuvFy40Hf5y9l_vOp5aNtRFuuC8jTfFpKfs/edit)
+
+---
+
+## 배포 구조 (어디서 돌아가나요?)
+
+이 서비스는 화면과 AI 서버가 나뉘어 있습니다.
+
+```
+[사용자 브라우저]
+   │
+   ├─ 화면(프론트엔드)  ← GitHub Pages
+   │     https://yoon-kyoung.github.io/youthsupportpolicy/
+   │
+   └─ AI 챗봇 요청 (POST /api/chat)  ← Vercel (AI 백엔드)
+         https://youth-policy-chatbot-kappa.vercel.app
+                │
+                ├─ OpenRouter (무료 AI 모델)
+                ├─ 온통청년 정책·센터 데이터
+                └─ Google Sheets (사용량 기록)
+```
+
+- **프론트엔드**: main 브랜치에 push → GitHub Pages 자동 반영
+- **AI 백엔드**: 별도 레포(`Geabong/youth-chatbot-api`)에서 관리, Vercel에 배포 — 프론트엔드는 위 주소를 호출
+- AI 백엔드 상세 문서는 해당 레포 README 참고
+
+> 💡 추천 테스트 질문: "27살 서울 사는데 월세 지원 있을까?" / "성남 사는 24살 취준생인데 일자리 지원 뭐 있어?" / "27살인데 시흥 살아요. 받을 수 있는 지원 있어요?" (시흥 전용 정책이 없어서 경기도 정책 + 센터 안내로 폴백됨)
+
+---
+
+## 팀 역할 (6/10 회의 기준)
+
+| 이름 | 담당 |
+|------|------|
+| 박수아 | 정책 비교 기능 방향 정리 |
+| 권규빈 | 디자인 방향, 컬러 조합 |
+| 최윤경 | 커뮤니티 기능, 전체 개발 총괄 |
+| 임종권 | 챗봇 + API 연결 + 관리자 페이지 |
+
+## 사용 기술
+
+| 기술 | 설명 |
+|------|------|
+| React + Vite | 웹사이트 만드는 도구 |
+| GitHub Pages | 화면(프론트엔드) 배포 (무료) |
+| Vercel | AI 챗봇 백엔드 서버 배포 (무료) |
+| Supabase | 회원 인증(이메일·카카오 OAuth) + 커뮤니티 DB (posts, comments 테이블) |
+| OpenRouter API | 무료 AI 모델 서비스 |
+| 온통청년 API | 정부 청년정책·청년센터 데이터 (2,600건+ / 센터 246곳) |
+| [Google Sheets](https://docs.google.com/spreadsheets/d/1vKSirUpGTuvFy40Hf5y9l_vOp5aNtRFuuC8jTfFpKfs/edit) | 사용량 기록 + 설정 저장 (무료 DB 대용) |
