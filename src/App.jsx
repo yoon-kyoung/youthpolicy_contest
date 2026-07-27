@@ -1587,12 +1587,102 @@ function CommunityView({bp,user}){
   );
 }
 
-// ─── 청년정책 제안 페이지 ──────────────────────────────────────────────────
+// ─── 청년정책 제안 페이지 (역제안 · 공감투표) ──────────────────────────────
+
+const VOTE_THRESHOLD=20;
+
+const PROPOSAL_STATUS_TABS=[
+  {value:"all",     label:"전체"},
+  {value:"pending", label:"답변대기"},
+  {value:"answered",label:"답변완료"},
+  {value:"adopted", label:"반영완료"},
+];
+
+const PROPOSAL_SORTS=[
+  {value:"recent", label:"최신순"},
+  {value:"votes",  label:"공감순"},
+];
+
+function proposalStatusMeta(status){
+  switch(status){
+    case "matching": return{label:"부처매칭중",icon:"sync",         bg:"#EFF6FF",border:"var(--accent-bg)",text:"var(--accent)"};
+    case "answered": return{label:"답변완료",  icon:"check_circle", bg:"#FEF3C7",border:"#FDE68A",         text:"#B45309"};
+    case "adopted":  return{label:"반영완료",  icon:"celebration",  bg:"#DCFCE7",border:"#BBF7D0",         text:"#15803D"};
+    default:         return{label:"답변대기",  icon:"schedule",     bg:"#F1F5F9",border:"#E2E8F0",         text:"#64748B"};
+  }
+}
+
+const PROPOSAL_SEED=[
+  {id:"prop1",category:"job",   title:"청년 인턴십 종료 후 정규직 전환 지원금 신설", content:"인턴 기간이 끝나면 계약이 종료되는 경우가 많아요. 정규직 전환 시 기업에 지원금을 지급하면 실제 채용으로 이어질 것 같습니다.", author:"김o준", createdAt:"2026-04-10T09:00:00.000Z", status:"adopted",  votes:342, answer:"고용노동부 답변: 제안 내용을 반영해 2026년 하반기부터 정규직 전환 지원금 시범사업을 시행합니다."},
+  {id:"prop2",category:"house", title:"1인가구 청년 전세보증금 반환보증료 전액 지원", content:"전세사기 걱정에 반환보증에 가입하고 싶어도 보증료가 부담됩니다. 청년 1인가구는 보증료를 전액 지원해주세요.", author:"이o현", createdAt:"2026-05-02T09:00:00.000Z", status:"answered", votes:256, answer:"국토교통부 답변: 보증료 지원 예산 확대 방안을 검토 중이며, 결과는 추후 공지 예정입니다."},
+  {id:"prop3",category:"money", title:"청년도약계좌 중도해지 시 정부기여금 일부 인정", content:"불가피한 사정으로 중도해지하면 정부기여금을 전혀 못 받는데, 가입 기간에 비례해서라도 일부 인정해주셨으면 합니다.", author:"박o영", createdAt:"2026-06-01T09:00:00.000Z", status:"matching", votes:128, answer:""},
+  {id:"prop4",category:"edu",   title:"국가장학금 소득분위 산정 기준 최신화", content:"재산 기준 산정에 실제 생활 여건이 잘 반영되지 않는 것 같습니다. 산정 기준을 최신 통계로 갱신해주세요.", author:"정o서", createdAt:"2026-05-20T09:00:00.000Z", status:"answered", votes:97,  answer:"교육부 답변: 2027학년도부터 소득 산정 기준 개선을 추진할 예정입니다."},
+  {id:"prop5",category:"edu",   title:"비전공자 개발 부트캠프 국비지원 비율 확대", content:"비전공자도 국비지원 부트캠프에 참여할 수 있지만 본인부담금이 커서 부담됩니다. 지원 비율을 확대해주세요.", author:"최o민", createdAt:"2026-06-20T09:00:00.000Z", status:"pending",  votes:41,  answer:""},
+  {id:"prop6",category:"health",title:"청년 마음건강 상담 지원 횟수 연 10회→20회 확대", content:"상담 10회로는 부족한 경우가 많습니다. 최소 20회까지는 지원 횟수를 늘려주셨으면 합니다.", author:"한o아", createdAt:"2026-07-05T09:00:00.000Z", status:"pending",  votes:19,  answer:""},
+  {id:"prop7",category:"job",   title:"지방 중소기업 청년 채용 시 교통비 지원 신설", content:"지방 중소기업은 대중교통이 불편해 통근 부담이 큽니다. 채용 시 교통비를 별도로 지원해주세요.", author:"오o진", createdAt:"2026-07-15T09:00:00.000Z", status:"pending",  votes:7,   answer:""},
+  {id:"prop8",category:"house", title:"청년 매입임대주택 반려동물 동반 입주 허용", content:"공공임대주택 대부분이 반려동물 동반 입주를 금지하고 있어 입주를 포기하는 경우가 많습니다.", author:"윤o혁", createdAt:"2026-07-22T09:00:00.000Z", status:"pending",  votes:3,   answer:""},
+];
+
+function ProposalCard({proposal,user,onVote,bp}){
+  const [voted,setVoted]=useLocalStorage(`yoa:proposalVoted_${proposal.id}`,false);
+  const s=proposalStatusMeta(proposal.status);
+  const c=CAT_COLORS[proposal.category]||{};
+  const votes=proposal.votes||0;
+  const progress=Math.min(100,Math.round((votes/VOTE_THRESHOLD)*100));
+
+  const handleVote=e=>{
+    e.stopPropagation();
+    if(!user){alert("로그인 후 공감할 수 있어요.");return;}
+    if(voted)return;
+    setVoted(true);
+    onVote(proposal.id);
+  };
+
+  return(
+    <div style={{background:"white",borderRadius:16,border:"1.5px solid #E2E8F0",padding:bp.isDesktop?"18px 20px":"14px 16px"}}>
+      <div style={{display:"flex",gap:6,marginBottom:8,flexWrap:"wrap",alignItems:"center"}}>
+        <span style={{...TAG_BASE,background:c.bg,border:`1px solid ${c.border}`,color:c.text,gap:4}}><Icon name={CAT_ICON[proposal.category]||"apps"} size={13} color={c.text}/>{CAT_LABEL[proposal.category]||proposal.category}</span>
+        <span style={{...TAG_BASE,background:s.bg,border:`1px solid ${s.border}`,color:s.text,gap:4}}><Icon name={s.icon} size={13} color={s.text}/>{s.label}</span>
+      </div>
+      <div style={{fontWeight:700,fontSize:bp.isDesktop?15:14,color:"#111827",marginBottom:6}}>{proposal.title}</div>
+      <div style={{fontSize:13,color:"#6b7280",lineHeight:1.6,whiteSpace:"pre-wrap"}}>{proposal.content}</div>
+
+      {proposal.status==="pending"&&(
+        <div style={{marginTop:12}}>
+          <div style={{height:6,borderRadius:20,background:"#F1F5F9",overflow:"hidden"}}>
+            <div style={{height:"100%",width:`${progress}%`,background:"var(--accent)",borderRadius:20,transition:"width 0.3s"}}/>
+          </div>
+          <div style={{fontSize:11,color:"#9ca3af",marginTop:4}}>공감 {votes}/{VOTE_THRESHOLD} · 임계치 도달 시 부처 매칭이 자동으로 시작돼요</div>
+        </div>
+      )}
+      {proposal.status==="matching"&&(
+        <div style={{fontSize:12,color:"var(--accent)",marginTop:10,display:"flex",alignItems:"center",gap:5}}><Icon name="sync" size={14} color="var(--accent)"/>공감 임계치 도달로 담당 부처 매칭이 진행 중이에요</div>
+      )}
+      {(proposal.status==="answered"||proposal.status==="adopted")&&proposal.answer&&(
+        <div style={{marginTop:12,background:s.bg,border:`1px solid ${s.border}`,borderRadius:12,padding:"10px 14px"}}>
+          <div style={{fontSize:11,fontWeight:700,color:s.text,marginBottom:4}}>담당 부처 답변</div>
+          <div style={{fontSize:13,color:"#374151",lineHeight:1.6}}>{proposal.answer}</div>
+        </div>
+      )}
+
+      <div style={{display:"flex",alignItems:"center",gap:8,marginTop:12,paddingTop:12,borderTop:"1px solid #E2E8F0",fontSize:12,color:"#9ca3af"}}>
+        <span>by <span style={{color:"#374151",fontWeight:600}}>{maskName(proposal.author)}</span></span>
+        <span>{(proposal.createdAt||"").slice(0,10)}</span>
+        <button onClick={handleVote} disabled={voted} style={{marginLeft:"auto",display:"flex",alignItems:"center",gap:5,lineHeight:1,padding:"6px 14px",borderRadius:20,border:voted?"1.5px solid #fca5a5":"1.5px solid #E2E8F0",background:voted?"#fff1f2":"white",color:voted?"#dc2626":"#6b7280",fontSize:12,fontWeight:700,cursor:voted?"default":"pointer",transition:"all 0.15s"}}>
+          <Icon name="favorite" filled={voted} size={14} color={voted?"#dc2626":"#9ca3af"}/>공감 {votes}
+        </button>
+      </div>
+    </div>
+  );
+}
 
 function PolicyProposalPage({bp,user}){
-  const [proposals,setProposals]=useLocalStorage("yoa:proposals",[]);
+  const [proposals,setProposals]=useLocalStorage("yoa:proposals",PROPOSAL_SEED);
   const [title,setTitle]=useState("");
   const [content,setContent]=useState("");
+  const [category,setCategory]=useState("job");
+  const [statusTab,setStatusTab]=useState("all");
+  const [sort,setSort]=useState("recent");
 
   const handleSubmit=e=>{
     e.preventDefault();
@@ -1602,26 +1692,89 @@ function PolicyProposalPage({bp,user}){
       id:Date.now(),
       title:title.trim(),
       content:content.trim(),
+      category,
       author:user.user_metadata?.name||user.email||"익명",
       createdAt:new Date().toISOString(),
+      status:"pending",
+      votes:0,
+      answer:"",
     };
     setProposals(prev=>[proposal,...prev]);
     setTitle("");
     setContent("");
   };
 
+  const handleVote=useCallback(id=>{
+    setProposals(prev=>prev.map(p=>{
+      if(p.id!==id)return p;
+      const votes=(p.votes||0)+1;
+      const status=p.status==="pending"&&votes>=VOTE_THRESHOLD?"matching":p.status;
+      return{...p,votes,status};
+    }));
+  },[setProposals]);
+
+  const statusCounts=useMemo(()=>{
+    const m={all:proposals.length,pending:0,answered:0,adopted:0};
+    proposals.forEach(p=>{
+      if(p.status==="pending"||p.status==="matching")m.pending++;
+      else if(p.status==="answered")m.answered++;
+      else if(p.status==="adopted")m.adopted++;
+    });
+    return m;
+  },[proposals]);
+
+  const stats=useMemo(()=>{
+    const total=proposals.length;
+    const answered=proposals.filter(p=>p.status==="answered"||p.status==="adopted").length;
+    const adopted=proposals.filter(p=>p.status==="adopted").length;
+    return{total,rate:total>0?Math.round((answered/total)*100):0,adopted};
+  },[proposals]);
+
+  const filtered=useMemo(()=>{
+    let list=proposals.filter(p=>{
+      if(statusTab==="all")return true;
+      if(statusTab==="pending")return p.status==="pending"||p.status==="matching";
+      return p.status===statusTab;
+    });
+    list=[...list].sort((a,b)=>sort==="votes"?(b.votes||0)-(a.votes||0):new Date(b.createdAt)-new Date(a.createdAt));
+    return list;
+  },[proposals,statusTab,sort]);
+
   return(
     <div style={{background:"#f8fafc",minHeight:"100%"}}>
       <div style={{background:"linear-gradient(160deg,#0f172a 0%,var(--accent-dark) 60%,var(--accent) 100%)",padding:bp.isDesktop?"36px 40px 28px":bp.isTablet?"28px 24px 20px":"22px 16px 16px",color:"white"}}>
         <div style={{maxWidth:860,margin:"0 auto"}}>
-          <div style={{fontSize:12,opacity:0.6,marginBottom:8}}>청년 정책 제안</div>
+          <div style={{fontSize:12,opacity:0.6,marginBottom:8}}>청년 정책 역제안</div>
           <h1 style={{fontSize:bp.isDesktop?32:bp.isTablet?24:20,fontWeight:900,margin:"0 0 8px",letterSpacing:"-0.02em",display:"flex",alignItems:"center",gap:10}}>필요한 정책을 직접 제안해보세요 <Icon name="campaign" size={bp.isDesktop?28:bp.isTablet?22:18} color="rgba(255,255,255,0.75)"/></h1>
-          <p style={{fontSize:bp.isDesktop?15:13,opacity:0.7,margin:0}}>여러분의 목소리가 새로운 청년정책으로 이어질 수 있어요</p>
+          <p style={{fontSize:bp.isDesktop?15:13,opacity:0.7,margin:0}}>여러분의 목소리가 공감투표를 통해 새로운 청년정책으로 이어질 수 있어요</p>
         </div>
       </div>
+
+      <div style={{padding:bp.isDesktop?"20px 40px 0":bp.isTablet?"16px 24px 0":"12px 14px 0"}}>
+        <div style={{maxWidth:860,margin:"0 auto",display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:bp.isMobile?8:12,background:"white",borderRadius:16,border:"1.5px solid #E2E8F0",padding:bp.isDesktop?"18px 24px":"14px 12px"}}>
+          {[
+            {icon:"campaign",   label:"누적 제안수", val:stats.total.toLocaleString()},
+            {icon:"forum",      label:"답변율",      val:`${stats.rate}%`},
+            {icon:"celebration",label:"반영 건수",   val:stats.adopted.toLocaleString()},
+          ].map(s=>(
+            <div key={s.label} style={{display:"flex",flexDirection:"column",alignItems:"center",gap:4,textAlign:"center"}}>
+              <div style={{display:"flex",alignItems:"center",gap:5,fontSize:bp.isMobile?11:12,color:"#9ca3af",fontWeight:600}}><Icon name={s.icon} size={14} color="#9ca3af"/>{s.label}</div>
+              <div style={{fontSize:bp.isDesktop?22:18,fontWeight:900,color:"#111827"}}>{s.val}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+
       <div style={{padding:bp.isDesktop?"28px 40px 60px":bp.isTablet?"20px 24px 60px":"14px 14px 80px"}}>
         <div style={{maxWidth:860,margin:"0 auto",display:"flex",flexDirection:"column",gap:20}}>
           <form onSubmit={handleSubmit} style={{background:"white",borderRadius:16,border:"1.5px solid #E2E8F0",padding:bp.isDesktop?24:16,display:"flex",flexDirection:"column",gap:12}}>
+            <div style={{display:"flex",gap:8,flexWrap:"wrap"}}>
+              {CATEGORIES.slice(1).map(c=>(
+                <button key={c.value} type="button" onClick={()=>setCategory(c.value)} style={{display:"flex",alignItems:"center",gap:4,padding:"6px 12px",borderRadius:20,border:"1.5px solid",cursor:"pointer",borderColor:category===c.value?"var(--accent)":"#E2E8F0",background:category===c.value?"var(--accent-bg)":"white",color:category===c.value?"var(--accent)":"#718096",fontSize:12,fontWeight:category===c.value?700:500}}>
+                  <Icon name={c.icon} size={13} color={category===c.value?"var(--accent)":"#718096"}/>{c.label}
+                </button>
+              ))}
+            </div>
             <input value={title} onChange={e=>setTitle(e.target.value)} placeholder="제안 제목을 입력하세요" style={{padding:"11px 14px",borderRadius:10,border:"1.5px solid #E2E8F0",fontSize:14,fontFamily:"inherit"}}/>
             <textarea value={content} onChange={e=>setContent(e.target.value)} placeholder="어떤 정책이 필요한지, 왜 필요한지 자유롭게 적어주세요" rows={5} style={{padding:"11px 14px",borderRadius:10,border:"1.5px solid #E2E8F0",fontSize:14,fontFamily:"inherit",resize:"vertical"}}/>
             <button type="submit" style={{alignSelf:"flex-end",padding:"9px 20px",borderRadius:20,background:"var(--accent)",border:"none",color:"white",fontSize:13,fontWeight:600,cursor:"pointer",transition:"opacity 0.15s"}}
@@ -1629,24 +1782,28 @@ function PolicyProposalPage({bp,user}){
             >제안하기</button>
           </form>
 
-          <div style={{display:"flex",flexDirection:"column",gap:10}}>
-            {proposals.length===0&&(
-              <div style={{display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",padding:"64px 20px",gap:10,background:"white",borderRadius:16,border:"1.5px solid #E2E8F0"}}>
-                <Icon name="campaign" size={44} color="#d1d5db"/>
-                <div style={{fontSize:16,fontWeight:700,color:"#1E293B",marginTop:4}}>아직 등록된 제안이 없어요</div>
-                <div style={{fontSize:13,color:"#9ca3af"}}>첫 번째 정책 제안을 남겨보세요</div>
+          <div>
+            <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",borderBottom:"1px solid #e5e7eb",background:"white",borderRadius:"16px 16px 0 0",padding:"0 12px"}}>
+              <div style={{display:"flex",gap:0,overflowX:"auto"}}>
+                {PROPOSAL_STATUS_TABS.map(t=>(
+                  <button key={t.value} onClick={()=>setStatusTab(t.value)} style={{padding:bp.isDesktop?"13px 16px":"11px 12px",border:"none",background:"none",cursor:"pointer",whiteSpace:"nowrap",fontSize:bp.isDesktop?14:13,fontWeight:statusTab===t.value?700:500,color:statusTab===t.value?"#111827":"#9ca3af",borderBottom:`2.5px solid ${statusTab===t.value?"#111827":"transparent"}`,transition:"all 0.15s"}}>{t.label} <span style={{opacity:0.6,fontSize:11}}>({statusCounts[t.value]??0})</span></button>
+                ))}
               </div>
-            )}
-            {proposals.map(p=>(
-              <div key={p.id} style={{background:"white",borderRadius:16,border:"1.5px solid #E2E8F0",padding:bp.isDesktop?"18px 20px":"14px 16px"}}>
-                <div style={{fontWeight:700,fontSize:bp.isDesktop?15:14,color:"#111827",marginBottom:6}}>{p.title}</div>
-                <div style={{fontSize:13,color:"#6b7280",lineHeight:1.6,whiteSpace:"pre-wrap"}}>{p.content}</div>
-                <div style={{display:"flex",alignItems:"center",gap:8,marginTop:12,paddingTop:12,borderTop:"1px solid #E2E8F0",fontSize:12,color:"#9ca3af"}}>
-                  <span>by <span style={{color:"#374151",fontWeight:600}}>{maskName(p.author)}</span></span>
-                  <span style={{marginLeft:"auto"}}>{(p.createdAt||"").slice(0,10)}</span>
+              <select value={sort} onChange={e=>setSort(e.target.value)} style={{fontSize:12,border:"1px solid #e2e8f0",borderRadius:8,padding:"5px 8px",background:"white",color:"#374151",outline:"none",fontFamily:"inherit",cursor:"pointer",flexShrink:0}}>
+                {PROPOSAL_SORTS.map(o=><option key={o.value} value={o.value}>{o.label}</option>)}
+              </select>
+            </div>
+
+            <div style={{display:"flex",flexDirection:"column",gap:10,marginTop:12}}>
+              {filtered.length===0&&(
+                <div style={{display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",padding:"64px 20px",gap:10,background:"white",borderRadius:16,border:"1.5px solid #E2E8F0"}}>
+                  <Icon name="campaign" size={44} color="#d1d5db"/>
+                  <div style={{fontSize:16,fontWeight:700,color:"#1E293B",marginTop:4}}>해당하는 제안이 없어요</div>
+                  <div style={{fontSize:13,color:"#9ca3af"}}>다른 상태 탭을 확인해보세요</div>
                 </div>
-              </div>
-            ))}
+              )}
+              {filtered.map(p=><ProposalCard key={p.id} proposal={p} user={user} onVote={handleVote} bp={bp}/>)}
+            </div>
           </div>
         </div>
       </div>

@@ -55,3 +55,6 @@ import { Icon } from "./Icon"; // 상대경로 조정
 | `admin_panel_settings` | 관리자 |
 | `notifications` | 알림 |
 | `campaign` | 청년정책 제안 |
+| `schedule` | 역제안 답변대기 상태 |
+| `sync` | 역제안 부처매칭중 상태 |
+| `check_circle` | 역제안 답변완료 상태 |
