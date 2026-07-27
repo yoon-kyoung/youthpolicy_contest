@@ -24,6 +24,73 @@ const SUGGESTIONS = [
   '대학생인데 학자금이나 교육 지원 궁금해',
 ]
 
+function useSpeechRecognition({ lang = 'ko-KR', onResult } = {}) {
+  const [listening, setListening] = useState(false)
+  const recognitionRef = useRef(null)
+  const onResultRef = useRef(onResult)
+  onResultRef.current = onResult
+
+  const Ctor = typeof window !== 'undefined' ? (window.SpeechRecognition || window.webkitSpeechRecognition) : null
+  const supported = !!Ctor
+
+  useEffect(() => {
+    if (!Ctor) return
+    const recognition = new Ctor()
+    recognition.lang = lang
+    recognition.continuous = false
+    recognition.interimResults = true
+    recognition.onresult = (e) => {
+      let transcript = ''
+      for (let i = 0; i < e.results.length; i++) transcript += e.results[i][0].transcript
+      onResultRef.current?.(transcript)
+    }
+    recognition.onend = () => setListening(false)
+    recognition.onerror = () => setListening(false)
+    recognitionRef.current = recognition
+    return () => {
+      recognition.onresult = null
+      recognition.onend = null
+      recognition.onerror = null
+      recognition.abort()
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [lang])
+
+  const toggle = useCallback(() => {
+    const r = recognitionRef.current
+    if (!r) return
+    if (listening) {
+      r.stop()
+    } else {
+      try { r.start(); setListening(true) } catch {}
+    }
+  }, [listening])
+
+  return { supported, listening, toggle }
+}
+
+function MicButton({ listening, supported, onClick, size = 40, disabled }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      disabled={disabled || !supported}
+      title={supported ? (listening ? '음성 인식 중지' : '음성으로 입력') : '이 브라우저는 음성 인식을 지원하지 않아요'}
+      style={{
+        width: size, height: size, borderRadius: '50%', border: 'none',
+        cursor: (disabled || !supported) ? 'default' : 'pointer',
+        background: listening ? '#dc2626' : (supported ? '#e5e7eb' : '#f1f5f9'),
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        flexShrink: 0, transition: 'background 0.15s',
+        animation: listening ? 'micRing 1.4s infinite' : 'none',
+        opacity: supported ? 1 : 0.5,
+      }}
+    >
+      <Icon name="mic" filled={listening} size={size <= 40 ? 18 : 16} color={listening ? '#ffffff' : (supported ? '#6b7280' : '#9ca3af')}/>
+    </button>
+  )
+}
+
 function renderInline(text) {
   return text.split(/(\*\*[^*]+\*\*)/g).map((p, i) =>
     /^\*\*[^*]+\*\*$/.test(p) ? <strong key={i}>{p.slice(2, -2)}</strong> : <span key={i}>{p}</span>,
@@ -249,6 +316,9 @@ export default function ChatBotView({ bp, favIds, onToggleFav }) {
     },
   ])
   const [input, setInput] = useState('')
+  const { supported: micSupported, listening: micListening, toggle: toggleMic } = useSpeechRecognition({
+    onResult: (text) => setInput(text),
+  })
   const [chipTags, setChipTags] = useState([])
   const [showOptions, setShowOptions] = useState(false)
   const [loading, setLoading] = useState(false)
@@ -585,6 +655,7 @@ export default function ChatBotView({ bp, favIds, onToggleFav }) {
                 color:'#111827',
               }}
             />
+            <MicButton listening={micListening} supported={micSupported} onClick={toggleMic}/>
             <button
               onClick={()=>sendMessage()}
               disabled={!input.trim()}
@@ -821,6 +892,7 @@ export default function ChatBotView({ bp, favIds, onToggleFav }) {
                 onFocus={e=>{e.target.style.borderColor=C.primary}}
                 onBlur={e=>{e.target.style.borderColor=C.borderGray}}
               />
+              <MicButton listening={micListening} supported={micSupported} onClick={toggleMic} disabled={loading} size={44}/>
               <button onClick={()=>sendMessage()} disabled={loading} style={{
                 padding:'12px 20px',borderRadius:12,border:'none',cursor:'pointer',
                 background:C.primary,color:C.neutralWhite,fontWeight:800,fontSize:14,

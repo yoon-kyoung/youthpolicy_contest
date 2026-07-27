@@ -2713,6 +2713,7 @@ const GLOBAL_CSS=`
   @keyframes floatOrb{0%,100%{transform:translate(0,0)}50%{transform:translate(10px,-14px)}}
   @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.4}}
   @keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+  @keyframes micRing{0%{box-shadow:0 0 0 0 rgba(220,38,38,0.35)}100%{box-shadow:0 0 0 10px rgba(220,38,38,0)}}
 `;
 
 export default function App(){
