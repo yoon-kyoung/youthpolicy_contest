@@ -261,8 +261,8 @@ const NAV_ITEMS = [
   { page:"search",    icon:"search",    label:"검색" },
   { page:"chatbot",   icon:"smart_toy", label:"AI챗봇" },
   { page:"mypage",    icon:"person",    label:"마이페이지", hasSub:true },
-  { page:"community", icon:"forum",     label:"커뮤니티" },
   { page:"proposal",  icon:"campaign",  label:"정책제안" },
+  { page:"community", icon:"forum",     label:"커뮤니티" },
 ];
 
 const THEMES = [
@@ -2426,8 +2426,8 @@ function Sidebar({page,setPage,favIds,user,open,setOpen}){
     {id:"chatbot", icon:"auto_awesome", label:"AI 챗봇"},
     {id:"search",  icon:"search",    label:"검색"},
     ...(user?[{id:"mypage", icon:"person", label:"마이페이지"}]:[]),
-    {id:"community",icon:"forum",    label:"커뮤니티"},
     {id:"proposal",icon:"campaign", label:"청년정책 제안"},
+    {id:"community",icon:"forum",    label:"커뮤니티"},
   ];
 
   return(
