@@ -59,3 +59,6 @@ import { Icon } from "./Icon"; // 상대경로 조정
 | `sync` | 역제안 부처매칭중 상태 |
 | `check_circle` | 역제안 답변완료 상태 |
 | `mic` | 챗봇 음성 인식 입력 (fill=1 인식 중, fill=0 대기) |
+| `fact_check` | 역제안 상세 타임라인 - 검토 단계 |
+| `public` | 역제안 상세 타임라인 - 공개 단계 |
+| `question_answer` | 역제안 상세 타임라인 - 답변 단계 |

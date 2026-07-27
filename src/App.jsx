@@ -1612,18 +1612,70 @@ function proposalStatusMeta(status){
   }
 }
 
+const PROPOSAL_TIMELINE_STEPS=["작성","검토","공개","답변","반영"];
+const PROPOSAL_TIMELINE_ICONS=["edit_note","fact_check","public","question_answer","celebration"];
+const PROPOSAL_TIMELINE_DONE_COUNT={pending:2,matching:3,answered:4,adopted:5};
+function proposalTimelineStates(status){
+  const doneCount=PROPOSAL_TIMELINE_DONE_COUNT[status]??2;
+  return PROPOSAL_TIMELINE_STEPS.map((_,i)=>{
+    if(i<doneCount)return"done";
+    if(i===doneCount&&doneCount<PROPOSAL_TIMELINE_STEPS.length)return"current";
+    return"upcoming";
+  });
+}
+
 const PROPOSAL_SEED=[
-  {id:"prop1",category:"job",   title:"청년 인턴십 종료 후 정규직 전환 지원금 신설", content:"인턴 기간이 끝나면 계약이 종료되는 경우가 많아요. 정규직 전환 시 기업에 지원금을 지급하면 실제 채용으로 이어질 것 같습니다.", author:"김o준", createdAt:"2026-04-10T09:00:00.000Z", status:"adopted",  votes:342, answer:"고용노동부 답변: 제안 내용을 반영해 2026년 하반기부터 정규직 전환 지원금 시범사업을 시행합니다."},
-  {id:"prop2",category:"house", title:"1인가구 청년 전세보증금 반환보증료 전액 지원", content:"전세사기 걱정에 반환보증에 가입하고 싶어도 보증료가 부담됩니다. 청년 1인가구는 보증료를 전액 지원해주세요.", author:"이o현", createdAt:"2026-05-02T09:00:00.000Z", status:"answered", votes:256, answer:"국토교통부 답변: 보증료 지원 예산 확대 방안을 검토 중이며, 결과는 추후 공지 예정입니다."},
-  {id:"prop3",category:"money", title:"청년도약계좌 중도해지 시 정부기여금 일부 인정", content:"불가피한 사정으로 중도해지하면 정부기여금을 전혀 못 받는데, 가입 기간에 비례해서라도 일부 인정해주셨으면 합니다.", author:"박o영", createdAt:"2026-06-01T09:00:00.000Z", status:"matching", votes:128, answer:""},
-  {id:"prop4",category:"edu",   title:"국가장학금 소득분위 산정 기준 최신화", content:"재산 기준 산정에 실제 생활 여건이 잘 반영되지 않는 것 같습니다. 산정 기준을 최신 통계로 갱신해주세요.", author:"정o서", createdAt:"2026-05-20T09:00:00.000Z", status:"answered", votes:97,  answer:"교육부 답변: 2027학년도부터 소득 산정 기준 개선을 추진할 예정입니다."},
-  {id:"prop5",category:"edu",   title:"비전공자 개발 부트캠프 국비지원 비율 확대", content:"비전공자도 국비지원 부트캠프에 참여할 수 있지만 본인부담금이 커서 부담됩니다. 지원 비율을 확대해주세요.", author:"최o민", createdAt:"2026-06-20T09:00:00.000Z", status:"pending",  votes:41,  answer:""},
-  {id:"prop6",category:"health",title:"청년 마음건강 상담 지원 횟수 연 10회→20회 확대", content:"상담 10회로는 부족한 경우가 많습니다. 최소 20회까지는 지원 횟수를 늘려주셨으면 합니다.", author:"한o아", createdAt:"2026-07-05T09:00:00.000Z", status:"pending",  votes:19,  answer:""},
-  {id:"prop7",category:"job",   title:"지방 중소기업 청년 채용 시 교통비 지원 신설", content:"지방 중소기업은 대중교통이 불편해 통근 부담이 큽니다. 채용 시 교통비를 별도로 지원해주세요.", author:"오o진", createdAt:"2026-07-15T09:00:00.000Z", status:"pending",  votes:7,   answer:""},
-  {id:"prop8",category:"house", title:"청년 매입임대주택 반려동물 동반 입주 허용", content:"공공임대주택 대부분이 반려동물 동반 입주를 금지하고 있어 입주를 포기하는 경우가 많습니다.", author:"윤o혁", createdAt:"2026-07-22T09:00:00.000Z", status:"pending",  votes:3,   answer:""},
+  {id:"prop1",category:"job",   title:"청년 인턴십 종료 후 정규직 전환 지원금 신설",
+    background:"인턴 프로그램이 끝나면 자연스럽게 계약이 종료되는 사례가 많아, 청년들이 취업 준비를 다시 처음부터 시작해야 하는 경우가 많습니다.",
+    content:"인턴 기간이 끝나면 계약이 종료되는 경우가 많아요. 정규직 전환 시 기업에 지원금을 지급하면 실제 채용으로 이어질 것 같습니다.",
+    expectedEffect:"정규직 전환률이 높아지고, 기업 입장에서도 이미 검증된 인재를 채용할 유인이 생겨 채용 안정성이 향상될 것으로 기대됩니다.",
+    author:"김o준", createdAt:"2026-04-10T09:00:00.000Z", status:"adopted",  votes:342,
+    answer:"제안 내용을 반영해 2026년 하반기부터 정규직 전환 지원금 시범사업을 시행합니다.", answerOrg:"고용노동부", answeredAt:"2026-05-05"},
+  {id:"prop2",category:"house", title:"1인가구 청년 전세보증금 반환보증료 전액 지원",
+    background:"전세사기 피해가 늘면서 반환보증 가입이 사실상 필수가 되었지만, 1인가구 청년에게는 보증료 자체가 큰 부담입니다.",
+    content:"전세사기 걱정에 반환보증에 가입하고 싶어도 보증료가 부담됩니다. 청년 1인가구는 보증료를 전액 지원해주세요.",
+    expectedEffect:"보증 가입률이 높아져 전세사기 피해를 예방하고, 청년 1인가구의 주거 안정성이 개선될 것으로 기대됩니다.",
+    author:"이o현", createdAt:"2026-05-02T09:00:00.000Z", status:"answered", votes:256,
+    answer:"보증료 지원 예산 확대 방안을 검토 중이며, 결과는 추후 공지 예정입니다.", answerOrg:"국토교통부", answeredAt:"2026-05-20"},
+  {id:"prop3",category:"money", title:"청년도약계좌 중도해지 시 정부기여금 일부 인정",
+    background:"이직·이사 등 불가피한 사유로 중도해지를 하면 그동안 쌓아온 정부기여금을 전혀 받지 못해 오히려 저축을 포기하게 됩니다.",
+    content:"불가피한 사정으로 중도해지하면 정부기여금을 전혀 못 받는데, 가입 기간에 비례해서라도 일부 인정해주셨으면 합니다.",
+    expectedEffect:"중도해지 부담이 줄어들어 더 많은 청년이 안심하고 가입을 유지할 수 있을 것으로 기대됩니다.",
+    author:"박o영", createdAt:"2026-06-01T09:00:00.000Z", status:"matching", votes:128,
+    answer:"", answerOrg:"", answeredAt:""},
+  {id:"prop4",category:"edu",   title:"국가장학금 소득분위 산정 기준 최신화",
+    background:"소득분위 산정 기준이 몇 년째 그대로라 실제 가구 소득·재산 변화를 제대로 반영하지 못한다는 지적이 많습니다.",
+    content:"재산 기준 산정에 실제 생활 여건이 잘 반영되지 않는 것 같습니다. 산정 기준을 최신 통계로 갱신해주세요.",
+    expectedEffect:"형평성 있는 지원이 가능해지고, 실제 어려운 가구에 더 정확히 장학금이 돌아갈 것으로 기대됩니다.",
+    author:"정o서", createdAt:"2026-05-20T09:00:00.000Z", status:"answered", votes:97,
+    answer:"2027학년도부터 소득 산정 기준 개선을 추진할 예정입니다.", answerOrg:"교육부", answeredAt:"2026-06-02"},
+  {id:"prop5",category:"edu",   title:"비전공자 개발 부트캠프 국비지원 비율 확대",
+    background:"비전공자도 국비지원 부트캠프에 지원할 수 있지만, 본인부담금이 커서 참여를 포기하는 경우가 많습니다.",
+    content:"비전공자도 국비지원 부트캠프에 참여할 수 있지만 본인부담금이 커서 부담됩니다. 지원 비율을 확대해주세요.",
+    expectedEffect:"비전공자의 개발 직군 진입 장벽이 낮아져 청년 취업 선택지가 넓어질 것으로 기대됩니다.",
+    author:"최o민", createdAt:"2026-06-20T09:00:00.000Z", status:"pending",  votes:41,
+    answer:"", answerOrg:"", answeredAt:""},
+  {id:"prop6",category:"health",title:"청년 마음건강 상담 지원 횟수 연 10회→20회 확대",
+    background:"상담 10회로는 근본적인 회복까지 이어지기 어렵다는 의견이 많습니다.",
+    content:"상담 10회로는 부족한 경우가 많습니다. 최소 20회까지는 지원 횟수를 늘려주셨으면 합니다.",
+    expectedEffect:"충분한 상담 기간이 확보되어 청년들의 정신건강 회복률이 높아질 것으로 기대됩니다.",
+    author:"한o아", createdAt:"2026-07-05T09:00:00.000Z", status:"pending",  votes:19,
+    answer:"", answerOrg:"", answeredAt:""},
+  {id:"prop7",category:"job",   title:"지방 중소기업 청년 채용 시 교통비 지원 신설",
+    background:"지방 중소기업은 대중교통이 불편해 통근 부담이 채용 기피로 이어지는 경우가 많습니다.",
+    content:"지방 중소기업은 대중교통이 불편해 통근 부담이 큽니다. 채용 시 교통비를 별도로 지원해주세요.",
+    expectedEffect:"지방 중소기업의 청년 채용이 늘고, 수도권 쏠림 현상 완화에도 도움이 될 것으로 기대됩니다.",
+    author:"오o진", createdAt:"2026-07-15T09:00:00.000Z", status:"pending",  votes:7,
+    answer:"", answerOrg:"", answeredAt:""},
+  {id:"prop8",category:"house", title:"청년 매입임대주택 반려동물 동반 입주 허용",
+    background:"1인가구 중 반려동물과 함께 거주하는 청년이 늘고 있지만, 대부분의 공공임대주택이 반려동물 동반을 금지하고 있습니다.",
+    content:"공공임대주택 대부분이 반려동물 동반 입주를 금지하고 있어 입주를 포기하는 경우가 많습니다.",
+    expectedEffect:"반려동물 동반 청년의 공공임대주택 선택권이 넓어질 것으로 기대됩니다.",
+    author:"윤o혁", createdAt:"2026-07-22T09:00:00.000Z", status:"pending",  votes:3,
+    answer:"", answerOrg:"", answeredAt:""},
 ];
 
-function ProposalCard({proposal,user,onVote,bp}){
+function ProposalCard({proposal,user,onVote,onOpen,bp}){
   const [voted,setVoted]=useLocalStorage(`yoa:proposalVoted_${proposal.id}`,false);
   const s=proposalStatusMeta(proposal.status);
   const c=CAT_COLORS[proposal.category]||{};
@@ -1639,7 +1691,7 @@ function ProposalCard({proposal,user,onVote,bp}){
   };
 
   return(
-    <div style={{background:"white",borderRadius:16,border:"1.5px solid #E2E8F0",padding:bp.isDesktop?"18px 20px":"14px 16px"}}>
+    <div onClick={()=>onOpen(proposal)} style={{background:"white",borderRadius:16,border:"1.5px solid #E2E8F0",padding:bp.isDesktop?"18px 20px":"14px 16px",cursor:"pointer"}}>
       <div style={{display:"flex",gap:6,marginBottom:8,flexWrap:"wrap",alignItems:"center"}}>
         <span style={{...TAG_BASE,background:c.bg,border:`1px solid ${c.border}`,color:c.text,gap:4}}><Icon name={CAT_ICON[proposal.category]||"apps"} size={13} color={c.text}/>{CAT_LABEL[proposal.category]||proposal.category}</span>
         <span style={{...TAG_BASE,background:s.bg,border:`1px solid ${s.border}`,color:s.text,gap:4}}><Icon name={s.icon} size={13} color={s.text}/>{s.label}</span>
@@ -1676,6 +1728,171 @@ function ProposalCard({proposal,user,onVote,bp}){
   );
 }
 
+function ProposalDetailView({proposal,user,onVote,onBack,bp}){
+  const [voted,setVoted]=useLocalStorage(`yoa:proposalVoted_${proposal.id}`,false);
+  const [comments,setComments]=useLocalStorage(`yoa:proposalComments_${proposal.id}`,[]);
+  const [commentText,setCommentText]=useState("");
+  const [copied,setCopied]=useState(false);
+  const s=proposalStatusMeta(proposal.status);
+  const c=CAT_COLORS[proposal.category]||{grad:"linear-gradient(135deg,var(--accent-dark),var(--accent))",bg:"var(--accent-bg)",border:"var(--accent-bg)",text:"var(--accent)"};
+  const votes=proposal.votes||0;
+  const progress=Math.min(100,Math.round((votes/VOTE_THRESHOLD)*100));
+  const timeline=proposalTimelineStates(proposal.status);
+
+  useEffect(()=>{window.scrollTo({top:0,behavior:"smooth"});},[proposal.id]);
+
+  const handleVote=()=>{
+    if(!user){alert("로그인 후 공감할 수 있어요.");return;}
+    if(voted)return;
+    setVoted(true);
+    onVote(proposal.id);
+  };
+  const handleShare=()=>{
+    const url=`${window.location.origin}${window.location.pathname}?proposal=${proposal.id}`;
+    navigator.clipboard.writeText(url).then(()=>{setCopied(true);setTimeout(()=>setCopied(false),2000);});
+  };
+  const handleAddComment=e=>{
+    e.preventDefault();
+    if(!user){alert("로그인 후 의견을 남길 수 있어요.");return;}
+    if(!commentText.trim())return;
+    setComments(prev=>[...prev,{id:Date.now(),author:user.user_metadata?.name||user.email||"익명",text:commentText.trim(),createdAt:new Date().toISOString()}]);
+    setCommentText("");
+  };
+
+  return(
+    <div style={{background:"#F5F9FC",minHeight:"100%",animation:"fadeUp 0.25s ease"}}>
+      {/* 뒤로가기 헤더 */}
+      <div style={{background:"white",borderBottom:"1px solid #e5e7eb",padding:bp.isDesktop?"0 40px":"0 16px",position:"sticky",top:0,zIndex:40}}>
+        <div style={{height:bp.isDesktop?56:52,display:"flex",alignItems:"center",gap:12}}>
+          <button onClick={onBack} style={{display:"flex",alignItems:"center",gap:6,background:"none",border:"none",cursor:"pointer",color:"#374151",fontSize:14,fontWeight:600,padding:"8px 0",transition:"color 0.15s"}}
+            onMouseEnter={e=>e.currentTarget.style.color="var(--accent)"}
+            onMouseLeave={e=>e.currentTarget.style.color="#374151"}
+          ><Icon name="arrow_back" size={16}/> 뒤로가기</button>
+          <span style={{color:"#e5e7eb"}}>|</span>
+          <span style={{fontSize:13,color:"#9ca3af",overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{proposal.title}</span>
+        </div>
+      </div>
+
+      {/* 히어로 */}
+      <div style={{background:c.grad,padding:bp.isDesktop?"40px 40px 32px":bp.isTablet?"30px 24px 24px":"24px 18px 20px",color:"white"}}>
+        <div style={{maxWidth:820,margin:"0 auto"}}>
+          <div style={{display:"flex",gap:8,marginBottom:14,flexWrap:"wrap",alignItems:"center"}}>
+            <span style={{background:"rgba(255,255,255,0.2)",border:"1px solid rgba(255,255,255,0.3)",borderRadius:20,padding:"3px 12px",fontSize:12,fontWeight:700,display:"inline-flex",alignItems:"center",gap:4}}><Icon name={CAT_ICON[proposal.category]||"apps"} size={13} color="white"/>{CAT_LABEL[proposal.category]}</span>
+            <span style={{background:"rgba(255,255,255,0.2)",border:"1px solid rgba(255,255,255,0.3)",borderRadius:20,padding:"3px 12px",fontSize:12,fontWeight:700,display:"inline-flex",alignItems:"center",gap:4}}><Icon name={s.icon} size={13} color="white"/>{s.label}</span>
+          </div>
+          <h1 style={{fontSize:bp.isDesktop?30:bp.isTablet?24:20,fontWeight:900,margin:"0 0 10px",lineHeight:1.3,letterSpacing:"-0.02em"}}>{proposal.title}</h1>
+          <p style={{fontSize:13,opacity:0.8,margin:0}}>by {maskName(proposal.author)} · {(proposal.createdAt||"").slice(0,10)} · 공감 {votes}</p>
+        </div>
+      </div>
+
+      <div style={{padding:bp.isDesktop?"32px 40px 60px":bp.isTablet?"24px 24px 60px":"16px 16px 80px"}}>
+        <div style={{maxWidth:820,margin:"0 auto",display:"flex",flexDirection:"column",gap:16}}>
+
+          {/* 상태 타임라인 */}
+          <section style={{background:"white",borderRadius:20,padding:bp.isDesktop?"24px 28px":"18px 14px",border:"1.5px solid #f1f5f9"}}>
+            <h2 style={{fontSize:15,fontWeight:800,color:"#111827",marginTop:0,marginBottom:20}}>진행 상태</h2>
+            <div style={{display:"flex",alignItems:"flex-start"}}>
+              {PROPOSAL_TIMELINE_STEPS.map((label,i)=>{
+                const st=timeline[i];
+                const prevSt=i>0?timeline[i-1]:null;
+                const color=st==="upcoming"?"#e2e8f0":(st==="current"?"var(--accent)":"#15803D");
+                return(
+                  <div key={label} style={{flex:1,display:"flex",flexDirection:"column",alignItems:"center",position:"relative"}}>
+                    {i>0&&<div style={{position:"absolute",top:15,right:"50%",width:"100%",height:2,background:prevSt==="upcoming"?"#e2e8f0":(prevSt==="current"?"var(--accent)":"#15803D"),zIndex:0}}/>}
+                    <div style={{width:30,height:30,borderRadius:"50%",background:st==="upcoming"?"#f1f5f9":color,display:"flex",alignItems:"center",justifyContent:"center",zIndex:1,position:"relative",animation:st==="current"?"pulse 1.4s infinite":"none",border:st==="upcoming"?"1.5px solid #e2e8f0":"none",flexShrink:0}}>
+                      <Icon name={PROPOSAL_TIMELINE_ICONS[i]} size={15} color={st==="upcoming"?"#94a3b8":"white"}/>
+                    </div>
+                    <span style={{fontSize:11,marginTop:6,fontWeight:st==="current"?700:600,color:st==="upcoming"?"#94a3b8":"#374151"}}>{label}</span>
+                  </div>
+                );
+              })}
+            </div>
+          </section>
+
+          {/* 제안 원문 */}
+          <section style={{background:"white",borderRadius:20,padding:bp.isDesktop?"24px 28px":"18px 16px",border:"1.5px solid #f1f5f9"}}>
+            <h2 style={{fontSize:15,fontWeight:800,color:"#111827",marginTop:0,marginBottom:14,display:"flex",alignItems:"center",gap:6}}><Icon name="description" size={16}/>제안 원문</h2>
+            {proposal.background&&(
+              <div style={{marginBottom:14}}>
+                <div style={{fontSize:12,fontWeight:700,color:"#6b7280",marginBottom:4}}>배경</div>
+                <p style={{margin:0,fontSize:14,color:"#374151",lineHeight:1.8,whiteSpace:"pre-wrap"}}>{proposal.background}</p>
+              </div>
+            )}
+            <div style={{marginBottom:proposal.expectedEffect?14:0}}>
+              <div style={{fontSize:12,fontWeight:700,color:"#6b7280",marginBottom:4}}>제안 내용</div>
+              <p style={{margin:0,fontSize:14,color:"#374151",lineHeight:1.8,whiteSpace:"pre-wrap"}}>{proposal.content}</p>
+            </div>
+            {proposal.expectedEffect&&(
+              <div>
+                <div style={{fontSize:12,fontWeight:700,color:"#6b7280",marginBottom:4}}>기대 효과</div>
+                <p style={{margin:0,fontSize:14,color:"#374151",lineHeight:1.8,whiteSpace:"pre-wrap"}}>{proposal.expectedEffect}</p>
+              </div>
+            )}
+            {proposal.status==="pending"&&(
+              <div style={{marginTop:16}}>
+                <div style={{height:6,borderRadius:20,background:"#F1F5F9",overflow:"hidden"}}>
+                  <div style={{height:"100%",width:`${progress}%`,background:"var(--accent)",borderRadius:20,transition:"width 0.3s"}}/>
+                </div>
+                <div style={{fontSize:11,color:"#9ca3af",marginTop:4}}>공감 {votes}/{VOTE_THRESHOLD} · 임계치 도달 시 부처 매칭이 자동으로 시작돼요</div>
+              </div>
+            )}
+          </section>
+
+          {/* 소관 부처 답변 */}
+          {(proposal.status==="answered"||proposal.status==="adopted")&&proposal.answer&&(
+            <section style={{background:s.bg,borderRadius:20,padding:bp.isDesktop?"24px 28px":"18px 16px",border:`1.5px solid ${s.border}`}}>
+              <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:12,flexWrap:"wrap",gap:6}}>
+                <h2 style={{fontSize:15,fontWeight:800,color:s.text,margin:0,display:"flex",alignItems:"center",gap:6}}><Icon name={s.icon} size={16} color={s.text}/>소관 부처 공식 답변</h2>
+                <span style={{fontSize:12,fontWeight:700,color:s.text}}>{proposal.answerOrg}{proposal.answeredAt?` · ${proposal.answeredAt}`:""}</span>
+              </div>
+              <p style={{margin:0,fontSize:14,color:"#374151",lineHeight:1.8,whiteSpace:"pre-wrap"}}>{proposal.answer}</p>
+            </section>
+          )}
+
+          {/* 공감 · 공유 */}
+          <div style={{display:"flex",gap:10}}>
+            <button onClick={handleVote} disabled={voted} style={{flex:1,display:"flex",alignItems:"center",justifyContent:"center",gap:6,padding:"12px",borderRadius:14,border:voted?"1.5px solid #fca5a5":"1.5px solid #E2E8F0",background:voted?"#fff1f2":"white",color:voted?"#dc2626":"#374151",fontSize:14,fontWeight:700,cursor:voted?"default":"pointer",transition:"all 0.15s"}}>
+              <Icon name="favorite" filled={voted} size={16} color={voted?"#dc2626":"#9ca3af"}/>공감 {votes}
+            </button>
+            <div style={{position:"relative",flex:1}}>
+              <button onClick={handleShare} style={{width:"100%",padding:"12px",borderRadius:14,border:"1.5px solid #E2E8F0",background:"white",color:"#374151",fontSize:14,fontWeight:700,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",gap:6,transition:"all 0.15s"}}>
+                <Icon name="share" size={16}/>공유하기
+              </button>
+              {copied&&<div style={{position:"absolute",bottom:"calc(100% + 8px)",left:"50%",transform:"translateX(-50%)",background:"#1f2937",color:"white",borderRadius:8,padding:"6px 14px",fontSize:12,fontWeight:600,whiteSpace:"nowrap",zIndex:20,boxShadow:"0 2px 8px rgba(0,0,0,0.18)",animation:"fadeUp 0.2s ease"}}>URL이 복사되었습니다</div>}
+            </div>
+          </div>
+
+          {/* 추가 의견(댓글) */}
+          <section style={{background:"white",borderRadius:20,padding:bp.isDesktop?"24px 28px":"18px 16px",border:"1.5px solid #f1f5f9"}}>
+            <h2 style={{fontSize:15,fontWeight:800,color:"#111827",marginTop:0,marginBottom:14,display:"flex",alignItems:"center",gap:6}}><Icon name="chat_bubble" size={16}/>추가 의견 <span style={{color:"#9ca3af",fontWeight:600}}>({comments.length})</span></h2>
+            <form onSubmit={handleAddComment} style={{display:"flex",gap:8,marginBottom:comments.length?16:0}}>
+              <input value={commentText} onChange={e=>setCommentText(e.target.value)} placeholder="다른 청년들에게 보충 의견을 남겨보세요" style={{flex:1,padding:"10px 14px",borderRadius:10,border:"1.5px solid #E2E8F0",fontSize:13,fontFamily:"inherit"}}/>
+              <button type="submit" style={{padding:"9px 18px",borderRadius:10,background:"var(--accent)",border:"none",color:"white",fontSize:13,fontWeight:700,cursor:"pointer",flexShrink:0,transition:"opacity 0.15s"}}
+                onMouseEnter={e=>e.currentTarget.style.opacity="0.85"} onMouseLeave={e=>e.currentTarget.style.opacity="1"}
+              >등록</button>
+            </form>
+            {comments.length===0?(
+              <p style={{margin:0,fontSize:13,color:"#9ca3af"}}>아직 등록된 의견이 없어요. 첫 의견을 남겨보세요!</p>
+            ):(
+              <div style={{display:"flex",flexDirection:"column",gap:10}}>
+                {comments.map(cm=>(
+                  <div key={cm.id} style={{borderTop:"1px solid #f1f5f9",paddingTop:10}}>
+                    <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:4}}>
+                      <span style={{fontSize:13,fontWeight:700,color:"#374151"}}>{maskName(cm.author)}</span>
+                      <span style={{fontSize:11,color:"#9ca3af"}}>{(cm.createdAt||"").slice(0,10)}</span>
+                    </div>
+                    <p style={{margin:0,fontSize:13,color:"#6b7280",lineHeight:1.6,whiteSpace:"pre-wrap"}}>{cm.text}</p>
+                  </div>
+                ))}
+              </div>
+            )}
+          </section>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function PolicyProposalPage({bp,user}){
   const [proposals,setProposals]=useLocalStorage("yoa:proposals",PROPOSAL_SEED);
   const [title,setTitle]=useState("");
@@ -1683,6 +1900,25 @@ function PolicyProposalPage({bp,user}){
   const [category,setCategory]=useState("job");
   const [statusTab,setStatusTab]=useState("all");
   const [sort,setSort]=useState("recent");
+  const [selectedProposal,setSelectedProposal]=useState(null);
+
+  useEffect(()=>{
+    const id=new URLSearchParams(window.location.search).get("proposal");
+    if(!id)return;
+    const found=proposals.find(p=>String(p.id)===id);
+    if(found)setSelectedProposal(found);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  },[]);
+
+  const openProposal=useCallback(p=>{
+    setSelectedProposal(p);
+    history.replaceState({},"",`${window.location.pathname}?proposal=${p.id}`);
+  },[]);
+
+  const closeProposal=useCallback(()=>{
+    setSelectedProposal(null);
+    history.replaceState({},"",window.location.pathname);
+  },[]);
 
   const handleSubmit=e=>{
     e.preventDefault();
@@ -1691,13 +1927,17 @@ function PolicyProposalPage({bp,user}){
     const proposal={
       id:Date.now(),
       title:title.trim(),
+      background:"",
       content:content.trim(),
+      expectedEffect:"",
       category,
       author:user.user_metadata?.name||user.email||"익명",
       createdAt:new Date().toISOString(),
       status:"pending",
       votes:0,
       answer:"",
+      answerOrg:"",
+      answeredAt:"",
     };
     setProposals(prev=>[proposal,...prev]);
     setTitle("");
@@ -1739,6 +1979,11 @@ function PolicyProposalPage({bp,user}){
     list=[...list].sort((a,b)=>sort==="votes"?(b.votes||0)-(a.votes||0):new Date(b.createdAt)-new Date(a.createdAt));
     return list;
   },[proposals,statusTab,sort]);
+
+  if(selectedProposal){
+    const live=proposals.find(p=>p.id===selectedProposal.id)||selectedProposal;
+    return <ProposalDetailView proposal={live} user={user} onVote={handleVote} onBack={closeProposal} bp={bp}/>;
+  }
 
   return(
     <div style={{background:"#f8fafc",minHeight:"100%"}}>
@@ -1802,7 +2047,7 @@ function PolicyProposalPage({bp,user}){
                   <div style={{fontSize:13,color:"#9ca3af"}}>다른 상태 탭을 확인해보세요</div>
                 </div>
               )}
-              {filtered.map(p=><ProposalCard key={p.id} proposal={p} user={user} onVote={handleVote} bp={bp}/>)}
+              {filtered.map(p=><ProposalCard key={p.id} proposal={p} user={user} onVote={handleVote} onOpen={openProposal} bp={bp}/>)}
             </div>
           </div>
         </div>
