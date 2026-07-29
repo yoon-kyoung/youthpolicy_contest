@@ -32,36 +32,43 @@ function TrendBadge({ trend }) {
   return <span style={{ fontSize: 11, color: '#d1d5db' }}>–</span>
 }
 
-function PopularSearchWidget({ items, onPick }) {
+const TICKER_INTERVAL_MS = 3000
+
+function PopularSearchTicker({ items, onPick, isMobile }) {
+  const [idx, setIdx] = useState(0)
+
+  useEffect(() => {
+    if (items.length < 2) return
+    setIdx(0)
+    const t = setInterval(() => setIdx((i) => (i + 1) % items.length), TICKER_INTERVAL_MS)
+    return () => clearInterval(t)
+  }, [items])
+
   if (!items.length) return null
+  const p = items[idx % items.length]
+
   return (
     <div style={{
-      width: '100%', maxWidth: 560, marginBottom: 24,
-      border: '1.5px solid #e5e7eb', borderRadius: 16,
-      background: 'rgba(255,255,255,0.75)',
-      boxShadow: '0 2px 10px rgba(0,0,0,0.05)',
-      padding: '14px 18px',
+      position: 'absolute', top: 16, right: 16, zIndex: 5,
+      width: isMobile ? 200 : 260, maxWidth: 'calc(100vw - 32px)',
+      border: '1.5px solid #e5e7eb', borderRadius: 14,
+      background: 'rgba(255,255,255,0.85)', backdropFilter: 'blur(4px)',
+      boxShadow: '0 2px 10px rgba(0,0,0,0.06)',
+      padding: '10px 14px',
     }}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 8 }}>
-        <Icon name="local_fire_department" size={16} color="#FF4D4D" />
-        <span style={{ fontSize: 13, fontWeight: 800, color: '#111827' }}>실시간 인기 정책 검색어</span>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 6 }}>
+        <Icon name="local_fire_department" size={14} color="#FF4D4D" />
+        <span style={{ fontSize: 12, fontWeight: 800, color: '#111827' }}>실시간 인기 정책 검색어</span>
       </div>
-      <div style={{ display: 'flex', flexDirection: 'column' }}>
-        {items.map((p) => (
-          <button key={p.id} onClick={() => onPick(p.name)} style={{
-            display: 'flex', alignItems: 'center', gap: 10, width: '100%',
-            border: 'none', background: 'transparent', cursor: 'pointer',
-            padding: '6px 4px', borderRadius: 8, textAlign: 'left', transition: 'background 0.15s',
-          }}
-            onMouseEnter={(e) => { e.currentTarget.style.background = '#f3f4f6' }}
-            onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent' }}
-          >
-            <span style={{ width: 18, fontSize: 13, fontWeight: 800, color: p.rank <= 3 ? C.primary : '#9ca3af', flexShrink: 0 }}>{p.rank}</span>
-            <span style={{ flex: 1, fontSize: 13, color: '#374151', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{p.name}</span>
-            <TrendBadge trend={p.trend} />
-          </button>
-        ))}
-      </div>
+      <button key={p.id} onClick={() => onPick(p.name)} style={{
+        display: 'flex', alignItems: 'center', gap: 8, width: '100%',
+        border: 'none', background: 'transparent', cursor: 'pointer',
+        padding: '2px 0', textAlign: 'left', animation: 'tickerFade 0.35s ease',
+      }}>
+        <span style={{ width: 16, fontSize: 12, fontWeight: 800, color: p.rank <= 3 ? C.primary : '#9ca3af', flexShrink: 0 }}>{p.rank}</span>
+        <span style={{ flex: 1, fontSize: 12, color: '#374151', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{p.name}</span>
+        <TrendBadge trend={p.trend} />
+      </button>
     </div>
   )
 }
@@ -657,16 +664,15 @@ export default function ChatBotView({ bp, favIds, onToggleFav }) {
       <div style={{ height:'100%', overflow:'hidden', background:'#ffffff', position:'relative' }}>
         <div style={{position:'absolute',left:'24.9%',top:'52%',width:'28.8vw',aspectRatio:'1',borderRadius:'50%',background:'#4AA8FF',filter:'blur(12vw)',pointerEvents:'none',zIndex:0}}/>
         <div style={{position:'absolute',left:'43.2%',top:'46%',width:'19.4vw',aspectRatio:'1',borderRadius:'50%',background:'#19CEBD',filter:'blur(8vw)',pointerEvents:'none',zIndex:0}}/>
-        {/* Privacy Notice — 오른쪽 상단 고정 */}
+        {/* Privacy Notice — 오른쪽 하단 고정 */}
         <PrivacyNoticePanel bp={bp}/>
+        {/* 실시간 인기 검색어 — 오른쪽 상단 고정 */}
+        <PopularSearchTicker items={popular} onPick={(name) => sendMessage(name)} isMobile={bp==='mobile'} />
         <div style={{
           position:'relative', zIndex:1,
           display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center',
           height:'100%', padding:'0 24px',
         }}>
-
-          {/* 실시간 인기 검색어 */}
-          <PopularSearchWidget items={popular} onPick={(name) => sendMessage(name)} />
 
           {/* Icon */}
           <img src={import.meta.env.BASE_URL + 'logo.png'} alt="청년ON" style={{width:68,height:68,borderRadius:16,marginBottom:20}}/>
