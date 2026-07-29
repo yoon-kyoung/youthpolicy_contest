@@ -14,6 +14,7 @@ import { API_BASE, QUESTION_LIMIT } from './config'
 import { SIDO_LIST, FIELD_OPTIONS } from './codes'
 import { recommendPolicies, policiesByIds } from './recommend'
 import { loadPolicies } from './policiesStore'
+import { popularPolicies, POPULARITY_REFRESH_MS } from './popularity'
 import PolicyCardMini from './PolicyCardMini'
 import { C } from '../styles/colors'
 import Icon from '../styles/Icon'
@@ -23,6 +24,47 @@ const SUGGESTIONS = [
   '25살 경기, 취업 준비 중인데 받을 수 있는 거 알려줘',
   '대학생인데 학자금이나 교육 지원 궁금해',
 ]
+
+function TrendBadge({ trend }) {
+  if (trend === 'new') return <span style={{ fontSize: 10, fontWeight: 800, color: '#F59E0B' }}>NEW</span>
+  if (trend === 'up') return <span style={{ fontSize: 11, color: '#EF4444' }}>▲</span>
+  if (trend === 'down') return <span style={{ fontSize: 11, color: '#3B82F6' }}>▼</span>
+  return <span style={{ fontSize: 11, color: '#d1d5db' }}>–</span>
+}
+
+function PopularSearchWidget({ items, onPick }) {
+  if (!items.length) return null
+  return (
+    <div style={{
+      width: '100%', maxWidth: 560, marginBottom: 24,
+      border: '1.5px solid #e5e7eb', borderRadius: 16,
+      background: 'rgba(255,255,255,0.75)',
+      boxShadow: '0 2px 10px rgba(0,0,0,0.05)',
+      padding: '14px 18px',
+    }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 8 }}>
+        <Icon name="local_fire_department" size={16} color="#FF4D4D" />
+        <span style={{ fontSize: 13, fontWeight: 800, color: '#111827' }}>실시간 인기 정책 검색어</span>
+      </div>
+      <div style={{ display: 'flex', flexDirection: 'column' }}>
+        {items.map((p) => (
+          <button key={p.id} onClick={() => onPick(p.name)} style={{
+            display: 'flex', alignItems: 'center', gap: 10, width: '100%',
+            border: 'none', background: 'transparent', cursor: 'pointer',
+            padding: '6px 4px', borderRadius: 8, textAlign: 'left', transition: 'background 0.15s',
+          }}
+            onMouseEnter={(e) => { e.currentTarget.style.background = '#f3f4f6' }}
+            onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent' }}
+          >
+            <span style={{ width: 18, fontSize: 13, fontWeight: 800, color: p.rank <= 3 ? C.primary : '#9ca3af', flexShrink: 0 }}>{p.rank}</span>
+            <span style={{ flex: 1, fontSize: 13, color: '#374151', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{p.name}</span>
+            <TrendBadge trend={p.trend} />
+          </button>
+        ))}
+      </div>
+    </div>
+  )
+}
 
 function useSpeechRecognition({ lang = 'ko-KR', onResult } = {}) {
   const [listening, setListening] = useState(false)
@@ -345,6 +387,14 @@ export default function ChatBotView({ bp, favIds, onToggleFav }) {
       .catch(() => setLoadErr(true))
   }, [])
 
+  const [popular, setPopular] = useState([])
+  useEffect(() => {
+    if (!ready) return
+    setPopular(popularPolicies(5))
+    const t = setInterval(() => setPopular(popularPolicies(5)), POPULARITY_REFRESH_MS)
+    return () => clearInterval(t)
+  }, [ready])
+
   // 마지막 세션 복원(이어서 채팅). ready 이후 1회. messages+apiHistory까지 살려 맥락 유지.
   useEffect(() => {
     if (!ready || hydratedRef.current) return
@@ -614,6 +664,9 @@ export default function ChatBotView({ bp, favIds, onToggleFav }) {
           display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center',
           height:'100%', padding:'0 24px',
         }}>
+
+          {/* 실시간 인기 검색어 */}
+          <PopularSearchWidget items={popular} onPick={(name) => sendMessage(name)} />
 
           {/* Icon */}
           <img src={import.meta.env.BASE_URL + 'logo.png'} alt="청년ON" style={{width:68,height:68,borderRadius:16,marginBottom:20}}/>
