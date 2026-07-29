@@ -772,8 +772,8 @@ function SearchView({favIds,onToggleFav,onGoDetail,bp,policies}){
                   {REGIONS.map(r=>(
                     <button key={r} onClick={()=>setRegion(r)} style={{padding:"4px 10px",borderRadius:20,border:"1.5px solid",borderColor:region===r?"var(--accent)":"#E2E8F0",background:region===r?"var(--accent)":"#FFFFFF",color:region===r?"#FFFFFF":"#475569",fontSize:12,fontWeight:region===r?700:400,cursor:"pointer",transition:"all 0.12s",whiteSpace:"nowrap"}}>{r}</button>
                   ))}
-                  <button onClick={()=>setShowRegionMap(true)} title="지도에서 선택" style={{display:"flex",alignItems:"center",justifyContent:"center",width:26,height:26,borderRadius:"50%",border:"1.5px solid #E2E8F0",background:"#FFFFFF",color:"#475569",cursor:"pointer",flexShrink:0,padding:0,marginLeft:2}}>
-                    <Icon name="map" size={13} color="#475569"/>
+                  <button onClick={()=>setShowRegionMap(true)} style={{display:"flex",alignItems:"center",gap:4,padding:"4px 10px",borderRadius:20,border:"1.5px solid #E2E8F0",background:"#FFFFFF",color:"#475569",fontSize:12,fontWeight:400,cursor:"pointer",whiteSpace:"nowrap",flexShrink:0,marginLeft:2}}>
+                    <Icon name="map" size={13} color="#475569"/>지도로 보기
                   </button>
                 </div>
               </div>
@@ -829,8 +829,8 @@ function SearchView({favIds,onToggleFav,onGoDetail,bp,policies}){
               {REGIONS.map(r=>(
                 <button key={r} onClick={()=>setRegion(r)} style={{padding:"3px 9px",borderRadius:20,border:"1.5px solid",borderColor:region===r?"var(--accent)":"#E2E8F0",background:region===r?"var(--accent)":"#FFFFFF",color:region===r?"#FFFFFF":"#475569",fontSize:11,fontWeight:region===r?700:400,cursor:"pointer",whiteSpace:"nowrap",flexShrink:0}}>{r}</button>
               ))}
-              <button onClick={()=>setShowRegionMap(true)} title="지도에서 선택" style={{display:"flex",alignItems:"center",justifyContent:"center",width:22,height:22,borderRadius:"50%",border:"1.5px solid #E2E8F0",background:"#FFFFFF",color:"#475569",cursor:"pointer",flexShrink:0,padding:0}}>
-                <Icon name="map" size={12} color="#475569"/>
+              <button onClick={()=>setShowRegionMap(true)} style={{display:"flex",alignItems:"center",gap:3,padding:"3px 9px",borderRadius:20,border:"1.5px solid #E2E8F0",background:"#FFFFFF",color:"#475569",fontSize:11,fontWeight:400,cursor:"pointer",whiteSpace:"nowrap",flexShrink:0}}>
+                <Icon name="map" size={12} color="#475569"/>지도로 보기
               </button>
             </div>
           </div>
