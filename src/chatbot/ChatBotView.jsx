@@ -169,6 +169,46 @@ function MicButton({ listening, supported, onClick, size = 40, disabled }) {
   )
 }
 
+function stripForSpeech(text = '') {
+  return text
+    .replace(/\*\*/g, '')
+    .replace(/^#+\s*/gm, '')
+    .replace(/\|/g, ' ')
+    .replace(/^[-·•]\s*/gm, '')
+    .replace(/^\d+[.)]\s*/gm, '')
+    .replace(/\n{2,}/g, '. ')
+    .replace(/\n/g, '. ')
+    .trim()
+}
+
+// 챗봇 답변 읽어주기(TTS). 브라우저 내장 음성합성이라 별도 비용·API 키가 필요 없다.
+function useSpeechSynthesis() {
+  const [speakingId, setSpeakingId] = useState(null)
+  const supported = typeof window !== 'undefined' && 'speechSynthesis' in window
+
+  const speak = useCallback((id, text) => {
+    if (!supported) return
+    window.speechSynthesis.cancel()
+    if (speakingId === id) { setSpeakingId(null); return }
+    const utter = new SpeechSynthesisUtterance(stripForSpeech(text))
+    utter.lang = 'ko-KR'
+    utter.rate = 1
+    utter.onend = () => setSpeakingId((cur) => (cur === id ? null : cur))
+    utter.onerror = () => setSpeakingId((cur) => (cur === id ? null : cur))
+    window.speechSynthesis.speak(utter)
+    setSpeakingId(id)
+  }, [supported, speakingId])
+
+  const stop = useCallback(() => {
+    if (supported) window.speechSynthesis.cancel()
+    setSpeakingId(null)
+  }, [supported])
+
+  useEffect(() => () => { if (supported) window.speechSynthesis.cancel() }, [supported])
+
+  return { supported, speakingId, speak, stop }
+}
+
 function renderInline(text) {
   return text.split(/(\*\*[^*]+\*\*)/g).map((p, i) =>
     /^\*\*[^*]+\*\*$/.test(p) ? <strong key={i}>{p.slice(2, -2)}</strong> : <span key={i}>{p}</span>,
@@ -408,6 +448,7 @@ export default function ChatBotView({ bp, favIds, onToggleFav, onGoDetail, reset
   const { supported: micSupported, listening: micListening, toggle: toggleMic } = useSpeechRecognition({
     onResult: (text) => setInput(text),
   })
+  const { supported: ttsSupported, speakingId, speak, stop: stopSpeaking } = useSpeechSynthesis()
   const [chipTags, setChipTags] = useState([])
   const [showOptions, setShowOptions] = useState(false)
   const [loading, setLoading] = useState(false)
@@ -531,6 +572,7 @@ export default function ChatBotView({ bp, favIds, onToggleFav, onGoDetail, reset
   }
 
   function startNewSession() {
+    stopSpeaking()
     flushSave()
     const nid = newId()
     setSessionId(nid)
@@ -914,6 +956,20 @@ export default function ChatBotView({ bp, favIds, onToggleFav, onGoDetail, reset
                   msg.text.split('\n').map((line, j)=><p key={j} style={{margin:'2px 0'}}>{renderInline(line)}</p>)
                 )}
               </div>
+              {msg.from === 'bot' && !msg.streaming && msg.text && ttsSupported && (
+                <button
+                  onClick={() => speak(i, msg.text)}
+                  title={speakingId === i ? '읽기 중지' : '답변 듣기'}
+                  style={{
+                    flexShrink:0,width:28,height:28,borderRadius:'50%',border:'none',cursor:'pointer',
+                    display:'flex',alignItems:'center',justifyContent:'center',marginTop:2,
+                    background:speakingId === i ? C.primary : '#f1f5f9',
+                    transition:'background 0.15s',
+                  }}
+                >
+                  <Icon name={speakingId === i ? 'stop' : 'volume_up'} size={15} color={speakingId === i ? C.neutralWhite : '#6b7280'}/>
+                </button>
+              )}
             </div>
             {/* 연관질문 칩 */}
             {msg.from === 'bot' && !msg.streaming && !reachedLimit && msg.followups?.length > 0 && (
