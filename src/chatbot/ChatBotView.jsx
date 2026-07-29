@@ -34,15 +34,35 @@ function TrendBadge({ trend }) {
 
 const TICKER_INTERVAL_MS = 3000
 
+function PopularSearchRow({ item, onPick, compact }) {
+  return (
+    <button key={item.id} onClick={() => onPick(item.name)} style={{
+      display: 'flex', alignItems: 'center', gap: 8, width: '100%',
+      border: 'none', background: 'transparent', cursor: 'pointer',
+      padding: compact ? '2px 0' : '6px 2px', borderRadius: 8, textAlign: 'left',
+      transition: 'background 0.15s',
+      ...(compact ? { animation: 'tickerFade 0.35s ease' } : {}),
+    }}
+      onMouseEnter={compact ? undefined : (e) => { e.currentTarget.style.background = '#f3f4f6' }}
+      onMouseLeave={compact ? undefined : (e) => { e.currentTarget.style.background = 'transparent' }}
+    >
+      <span style={{ width: 18, fontSize: 12, fontWeight: 800, color: item.rank <= 3 ? C.primary : '#9ca3af', flexShrink: 0 }}>{item.rank}</span>
+      <span style={{ flex: 1, fontSize: 12, color: '#374151', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{item.name}</span>
+      <TrendBadge trend={item.trend} />
+    </button>
+  )
+}
+
 function PopularSearchTicker({ items, onPick, isMobile }) {
   const [idx, setIdx] = useState(0)
+  const [expanded, setExpanded] = useState(false)
 
   useEffect(() => {
-    if (items.length < 2) return
+    if (items.length < 2 || expanded) return
     setIdx(0)
     const t = setInterval(() => setIdx((i) => (i + 1) % items.length), TICKER_INTERVAL_MS)
     return () => clearInterval(t)
-  }, [items])
+  }, [items, expanded])
 
   if (!items.length) return null
   const p = items[idx % items.length]
@@ -50,25 +70,32 @@ function PopularSearchTicker({ items, onPick, isMobile }) {
   return (
     <div style={{
       position: 'absolute', top: 16, right: 16, zIndex: 5,
-      width: isMobile ? 200 : 260, maxWidth: 'calc(100vw - 32px)',
+      width: expanded ? (isMobile ? 240 : 300) : (isMobile ? 200 : 260),
+      maxWidth: 'calc(100vw - 32px)',
       border: '1.5px solid #e5e7eb', borderRadius: 14,
       background: 'rgba(255,255,255,0.85)', backdropFilter: 'blur(4px)',
       boxShadow: '0 2px 10px rgba(0,0,0,0.06)',
-      padding: '10px 14px',
+      padding: '10px 14px', transition: 'width 0.15s',
     }}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 6 }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: expanded ? 8 : 6 }}>
         <Icon name="local_fire_department" size={14} color="#FF4D4D" />
-        <span style={{ fontSize: 12, fontWeight: 800, color: '#111827' }}>실시간 인기 정책 검색어</span>
+        <span style={{ fontSize: 12, fontWeight: 800, color: '#111827', flex: 1 }}>실시간 인기 정책 검색어</span>
+        <button
+          onClick={() => setExpanded((v) => !v)}
+          title={expanded ? '접기' : `전체 순위 보기 (1~${items.length}위)`}
+          style={{ border: 'none', background: 'transparent', cursor: 'pointer', padding: 2, display: 'flex', color: '#9ca3af' }}
+        >
+          <Icon name={expanded ? 'expand_less' : 'expand_more'} size={16} color="#9ca3af" />
+        </button>
       </div>
-      <button key={p.id} onClick={() => onPick(p.name)} style={{
-        display: 'flex', alignItems: 'center', gap: 8, width: '100%',
-        border: 'none', background: 'transparent', cursor: 'pointer',
-        padding: '2px 0', textAlign: 'left', animation: 'tickerFade 0.35s ease',
-      }}>
-        <span style={{ width: 16, fontSize: 12, fontWeight: 800, color: p.rank <= 3 ? C.primary : '#9ca3af', flexShrink: 0 }}>{p.rank}</span>
-        <span style={{ flex: 1, fontSize: 12, color: '#374151', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{p.name}</span>
-        <TrendBadge trend={p.trend} />
-      </button>
+
+      {expanded ? (
+        <div style={{ display: 'flex', flexDirection: 'column', maxHeight: 320, overflowY: 'auto' }}>
+          {items.map((it) => <PopularSearchRow key={it.id} item={it} onPick={onPick} />)}
+        </div>
+      ) : (
+        <PopularSearchRow item={p} onPick={onPick} compact />
+      )}
     </div>
   )
 }
@@ -397,8 +424,8 @@ export default function ChatBotView({ bp, favIds, onToggleFav }) {
   const [popular, setPopular] = useState([])
   useEffect(() => {
     if (!ready) return
-    setPopular(popularPolicies(5))
-    const t = setInterval(() => setPopular(popularPolicies(5)), POPULARITY_REFRESH_MS)
+    setPopular(popularPolicies(10))
+    const t = setInterval(() => setPopular(popularPolicies(10)), POPULARITY_REFRESH_MS)
     return () => clearInterval(t)
   }, [ready])
 
