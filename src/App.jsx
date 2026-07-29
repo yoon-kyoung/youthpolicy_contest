@@ -446,6 +446,35 @@ function DeadlinePill({deadline}){
   return<span style={{...TAG_BASE,background:s.bg,border:`1px solid ${s.border}`,color:s.color}}>D-{d}</span>;
 }
 
+function Pagination({page,pageCount,onChange}){
+  if(pageCount<=1)return null;
+  const nums=[];
+  const start=Math.max(1,Math.min(page-2,pageCount-4));
+  const end=Math.min(pageCount,Math.max(page+2,5));
+  for(let i=Math.max(1,start);i<=end;i++)nums.push(i);
+  const btn=(active)=>({
+    minWidth:30,height:30,padding:"0 6px",borderRadius:9,border:"1.5px solid",
+    borderColor:active?"var(--accent)":"#E2E8F0",background:active?"var(--accent)":"#FFFFFF",
+    color:active?"#FFFFFF":"#475569",fontSize:13,fontWeight:active?700:500,cursor:"pointer",
+    display:"flex",alignItems:"center",justifyContent:"center",transition:"all 0.12s",
+  });
+  return(
+    <div style={{display:"flex",alignItems:"center",justifyContent:"center",gap:6,padding:"24px 0"}}>
+      <button onClick={()=>onChange(Math.max(1,page-1))} disabled={page===1} style={{...btn(false),color:page===1?"#cbd5e1":"#475569",cursor:page===1?"default":"pointer"}}>
+        <Icon name="chevron_left" size={16} color={page===1?"#cbd5e1":"#475569"}/>
+      </button>
+      {start>1&&<span style={{color:"#94a3b8",fontSize:13,padding:"0 2px"}}>…</span>}
+      {nums.map(n=>(
+        <button key={n} onClick={()=>onChange(n)} style={btn(n===page)}>{n}</button>
+      ))}
+      {end<pageCount&&<span style={{color:"#94a3b8",fontSize:13,padding:"0 2px"}}>…</span>}
+      <button onClick={()=>onChange(Math.min(pageCount,page+1))} disabled={page===pageCount} style={{...btn(false),color:page===pageCount?"#cbd5e1":"#475569",cursor:page===pageCount?"default":"pointer"}}>
+        <Icon name="chevron_right" size={16} color={page===pageCount?"#cbd5e1":"#475569"}/>
+      </button>
+    </div>
+  );
+}
+
 function PolicyCard({policy,favIds,onToggle,onGoDetail,compact,delay=0}){
   const [ref,visible]=useReveal();
   const [copied,setCopied]=useState(false);
@@ -722,6 +751,11 @@ function SearchView({favIds,onToggleFav,onGoDetail,bp,policies}){
   },[query,cat,sort,excludeExpired,ministry,region,policies]);
 
   const cols=bp.isDesktop?3:bp.isTablet?2:1;
+  const pageSize=cols*4;
+  const [pageNum,setPageNum]=useState(1);
+  useEffect(()=>{setPageNum(1);},[query,cat,sort,excludeExpired,ministry,region]);
+  const pageCount=Math.max(1,Math.ceil(filtered.length/pageSize));
+  const pageItems=filtered.slice((pageNum-1)*pageSize,pageNum*pageSize);
 
   if(bp.isDesktop){
     return(
@@ -793,7 +827,10 @@ function SearchView({favIds,onToggleFav,onGoDetail,bp,policies}){
           <div>
           {filtered.length===0
             ?<div style={{textAlign:"center",padding:"80px 0",color:"#9ca3af"}}><div style={{marginBottom:12}}><Icon name="search" size={48} color="#9ca3af"/></div><div style={{fontSize:16,fontWeight:600,color:"#374151",marginBottom:6}}>검색 결과가 없어요</div><div style={{fontSize:13}}>다른 키워드나 카테고리를 시도해 보세요</div></div>
-            :<div style={{display:"grid",gridTemplateColumns:`repeat(${cols},1fr)`,gap:14}}>{filtered.map((p,i)=><PolicyCard key={p.id} policy={p} favIds={favIds} onToggle={onToggleFav} onGoDetail={onGoDetail} delay={i*40}/>)}</div>
+            :<>
+              <div style={{display:"grid",gridTemplateColumns:`repeat(${cols},1fr)`,gap:14}}>{pageItems.map((p,i)=><PolicyCard key={p.id} policy={p} favIds={favIds} onToggle={onToggleFav} onGoDetail={onGoDetail} delay={i*40}/>)}</div>
+              <Pagination page={pageNum} pageCount={pageCount} onChange={setPageNum}/>
+            </>
           }
           </div>
         </div>
@@ -857,12 +894,13 @@ function SearchView({favIds,onToggleFav,onGoDetail,bp,policies}){
           {SORT_OPTIONS.map(o=><option key={o.value} value={o.value}>{o.label}</option>)}
         </select>
       </div>
-      <div style={{padding:"14px 14px 80px",display:"grid",gridTemplateColumns:`repeat(${cols},1fr)`,gap:9}}>
+      <div style={{padding:"14px 14px 0",display:"grid",gridTemplateColumns:`repeat(${cols},1fr)`,gap:9}}>
         {filtered.length===0
           ?<div style={{gridColumn:`span ${cols}`,textAlign:"center",padding:"48px 0",color:"#9ca3af"}}><div style={{marginBottom:10}}><Icon name="search" size={36} color="#9ca3af"/></div><div style={{fontSize:15,fontWeight:600,color:"#374151",marginBottom:6}}>검색 결과가 없어요</div><div style={{fontSize:13}}>다른 키워드나 카테고리를 시도해 보세요</div></div>
-          :filtered.map((p,i)=><PolicyCard key={p.id} policy={p} favIds={favIds} onToggle={onToggleFav} onGoDetail={onGoDetail} delay={i*40}/>)
+          :pageItems.map((p,i)=><PolicyCard key={p.id} policy={p} favIds={favIds} onToggle={onToggleFav} onGoDetail={onGoDetail} delay={i*40}/>)
         }
       </div>
+      {filtered.length>0&&<div style={{paddingBottom:80}}><Pagination page={pageNum} pageCount={pageCount} onChange={setPageNum}/></div>}
       {showRegionMap&&<RegionMapModal region={region} onSelect={r=>{setRegion(r);setShowRegionMap(false);}} onClose={()=>setShowRegionMap(false)}/>}
     </div>
   );
