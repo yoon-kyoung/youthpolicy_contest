@@ -18,6 +18,7 @@ import { popularPolicies, POPULARITY_REFRESH_MS } from './popularity'
 import PolicyCardMini from './PolicyCardMini'
 import { C } from '../styles/colors'
 import Icon from '../styles/Icon'
+import { mapRawPolicy } from '../App'
 
 const SUGGESTIONS = [
   '27살 서울 사는데 월세 지원 있을까?',
@@ -366,7 +367,7 @@ function PrivacyNoticePanel({ bp }) {
   )
 }
 
-export default function ChatBotView({ bp, favIds, onToggleFav }) {
+export default function ChatBotView({ bp, favIds, onToggleFav, onGoDetail }) {
   const pad = bp === 'desktop' ? '36px 40px' : bp === 'tablet' ? '28px 24px' : '18px 14px'
 
   // ── 대화 저장/복원 ──
@@ -601,7 +602,7 @@ export default function ChatBotView({ bp, favIds, onToggleFav }) {
       if (activeReqRef.current !== reqSession) return
       const cleanText = full.replace(/^\[POLICY_IDS:[^\]]*\]\n?/, '')
       const { body, followups } = parseFollowups(cleanText)
-      const policies = ids.length ? policiesByIds(ids) : null
+      const policies = ids.length ? policiesByIds(ids).map((p, i) => mapRawPolicy(p, i)) : null
       patchLast({ text: body || '결과를 가져오지 못했어요.', policies, followups, streaming: false })
       failStreakRef.current = 0
       if (!rateLimited) {
@@ -868,7 +869,7 @@ export default function ChatBotView({ bp, favIds, onToggleFav }) {
               }}>
                 {msg.policies.map((p)=>(
                   <div key={p.id} style={{scrollSnapAlign:'start',display:'flex'}}>
-                    <PolicyCardMini policy={p} favIds={favIds} onToggleFav={onToggleFav}/>
+                    <PolicyCardMini policy={p} favIds={favIds} onToggleFav={onToggleFav} onGoDetail={onGoDetail}/>
                   </div>
                 ))}
               </div>

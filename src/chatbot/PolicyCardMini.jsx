@@ -1,152 +1,67 @@
 import { useState } from 'react'
-import { categoryMeta } from './codes'
-import { C } from '../styles/colors'
+import { CAT_COLORS, CAT_LABEL, CAT_ICON, daysLeft, dDayStyle } from '../App'
 import Icon from '../styles/Icon'
 
-function fmtSupport(t) {
-  if (!t) return t
-  let s = t
-  s = s.replace(/&middot;/g, '·')
-  s = s.replace(/\s*([□■◇◆⃞])\s*/g, '\n$1 ')
-  s = s.replace(/\s*([○●❍◦ㅇ〇])\s*/g, '\n  $1 ')
-  s = s.replace(/\s*([※☞►▶▷❖])\s*/g, '\n$1 ')
-  s = s.replace(/\s*([▴▸▹▵‣])\s*/g, '\n    $1 ')
-  s = s.replace(/\s*([❶-❿①-⑳⑴-⒇➀-➉])\s*/g, '\n  $1 ')
-  s = s.replace(/([^\n(])\s*(\([가-힣A-Za-z\s]{2,15}\))\s*/g, '$1\n$2 ')
-  s = s.replace(/([^\n\d])\s+(\d+[).]\s)/g, '$1\n$2')
-  s = s.replace(/([^\n\-\d])\s+-\s+/g, '$1\n- ')
-  s = s.replace(/([^\n·‧･・])\s+[·‧･・]\s+/g, '$1\n  · ')
-  s = s.replace(/([^\n*])\s+(\*\s+[가-힣'''])/g, '$1\n$2')
-  s = s.replace(/\n{3,}/g, '\n\n')
-  return s.replace(/^\n+/, '').trim()
+const TAG_BASE = { fontSize: 12, fontWeight: 700, lineHeight: 1, padding: '4px 10px', borderRadius: 20, whiteSpace: 'nowrap', display: 'inline-flex', alignItems: 'center' }
+
+function CatBadge({ cat }) {
+  const c = CAT_COLORS[cat] || {}
+  return (
+    <span style={{ ...TAG_BASE, background: c.bg, border: `1px solid ${c.border}`, color: c.text, gap: 4 }}>
+      <Icon name={CAT_ICON[cat] || 'apps'} size={13} color={c.text} />{CAT_LABEL[cat] || cat}
+    </span>
+  )
 }
 
-const COLLAPSED_H = 130
+function DeadlinePill({ deadline }) {
+  const d = daysLeft(deadline)
+  if (d === null) return <span style={{ ...TAG_BASE, background: '#F1F5F9', border: '1px solid #E2E8F0', color: '#64748B' }}>상시 접수</span>
+  if (d <= 0) return <span style={{ ...TAG_BASE, background: '#F1F5F9', border: '1px solid #E2E8F0', color: '#94A3B8' }}>마감됨</span>
+  const s = dDayStyle(d)
+  return <span style={{ ...TAG_BASE, background: s.bg, border: `1px solid ${s.border}`, color: s.color }}>D-{d}</span>
+}
 
-export default function PolicyCardMini({ policy, favIds, onToggleFav }) {
-  const cat = categoryMeta(policy.category)
-  const link = policy.applyUrl || policy.refUrl
-  const long = (policy.support || '').length > 120
-  const [open, setOpen] = useState(false)
+export default function PolicyCardMini({ policy, favIds, onToggleFav, onGoDetail }) {
+  const [copied, setCopied] = useState(false)
   const isFav = favIds?.has?.(policy.id) ?? false
 
   const handleShare = (e) => {
     e.stopPropagation()
-    const url = link || window.location.href
-    if (navigator.share) {
-      navigator.share({ title: policy.name, url })
-    } else {
-      navigator.clipboard?.writeText(url)
-    }
+    const url = `${window.location.origin}${window.location.pathname}?policy=${policy.id}`
+    navigator.clipboard?.writeText(url).then(() => { setCopied(true); setTimeout(() => setCopied(false), 2000) })
   }
 
   return (
-    <article style={{
-      background:`${cat.color}08`, border:'1.5px solid #f1f5f9', borderLeft:`4px solid ${cat.color}`,
-      borderRadius:16, padding:16, animation:'fadeUp 0.25s ease',
-      flex:'0 0 auto', width:268, maxWidth:'80vw', height:'100%',
-      display:'flex', flexDirection:'column', boxSizing:'border-box',
-      position:'relative',
-    }}>
-      <div style={{position:'absolute',top:10,right:10,display:'flex',gap:4,zIndex:1}}>
-        <button onClick={handleShare} style={{
-          background:'none',border:'none',cursor:'pointer',padding:4,
-          display:'flex',alignItems:'center',justifyContent:'center',
-          borderRadius:8, color:'#94a3b8',
-        }}>
-          <Icon name="share" size={16} color="#94a3b8"/>
-        </button>
-        {onToggleFav && (
-          <button onClick={(e)=>{e.stopPropagation();onToggleFav(policy.id)}} style={{
-            background:'none',border:'none',cursor:'pointer',padding:4,
-            display:'flex',alignItems:'center',justifyContent:'center',
-            borderRadius:8,
-          }}>
-            <Icon name="bookmark" filled={isFav} size={16} color={isFav?'#f59e0b':'#94a3b8'}/>
-          </button>
-        )}
+    <div
+      onClick={() => onGoDetail?.(policy)}
+      style={{
+        background: 'white', borderRadius: 16, border: '1.5px solid #E2E8F0',
+        padding: '14px 16px', cursor: onGoDetail ? 'pointer' : 'default', position: 'relative',
+        display: 'flex', flexDirection: 'column', boxSizing: 'border-box',
+        width: 240, maxWidth: '80vw', height: '100%',
+        transition: 'transform 0.15s, box-shadow 0.15s',
+      }}
+      onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 6px 20px rgba(0,0,0,0.08)' }}
+      onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = '' }}
+    >
+      <button onClick={handleShare} title="링크 복사"
+        style={{ position: 'absolute', top: 9, right: 38, background: 'none', border: 'none', cursor: 'pointer', color: '#d1d5db', padding: 4, display: 'flex', alignItems: 'center', transition: 'color 0.15s' }}
+        onMouseEnter={e => e.currentTarget.style.color = '#6b7280'}
+        onMouseLeave={e => e.currentTarget.style.color = '#d1d5db'}
+      ><Icon name="share" size={16} color="currentColor" /></button>
+      {onToggleFav && (
+        <button onClick={(e) => { e.stopPropagation(); onToggleFav(policy.id) }}
+          style={{ position: 'absolute', top: 9, right: 10, background: 'none', border: 'none', cursor: 'pointer', color: isFav ? '#f59e0b' : '#d1d5db', padding: 4, display: 'flex', alignItems: 'center' }}
+        ><Icon name="bookmark" filled={isFav} size={18} color="currentColor" /></button>
+      )}
+      {copied && <div style={{ position: 'absolute', top: 38, right: 6, background: '#1f2937', color: 'white', borderRadius: 8, padding: '4px 10px', fontSize: 11, fontWeight: 600, whiteSpace: 'nowrap', zIndex: 20, boxShadow: '0 2px 8px rgba(0,0,0,0.18)' }}>URL 복사 완료</div>}
+
+      <div style={{ display: 'flex', gap: 6, marginBottom: 8, flexWrap: 'wrap', alignItems: 'center' }}>
+        <CatBadge cat={policy.cat} /><DeadlinePill deadline={policy.deadline} />
       </div>
-      <div style={{display:'flex',alignItems:'center',gap:8,marginBottom:8,flexWrap:'wrap',paddingRight:56}}>
-        <span style={{
-          background:`${cat.color}15`,color:cat.color,fontSize:12,fontWeight:700,
-          padding:'3px 10px',borderRadius:99,whiteSpace:'nowrap',
-          display:'inline-flex',alignItems:'center',gap:4,
-        }}>
-          <Icon name={cat.icon} size={13} color={cat.color}/>{policy.subCategory||cat.key}
-        </span>
-        {policy.regionSpecific?(
-          <span style={{fontSize:12,color:C.primary,fontWeight:600,display:'inline-flex',alignItems:'center',gap:3}}><Icon name="location_on" size={13} color={C.primary}/>{policy.regions[0]} 맞춤</span>
-        ):(
-          <span style={{fontSize:12,color:C.mutedText}}>전국</span>
-        )}
-      </div>
-
-      <h3 style={{margin:'0 0 6px',fontSize:15,fontWeight:700,color:'#1e293b',lineHeight:1.4,
-        display:'-webkit-box',WebkitLineClamp:2,WebkitBoxOrient:'vertical',overflow:'hidden'}}>
-        {policy.name}
-      </h3>
-      {policy.summary&&(
-        <p style={{margin:'0 0 8px',fontSize:13,color:C.mutedText,lineHeight:1.5}}>
-          {policy.summary}
-        </p>
-      )}
-
-      <dl style={{
-        margin:0,fontSize:13,color:'#64748b',lineHeight:1.6,flex:1,
-        maxHeight: long && !open ? COLLAPSED_H : 'none',
-        overflow:'hidden',
-        position:'relative',
-      }}>
-        {long && !open && (
-          <div style={{
-            position:'absolute',bottom:0,left:0,right:0,height:40,
-            background:'linear-gradient(transparent, white)',pointerEvents:'none',
-          }}/>
-        )}
-        {policy.support&&(
-          <div><dt style={{display:'inline',fontWeight:600}}>지원내용</dt>{' '}
-          <dd style={{display:'inline',margin:0,whiteSpace:'pre-line'}}>{fmtSupport(policy.support)}</dd></div>
-        )}
-        <div>
-          <dt style={{display:'inline',fontWeight:600}}>지원연령</dt>{' '}
-          <dd style={{display:'inline',margin:0}}>
-            {policy.minAge!=null&&policy.maxAge!=null
-              ?`만 ${policy.minAge}~${policy.maxAge}세`
-              :'연령 무관'}
-          </dd>
-        </div>
-        {policy.period&&(
-          <div><dt style={{display:'inline',fontWeight:600}}>신청기간</dt>{' '}
-          <dd style={{display:'inline',margin:0}}>{policy.period}</dd></div>
-        )}
-        {policy.org&&(
-          <div><dt style={{display:'inline',fontWeight:600}}>주관</dt>{' '}
-          <dd style={{display:'inline',margin:0}}>{policy.org}</dd></div>
-        )}
-      </dl>
-
-      {long && (
-        <button
-          onClick={() => setOpen(v => !v)}
-          style={{
-            background:'none',border:'none',cursor:'pointer',
-            color:C.primary,fontSize:12,fontWeight:600,
-            padding:'6px 0 2px',textAlign:'left',
-          }}
-        >{open ? '접기 ▲' : '더보기 ▼'}</button>
-      )}
-
-      {link&&(
-        <a
-          href={link} target="_blank" rel="noopener noreferrer"
-          style={{
-            display:'inline-block',marginTop:'auto',paddingTop:10,fontSize:13,fontWeight:700,
-            color:C.primary,textDecoration:'none',
-          }}
-        >
-          신청·자세히 보기 →
-        </a>
-      )}
-    </article>
+      <div style={{ fontWeight: 700, fontSize: 14, color: '#111827', lineHeight: 1.4, marginBottom: 4, paddingRight: 56 }}>{policy.title}</div>
+      <div style={{ fontSize: 12, color: '#9ca3af', marginBottom: 0 }}>{policy.org} · {policy.target}</div>
+      <div style={{ fontSize: 12, color: '#9ca3af', marginTop: 'auto', paddingTop: 12 }}>자세히 보기 →</div>
+    </div>
   )
 }

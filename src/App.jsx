@@ -137,7 +137,7 @@ function cleanSupportFull(text){
   return result.length>0?result.join("\n"):"";
 }
 
-function mapRawPolicy(raw,idx){
+export function mapRawPolicy(raw,idx){
   const deadline=parsePeriodEnd(raw.period);
   const d=deadline==="상시"?null:Math.ceil((new Date(deadline)-Date.now())/86400000);
   const hot=d!==null&&d>0&&d<=30;
@@ -178,8 +178,8 @@ const CATEGORIES = [
   { value:"edu",    icon:"school",   label:"교육·역량" },
   { value:"health", icon:"favorite", label:"건강·심리" },
 ];
-const CAT_LABEL = Object.fromEntries(CATEGORIES.map(c=>[c.value,c.label]));
-const CAT_ICON  = Object.fromEntries(CATEGORIES.map(c=>[c.value,c.icon]));
+export const CAT_LABEL = Object.fromEntries(CATEGORIES.map(c=>[c.value,c.label]));
+export const CAT_ICON  = Object.fromEntries(CATEGORIES.map(c=>[c.value,c.icon]));
 
 const MINISTRIES = [
   "전체","고용노동부","중소벤처기업부","교육부","국토교통부","보건복지부",
@@ -245,7 +245,7 @@ function RegionMapModal({region,onSelect,onClose}){
     </div>
   );
 }
-const CAT_COLORS = {
+export const CAT_COLORS = {
   job:    { bg:"#E0F2FE", border:"#BAE6FD", text:"#0369A1", dot:"#0369A1", grad:"linear-gradient(135deg,#0C4A6E,#0369A1)" },
   house:  { bg:"#DCFCE7", border:"#BBF7D0", text:"#15803D", dot:"#15803D", grad:"linear-gradient(135deg,#14532D,#15803D)" },
   money:  { bg:"#FEF3C7", border:"#FDE68A", text:"#B45309", dot:"#B45309", grad:"linear-gradient(135deg,#78350F,#B45309)" },
@@ -414,11 +414,11 @@ function useLocalStorage(key,init){
 
 // ─── 유틸 ──────────────────────────────────────────────────────────────────
 
-function daysLeft(deadline){
+export function daysLeft(deadline){
   if(!deadline||deadline==="상시")return null;
   return Math.ceil((new Date(deadline)-Date.now())/86400000);
 }
-function dDayStyle(d){
+export function dDayStyle(d){
   if(d<=7)  return{color:"#FF4D4D",bg:"#FFF0F0",border:"#FFBDBD"};
   if(d<30)  return{color:"#FF9100",bg:"#FFF4E6",border:"#FFD9A0"};
   return{color:"#00C853",bg:"#E6FAEF",border:"#99F0BC"};
@@ -3423,7 +3423,7 @@ export default function App(){
             {isDetail
               ?<div style={{flex:1,overflowY:"auto"}}><PolicyDetailView policy={detailPolicy} favIds={favIds} onToggle={toggleFav} onBack={goBack} onGoDetail={goDetailFromDetail} bp={bp} policies={policies}/></div>
               :page==="search"    ?<div style={{flex:1,overflow:"hidden"}}><SearchView {...viewProps}/></div>
-              :page==="chatbot"   ?<div style={{flex:1,overflow:"hidden"}}><ChatBotView bp={bp.isDesktop?'desktop':bp.isTablet?'tablet':'mobile'} favIds={favIds} onToggleFav={toggleFav}/></div>
+              :page==="chatbot"   ?<div style={{flex:1,overflow:"hidden"}}><ChatBotView bp={bp.isDesktop?'desktop':bp.isTablet?'tablet':'mobile'} favIds={favIds} onToggleFav={toggleFav} onGoDetail={goDetail}/></div>
               :page==="mypage"    ?<div style={{flex:1,overflowY:"auto"}}><MyPageContainer supabaseUser={user} onLogout={handleLogout} initialTab={mySub||"info"} favIds={favIds} policies={policies} onToggleFav={toggleFav} onGoDetail={goDetail}/></div>
               :page==="community" ?<div style={{flex:1,overflowY:"auto"}}><CommunityView bp={bp} user={user}/></div>
               :page==="proposal"  ?<div style={{flex:1,overflowY:"auto"}}><PolicyProposalPage bp={bp} user={user}/></div>
@@ -3481,7 +3481,7 @@ export default function App(){
         {isDetail
           ?<PolicyDetailView policy={detailPolicy} favIds={favIds} onToggle={toggleFav} onBack={goBack} onGoDetail={goDetailFromDetail} bp={bp} policies={policies}/>
           :page==="search"    ?<SearchView {...viewProps}/>
-          :page==="chatbot"   ?<ChatBotView bp={bp.isDesktop?'desktop':bp.isTablet?'tablet':'mobile'} favIds={favIds} onToggleFav={toggleFav}/>
+          :page==="chatbot"   ?<ChatBotView bp={bp.isDesktop?'desktop':bp.isTablet?'tablet':'mobile'} favIds={favIds} onToggleFav={toggleFav} onGoDetail={goDetail}/>
           :page==="mypage"    ?<MyPageContainer supabaseUser={user} onLogout={handleLogout} initialTab={mySub||"info"} favIds={favIds} policies={policies} onToggleFav={toggleFav} onGoDetail={goDetail}/>
           :page==="community" ?<CommunityView bp={bp} user={user}/>
           :page==="proposal"  ?<PolicyProposalPage bp={bp} user={user}/>
