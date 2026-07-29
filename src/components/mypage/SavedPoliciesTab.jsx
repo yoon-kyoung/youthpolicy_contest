@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect, useMemo } from 'react'
 import Icon from '../../styles/Icon'
 
 const CAT = {
@@ -9,10 +9,117 @@ const CAT = {
   health: { bg: '#FFF1F2', text: '#BE123C', label: '복지' },
 }
 
+const ORDER_KEY = 'yoa:savedOrder'
+
+function loadOrder() {
+  try {
+    const raw = localStorage.getItem(ORDER_KEY)
+    return raw ? JSON.parse(raw) : null
+  } catch { return null }
+}
+function persistOrder(ids) {
+  try { localStorage.setItem(ORDER_KEY, JSON.stringify(ids)) } catch { /* ignore */ }
+}
+
+// 마감기한 정렬 기준값. "상시"/빈 값/파싱 불가는 맨 뒤로 보낸다.
+function deadlineRank(deadline) {
+  if (!deadline || deadline === '상시') return Infinity
+  const t = Date.parse(deadline)
+  return Number.isNaN(t) ? Infinity : t
+}
+
+function deadlineLabel(deadline) {
+  if (!deadline || deadline === '상시') return '상시'
+  const t = Date.parse(deadline)
+  if (Number.isNaN(t)) return deadline
+  const days = Math.ceil((t - Date.now()) / 86400000)
+  if (days < 0) return '마감'
+  if (days === 0) return 'D-day'
+  return `D-${days}`
+}
+function deadlineColor(deadline) {
+  if (!deadline || deadline === '상시') return '#9ca3af'
+  const t = Date.parse(deadline)
+  if (Number.isNaN(t)) return '#9ca3af'
+  const days = Math.ceil((t - Date.now()) / 86400000)
+  if (days <= 7) return '#ef4444'
+  if (days <= 30) return '#f59e0b'
+  return '#9ca3af'
+}
+
 export default function SavedPoliciesTab({ policies, favIds, onToggleFav, onGoDetail }) {
   const saved = (policies || []).filter(p => favIds?.has(p.id))
   const [pendingIds, setPendingIds] = useState(new Set())
   const timerRefs = useRef({})
+
+  // 사용자가 드래그로 재배열한 순서(id 배열). 없으면 마감임박순이 기본값.
+  const [order, setOrder] = useState(loadOrder)
+  const dragIdRef = useRef(null)
+  const [dragOverId, setDragOverId] = useState(null)
+
+  const savedIdsKey = saved.map(p => p.id).join(',')
+
+  // 저장 목록이 바뀔 때(새로 저장/취소)마다 순서를 정합화: 없어진 id 제거, 새 id는 마감순 자리에 병합
+  useEffect(() => {
+    const savedIds = new Set(saved.map(p => p.id))
+    const byDeadline = [...saved]
+      .sort((a, b) => deadlineRank(a.deadline) - deadlineRank(b.deadline))
+      .map(p => p.id)
+
+    setOrder(prev => {
+      const kept = (prev ?? []).filter(id => savedIds.has(id))
+      const missing = byDeadline.filter(id => !kept.includes(id))
+      if (kept.length === 0) return byDeadline
+      if (missing.length === 0) return kept
+      const merged = [...kept]
+      missing.forEach(id => {
+        const idx = byDeadline.indexOf(id)
+        let insertAt = merged.length
+        for (let i = idx - 1; i >= 0; i--) {
+          const pos = merged.indexOf(byDeadline[i])
+          if (pos !== -1) { insertAt = pos + 1; break }
+        }
+        merged.splice(insertAt, 0, id)
+      })
+      return merged
+    })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [savedIdsKey])
+
+  useEffect(() => {
+    if (order) persistOrder(order)
+  }, [order])
+
+  const sortedSaved = useMemo(() => {
+    if (!order) return saved
+    const byId = new Map(saved.map(p => [p.id, p]))
+    const list = order.map(id => byId.get(id)).filter(Boolean)
+    saved.forEach(p => { if (!order.includes(p.id)) list.push(p) })
+    return list
+  }, [saved, order])
+
+  const resetToDeadlineOrder = () => {
+    setOrder([...saved].sort((a, b) => deadlineRank(a.deadline) - deadlineRank(b.deadline)).map(p => p.id))
+  }
+
+  const handleDragStart = (id) => { dragIdRef.current = id }
+  const handleDragOver = (e, id) => {
+    e.preventDefault()
+    if (id !== dragOverId) setDragOverId(id)
+  }
+  const handleDrop = (id) => {
+    const draggedId = dragIdRef.current
+    dragIdRef.current = null
+    setDragOverId(null)
+    if (!draggedId || draggedId === id) return
+    setOrder(prev => {
+      const base = (prev ?? sortedSaved.map(p => p.id)).filter(x => x !== draggedId)
+      const targetIdx = base.indexOf(id)
+      base.splice(targetIdx, 0, draggedId)
+      return base
+    })
+  }
+  const handleDragEnd = () => { dragIdRef.current = null; setDragOverId(null) }
 
   const handleBookmarkClick = (id) => {
     if (pendingIds.has(id)) {
@@ -72,23 +179,45 @@ export default function SavedPoliciesTab({ policies, favIds, onToggleFav, onGoDe
           <Icon name="bookmark" size={16} color="#111827" style={{ marginRight: 6 }} />
           저장한 정책
         </span>
-        <span style={styles.count}>{saved.length}건</span>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <button
+            type="button"
+            onClick={resetToDeadlineOrder}
+            style={styles.sortBtn}
+            title="마감기한이 임박한 순서로 다시 정렬"
+            onMouseEnter={e => { e.currentTarget.style.borderColor = '#007FFF'; e.currentTarget.style.color = '#007FFF' }}
+            onMouseLeave={e => { e.currentTarget.style.borderColor = '#e2e8f0'; e.currentTarget.style.color = '#6b7280' }}
+          >
+            <Icon name="event" size={13} color="currentColor" />
+            마감임박순
+          </button>
+          <span style={styles.count}>{saved.length}건</span>
+        </div>
       </div>
       <div style={styles.list} data-tour="saved-content">
-        {saved.map(p => {
+        {sortedSaved.map((p, idx) => {
           const c = CAT[p.cat] || CAT[p.category] || { bg: '#f3f4f6', text: '#374151', label: '기타' }
           const isPending = pendingIds.has(p.id)
+          const isDragOver = dragOverId === p.id
 
           return (
             <div
               key={p.id}
+              draggable
+              onDragStart={() => handleDragStart(p.id)}
+              onDragOver={(e) => handleDragOver(e, p.id)}
+              onDrop={() => handleDrop(p.id)}
+              onDragEnd={handleDragEnd}
               style={{
                 ...styles.item,
                 opacity: isPending ? 0.55 : 1,
-                transition: 'opacity 0.2s',
+                boxShadow: isDragOver ? 'inset 0 0 0 2px #007FFF' : 'none',
+                transition: 'opacity 0.2s, box-shadow 0.1s',
               }}
             >
               <div style={styles.itemLeft}>
+                <Icon name="drag_indicator" size={16} color="#cbd5e1" style={styles.dragHandle} />
+                <span style={styles.rank}>{idx + 1}</span>
                 <span style={{ ...styles.badge, backgroundColor: c.bg, color: c.text }}>
                   {c.label}
                 </span>
@@ -109,6 +238,9 @@ export default function SavedPoliciesTab({ policies, favIds, onToggleFav, onGoDe
               </div>
 
               <div style={styles.actionArea}>
+                <span style={{ ...styles.deadline, color: deadlineColor(p.deadline) }}>
+                  {deadlineLabel(p.deadline)}
+                </span>
                 {isPending && (
                   <button
                     type="button"
@@ -139,7 +271,7 @@ export default function SavedPoliciesTab({ policies, favIds, onToggleFav, onGoDe
       </div>
       <div style={styles.hint}>
         <Icon name="info" size={13} color="#9ca3af" />
-        <span>북마크 아이콘을 누르면 저장이 취소됩니다. 3초 안에 실행취소할 수 있어요.</span>
+        <span>기본은 마감임박순 정렬이에요. 항목을 드래그하면 원하는 순서로 바꿀 수 있어요. 북마크 아이콘을 누르면 저장이 취소되며, 3초 안에 실행취소할 수 있어요.</span>
       </div>
     </div>
   )
@@ -173,6 +305,39 @@ const styles = {
     backgroundColor: '#F0F7FF',
     padding: '3px 10px',
     borderRadius: 20,
+  },
+  sortBtn: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: 4,
+    lineHeight: 1,
+    padding: '5px 10px',
+    borderRadius: 20,
+    border: '1.5px solid #e2e8f0',
+    backgroundColor: '#ffffff',
+    color: '#6b7280',
+    fontSize: 11,
+    fontWeight: 600,
+    cursor: 'pointer',
+    transition: 'all 0.15s',
+  },
+  dragHandle: {
+    cursor: 'grab',
+    flexShrink: 0,
+  },
+  rank: {
+    fontSize: 11,
+    fontWeight: 700,
+    color: '#9ca3af',
+    width: 14,
+    textAlign: 'center',
+    flexShrink: 0,
+  },
+  deadline: {
+    fontSize: 11,
+    fontWeight: 700,
+    whiteSpace: 'nowrap',
+    flexShrink: 0,
   },
   list: {
     display: 'flex',

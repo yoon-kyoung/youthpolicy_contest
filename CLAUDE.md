@@ -64,3 +64,4 @@ import { Icon } from "./Icon"; // 상대경로 조정
 | `question_answer` | 역제안 상세 타임라인 - 답변 단계 |
 | `map` | 지도로 지역 선택 |
 | `help` | 정책제안 안내 패널 (방법·FAQ) |
+| `drag_indicator` | 저장한 정책 목록 드래그 순서 변경 핸들 |
