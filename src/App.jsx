@@ -351,6 +351,10 @@ const COMMUNITY_POSTS = [
 
 // ─── Hooks ─────────────────────────────────────────────────────────────────
 
+// Safari/iOS와 Firefox는 비표준 CSS zoom을 지원하지 않아 --font-scale 보정만 적용되면
+// 레이아웃 높이가 어긋난다(글자 깨짐·정렬 붕괴로 보임). 지원 브라우저에서만 배율 기능을 켠다.
+const ZOOM_SUPPORTED=typeof CSS!=="undefined"&&typeof CSS.supports==="function"&&CSS.supports("zoom","1");
+
 function useBreakpoint() {
   const [w, setW] = useState(typeof window!=="undefined"?window.innerWidth:1200);
   useEffect(()=>{
@@ -2301,7 +2305,7 @@ function LoginPage({setPage,bp}){
   };
 
   return(
-    <div style={{minHeight:"100vh",display:"flex",fontFamily:"'Pretendard','Apple SD Gothic Neo','Noto Sans KR',sans-serif"}}>
+    <div style={{minHeight:"100vh",display:"flex",fontFamily:"'Pretendard Variable','Apple SD Gothic Neo','Noto Sans KR',sans-serif"}}>
       {/* 왼쪽 브랜드 패널 (데스크탑만) */}
       {bp.isDesktop&&(
         <div style={{width:480,background:"linear-gradient(160deg,#0f172a 0%,var(--accent-dark) 60%,var(--accent) 100%)",display:"flex",flexDirection:"column",justifyContent:"center",padding:"60px 56px",position:"relative",overflow:"hidden"}}>
@@ -2461,7 +2465,7 @@ function SignupPage({setPage,bp}){
   const errStyle={fontSize:12,color:"#dc2626",marginTop:4};
 
   return(
-    <div style={{minHeight:"100vh",display:"flex",fontFamily:"'Pretendard','Apple SD Gothic Neo','Noto Sans KR',sans-serif"}}>
+    <div style={{minHeight:"100vh",display:"flex",fontFamily:"'Pretendard Variable','Apple SD Gothic Neo','Noto Sans KR',sans-serif"}}>
       {bp.isDesktop&&(
         <div style={{width:480,background:"linear-gradient(160deg,#0f172a 0%,#0a7a6e 60%,#19CEBD 100%)",display:"flex",flexDirection:"column",justifyContent:"center",padding:"60px 56px",position:"relative",overflow:"hidden"}}>
           <div style={{position:"absolute",right:"-15%",top:"-10%",width:400,height:400,borderRadius:"50%",background:"rgba(255,255,255,0.05)"}}/>
@@ -2791,7 +2795,7 @@ function GuidePage({onBack,bp}){
   const warn={background:"#fef3c7",border:"1px solid #fde68a",borderRadius:12,padding:"12px 16px",fontSize:13,color:"#92400e",lineHeight:1.6,margin:"12px 0"};
   const btnStyle={display:"block",width:"100%",textAlign:"left",background:"none",border:"none",cursor:"pointer",fontSize:12,color:"#6b7280",fontWeight:500,padding:"7px 10px",borderRadius:8,transition:"all 0.12s"};
   return(
-    <div style={{background:"var(--body-bg,#f8fafc)",minHeight:"calc(100vh / var(--font-scale,1))",fontFamily:"'Pretendard','Apple SD Gothic Neo','Noto Sans KR',sans-serif"}}>
+    <div style={{background:"var(--body-bg,#f8fafc)",minHeight:"calc(100vh / var(--font-scale,1))",fontFamily:"'Pretendard Variable','Apple SD Gothic Neo','Noto Sans KR',sans-serif"}}>
       <div style={{background:"var(--header-bg,white)",borderBottom:"1px solid #e5e7eb",padding:isDesktop?"0 40px":"0 18px",position:"sticky",top:0,zIndex:40}}>
         <div style={{height:h,display:"flex",alignItems:"center",gap:12}}>
           <button onClick={onBack} style={{display:"flex",alignItems:"center",gap:6,background:"none",border:"none",cursor:"pointer",color:"#374151",fontSize:14,fontWeight:600,padding:"8px 0",transition:"color 0.15s"}}
@@ -2995,7 +2999,7 @@ function FeaturesPage({onBack,bp}){
   ];
   const h=bp.isDesktop?56:52;
   return(
-    <div style={{background:'#F5F9FC',fontFamily:"'Pretendard','Apple SD Gothic Neo','Noto Sans KR',sans-serif"}}>
+    <div style={{background:'#F5F9FC',fontFamily:"'Pretendard Variable','Apple SD Gothic Neo','Noto Sans KR',sans-serif"}}>
       <div style={{background:'white',borderBottom:'1px solid #e5e7eb',padding:bp.isDesktop?'0 40px':'0 18px',position:'sticky',top:0,zIndex:40}}>
         <div style={{height:h,display:'flex',alignItems:'center',gap:12}}>
           <button onClick={onBack} style={{display:'flex',alignItems:'center',gap:6,background:'none',border:'none',cursor:'pointer',color:'#374151',fontSize:14,fontWeight:600,padding:'8px 0',transition:'color 0.15s'}}
@@ -3201,10 +3205,13 @@ export default function App(){
   const bp=useBreakpoint();
   const theme=THEMES.find(t=>t.key===themeKey)||THEMES[0];
 
-  const incFont=useCallback(()=>setFontScale(s=>Math.min(+(s+0.05).toFixed(2),1.2)),[setFontScale]);
-  const decFont=useCallback(()=>setFontScale(s=>Math.max(+(s-0.05).toFixed(2),0.85)),[setFontScale]);
+  const incFontRaw=useCallback(()=>setFontScale(s=>Math.min(+(s+0.05).toFixed(2),1.2)),[setFontScale]);
+  const decFontRaw=useCallback(()=>setFontScale(s=>Math.max(+(s-0.05).toFixed(2),0.85)),[setFontScale]);
+  const incFont=ZOOM_SUPPORTED?incFontRaw:undefined;
+  const decFont=ZOOM_SUPPORTED?decFontRaw:undefined;
 
   useEffect(()=>{
+    if(!ZOOM_SUPPORTED)return;
     document.documentElement.style.zoom=fontScale;
     document.documentElement.style.setProperty('--font-scale',fontScale);
     return()=>{
@@ -3339,7 +3346,7 @@ export default function App(){
 
   if(page==="features"){
     return(
-      <div style={{height:"calc(100vh / var(--font-scale,1))",overflow:"hidden",display:"flex",flexDirection:"column",fontFamily:"'Pretendard','Apple SD Gothic Neo','Noto Sans KR',sans-serif"}}>
+      <div style={{height:"calc(100vh / var(--font-scale,1))",overflow:"hidden",display:"flex",flexDirection:"column",fontFamily:"'Pretendard Variable','Apple SD Gothic Neo','Noto Sans KR',sans-serif"}}>
         <style>{GLOBAL_CSS}</style>
         <ThemeStyle color={theme.color} colorDark={theme.colorDark} colorBg={theme.colorBg} colorBgActive={theme.colorBgActive} colorShadow={theme.colorShadow} headerBg={theme.headerBg} bodyBg={theme.bodyBg}/>
         <div style={{flex:1,overflowY:"auto"}}>
@@ -3350,7 +3357,7 @@ export default function App(){
   }
   if(page==="guide"){
     return(
-      <div style={{height:"calc(100vh / var(--font-scale,1))",overflow:"hidden",display:"flex",flexDirection:"column",fontFamily:"'Pretendard','Apple SD Gothic Neo','Noto Sans KR',sans-serif"}}>
+      <div style={{height:"calc(100vh / var(--font-scale,1))",overflow:"hidden",display:"flex",flexDirection:"column",fontFamily:"'Pretendard Variable','Apple SD Gothic Neo','Noto Sans KR',sans-serif"}}>
         <style>{GLOBAL_CSS}</style>
         <ThemeStyle color={theme.color} colorDark={theme.colorDark} colorBg={theme.colorBg} colorBgActive={theme.colorBgActive} colorShadow={theme.colorShadow} headerBg={theme.headerBg} bodyBg={theme.bodyBg}/>
         <div style={{flex:1,overflowY:"auto"}}>
@@ -3362,7 +3369,7 @@ export default function App(){
 
   if(bp.isDesktop){
     return(
-      <div style={{display:"flex",height:"calc(100vh / var(--font-scale, 1))",overflow:"hidden",fontFamily:"'Pretendard','Apple SD Gothic Neo','Noto Sans KR',sans-serif"}}>
+      <div style={{display:"flex",height:"calc(100vh / var(--font-scale, 1))",overflow:"hidden",fontFamily:"'Pretendard Variable','Apple SD Gothic Neo','Noto Sans KR',sans-serif"}}>
         <style>{GLOBAL_CSS}</style>
         <ThemeStyle color={theme.color} colorDark={theme.colorDark} colorBg={theme.colorBg} colorBgActive={theme.colorBgActive} colorShadow={theme.colorShadow} headerBg={theme.headerBg} bodyBg={theme.bodyBg}/>
         <Sidebar page={page} setPage={navigateTo} favIds={favIds} user={user} open={sidebarOpen} setOpen={setSidebarOpen}/>
@@ -3429,7 +3436,7 @@ export default function App(){
   }
 
   return(
-    <div style={{display:"flex",flexDirection:"column",height:"calc(100vh / var(--font-scale, 1))",overflow:"hidden",fontFamily:"'Pretendard','Apple SD Gothic Neo','Noto Sans KR',sans-serif"}}>
+    <div style={{display:"flex",flexDirection:"column",height:"calc(100vh / var(--font-scale, 1))",overflow:"hidden",fontFamily:"'Pretendard Variable','Apple SD Gothic Neo','Noto Sans KR',sans-serif"}}>
       <style>{GLOBAL_CSS}</style>
       <ThemeStyle color={theme.color} colorDark={theme.colorDark} colorBg={theme.colorBg} colorBgActive={theme.colorBgActive} colorShadow={theme.colorShadow} headerBg={theme.headerBg} bodyBg={theme.bodyBg}/>
       {!isDetail&&(
