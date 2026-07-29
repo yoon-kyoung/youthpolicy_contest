@@ -62,3 +62,4 @@ import { Icon } from "./Icon"; // 상대경로 조정
 | `fact_check` | 역제안 상세 타임라인 - 검토 단계 |
 | `public` | 역제안 상세 타임라인 - 공개 단계 |
 | `question_answer` | 역제안 상세 타임라인 - 답변 단계 |
+| `map` | 지도로 지역 선택 |

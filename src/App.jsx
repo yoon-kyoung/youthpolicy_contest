@@ -191,6 +191,60 @@ const REGIONS = [
   "전체","서울","경기","인천","부산","대구","광주","대전","울산",
   "강원","충북","충남","전북","전남","경북","경남","제주","세종",
 ];
+
+// 지도형 지역 선택 모달용 대략적인 실제 지리 배치(%)
+const REGION_MAP_POS = {
+  "경기":{top:"9%", left:"44%"},
+  "서울":{top:"17%",left:"38%"},
+  "인천":{top:"20%",left:"27%"},
+  "강원":{top:"13%",left:"68%"},
+  "세종":{top:"34%",left:"47%"},
+  "충북":{top:"38%",left:"57%"},
+  "충남":{top:"39%",left:"38%"},
+  "대전":{top:"44%",left:"49%"},
+  "경북":{top:"48%",left:"70%"},
+  "전북":{top:"60%",left:"41%"},
+  "대구":{top:"60%",left:"66%"},
+  "울산":{top:"66%",left:"77%"},
+  "광주":{top:"73%",left:"41%"},
+  "경남":{top:"75%",left:"60%"},
+  "부산":{top:"80%",left:"73%"},
+  "전남":{top:"82%",left:"35%"},
+  "제주":{top:"97%",left:"28%"},
+};
+
+function RegionMapModal({region,onSelect,onClose}){
+  return(
+    <div onClick={onClose} style={{position:"fixed",inset:0,background:"rgba(15,23,42,0.5)",zIndex:200,display:"flex",alignItems:"center",justifyContent:"center",padding:20}}>
+      <div onClick={e=>e.stopPropagation()} style={{background:"white",borderRadius:20,padding:"20px 20px 24px",width:"100%",maxWidth:360,boxShadow:"0 20px 60px rgba(0,0,0,0.25)"}}>
+        <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:14}}>
+          <div style={{fontSize:16,fontWeight:800,color:"#111827",display:"flex",alignItems:"center",gap:6}}><Icon name="map" size={18} color="var(--accent)"/>지역 선택</div>
+          <button onClick={onClose} style={{background:"#f1f5f9",border:"none",borderRadius:"50%",width:26,height:26,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center"}}><Icon name="close" size={14} color="#6b7280"/></button>
+        </div>
+        <button onClick={()=>onSelect("전체")} style={{width:"100%",padding:"8px 0",borderRadius:10,border:"1.5px solid",borderColor:region==="전체"?"var(--accent)":"#E2E8F0",background:region==="전체"?"var(--accent)":"#FFFFFF",color:region==="전체"?"#FFFFFF":"#475569",fontSize:13,fontWeight:region==="전체"?700:500,cursor:"pointer",marginBottom:14}}>전체 지역 보기</button>
+        <div style={{position:"relative",width:"100%",aspectRatio:"3/4",background:"linear-gradient(180deg,#EFF6FF,#F8FAFC)",borderRadius:16,border:"1px solid #E2E8F0",overflow:"hidden"}}>
+          {REGIONS.slice(1).map(r=>{
+            const pos=REGION_MAP_POS[r];
+            const active=region===r;
+            return(
+              <button key={r} onClick={()=>onSelect(r)} style={{
+                position:"absolute",top:pos.top,left:pos.left,transform:"translate(-50%,-50%)",
+                padding:"5px 9px",borderRadius:10,border:"1.5px solid",
+                borderColor:active?"var(--accent)":"#CBD5E1",
+                background:active?"var(--accent)":"rgba(255,255,255,0.92)",
+                color:active?"#FFFFFF":"#334155",
+                fontSize:11,fontWeight:active?800:600,cursor:"pointer",
+                whiteSpace:"nowrap",boxShadow:active?"0 3px 10px var(--accent-shadow)":"0 1px 3px rgba(0,0,0,0.08)",
+                transition:"all 0.12s",
+              }}>{r}</button>
+            );
+          })}
+        </div>
+        <div style={{fontSize:11,color:"#94A3B8",textAlign:"center",marginTop:10}}>지도에서 지역을 선택하면 바로 적용돼요</div>
+      </div>
+    </div>
+  );
+}
 const CAT_COLORS = {
   job:    { bg:"#E0F2FE", border:"#BAE6FD", text:"#0369A1", dot:"#0369A1", grad:"linear-gradient(135deg,#0C4A6E,#0369A1)" },
   house:  { bg:"#DCFCE7", border:"#BBF7D0", text:"#15803D", dot:"#15803D", grad:"linear-gradient(135deg,#14532D,#15803D)" },
@@ -633,6 +687,7 @@ function SearchView({favIds,onToggleFav,onGoDetail,bp,policies}){
   const [excludeExpired,setExcludeExpired]=useLocalStorage("yoa:excludeExpired",false);
   const [ministry,setMinistry]=useLocalStorage("yoa:search:ministry","전체");
   const [region,setRegion]=useLocalStorage("yoa:search:region","전체");
+  const [showRegionMap,setShowRegionMap]=useState(false);
   const query=useDebounce(rawQ,300);
 
   const catCounts=useMemo(()=>{
@@ -713,10 +768,13 @@ function SearchView({favIds,onToggleFav,onGoDetail,bp,policies}){
             <div style={{background:"#FFFFFF",border:"1px solid #E2E8F0",borderRadius:12,padding:"12px 16px",display:"flex",flexDirection:"column",gap:10,marginTop:4}}>
               <div>
                 <div style={{fontSize:11,fontWeight:700,color:"#374151",lineHeight:1,marginBottom:6,display:"flex",alignItems:"center",gap:4}}>지역</div>
-                <div style={{display:"flex",gap:5,flexWrap:"wrap"}}>
+                <div style={{display:"flex",gap:5,flexWrap:"wrap",alignItems:"center"}}>
                   {REGIONS.map(r=>(
                     <button key={r} onClick={()=>setRegion(r)} style={{padding:"4px 10px",borderRadius:20,border:"1.5px solid",borderColor:region===r?"var(--accent)":"#E2E8F0",background:region===r?"var(--accent)":"#FFFFFF",color:region===r?"#FFFFFF":"#475569",fontSize:12,fontWeight:region===r?700:400,cursor:"pointer",transition:"all 0.12s",whiteSpace:"nowrap"}}>{r}</button>
                   ))}
+                  <button onClick={()=>setShowRegionMap(true)} title="지도에서 선택" style={{display:"flex",alignItems:"center",justifyContent:"center",width:26,height:26,borderRadius:"50%",border:"1.5px solid #E2E8F0",background:"#FFFFFF",color:"#475569",cursor:"pointer",flexShrink:0,padding:0,marginLeft:2}}>
+                    <Icon name="map" size={13} color="#475569"/>
+                  </button>
                 </div>
               </div>
               <div style={{borderTop:"1px solid #E2E8F0",paddingTop:10}}>
@@ -739,6 +797,7 @@ function SearchView({favIds,onToggleFav,onGoDetail,bp,policies}){
           }
           </div>
         </div>
+        {showRegionMap&&<RegionMapModal region={region} onSelect={r=>{setRegion(r);setShowRegionMap(false);}} onClose={()=>setShowRegionMap(false)}/>}
       </div>
     );
   }
@@ -770,6 +829,9 @@ function SearchView({favIds,onToggleFav,onGoDetail,bp,policies}){
               {REGIONS.map(r=>(
                 <button key={r} onClick={()=>setRegion(r)} style={{padding:"3px 9px",borderRadius:20,border:"1.5px solid",borderColor:region===r?"var(--accent)":"#E2E8F0",background:region===r?"var(--accent)":"#FFFFFF",color:region===r?"#FFFFFF":"#475569",fontSize:11,fontWeight:region===r?700:400,cursor:"pointer",whiteSpace:"nowrap",flexShrink:0}}>{r}</button>
               ))}
+              <button onClick={()=>setShowRegionMap(true)} title="지도에서 선택" style={{display:"flex",alignItems:"center",justifyContent:"center",width:22,height:22,borderRadius:"50%",border:"1.5px solid #E2E8F0",background:"#FFFFFF",color:"#475569",cursor:"pointer",flexShrink:0,padding:0}}>
+                <Icon name="map" size={12} color="#475569"/>
+              </button>
             </div>
           </div>
           <div style={{borderTop:"1px solid #E2E8F0",paddingTop:8}}>
@@ -801,6 +863,7 @@ function SearchView({favIds,onToggleFav,onGoDetail,bp,policies}){
           :filtered.map((p,i)=><PolicyCard key={p.id} policy={p} favIds={favIds} onToggle={onToggleFav} onGoDetail={onGoDetail} delay={i*40}/>)
         }
       </div>
+      {showRegionMap&&<RegionMapModal region={region} onSelect={r=>{setRegion(r);setShowRegionMap(false);}} onClose={()=>setShowRegionMap(false)}/>}
     </div>
   );
 }
