@@ -367,7 +367,7 @@ function PrivacyNoticePanel({ bp }) {
   )
 }
 
-export default function ChatBotView({ bp, favIds, onToggleFav, onGoDetail }) {
+export default function ChatBotView({ bp, favIds, onToggleFav, onGoDetail, resetSignal }) {
   const pad = bp === 'desktop' ? '36px 40px' : bp === 'tablet' ? '28px 24px' : '18px 14px'
 
   // ── 대화 저장/복원 ──
@@ -378,6 +378,15 @@ export default function ChatBotView({ bp, favIds, onToggleFav, onGoDetail }) {
   const hydratedRef = useRef(false)
   const saveTimerRef = useRef(null)
   const activeReqRef = useRef(null)
+
+  // 헤더 로고 클릭(청년ON) → 대화 중이었다면 첫 화면으로 리셋
+  const resetSignalRef = useRef(resetSignal)
+  useEffect(() => {
+    if (resetSignal === undefined || resetSignal === resetSignalRef.current) return
+    resetSignalRef.current = resetSignal
+    startNewSession()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [resetSignal])
 
   const [ready, setReady] = useState(false)
   const [loadErr, setLoadErr] = useState(false)

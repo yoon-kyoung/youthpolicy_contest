@@ -2648,7 +2648,7 @@ function NavUserDropdown({user,onLogout,onGoMyPage,compact=false,favCount=0,font
   );
 }
 
-function Sidebar({page,setPage,favIds,user,open,setOpen}){
+function Sidebar({page,setPage,favIds,user,open,setOpen,onLogoClick}){
   const [mySub,setMySub]=useLocalStorage("yoa:mysub","custom");
   const mainPage=page==="detail"?"":page.split("-")[0];
 
@@ -2673,7 +2673,7 @@ function Sidebar({page,setPage,favIds,user,open,setOpen}){
       {/* 로고 + 토글 */}
       <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:32,justifyContent:open?"space-between":"center"}}>
         {open&&(
-          <button onClick={()=>window.location.reload()} style={{display:"flex",alignItems:"center",gap:10,background:"none",border:"none",cursor:"pointer",padding:0,minWidth:0}}>
+          <button onClick={onLogoClick} style={{display:"flex",alignItems:"center",gap:10,background:"none",border:"none",cursor:"pointer",padding:0,minWidth:0}}>
             <img src={import.meta.env.BASE_URL + 'logo.png'} alt="청년ON" style={{width:34,height:34,borderRadius:10,flexShrink:0}}/>
             <div style={{overflow:"hidden"}}>
               <div style={{fontWeight:900,fontSize:16,color:"#0F172A",letterSpacing:"-0.03em",whiteSpace:"nowrap"}}>청년ON</div>
@@ -3118,12 +3118,12 @@ function FontSizeControl({scale,onInc,onDec}){
   );
 }
 
-function TopNav({page,setPage,favIds,user,onLogout,themeKey,onThemeChange,fontScale,onFontInc,onFontDec}){
+function TopNav({page,setPage,favIds,user,onLogout,themeKey,onThemeChange,fontScale,onFontInc,onFontDec,onLogoClick}){
   const mainPage=page==="detail"?"":["search","chatbot","mypage","community","proposal"].find(p=>page.startsWith(p))||"search";
   return(
     <header style={{background:'var(--header-bg,white)',borderBottom:"1px solid #e5e7eb",padding:"0 20px",position:"sticky",top:0,zIndex:50}}>
       <div style={{height:56,display:"flex",alignItems:"center",gap:0}}>
-        <button onClick={()=>window.location.reload()} style={{display:"flex",alignItems:"center",gap:9,marginRight:24,background:"none",border:"none",cursor:"pointer",padding:0}}>
+        <button onClick={onLogoClick} style={{display:"flex",alignItems:"center",gap:9,marginRight:24,background:"none",border:"none",cursor:"pointer",padding:0}}>
           <img src={import.meta.env.BASE_URL + 'logo.png'} alt="청년ON" style={{width:30,height:30,borderRadius:9}}/>
           <div style={{fontWeight:900,fontSize:15,color:"#111827"}}>청년ON</div>
         </button>
@@ -3310,6 +3310,14 @@ export default function App(){
     setPage(p);
   },[]);
 
+  // 로고 클릭: 챗봇 홈으로 이동 + 대화 중이었다면 첫 화면으로 리셋
+  const [chatResetKey,setChatResetKey]=useState(0);
+  const goHome=useCallback(()=>{
+    setDetailPolicy(null);
+    setPage("chatbot");
+    setChatResetKey(k=>k+1);
+  },[]);
+
   const [adminMode,setAdminMode]=useState(()=>window.location.hash==="#admin");
   useEffect(()=>{
     const onHash=()=>setAdminMode(window.location.hash==="#admin");
@@ -3372,7 +3380,7 @@ export default function App(){
       <div style={{display:"flex",height:"calc(100vh / var(--font-scale, 1))",overflow:"hidden",fontFamily:"'Pretendard Variable','Apple SD Gothic Neo','Noto Sans KR',sans-serif"}}>
         <style>{GLOBAL_CSS}</style>
         <ThemeStyle color={theme.color} colorDark={theme.colorDark} colorBg={theme.colorBg} colorBgActive={theme.colorBgActive} colorShadow={theme.colorShadow} headerBg={theme.headerBg} bodyBg={theme.bodyBg}/>
-        <Sidebar page={page} setPage={navigateTo} favIds={favIds} user={user} open={sidebarOpen} setOpen={setSidebarOpen}/>
+        <Sidebar page={page} setPage={navigateTo} favIds={favIds} user={user} open={sidebarOpen} setOpen={setSidebarOpen} onLogoClick={goHome}/>
         <div style={{flex:1,display:"flex",flexDirection:"column",overflow:"hidden"}}>
           {!isDetail&&(
             <div style={{background:'var(--header-bg,white)',borderBottom:"1px solid #e5e7eb",padding:"0 32px",flexShrink:0}}>
@@ -3387,7 +3395,7 @@ export default function App(){
                       {page==="proposal"&&<><Icon name="campaign" size={16} color="#111827"/> 청년정책 제안</>}
                     </>
                   ):(
-                    <span onClick={()=>window.location.reload()} style={{cursor:"pointer"}}>청년ON</span>
+                    <span onClick={goHome} style={{cursor:"pointer"}}>청년ON</span>
                   )}
                 </div>
                 <div style={{display:"flex",gap:8,alignItems:"center"}}>
@@ -3423,7 +3431,7 @@ export default function App(){
             {isDetail
               ?<div style={{flex:1,overflowY:"auto"}}><PolicyDetailView policy={detailPolicy} favIds={favIds} onToggle={toggleFav} onBack={goBack} onGoDetail={goDetailFromDetail} bp={bp} policies={policies}/></div>
               :page==="search"    ?<div style={{flex:1,overflow:"hidden"}}><SearchView {...viewProps}/></div>
-              :page==="chatbot"   ?<div style={{flex:1,overflow:"hidden"}}><ChatBotView bp={bp.isDesktop?'desktop':bp.isTablet?'tablet':'mobile'} favIds={favIds} onToggleFav={toggleFav} onGoDetail={goDetail}/></div>
+              :page==="chatbot"   ?<div style={{flex:1,overflow:"hidden"}}><ChatBotView bp={bp.isDesktop?'desktop':bp.isTablet?'tablet':'mobile'} favIds={favIds} onToggleFav={toggleFav} onGoDetail={goDetail} resetSignal={chatResetKey}/></div>
               :page==="mypage"    ?<div style={{flex:1,overflowY:"auto"}}><MyPageContainer supabaseUser={user} onLogout={handleLogout} initialTab={mySub||"info"} favIds={favIds} policies={policies} onToggleFav={toggleFav} onGoDetail={goDetail}/></div>
               :page==="community" ?<div style={{flex:1,overflowY:"auto"}}><CommunityView bp={bp} user={user}/></div>
               :page==="proposal"  ?<div style={{flex:1,overflowY:"auto"}}><PolicyProposalPage bp={bp} user={user}/></div>
@@ -3441,7 +3449,7 @@ export default function App(){
       <ThemeStyle color={theme.color} colorDark={theme.colorDark} colorBg={theme.colorBg} colorBgActive={theme.colorBgActive} colorShadow={theme.colorShadow} headerBg={theme.headerBg} bodyBg={theme.bodyBg}/>
       {!isDetail&&(
         bp.isTablet
-          ?<TopNav page={page} setPage={navigateTo} favIds={favIds} user={user} onLogout={handleLogout} themeKey={themeKey} onThemeChange={setThemeKey} fontScale={fontScale} onFontInc={incFont} onFontDec={decFont}/>
+          ?<TopNav page={page} setPage={navigateTo} favIds={favIds} user={user} onLogout={handleLogout} themeKey={themeKey} onThemeChange={setThemeKey} fontScale={fontScale} onFontInc={incFont} onFontDec={decFont} onLogoClick={goHome}/>
           :(
             <header style={{background:'var(--header-bg,white)',borderBottom:"1px solid #e5e7eb",padding:"0 16px",position:"sticky",top:0,zIndex:50}}>
               <div style={{height:52,display:"flex",alignItems:"center",justifyContent:"space-between"}}>
@@ -3454,7 +3462,7 @@ export default function App(){
                     onMouseEnter={e=>e.currentTarget.style.background="#f3f4f6"}
                     onMouseLeave={e=>e.currentTarget.style.background="none"}
                   >사용법</button>
-                  <button onClick={()=>window.location.reload()} style={{display:"flex",alignItems:"center",gap:8,background:"none",border:"none",cursor:"pointer",padding:0}}>
+                  <button onClick={goHome} style={{display:"flex",alignItems:"center",gap:8,background:"none",border:"none",cursor:"pointer",padding:0}}>
                     <img src={import.meta.env.BASE_URL + 'logo.png'} alt="청년ON" style={{width:30,height:30,borderRadius:9}}/>
                     <div style={{fontWeight:900,fontSize:15,color:"#111827"}}>청년ON</div>
                   </button>
@@ -3481,7 +3489,7 @@ export default function App(){
         {isDetail
           ?<PolicyDetailView policy={detailPolicy} favIds={favIds} onToggle={toggleFav} onBack={goBack} onGoDetail={goDetailFromDetail} bp={bp} policies={policies}/>
           :page==="search"    ?<SearchView {...viewProps}/>
-          :page==="chatbot"   ?<ChatBotView bp={bp.isDesktop?'desktop':bp.isTablet?'tablet':'mobile'} favIds={favIds} onToggleFav={toggleFav} onGoDetail={goDetail}/>
+          :page==="chatbot"   ?<ChatBotView bp={bp.isDesktop?'desktop':bp.isTablet?'tablet':'mobile'} favIds={favIds} onToggleFav={toggleFav} onGoDetail={goDetail} resetSignal={chatResetKey}/>
           :page==="mypage"    ?<MyPageContainer supabaseUser={user} onLogout={handleLogout} initialTab={mySub||"info"} favIds={favIds} policies={policies} onToggleFav={toggleFav} onGoDetail={goDetail}/>
           :page==="community" ?<CommunityView bp={bp} user={user}/>
           :page==="proposal"  ?<PolicyProposalPage bp={bp} user={user}/>
