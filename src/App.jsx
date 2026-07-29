@@ -3094,6 +3094,7 @@ export default function App(){
     return(
       <>
         <style>{GLOBAL_CSS}</style>
+        <ThemeStyle color={theme.color} colorDark={theme.colorDark} colorBg={theme.colorBg} colorBgActive={theme.colorBgActive} colorShadow={theme.colorShadow} headerBg={theme.headerBg} bodyBg={theme.bodyBg}/>
         <LoginPage setPage={navigateTo} bp={bp}/>
       </>
     );
@@ -3103,6 +3104,7 @@ export default function App(){
     return(
       <>
         <style>{GLOBAL_CSS}</style>
+        <ThemeStyle color={theme.color} colorDark={theme.colorDark} colorBg={theme.colorBg} colorBgActive={theme.colorBgActive} colorShadow={theme.colorShadow} headerBg={theme.headerBg} bodyBg={theme.bodyBg}/>
         <SignupPage setPage={navigateTo} bp={bp}/>
       </>
     );
