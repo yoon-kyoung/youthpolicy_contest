@@ -2064,6 +2064,9 @@ function LoginPage({setPage,bp}){
   const [showPw,setShowPw]=useState(false);
   const [error,setError]=useState("");
   const [loading,setLoading]=useState(false);
+  const [unconfirmed,setUnconfirmed]=useState(false);
+  const [resending,setResending]=useState(false);
+  const [resendMsg,setResendMsg]=useState("");
 
   const handleKakao=async()=>{
     const {error:err}=await supabase.auth.signInWithOAuth({
@@ -2075,13 +2078,29 @@ function LoginPage({setPage,bp}){
 
   const handleSubmit=async e=>{
     e.preventDefault();
+    setUnconfirmed(false);setResendMsg("");
     if(!email){setError("이메일을 입력해주세요.");return;}
     if(!pw){setError("비밀번호를 입력해주세요.");return;}
     setLoading(true);
     const {error:err}=await supabase.auth.signInWithPassword({email,password:pw});
     setLoading(false);
-    if(err){setError("이메일 또는 비밀번호가 올바르지 않습니다.");return;}
+    if(err){
+      if(err.message==="Email not confirmed"){
+        setError("이메일 인증이 완료되지 않았어요. 가입하신 메일함(스팸함 포함)에서 인증 메일을 확인해주세요.");
+        setUnconfirmed(true);
+      }else{
+        setError("이메일 또는 비밀번호가 올바르지 않습니다.");
+      }
+      return;
+    }
     setPage("chatbot");
+  };
+
+  const handleResend=async()=>{
+    setResending(true);setResendMsg("");
+    const {error:err}=await supabase.auth.resend({type:"signup",email});
+    setResending(false);
+    setResendMsg(err?"인증 메일 재발송에 실패했어요. 잠시 후 다시 시도해주세요.":"인증 메일을 다시 보냈어요. 메일함을 확인해주세요.");
   };
 
   return(
@@ -2154,7 +2173,17 @@ function LoginPage({setPage,bp}){
                 </div>
               </div>
 
-              {error&&<div style={{fontSize:13,color:"#dc2626",background:"#fef2f2",border:"1px solid #fecaca",borderRadius:8,padding:"10px 14px"}}>{error}</div>}
+              {error&&(
+                <div style={{fontSize:13,color:"#dc2626",background:"#fef2f2",border:"1px solid #fecaca",borderRadius:8,padding:"10px 14px"}}>
+                  {error}
+                  {unconfirmed&&(
+                    <button type="button" onClick={handleResend} disabled={resending} style={{display:"block",marginTop:8,background:"none",border:"none",color:"var(--accent)",fontSize:13,fontWeight:700,cursor:resending?"default":"pointer",padding:0}}>
+                      {resending?"재발송 중...":"인증 메일 다시 받기"}
+                    </button>
+                  )}
+                  {resendMsg&&<div style={{marginTop:6,color:"#374151"}}>{resendMsg}</div>}
+                </div>
+              )}
 
               <button type="submit" disabled={loading} style={{width:"100%",padding:"13px",borderRadius:10,border:"none",background:"var(--accent)",color:"white",fontSize:15,fontWeight:800,cursor:loading?"default":"pointer",marginTop:4,transition:"opacity 0.15s",boxShadow:"0 4px 20px var(--accent-shadow)",opacity:loading?0.7:1}}>
                 {loading?"로그인 중...":"로그인"}
