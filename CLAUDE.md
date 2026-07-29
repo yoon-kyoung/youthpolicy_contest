@@ -65,3 +65,6 @@ import { Icon } from "./Icon"; // 상대경로 조정
 | `map` | 지도로 지역 선택 |
 | `help` | 정책제안 안내 패널 (방법·FAQ) |
 | `drag_indicator` | 저장한 정책 목록 드래그 순서 변경 핸들 |
+| `download` | 챗봇 대화 다운로드 버튼 |
+| `article` | 대화 다운로드 - Word 문서 옵션 |
+| `picture_as_pdf` | 대화 다운로드 - PDF 옵션 |

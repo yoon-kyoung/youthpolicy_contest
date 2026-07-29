@@ -19,6 +19,7 @@ import PolicyCardMini from './PolicyCardMini'
 import { C } from '../styles/colors'
 import Icon from '../styles/Icon'
 import { mapRawPolicy } from '../App'
+import { downloadAsTxt, downloadAsWord, downloadAsPdf } from './exportTranscript'
 
 const SUGGESTIONS = [
   '27살 서울 사는데 월세 지원 있을까?',
@@ -374,6 +375,8 @@ export default function ChatBotView({ bp, favIds, onToggleFav, onGoDetail, reset
   const [sessionId, setSessionId] = useState(() => getLastSessionId() || newId())
   const [drawerOpen, setDrawerOpen] = useState(false)
   const [sessions, setSessions] = useState([])
+  const [downloadMenuOpen, setDownloadMenuOpen] = useState(false)
+  const downloadMenuRef = useRef(null)
   const createdAtRef = useRef(Date.now())
   const hydratedRef = useRef(false)
   const saveTimerRef = useRef(null)
@@ -499,6 +502,23 @@ export default function ChatBotView({ bp, favIds, onToggleFav, onGoDetail, reset
     })
 
   const reachedLimit = qCount >= QUESTION_LIMIT
+
+  useEffect(() => {
+    if (!downloadMenuOpen) return
+    const onClickOutside = (e) => {
+      if (downloadMenuRef.current && !downloadMenuRef.current.contains(e.target)) setDownloadMenuOpen(false)
+    }
+    document.addEventListener('mousedown', onClickOutside)
+    return () => document.removeEventListener('mousedown', onClickOutside)
+  }, [downloadMenuOpen])
+
+  function handleExport(format) {
+    setDownloadMenuOpen(false)
+    const title = deriveTitle(messages)
+    if (format === 'txt') downloadAsTxt(messages, title)
+    else if (format === 'word') downloadAsWord(messages, title)
+    else if (format === 'pdf') downloadAsPdf(messages, title)
+  }
 
   function flushSave() {
     if (mode === 'guided') return
@@ -800,15 +820,59 @@ export default function ChatBotView({ bp, favIds, onToggleFav, onGoDetail, reset
         display:'flex',alignItems:'center',justifyContent:'space-between',gap:8,
         padding:'10px 14px',borderBottom:'1.5px solid #f1f5f9',background:C.neutralWhite,
       }}>
-        <button onClick={openDrawer} disabled={loading} style={{
-          display:'inline-flex',alignItems:'center',gap:6,
-          border:`1.5px solid ${C.borderGray}`,background:C.neutralWhite,color:C.neutralDark,
-          borderRadius:10,padding:'7px 12px',fontSize:13,fontWeight:700,
-          cursor:loading?'default':'pointer',opacity:loading?0.55:1,
-        }}>
-          <Icon name="menu" size={15} color={C.neutralDark}/>
-          대화목록
-        </button>
+        <div style={{display:'flex',alignItems:'center',gap:8}}>
+          <button onClick={openDrawer} disabled={loading} style={{
+            display:'inline-flex',alignItems:'center',gap:6,
+            border:`1.5px solid ${C.borderGray}`,background:C.neutralWhite,color:C.neutralDark,
+            borderRadius:10,padding:'7px 12px',fontSize:13,fontWeight:700,
+            cursor:loading?'default':'pointer',opacity:loading?0.55:1,
+          }}>
+            <Icon name="menu" size={15} color={C.neutralDark}/>
+            대화목록
+          </button>
+          <div ref={downloadMenuRef} style={{position:'relative'}}>
+            <button
+              onClick={() => setDownloadMenuOpen((v) => !v)}
+              disabled={!messages.some((m) => m.from === 'user')}
+              title="대화 내용 다운로드"
+              style={{
+                display:'inline-flex',alignItems:'center',gap:6,
+                border:`1.5px solid ${C.borderGray}`,background:C.neutralWhite,color:C.neutralDark,
+                borderRadius:10,padding:'7px 12px',fontSize:13,fontWeight:700,
+                cursor:messages.some((m) => m.from === 'user')?'pointer':'default',
+                opacity:messages.some((m) => m.from === 'user')?1:0.45,
+              }}>
+              <Icon name="download" size={15} color={C.neutralDark}/>
+              다운로드
+            </button>
+            {downloadMenuOpen && (
+              <div style={{
+                position:'absolute',top:'calc(100% + 6px)',left:0,zIndex:30,
+                background:C.neutralWhite,border:`1.5px solid ${C.borderGray}`,borderRadius:12,
+                boxShadow:'0 8px 24px rgba(0,0,0,0.12)',padding:6,minWidth:180,
+              }}>
+                {[
+                  {format:'txt',icon:'description',label:'텍스트 파일 (.txt)'},
+                  {format:'word',icon:'article',label:'Word 문서 (.doc)'},
+                  {format:'pdf',icon:'picture_as_pdf',label:'PDF (인쇄해서 저장)'},
+                ].map((opt) => (
+                  <button key={opt.format} onClick={() => handleExport(opt.format)} style={{
+                    display:'flex',alignItems:'center',gap:8,width:'100%',
+                    border:'none',background:'none',cursor:'pointer',
+                    padding:'9px 10px',borderRadius:8,fontSize:13,fontWeight:600,color:C.neutralDark,
+                    textAlign:'left',transition:'background 0.12s',
+                  }}
+                    onMouseEnter={(e) => e.currentTarget.style.background = '#f8fafc'}
+                    onMouseLeave={(e) => e.currentTarget.style.background = 'none'}
+                  >
+                    <Icon name={opt.icon} size={16} color={C.neutralDark}/>
+                    {opt.label}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
         <button onClick={startNewSession} disabled={loading} style={{
           display:'inline-flex',alignItems:'center',gap:5,
           border:'none',background:C.primary,color:C.neutralWhite,
