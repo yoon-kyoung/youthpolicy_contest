@@ -1994,6 +1994,100 @@ function ProposalDetailView({proposal,user,onVote,onBack,bp}){
   );
 }
 
+const PROPOSAL_GUIDE_STEPS=[
+  "카테고리를 고르고 제목·내용을 작성해 제안을 등록해요",
+  "등록된 제안은 다른 청년들의 공감투표를 받아요",
+  `공감이 ${VOTE_THRESHOLD}건 이상 모이면 담당 부처 매칭이 자동으로 시작돼요`,
+  "담당 부처의 검토가 끝나면 답변이 등록되고 상태가 업데이트돼요",
+];
+
+const PROPOSAL_FAQ=[
+  {q:"제안은 누구나 할 수 있나요?",a:"로그인한 회원이라면 누구나 자유롭게 제안할 수 있어요."},
+  {q:"공감투표는 어떻게 하나요?",a:"제안 카드의 공감 버튼을 누르면 투표할 수 있어요. 1인 1표만 가능해요."},
+  {q:"답변은 언제쯤 오나요?",a:"공감 임계치 도달 후 부처 매칭과 검토를 거쳐 순차적으로 답변이 제공돼요."},
+  {q:"채택되면 어떻게 되나요?",a:"실제 정책에 반영되면 '반영완료' 상태로 바뀌고 시행 시기가 함께 안내돼요."},
+];
+
+function ProposalGuideSection({icon,title,children}){
+  return(
+    <div style={{marginBottom:14}}>
+      <div style={{fontSize:11,fontWeight:700,color:"#374151",marginBottom:7,display:"flex",alignItems:"center",gap:5}}>
+        <Icon name={icon} size={12} color="var(--accent)"/>{title}
+      </div>
+      {children}
+    </div>
+  );
+}
+
+function ProposalGuidePanel({bp}){
+  const [collapsed,setCollapsed]=useLocalStorage("yoa:proposalGuide:collapsed",true);
+  const isMobile=bp.isMobile;
+
+  return(
+    <div style={{
+      position:"fixed",bottom:"calc(78px + env(safe-area-inset-bottom))",right:isMobile?14:24,
+      width:collapsed?"auto":(isMobile?"calc(100vw - 28px)":"340px"),
+      maxWidth:isMobile?"calc(100vw - 28px)":"340px",
+      zIndex:45,
+      ...(collapsed?{}:{border:"1.5px solid #E2E8F0",borderRadius:18,overflow:"hidden",background:"white",boxShadow:"0 4px 20px rgba(0,0,0,0.14)"}),
+    }}>
+      {!collapsed&&(
+        <>
+        <div style={{padding:isMobile?"14px 14px 6px":"16px 16px 8px",maxHeight:"48vh",overflowY:"auto"}}>
+          <ProposalGuideSection icon="edit_note" title="정책제안 방법">
+            <div style={{display:"flex",flexDirection:"column",gap:6}}>
+              {PROPOSAL_GUIDE_STEPS.map((step,i)=>(
+                <div key={step} style={{display:"flex",gap:8,alignItems:"flex-start"}}>
+                  <div style={{width:16,height:16,borderRadius:"50%",background:"var(--accent-bg)",color:"var(--accent)",fontSize:10,fontWeight:800,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,marginTop:1}}>{i+1}</div>
+                  <span style={{fontSize:12,color:"#374151",lineHeight:1.5}}>{step}</span>
+                </div>
+              ))}
+            </div>
+          </ProposalGuideSection>
+
+          <ProposalGuideSection icon="help" title="자주 묻는 질문">
+            <div style={{display:"flex",flexDirection:"column",gap:10}}>
+              {PROPOSAL_FAQ.map(item=>(
+                <div key={item.q}>
+                  <div style={{fontSize:12,fontWeight:700,color:"#111827",marginBottom:3}}>Q. {item.q}</div>
+                  <div style={{fontSize:12,color:"#6b7280",lineHeight:1.5}}>A. {item.a}</div>
+                </div>
+              ))}
+            </div>
+          </ProposalGuideSection>
+        </div>
+
+        <button onClick={()=>setCollapsed(true)} style={{width:"100%",display:"flex",alignItems:"center",gap:12,padding:"14px 16px",background:"#F8FAFE",border:"none",borderTop:"1.5px solid #E2E8F0",cursor:"pointer",textAlign:"left"}}>
+          <div style={{width:32,height:32,borderRadius:"50%",background:"linear-gradient(135deg,var(--accent-dark),var(--accent))",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,boxShadow:"0 2px 8px var(--accent-shadow)"}}>
+            <Icon name="help" size={16} color="white"/>
+          </div>
+          <div style={{flex:1}}>
+            <div style={{fontSize:13,fontWeight:800,color:"#111827",lineHeight:1.3}}>정책제안 안내</div>
+            <div style={{fontSize:11,color:"#6b7280",marginTop:2}}>제안 전 확인해보세요</div>
+          </div>
+          <div style={{display:"flex",alignItems:"center",gap:5,color:"#9ca3af",fontSize:12,flexShrink:0}}>
+            <span>접기</span>
+            <span style={{display:"inline-block",transform:"rotate(180deg)",transition:"transform 0.25s",fontSize:10}}>▼</span>
+          </div>
+        </button>
+        </>
+      )}
+
+      {collapsed&&(
+        <div onClick={()=>setCollapsed(false)} style={{display:"flex",flexDirection:"column",alignItems:"center",gap:6,cursor:"pointer"}}>
+          <div style={{width:48,height:48,borderRadius:"50%",background:"linear-gradient(135deg,var(--accent-dark),var(--accent))",display:"flex",alignItems:"center",justifyContent:"center",boxShadow:"0 2px 12px var(--accent-shadow)"}}>
+            <Icon name="help" size={22} color="white"/>
+          </div>
+          <div style={{textAlign:"center",background:"white",borderRadius:10,padding:"3px 8px",boxShadow:"0 1px 6px rgba(0,0,0,0.08)"}}>
+            <div style={{fontSize:11,fontWeight:800,color:"#111827",lineHeight:1.3}}>정책제안 안내</div>
+            <div style={{fontSize:10,color:"#6b7280",marginTop:1}}>제안 전 확인해보세요</div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
 function PolicyProposalPage({bp,user}){
   const [proposals,setProposals]=useLocalStorage("yoa:proposals",PROPOSAL_SEED);
   const [title,setTitle]=useState("");
@@ -2153,6 +2247,8 @@ function PolicyProposalPage({bp,user}){
           </div>
         </div>
       </div>
+
+      <ProposalGuidePanel bp={bp}/>
     </div>
   );
 }
