@@ -1763,17 +1763,19 @@ function ProposalTimelineWidget({steps,states,title="진행 상태"}){
       <div style={{display:"flex",alignItems:"flex-start"}}>
         {steps.map((step,i)=>{
           const st=states[i];
-          const prevSt=i>0?states[i-1]:null;
           const isOpen=openIndex===i;
-          const filled=st!=="upcoming"||isOpen;
+          const filled=idx=>states[idx]!=="upcoming"||openIndex===idx;
+          const isFilled=filled(i);
           const stateColor=st==="current"?"var(--accent)":"#15803D";
+          const lineFilled=i>0&&(filled(i-1)||isFilled);
+          const lineColor=i>0&&states[i-1]==="done"?"#15803D":"var(--accent)";
           return(
             <div key={step.label} style={{flex:1,display:"flex",flexDirection:"column",alignItems:"center",position:"relative"}}>
-              {i>0&&<div style={{position:"absolute",top:15,right:"50%",width:"100%",height:2,background:prevSt==="upcoming"?"#e2e8f0":(prevSt==="current"?"var(--accent)":"#15803D"),zIndex:0}}/>}
-              <button type="button" onClick={()=>setOpenIndex(prev=>prev===i?null:i)} style={{width:30,height:30,borderRadius:"50%",background:filled?(st==="upcoming"?"var(--accent)":stateColor):"#f1f5f9",display:"flex",alignItems:"center",justifyContent:"center",zIndex:1,position:"relative",animation:st==="current"?"pulse 1.4s infinite":"none",border:filled?"none":"1.5px solid #e2e8f0",flexShrink:0,padding:0,cursor:"pointer",transition:"background 0.2s,border 0.2s"}}>
-                <Icon name={step.icon} size={15} color={filled?"white":"#94a3b8"}/>
+              {i>0&&<div style={{position:"absolute",top:15,right:"50%",width:"100%",height:2,background:lineFilled?lineColor:"#e2e8f0",zIndex:0}}/>}
+              <button type="button" onClick={()=>setOpenIndex(prev=>prev===i?null:i)} style={{width:30,height:30,borderRadius:"50%",background:isFilled?(st==="upcoming"?"var(--accent)":stateColor):"#f1f5f9",display:"flex",alignItems:"center",justifyContent:"center",zIndex:1,position:"relative",animation:isOpen?"pulse 1.4s infinite":"none",border:isFilled?"none":"1.5px solid #e2e8f0",flexShrink:0,padding:0,cursor:"pointer",transition:"background 0.2s,border 0.2s"}}>
+                <Icon name={step.icon} size={15} color={isFilled?"white":"#94a3b8"}/>
               </button>
-              <span style={{fontSize:11,marginTop:6,fontWeight:(st==="current"||isOpen)?700:600,color:filled?"#374151":"#94a3b8"}}>{step.label}</span>
+              <span style={{fontSize:11,marginTop:6,fontWeight:(st==="current"||isOpen)?700:600,color:isFilled?"#374151":"#94a3b8"}}>{step.label}</span>
             </div>
           );
         })}
@@ -2068,28 +2070,15 @@ const PROPOSAL_ONBOARDING_STEPS=PROPOSAL_GUIDE_STEPS.map((summary,i)=>({...PROPO
 const PROPOSAL_ONBOARDING_TIMELINE_META=PROPOSAL_ONBOARDING_STEPS.map(s=>({label:s.title,icon:s.icon,summary:s.summary,detail:s.detail}));
 
 function ProposalOnboardingCarousel({bp}){
-  const scrollRef=useRef(null);
-  const [active,setActive]=useState(0);
-  const total=PROPOSAL_ONBOARDING_STEPS.length;
   const sidePad=bp.isDesktop?24:16;
-
-  const handleScroll=()=>{
-    const el=scrollRef.current;
-    if(!el||!el.clientWidth)return;
-    const i=Math.round(el.scrollLeft/el.clientWidth);
-    setActive(Math.max(0,Math.min(total-1,i)));
-  };
 
   return(
     <div style={{background:"white",borderRadius:16,border:"1.5px solid #E2E8F0",padding:"18px 0 16px",overflow:"hidden"}}>
-      <div style={{padding:`0 ${sidePad}px 14px`,display:"flex",alignItems:"center",justifyContent:"space-between",gap:7}}>
-        <div style={{display:"flex",alignItems:"center",gap:7}}>
-          <Icon name="edit_note" size={17} color="var(--accent)"/>
-          <div style={{fontSize:bp.isDesktop?16:15,fontWeight:800,color:"#111827"}}>정책제안 이렇게 진행돼요</div>
-        </div>
-        <div style={{fontSize:12,fontWeight:700,color:"#9ca3af"}}>{active+1} / {total}</div>
+      <div style={{padding:`0 ${sidePad}px 14px`,display:"flex",alignItems:"center",gap:7}}>
+        <Icon name="edit_note" size={17} color="var(--accent)"/>
+        <div style={{fontSize:bp.isDesktop?16:15,fontWeight:800,color:"#111827"}}>정책제안 이렇게 진행돼요</div>
       </div>
-      <div ref={scrollRef} onScroll={handleScroll} className="proposal-onboarding-scroll" style={{display:"flex",overflowX:"auto",scrollSnapType:"x mandatory",WebkitOverflowScrolling:"touch",scrollbarWidth:"none"}}>
+      <div className="proposal-onboarding-scroll" style={{display:"flex",overflowX:"auto",scrollSnapType:"x mandatory",WebkitOverflowScrolling:"touch",scrollbarWidth:"none"}}>
         {PROPOSAL_ONBOARDING_STEPS.map((step,i)=>(
           <div key={step.title} style={{flex:"0 0 100%",width:"100%",boxSizing:"border-box",scrollSnapAlign:"start",padding:`0 ${sidePad}px`,display:"flex",flexDirection:"column"}}>
             <ProposalTimelineWidget steps={PROPOSAL_ONBOARDING_TIMELINE_META} states={PROPOSAL_ONBOARDING_TIMELINE_META.map((_,idx)=>idx<i?"done":idx===i?"current":"upcoming")}/>
