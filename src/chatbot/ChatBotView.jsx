@@ -274,7 +274,7 @@ function PrivacyNoticePanel({ bp }) {
 
   return (
     <div style={{
-      position: 'absolute', bottom: 12, right: 12,
+      position: 'absolute', bottom: 12, right: 26,
       width: collapsed ? 'auto' : (isMobile ? 'calc(100vw - 24px)' : '340px'),
       maxWidth: isMobile ? 'calc(100vw - 24px)' : '340px',
       zIndex: 10,
@@ -388,15 +388,15 @@ function PrivacyNoticePanel({ bp }) {
       {collapsed && (
         <div
           onClick={() => setCollapsed(false)}
-          style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6, cursor: 'pointer' }}
+          style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 7, cursor: 'pointer', transformOrigin: 'top center', animation: 'guideWiggle 5s ease-in-out infinite' }}
         >
           <div style={{
-            width: 48, height: 48, borderRadius: '50%',
+            width: 60, height: 60, borderRadius: '50%',
             background: 'linear-gradient(135deg,var(--accent-dark),var(--accent))',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
-            boxShadow: '0 2px 12px var(--accent-shadow)',
+            boxShadow: '0 4px 16px var(--accent-shadow)',
           }}>
-            <Icon name="lock" size={22} color="white"/>
+            <Icon name="lock" size={28} color="white"/>
           </div>
           <div style={{ textAlign: 'center' }}>
             <div style={{ fontSize: 12, fontWeight: 800, color: '#111827', lineHeight: 1.3 }}>개인정보 안내</div>
