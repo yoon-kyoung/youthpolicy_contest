@@ -1642,6 +1642,24 @@ function CommunityView({bp,user,onGoProposal,initialCatFilter}){
       </div>
       <div style={{padding:bp.isDesktop?"28px 40px 60px":bp.isTablet?"20px 24px 60px":"14px 14px 80px"}}>
         <div style={{display:"flex",flexDirection:"column",gap:10,maxWidth:860,margin:"0 auto"}}>
+          {!loadingPosts&&(
+            <div onClick={()=>onGoProposal?.()} style={{background:"linear-gradient(135deg,var(--accent-dark),var(--accent))",borderRadius:16,padding:bp.isDesktop?"22px 26px":"16px 16px",cursor:"pointer",color:"white",display:"flex",alignItems:"center",gap:16,transition:"transform 0.15s,box-shadow 0.15s"}}
+              onMouseEnter={e=>{e.currentTarget.style.transform="translateY(-2px)";e.currentTarget.style.boxShadow="0 10px 28px rgba(0,0,0,0.18)";}}
+              onMouseLeave={e=>{e.currentTarget.style.transform="";e.currentTarget.style.boxShadow="";}}
+            >
+              <div style={{flex:1,minWidth:0}}>
+                <div style={{display:"flex",alignItems:"center",gap:7,marginBottom:8}}>
+                  <span style={{fontSize:10,fontWeight:800,padding:"3px 8px",borderRadius:20,background:"rgba(255,255,255,0.22)",letterSpacing:"0.02em"}}>NEW</span>
+                  <span style={{fontSize:12,fontWeight:700,opacity:0.85}}>청년정책 역제안</span>
+                </div>
+                <div style={{fontSize:bp.isDesktop?16:14,fontWeight:800,lineHeight:1.4,marginBottom:4}}>커뮤니티에서 나눈 이야기, 이제 정책으로 제안해보세요</div>
+                <div style={{fontSize:bp.isDesktop?13:12,opacity:0.8,lineHeight:1.5}}>공감이 모이면 담당 부처에 자동으로 전달돼요</div>
+              </div>
+              <div style={{display:"flex",alignItems:"center",gap:5,flexShrink:0,padding:"9px 16px",borderRadius:20,background:"white",color:"var(--accent-dark)",fontSize:13,fontWeight:700,whiteSpace:"nowrap"}}>
+                제안 써보기<Icon name="arrow_forward" size={15} color="var(--accent-dark)"/>
+              </div>
+            </div>
+          )}
           {loadingPosts&&(
             <div style={{display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",padding:"72px 20px",gap:14,background:"white",borderRadius:16,border:"1.5px solid #E2E8F0"}}>
               {[0,1,2].map(i=>(
@@ -1686,24 +1704,6 @@ function CommunityView({bp,user,onGoProposal,initialCatFilter}){
               </div>
             );
           })}
-          {!loadingPosts&&(
-            <div onClick={()=>onGoProposal?.()} style={{marginTop:4,background:"linear-gradient(135deg,var(--accent-dark),var(--accent))",borderRadius:16,padding:bp.isDesktop?"22px 26px":"16px 16px",cursor:"pointer",color:"white",display:"flex",alignItems:"center",gap:16,transition:"transform 0.15s,box-shadow 0.15s"}}
-              onMouseEnter={e=>{e.currentTarget.style.transform="translateY(-2px)";e.currentTarget.style.boxShadow="0 10px 28px rgba(0,0,0,0.18)";}}
-              onMouseLeave={e=>{e.currentTarget.style.transform="";e.currentTarget.style.boxShadow="";}}
-            >
-              <div style={{flex:1,minWidth:0}}>
-                <div style={{display:"flex",alignItems:"center",gap:7,marginBottom:8}}>
-                  <span style={{fontSize:10,fontWeight:800,padding:"3px 8px",borderRadius:20,background:"rgba(255,255,255,0.22)",letterSpacing:"0.02em"}}>NEW</span>
-                  <span style={{fontSize:12,fontWeight:700,opacity:0.85}}>청년정책 역제안</span>
-                </div>
-                <div style={{fontSize:bp.isDesktop?16:14,fontWeight:800,lineHeight:1.4,marginBottom:4}}>커뮤니티에서 나눈 이야기, 이제 정책으로 제안해보세요</div>
-                <div style={{fontSize:bp.isDesktop?13:12,opacity:0.8,lineHeight:1.5}}>공감이 모이면 담당 부처에 자동으로 전달돼요</div>
-              </div>
-              <div style={{display:"flex",alignItems:"center",gap:5,flexShrink:0,padding:"9px 16px",borderRadius:20,background:"white",color:"var(--accent-dark)",fontSize:13,fontWeight:700,whiteSpace:"nowrap"}}>
-                제안 써보기<Icon name="arrow_forward" size={15} color="var(--accent-dark)"/>
-              </div>
-            </div>
-          )}
         </div>
       </div>
     </div>
