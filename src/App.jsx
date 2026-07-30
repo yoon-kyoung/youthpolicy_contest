@@ -1856,6 +1856,7 @@ const PROPOSAL_SEED=[
 
 function ProposalCard({proposal,user,onVote,onOpen,bp}){
   const [voted,setVoted]=useLocalStorage(`yoa:proposalVoted_${proposal.id}`,false);
+  const [comments]=useLocalStorage(`yoa:proposalComments_${proposal.id}`,[]);
   const s=proposalStatusMeta(proposal.status);
   const c=CAT_COLORS[proposal.category]||{};
   const votes=proposal.votes||0;
@@ -1902,6 +1903,9 @@ function ProposalCard({proposal,user,onVote,onOpen,bp}){
         <button onClick={handleVote} disabled={voted} style={{marginLeft:"auto",display:"flex",alignItems:"center",gap:5,lineHeight:1,padding:"6px 14px",borderRadius:20,border:voted?"1.5px solid #fca5a5":"1.5px solid #E2E8F0",background:voted?"#fff1f2":"white",color:voted?"#dc2626":"#6b7280",fontSize:12,fontWeight:700,cursor:voted?"default":"pointer",transition:"all 0.15s"}}>
           <Icon name="favorite" filled={voted} size={14} color={voted?"#dc2626":"#9ca3af"}/>공감 {votes}
         </button>
+        <span style={{display:"flex",alignItems:"center",gap:5,lineHeight:1,padding:"6px 14px",fontSize:12,fontWeight:700,color:"#6b7280"}}>
+          <Icon name="chat_bubble" size={14} color="#9ca3af"/>댓글 {comments.length}
+        </span>
       </div>
     </div>
   );
