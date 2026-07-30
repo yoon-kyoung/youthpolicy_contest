@@ -1764,14 +1764,16 @@ function ProposalTimelineWidget({steps,states,title="진행 상태"}){
         {steps.map((step,i)=>{
           const st=states[i];
           const prevSt=i>0?states[i-1]:null;
-          const color=st==="upcoming"?"#e2e8f0":(st==="current"?"var(--accent)":"#15803D");
+          const isOpen=openIndex===i;
+          const filled=st!=="upcoming"||isOpen;
+          const stateColor=st==="current"?"var(--accent)":"#15803D";
           return(
             <div key={step.label} style={{flex:1,display:"flex",flexDirection:"column",alignItems:"center",position:"relative"}}>
               {i>0&&<div style={{position:"absolute",top:15,right:"50%",width:"100%",height:2,background:prevSt==="upcoming"?"#e2e8f0":(prevSt==="current"?"var(--accent)":"#15803D"),zIndex:0}}/>}
-              <button type="button" onClick={()=>setOpenIndex(prev=>prev===i?null:i)} style={{width:30,height:30,borderRadius:"50%",background:st==="upcoming"?"#f1f5f9":color,display:"flex",alignItems:"center",justifyContent:"center",zIndex:1,position:"relative",animation:st==="current"?"pulse 1.4s infinite":"none",border:st==="upcoming"?"1.5px solid #e2e8f0":"none",flexShrink:0,padding:0,cursor:"pointer"}}>
-                <Icon name={step.icon} size={15} color={st==="upcoming"?"#94a3b8":"white"}/>
+              <button type="button" onClick={()=>setOpenIndex(prev=>prev===i?null:i)} style={{width:30,height:30,borderRadius:"50%",background:filled?(st==="upcoming"?"var(--accent)":stateColor):"#f1f5f9",display:"flex",alignItems:"center",justifyContent:"center",zIndex:1,position:"relative",animation:st==="current"?"pulse 1.4s infinite":"none",border:filled?"none":"1.5px solid #e2e8f0",flexShrink:0,padding:0,cursor:"pointer",transition:"background 0.2s,border 0.2s"}}>
+                <Icon name={step.icon} size={15} color={filled?"white":"#94a3b8"}/>
               </button>
-              <span style={{fontSize:11,marginTop:6,fontWeight:st==="current"?700:600,color:st==="upcoming"?"#94a3b8":"#374151"}}>{step.label}</span>
+              <span style={{fontSize:11,marginTop:6,fontWeight:(st==="current"||isOpen)?700:600,color:filled?"#374151":"#94a3b8"}}>{step.label}</span>
             </div>
           );
         })}
@@ -2071,11 +2073,6 @@ function ProposalOnboardingCarousel({bp}){
   const total=PROPOSAL_ONBOARDING_STEPS.length;
   const sidePad=bp.isDesktop?24:16;
 
-  const scrollToIndex=i=>{
-    const el=scrollRef.current;
-    if(!el)return;
-    el.scrollTo({left:i*el.clientWidth,behavior:"smooth"});
-  };
   const handleScroll=()=>{
     const el=scrollRef.current;
     if(!el||!el.clientWidth)return;
@@ -2097,11 +2094,6 @@ function ProposalOnboardingCarousel({bp}){
           <div key={step.title} style={{flex:"0 0 100%",width:"100%",boxSizing:"border-box",scrollSnapAlign:"start",padding:`0 ${sidePad}px`,display:"flex",flexDirection:"column"}}>
             <ProposalTimelineWidget steps={PROPOSAL_ONBOARDING_TIMELINE_META} states={PROPOSAL_ONBOARDING_TIMELINE_META.map((_,idx)=>idx<i?"done":idx===i?"current":"upcoming")}/>
           </div>
-        ))}
-      </div>
-      <div style={{display:"flex",justifyContent:"center",gap:6,marginTop:14}}>
-        {PROPOSAL_ONBOARDING_STEPS.map((_,i)=>(
-          <button key={i} onClick={()=>scrollToIndex(i)} aria-label={`${i+1}단계로 이동`} style={{width:active===i?18:6,height:6,borderRadius:20,border:"none",padding:0,cursor:"pointer",background:active===i?"var(--accent)":"#E2E8F0",transition:"all 0.2s"}}/>
         ))}
       </div>
     </div>
