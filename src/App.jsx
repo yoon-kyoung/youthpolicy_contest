@@ -1769,7 +1769,7 @@ const PROPOSAL_TIMELINE_META=PROPOSAL_TIMELINE_STEPS.map((label,i)=>({label,icon
 
 function ProposalTimelineWidget({steps,states,title="진행 상태",clickFill=false}){
   const [openIndex,setOpenIndex]=useState(null);
-  const filled=i=>states[i]!=="upcoming"||(clickFill&&openIndex!=null&&i<=openIndex);
+  const clickedFilled=i=>clickFill&&openIndex!=null&&i<=openIndex;
   return(
     <section style={{background:"white",borderRadius:20,padding:"18px 14px",border:"1.5px solid #f1f5f9"}}>
       {title&&<h2 style={{fontSize:15,fontWeight:800,color:"#111827",marginTop:0,marginBottom:20}}>{title}</h2>}
@@ -1777,8 +1777,8 @@ function ProposalTimelineWidget({steps,states,title="진행 상태",clickFill=fa
         {steps.map((step,i)=>{
           const st=states[i];
           const isOpen=openIndex===i;
-          const isFilled=filled(i);
-          const lineFilled=i>0&&(filled(i-1)||isFilled);
+          const isFilled=st!=="upcoming"||clickedFilled(i);
+          const lineFilled=i>0&&(states[i-1]==="done"||clickedFilled(i-1));
           return(
             <div key={step.label} style={{flex:1,display:"flex",flexDirection:"column",alignItems:"center",position:"relative"}}>
               {i>0&&<div style={{position:"absolute",top:15,right:"50%",width:"100%",height:2,background:lineFilled?"var(--accent)":"#e2e8f0",zIndex:0}}/>}
@@ -1786,12 +1786,6 @@ function ProposalTimelineWidget({steps,states,title="진행 상태",clickFill=fa
                 <Icon name={step.icon} size={15} color={isFilled?"white":"#94a3b8"}/>
               </button>
               <span style={{fontSize:11,marginTop:6,fontWeight:(st==="current"||isOpen)?700:600,color:isFilled?"#374151":"#94a3b8"}}>{step.label}</span>
-              {st==="current"&&openIndex==null&&(
-                <div style={{position:"relative",marginTop:10,background:"#1f2937",color:"white",borderRadius:8,padding:"6px 12px",fontSize:11,fontWeight:600,whiteSpace:"nowrap",boxShadow:"0 2px 8px rgba(0,0,0,0.18)",animation:"fadeUp 0.3s ease"}}>
-                  <div style={{position:"absolute",bottom:"100%",left:"50%",transform:"translateX(-50%)",width:0,height:0,borderLeft:"5px solid transparent",borderRight:"5px solid transparent",borderBottom:"5px solid #1f2937"}}/>
-                  아이콘을 클릭해서 상세 내용을 확인해보세요!
-                </div>
-              )}
             </div>
           );
         })}
