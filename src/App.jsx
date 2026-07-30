@@ -2073,7 +2073,7 @@ function ProposalFormRow({label,children}){
   );
 }
 
-const PROPOSAL_MIN_LEN={background:100,content:300,expectedEffect:300};
+const PROPOSAL_MIN_LEN={background:100,content:300,expectedEffect:200};
 
 function ProposalWriteView({category,setCategory,title,setTitle,background,setBackground,content,setContent,expectedEffect,setExpectedEffect,attachmentName,setAttachmentName,proposals,onSubmit,onBack,bp}){
   useEffect(()=>{window.scrollTo({top:0,behavior:"smooth"});},[]);
@@ -2121,7 +2121,7 @@ function ProposalWriteView({category,setCategory,title,setTitle,background,setBa
   const handleFormSubmit=e=>{
     e.preventDefault();
     if(!allLenOk){
-      alert(`배경 ${PROPOSAL_MIN_LEN.background}자, 제안내용·기대효과는 각 ${PROPOSAL_MIN_LEN.content}자 이상 작성해야 제안할 수 있어요.`);
+      alert(`배경 ${PROPOSAL_MIN_LEN.background}자, 제안내용 ${PROPOSAL_MIN_LEN.content}자, 기대효과 ${PROPOSAL_MIN_LEN.expectedEffect}자 이상 작성해야 제안할 수 있어요.`);
       return;
     }
     if(!aiPassed){
