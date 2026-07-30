@@ -2092,20 +2092,10 @@ function ProposalOnboardingCarousel({bp}){
         </div>
         <div style={{fontSize:12,fontWeight:700,color:"#9ca3af"}}>{active+1} / {total}</div>
       </div>
-      <div ref={scrollRef} onScroll={handleScroll} style={{display:"flex",overflowX:"auto",scrollSnapType:"x mandatory",WebkitOverflowScrolling:"touch"}}>
+      <div ref={scrollRef} onScroll={handleScroll} className="proposal-onboarding-scroll" style={{display:"flex",overflowX:"auto",scrollSnapType:"x mandatory",WebkitOverflowScrolling:"touch",scrollbarWidth:"none"}}>
         {PROPOSAL_ONBOARDING_STEPS.map((step,i)=>(
-          <div key={step.title} style={{flex:"0 0 100%",width:"100%",boxSizing:"border-box",scrollSnapAlign:"start",padding:`0 ${sidePad}px`,display:"flex",flexDirection:"column",gap:16}}>
+          <div key={step.title} style={{flex:"0 0 100%",width:"100%",boxSizing:"border-box",scrollSnapAlign:"start",padding:`0 ${sidePad}px`,display:"flex",flexDirection:"column"}}>
             <ProposalTimelineWidget steps={PROPOSAL_ONBOARDING_TIMELINE_META} states={PROPOSAL_ONBOARDING_TIMELINE_META.map((_,idx)=>idx<i?"done":idx===i?"current":"upcoming")}/>
-            <div style={{display:"flex",flexDirection:"column",gap:8}}>
-              <div style={{display:"flex",alignItems:"center",gap:8}}>
-                <div style={{width:32,height:32,borderRadius:10,background:`linear-gradient(135deg,${step.gradient[0]},${step.gradient[1]})`,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>
-                  <Icon name={step.icon} size={17} color="white"/>
-                </div>
-                <div style={{fontSize:bp.isDesktop?19:17,fontWeight:800,color:"#111827"}}>{step.title}</div>
-              </div>
-              <div style={{fontSize:bp.isDesktop?14:13,fontWeight:700,color:"var(--accent)",lineHeight:1.5}}>{step.summary}</div>
-              <div style={{fontSize:bp.isDesktop?14:13,color:"#6b7280",lineHeight:1.7}}>{step.detail}</div>
-            </div>
           </div>
         ))}
       </div>
@@ -3289,6 +3279,7 @@ const GLOBAL_CSS=`
   ::-webkit-scrollbar{width:5px;height:5px;}
   ::-webkit-scrollbar-thumb{background:#d1d5db;border-radius:4px;}
   ::-webkit-scrollbar-track{background:transparent;}
+  .proposal-onboarding-scroll::-webkit-scrollbar{display:none;}
   input[type=search]::-webkit-search-cancel-button{-webkit-appearance:none;}
   @keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
   @keyframes floatOrb{0%,100%{transform:translate(0,0)}50%{transform:translate(10px,-14px)}}
