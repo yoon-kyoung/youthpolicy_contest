@@ -2275,7 +2275,7 @@ function PolicyProposalPage({bp,user}){
         <div style={{maxWidth:860,margin:"0 auto",display:"flex",flexDirection:"column",gap:20}}>
           <ProposalOnboardingCarousel bp={bp}/>
 
-          <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:bp.isMobile?8:12,background:"white",borderRadius:16,border:"1.5px solid #E2E8F0",padding:bp.isDesktop?"18px 24px":"14px 12px"}}>
+          <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:bp.isMobile?8:12,background:"var(--accent-bg)",borderRadius:16,border:"1.5px solid #E2E8F0",padding:bp.isDesktop?"18px 24px":"14px 12px"}}>
             {[
               {label:"누적 제안수", val:stats.total.toLocaleString()},
               {label:"답변율",      val:`${stats.rate}%`},
