@@ -1767,8 +1767,9 @@ function proposalTimelineStates(status){
 }
 const PROPOSAL_TIMELINE_META=PROPOSAL_TIMELINE_STEPS.map((label,i)=>({label,icon:PROPOSAL_TIMELINE_ICONS[i],detail:PROPOSAL_TIMELINE_DESC[i]}));
 
-function ProposalTimelineWidget({steps,states,title="진행 상태"}){
+function ProposalTimelineWidget({steps,states,title="진행 상태",clickFill=false}){
   const [openIndex,setOpenIndex]=useState(null);
+  const filled=i=>states[i]!=="upcoming"||(clickFill&&openIndex!=null&&i<=openIndex);
   return(
     <section style={{background:"white",borderRadius:20,padding:"18px 14px",border:"1.5px solid #f1f5f9"}}>
       {title&&<h2 style={{fontSize:15,fontWeight:800,color:"#111827",marginTop:0,marginBottom:20}}>{title}</h2>}
@@ -1776,8 +1777,8 @@ function ProposalTimelineWidget({steps,states,title="진행 상태"}){
         {steps.map((step,i)=>{
           const st=states[i];
           const isOpen=openIndex===i;
-          const isFilled=st!=="upcoming";
-          const lineFilled=i>0&&states[i-1]==="done";
+          const isFilled=filled(i);
+          const lineFilled=i>0&&(filled(i-1)||isFilled);
           return(
             <div key={step.label} style={{flex:1,display:"flex",flexDirection:"column",alignItems:"center",position:"relative"}}>
               {i>0&&<div style={{position:"absolute",top:15,right:"50%",width:"100%",height:2,background:lineFilled?"var(--accent)":"#e2e8f0",zIndex:0}}/>}
@@ -2319,7 +2320,7 @@ function ProposalOnboardingCarousel({bp}){
       <div className="proposal-onboarding-scroll" style={{display:"flex",overflowX:"auto",scrollSnapType:"x mandatory",WebkitOverflowScrolling:"touch",scrollbarWidth:"none"}}>
         {PROPOSAL_ONBOARDING_STEPS.map((step,i)=>(
           <div key={step.title} style={{flex:"0 0 100%",width:"100%",boxSizing:"border-box",scrollSnapAlign:"start",padding:`0 ${sidePad}px`,display:"flex",flexDirection:"column"}}>
-            <ProposalTimelineWidget steps={PROPOSAL_ONBOARDING_TIMELINE_META} states={PROPOSAL_ONBOARDING_TIMELINE_META.map((_,idx)=>idx<i?"done":idx===i?"current":"upcoming")}/>
+            <ProposalTimelineWidget steps={PROPOSAL_ONBOARDING_TIMELINE_META} states={PROPOSAL_ONBOARDING_TIMELINE_META.map((_,idx)=>idx<i?"done":idx===i?"current":"upcoming")} clickFill/>
           </div>
         ))}
       </div>
