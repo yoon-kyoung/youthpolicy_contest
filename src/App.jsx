@@ -2190,10 +2190,16 @@ function ProposalWriteView({category,setCategory,title,setTitle,background,setBa
             </ProposalFormRow>
 
             <ProposalFormRow label="진행 방식">
-              <label style={{display:"flex",alignItems:"center",gap:8,cursor:"pointer",width:"fit-content"}}>
-                <input type="checkbox" checked={isTeam} onChange={e=>setIsTeam(e.target.checked)} style={{width:16,height:16,accentColor:"var(--accent)",cursor:"pointer"}}/>
-                <span style={{fontSize:13,color:"#374151",fontWeight:500}}>팀으로 함께 제안해요</span>
-              </label>
+              <div style={{display:"flex",gap:20,flexWrap:"wrap"}}>
+                <label style={{display:"flex",alignItems:"center",gap:8,cursor:"pointer",width:"fit-content"}}>
+                  <input type="checkbox" checked={!isTeam} onChange={e=>setIsTeam(!e.target.checked)} style={{width:16,height:16,accentColor:"var(--accent)",cursor:"pointer"}}/>
+                  <span style={{fontSize:13,color:"#374151",fontWeight:500}}>개인</span>
+                </label>
+                <label style={{display:"flex",alignItems:"center",gap:8,cursor:"pointer",width:"fit-content"}}>
+                  <input type="checkbox" checked={isTeam} onChange={e=>setIsTeam(e.target.checked)} style={{width:16,height:16,accentColor:"var(--accent)",cursor:"pointer"}}/>
+                  <span style={{fontSize:13,color:"#374151",fontWeight:500}}>팀으로 함께 제안해요</span>
+                </label>
+              </div>
               {isTeam&&(
                 <div style={{marginTop:10}}>
                   <div style={{display:"flex",flexWrap:"wrap",alignItems:"center",gap:6,padding:"8px 12px",borderRadius:10,border:"1.5px solid #E2E8F0",background:"white"}}>
