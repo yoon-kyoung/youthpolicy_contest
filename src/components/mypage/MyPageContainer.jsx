@@ -3,6 +3,7 @@ import Icon from '../../styles/Icon'
 import PageHeader from './PageHeader'
 import TabBar from './TabBar'
 import UserInfoTab from './UserInfoTab'
+import ApplicationCalendar from './ApplicationCalendar'
 import PreferenceTab from './PreferenceTab'
 import SettingsTab from './SettingsTab'
 import SavedPoliciesTab from './SavedPoliciesTab'
@@ -207,6 +208,9 @@ export default function MyPageContainer({ supabaseUser, onLogout, initialTab, fa
             </div>
           </div>
         )}
+
+        {/* 달력 — 탭과 무관하게 항상 표시 */}
+        <ApplicationCalendar policies={policies} favIds={favIds} onGoDetail={onGoDetail} />
 
         {/* 탭 + 콘텐츠 */}
         <div style={styles.tabContainer}>
