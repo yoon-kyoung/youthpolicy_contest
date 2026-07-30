@@ -70,3 +70,4 @@ import { Icon } from "./Icon"; // 상대경로 조정
 | `picture_as_pdf` | 대화 다운로드 - PDF 옵션 |
 | `volume_up` | 챗봇 답변 듣기(TTS) 대기 상태 |
 | `stop` | 챗봇 답변 듣기(TTS) 재생 중 (클릭 시 중지) |
+| `attach_file` | 정책제안 작성 - 첨부자료 |

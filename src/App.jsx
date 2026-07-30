@@ -1988,9 +1988,14 @@ function ProposalDetailView({proposal,user,onVote,onBack,bp}){
               <p style={{margin:0,fontSize:14,color:"#374151",lineHeight:1.8,whiteSpace:"pre-wrap"}}>{proposal.content}</p>
             </div>
             {proposal.expectedEffect&&(
-              <div>
+              <div style={{marginBottom:proposal.attachment?14:0}}>
                 <div style={{fontSize:12,fontWeight:700,color:"#6b7280",marginBottom:4}}>기대 효과</div>
                 <p style={{margin:0,fontSize:14,color:"#374151",lineHeight:1.8,whiteSpace:"pre-wrap"}}>{proposal.expectedEffect}</p>
+              </div>
+            )}
+            {proposal.attachment&&(
+              <div style={{display:"flex",alignItems:"center",gap:5,fontSize:13,color:"#6b7280"}}>
+                <Icon name="attach_file" size={15} color="#9ca3af"/>{proposal.attachment}
               </div>
             )}
             {proposal.status==="pending"&&(
@@ -2058,7 +2063,16 @@ function ProposalDetailView({proposal,user,onVote,onBack,bp}){
   );
 }
 
-function ProposalWriteView({category,setCategory,title,setTitle,content,setContent,onSubmit,onBack,bp}){
+function ProposalFormRow({label,children}){
+  return(
+    <div style={{display:"flex",gap:14,alignItems:"flex-start"}}>
+      <div style={{width:86,flexShrink:0,paddingTop:11,fontSize:13,fontWeight:700,color:"#374151"}}>{label}</div>
+      <div style={{flex:1,minWidth:0}}>{children}</div>
+    </div>
+  );
+}
+
+function ProposalWriteView({category,setCategory,title,setTitle,background,setBackground,content,setContent,expectedEffect,setExpectedEffect,attachmentName,setAttachmentName,onSubmit,onBack,bp}){
   useEffect(()=>{window.scrollTo({top:0,behavior:"smooth"});},[]);
 
   return(
@@ -2079,16 +2093,41 @@ function ProposalWriteView({category,setCategory,title,setTitle,content,setConte
           <h1 style={{fontSize:bp.isDesktop?26:20,fontWeight:900,margin:"0 0 6px",letterSpacing:"-0.02em",color:"#111827"}}>필요한 정책을 직접 제안해보세요</h1>
           <p style={{fontSize:13,color:"#6b7280",margin:"0 0 20px"}}>여러분의 목소리가 공감투표를 통해 새로운 청년정책으로 이어질 수 있어요</p>
 
-          <form onSubmit={onSubmit} style={{background:"white",borderRadius:16,border:"1.5px solid #E2E8F0",padding:bp.isDesktop?24:16,display:"flex",flexDirection:"column",gap:12}}>
-            <div style={{display:"flex",gap:8,flexWrap:"wrap"}}>
-              {CATEGORIES.slice(1).map(c=>(
-                <button key={c.value} type="button" onClick={()=>setCategory(c.value)} style={{display:"flex",alignItems:"center",gap:4,padding:"6px 12px",borderRadius:20,border:"1.5px solid",cursor:"pointer",borderColor:category===c.value?"var(--accent)":"#E2E8F0",background:category===c.value?"var(--accent-bg)":"white",color:category===c.value?"var(--accent)":"#718096",fontSize:12,fontWeight:category===c.value?700:500}}>
-                  <Icon name={c.icon} size={13} color={category===c.value?"var(--accent)":"#718096"}/>{c.label}
-                </button>
-              ))}
-            </div>
-            <input value={title} onChange={e=>setTitle(e.target.value)} placeholder="제안 제목을 입력하세요" style={{padding:"11px 14px",borderRadius:10,border:"1.5px solid #E2E8F0",fontSize:14,fontFamily:"inherit"}}/>
-            <textarea value={content} onChange={e=>setContent(e.target.value)} placeholder="어떤 정책이 필요한지, 왜 필요한지 자유롭게 적어주세요" rows={9} style={{padding:"11px 14px",borderRadius:10,border:"1.5px solid #E2E8F0",fontSize:14,fontFamily:"inherit",resize:"vertical"}}/>
+          <form onSubmit={onSubmit} style={{background:"white",borderRadius:16,border:"1.5px solid #E2E8F0",padding:bp.isDesktop?24:16,display:"flex",flexDirection:"column",gap:16}}>
+            <ProposalFormRow label="정책 제안분야">
+              <div style={{display:"flex",gap:8,flexWrap:"wrap"}}>
+                {CATEGORIES.slice(1).map(c=>(
+                  <button key={c.value} type="button" onClick={()=>setCategory(c.value)} style={{display:"flex",alignItems:"center",gap:4,padding:"6px 12px",borderRadius:20,border:"1.5px solid",cursor:"pointer",borderColor:category===c.value?"var(--accent)":"#E2E8F0",background:category===c.value?"var(--accent-bg)":"white",color:category===c.value?"var(--accent)":"#718096",fontSize:12,fontWeight:category===c.value?700:500}}>
+                    <Icon name={c.icon} size={13} color={category===c.value?"var(--accent)":"#718096"}/>{c.label}
+                  </button>
+                ))}
+              </div>
+            </ProposalFormRow>
+
+            <ProposalFormRow label="제목">
+              <input value={title} onChange={e=>setTitle(e.target.value)} placeholder="제안 제목을 입력하세요" style={{width:"100%",padding:"11px 14px",borderRadius:10,border:"1.5px solid #E2E8F0",fontSize:14,fontFamily:"inherit",boxSizing:"border-box"}}/>
+            </ProposalFormRow>
+
+            <ProposalFormRow label="배경">
+              <textarea value={background} onChange={e=>setBackground(e.target.value)} placeholder="이 제안이 필요하게 된 배경을 적어주세요" rows={3} style={{width:"100%",padding:"11px 14px",borderRadius:10,border:"1.5px solid #E2E8F0",fontSize:14,fontFamily:"inherit",resize:"vertical",boxSizing:"border-box"}}/>
+            </ProposalFormRow>
+
+            <ProposalFormRow label="제안내용">
+              <textarea value={content} onChange={e=>setContent(e.target.value)} placeholder="어떤 정책이 필요한지 구체적으로 적어주세요" rows={5} style={{width:"100%",padding:"11px 14px",borderRadius:10,border:"1.5px solid #E2E8F0",fontSize:14,fontFamily:"inherit",resize:"vertical",boxSizing:"border-box"}}/>
+            </ProposalFormRow>
+
+            <ProposalFormRow label="기대효과">
+              <textarea value={expectedEffect} onChange={e=>setExpectedEffect(e.target.value)} placeholder="이 제안이 반영되면 어떤 효과가 있을지 적어주세요" rows={3} style={{width:"100%",padding:"11px 14px",borderRadius:10,border:"1.5px solid #E2E8F0",fontSize:14,fontFamily:"inherit",resize:"vertical",boxSizing:"border-box"}}/>
+            </ProposalFormRow>
+
+            <ProposalFormRow label="첨부자료">
+              <label style={{display:"flex",alignItems:"center",gap:8,padding:"9px 14px",borderRadius:10,border:"1.5px dashed #E2E8F0",fontSize:13,color:"#6b7280",cursor:"pointer",width:"fit-content"}}>
+                <Icon name="attach_file" size={16} color="#9ca3af"/>
+                {attachmentName||"파일 선택"}
+                <input type="file" onChange={e=>setAttachmentName(e.target.files?.[0]?.name||"")} style={{display:"none"}}/>
+              </label>
+            </ProposalFormRow>
+
             <button type="submit" style={{alignSelf:"flex-end",padding:"9px 20px",borderRadius:20,background:"var(--accent)",border:"none",color:"white",fontSize:13,fontWeight:600,cursor:"pointer",transition:"opacity 0.15s"}}
               onMouseEnter={e=>e.currentTarget.style.opacity="0.85"} onMouseLeave={e=>e.currentTarget.style.opacity="1"}
             >제안하기</button>
@@ -2214,7 +2253,10 @@ function ProposalGuidePanel({bp,onGoCommunity}){
 function PolicyProposalPage({bp,user,onGoCommunity}){
   const [proposals,setProposals]=useLocalStorage("yoa:proposals",PROPOSAL_SEED);
   const [title,setTitle]=useState("");
+  const [background,setBackground]=useState("");
   const [content,setContent]=useState("");
+  const [expectedEffect,setExpectedEffect]=useState("");
+  const [attachmentName,setAttachmentName]=useState("");
   const [category,setCategory]=useState("job");
   const [statusTab,setStatusTab]=useState("all");
   const [catFilter,setCatFilter]=useState("all");
@@ -2248,9 +2290,10 @@ function PolicyProposalPage({bp,user,onGoCommunity}){
     const proposal={
       id:Date.now(),
       title:title.trim(),
-      background:"",
+      background:background.trim(),
       content:content.trim(),
-      expectedEffect:"",
+      expectedEffect:expectedEffect.trim(),
+      attachment:attachmentName,
       category,
       author:user.user_metadata?.name||user.email||"익명",
       createdAt:new Date().toISOString(),
@@ -2262,7 +2305,10 @@ function PolicyProposalPage({bp,user,onGoCommunity}){
     };
     setProposals(prev=>[proposal,...prev]);
     setTitle("");
+    setBackground("");
     setContent("");
+    setExpectedEffect("");
+    setAttachmentName("");
     setShowForm(false);
   };
 
@@ -2314,7 +2360,7 @@ function PolicyProposalPage({bp,user,onGoCommunity}){
   }
 
   if(showForm){
-    return <ProposalWriteView category={category} setCategory={setCategory} title={title} setTitle={setTitle} content={content} setContent={setContent} onSubmit={handleSubmit} onBack={()=>setShowForm(false)} bp={bp}/>;
+    return <ProposalWriteView category={category} setCategory={setCategory} title={title} setTitle={setTitle} background={background} setBackground={setBackground} content={content} setContent={setContent} expectedEffect={expectedEffect} setExpectedEffect={setExpectedEffect} attachmentName={attachmentName} setAttachmentName={setAttachmentName} onSubmit={handleSubmit} onBack={()=>setShowForm(false)} bp={bp}/>;
   }
 
   const now=new Date();
