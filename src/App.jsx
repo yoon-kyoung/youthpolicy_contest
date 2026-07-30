@@ -1737,6 +1737,13 @@ function proposalStatusMeta(status){
 
 const PROPOSAL_TIMELINE_STEPS=["작성","검토","공개","답변","반영"];
 const PROPOSAL_TIMELINE_ICONS=["edit_note","fact_check","public","question_answer","celebration"];
+const PROPOSAL_TIMELINE_DESC=[
+  "청년이 필요한 정책을 자유롭게 작성해 제안을 등록하는 단계예요.",
+  "운영진이 제안 내용에 부적절한 부분이 없는지 1차로 확인하는 단계예요.",
+  "제안이 게시판에 공개되어 다른 청년들의 공감투표를 받는 단계예요.",
+  "공감이 모여 매칭된 담당 부처가 제안을 검토하고 답변을 등록하는 단계예요.",
+  "제안 내용이 실제 정책에 반영되어 시행되는 단계예요.",
+];
 const PROPOSAL_TIMELINE_DONE_COUNT={pending:2,matching:3,answered:4,adopted:5};
 function proposalTimelineStates(status){
   const doneCount=PROPOSAL_TIMELINE_DONE_COUNT[status]??2;
@@ -1745,6 +1752,37 @@ function proposalTimelineStates(status){
     if(i===doneCount&&doneCount<PROPOSAL_TIMELINE_STEPS.length)return"current";
     return"upcoming";
   });
+}
+
+function ProposalTimelineWidget({states,title="진행 상태"}){
+  const [openIndex,setOpenIndex]=useState(null);
+  return(
+    <section style={{background:"white",borderRadius:20,padding:"18px 14px",border:"1.5px solid #f1f5f9"}}>
+      {title&&<h2 style={{fontSize:15,fontWeight:800,color:"#111827",marginTop:0,marginBottom:20}}>{title}</h2>}
+      <div style={{display:"flex",alignItems:"flex-start"}}>
+        {PROPOSAL_TIMELINE_STEPS.map((label,i)=>{
+          const st=states[i];
+          const prevSt=i>0?states[i-1]:null;
+          const color=st==="upcoming"?"#e2e8f0":(st==="current"?"var(--accent)":"#15803D");
+          return(
+            <div key={label} style={{flex:1,display:"flex",flexDirection:"column",alignItems:"center",position:"relative"}}>
+              {i>0&&<div style={{position:"absolute",top:15,right:"50%",width:"100%",height:2,background:prevSt==="upcoming"?"#e2e8f0":(prevSt==="current"?"var(--accent)":"#15803D"),zIndex:0}}/>}
+              <button type="button" onClick={()=>setOpenIndex(prev=>prev===i?null:i)} style={{width:30,height:30,borderRadius:"50%",background:st==="upcoming"?"#f1f5f9":color,display:"flex",alignItems:"center",justifyContent:"center",zIndex:1,position:"relative",animation:st==="current"?"pulse 1.4s infinite":"none",border:st==="upcoming"?"1.5px solid #e2e8f0":"none",flexShrink:0,padding:0,cursor:"pointer"}}>
+                <Icon name={PROPOSAL_TIMELINE_ICONS[i]} size={15} color={st==="upcoming"?"#94a3b8":"white"}/>
+              </button>
+              <span style={{fontSize:11,marginTop:6,fontWeight:st==="current"?700:600,color:st==="upcoming"?"#94a3b8":"#374151"}}>{label}</span>
+            </div>
+          );
+        })}
+      </div>
+      {openIndex!=null&&(
+        <div style={{marginTop:16,padding:"12px 14px",borderRadius:12,background:"#F8FAFC",border:"1px solid #E2E8F0",display:"flex",gap:8,alignItems:"flex-start"}}>
+          <Icon name={PROPOSAL_TIMELINE_ICONS[openIndex]} size={15} color="var(--accent)"/>
+          <div style={{fontSize:12,color:"#374151",lineHeight:1.6}}><b style={{color:"#111827"}}>{PROPOSAL_TIMELINE_STEPS[openIndex]}</b> — {PROPOSAL_TIMELINE_DESC[openIndex]}</div>
+        </div>
+      )}
+    </section>
+  );
 }
 
 const PROPOSAL_SEED=[
@@ -1912,25 +1950,7 @@ function ProposalDetailView({proposal,user,onVote,onBack,bp}){
         <div style={{maxWidth:820,margin:"0 auto",display:"flex",flexDirection:"column",gap:16}}>
 
           {/* 상태 타임라인 */}
-          <section style={{background:"white",borderRadius:20,padding:bp.isDesktop?"24px 28px":"18px 14px",border:"1.5px solid #f1f5f9"}}>
-            <h2 style={{fontSize:15,fontWeight:800,color:"#111827",marginTop:0,marginBottom:20}}>진행 상태</h2>
-            <div style={{display:"flex",alignItems:"flex-start"}}>
-              {PROPOSAL_TIMELINE_STEPS.map((label,i)=>{
-                const st=timeline[i];
-                const prevSt=i>0?timeline[i-1]:null;
-                const color=st==="upcoming"?"#e2e8f0":(st==="current"?"var(--accent)":"#15803D");
-                return(
-                  <div key={label} style={{flex:1,display:"flex",flexDirection:"column",alignItems:"center",position:"relative"}}>
-                    {i>0&&<div style={{position:"absolute",top:15,right:"50%",width:"100%",height:2,background:prevSt==="upcoming"?"#e2e8f0":(prevSt==="current"?"var(--accent)":"#15803D"),zIndex:0}}/>}
-                    <div style={{width:30,height:30,borderRadius:"50%",background:st==="upcoming"?"#f1f5f9":color,display:"flex",alignItems:"center",justifyContent:"center",zIndex:1,position:"relative",animation:st==="current"?"pulse 1.4s infinite":"none",border:st==="upcoming"?"1.5px solid #e2e8f0":"none",flexShrink:0}}>
-                      <Icon name={PROPOSAL_TIMELINE_ICONS[i]} size={15} color={st==="upcoming"?"#94a3b8":"white"}/>
-                    </div>
-                    <span style={{fontSize:11,marginTop:6,fontWeight:st==="current"?700:600,color:st==="upcoming"?"#94a3b8":"#374151"}}>{label}</span>
-                  </div>
-                );
-              })}
-            </div>
-          </section>
+          <ProposalTimelineWidget states={timeline}/>
 
           {/* 제안 원문 */}
           <section style={{background:"white",borderRadius:20,padding:bp.isDesktop?"24px 28px":"18px 16px",border:"1.5px solid #f1f5f9"}}>
@@ -2071,17 +2091,15 @@ function ProposalOnboardingCarousel({bp}){
       </div>
       <div ref={scrollRef} onScroll={handleScroll} style={{display:"flex",overflowX:"auto",scrollSnapType:"x mandatory",WebkitOverflowScrolling:"touch"}}>
         {PROPOSAL_ONBOARDING_STEPS.map((step,i)=>(
-          <div key={step.title} style={{flex:"0 0 100%",width:"100%",boxSizing:"border-box",scrollSnapAlign:"start",padding:`0 ${sidePad}px`,display:"flex",flexDirection:"column"}}>
-            <div style={{position:"relative",height:bp.isDesktop?220:180,borderRadius:18,background:`linear-gradient(135deg,${step.gradient[0]},${step.gradient[1]})`,display:"flex",alignItems:"center",justifyContent:"center",overflow:"hidden"}}>
-              <div style={{position:"absolute",width:140,height:140,borderRadius:"50%",background:"rgba(255,255,255,0.14)",top:-45,right:-30}}/>
-              <div style={{position:"absolute",width:90,height:90,borderRadius:"50%",background:"rgba(255,255,255,0.12)",bottom:-28,left:-16}}/>
-              <div style={{position:"absolute",top:14,left:16,width:26,height:26,borderRadius:"50%",background:"rgba(255,255,255,0.28)",color:"white",fontSize:13,fontWeight:800,display:"flex",alignItems:"center",justifyContent:"center"}}>{i+1}</div>
-              <div style={{width:bp.isDesktop?92:76,height:bp.isDesktop?92:76,borderRadius:"50%",background:"rgba(255,255,255,0.95)",display:"flex",alignItems:"center",justifyContent:"center",position:"relative",zIndex:1,boxShadow:"0 6px 20px rgba(0,0,0,0.18)"}}>
-                <Icon name={step.icon} size={bp.isDesktop?42:36} color={step.gradient[1]}/>
+          <div key={step.title} style={{flex:"0 0 100%",width:"100%",boxSizing:"border-box",scrollSnapAlign:"start",padding:`0 ${sidePad}px`,display:"flex",flexDirection:"column",gap:16}}>
+            <ProposalTimelineWidget states={PROPOSAL_TIMELINE_STEPS.map((_,idx)=>idx<i?"done":idx===i?"current":"upcoming")}/>
+            <div style={{display:"flex",flexDirection:"column",gap:8}}>
+              <div style={{display:"flex",alignItems:"center",gap:8}}>
+                <div style={{width:32,height:32,borderRadius:10,background:`linear-gradient(135deg,${step.gradient[0]},${step.gradient[1]})`,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>
+                  <Icon name={step.icon} size={17} color="white"/>
+                </div>
+                <div style={{fontSize:bp.isDesktop?19:17,fontWeight:800,color:"#111827"}}>{step.title}</div>
               </div>
-            </div>
-            <div style={{padding:"18px 4px 4px",display:"flex",flexDirection:"column",gap:8}}>
-              <div style={{fontSize:bp.isDesktop?19:17,fontWeight:800,color:"#111827"}}>{step.title}</div>
               <div style={{fontSize:bp.isDesktop?14:13,fontWeight:700,color:"var(--accent)",lineHeight:1.5}}>{step.summary}</div>
               <div style={{fontSize:bp.isDesktop?14:13,color:"#6b7280",lineHeight:1.7}}>{step.detail}</div>
             </div>
