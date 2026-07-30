@@ -18,6 +18,23 @@ import { Icon } from "./Icon"; // 상대경로 조정
 1. https://fonts.google.com/icons?icon.style=Rounded 에서 Rounded 스타일로 검색
 2. 아이콘 이름을 `name` prop으로 사용
 3. CLAUDE.md 하단 목록에 추가
+4. **중요**: `src/assets/fonts/material-symbols-*.woff2`는 실제로 쓰는 아이콘만 담은 서브셋 폰트라서, 이름만 코드에 추가하고 폰트를 재생성하지 않으면 그 아이콘은 화면에서 깨져서(빈 사각형/오류) 보인다. 새 아이콘을 추가했으면 아래처럼 두 폰트를 모두 재생성해야 한다.
+
+```bash
+# 1) 코드에서 쓰는 모든 아이콘 이름을 콤마로 나열 (기존 목록 + 새로 추가한 것)
+ICONS="account_balance,add,...,work"
+
+# 2) Google Fonts에서 FILL 축만 가변으로 남기고(opsz=24,wght=400,GRAD=0 고정) 서브셋 CSS 요청
+UA="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36"
+curl -s -A "$UA" "https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0..1,0&icon_names=${ICONS}" -o outlined.css
+curl -s -A "$UA" "https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0..1,0&icon_names=${ICONS}" -o rounded.css
+
+# 3) CSS 안의 fonts.gstatic.com woff2 URL을 다운받아 교체
+curl -s "$(grep -oE 'https://fonts.gstatic.com[^)]+' outlined.css)" -o src/assets/fonts/material-symbols-outlined.woff2
+curl -s "$(grep -oE 'https://fonts.gstatic.com[^)]+' rounded.css)" -o src/assets/fonts/material-symbols-rounded.woff2
+```
+
+fontTools(`pip install fonttools`)로 `TTFont(path)`를 열어 `'fvar' in f`와 FILL 0~1 범위, GSUB 리가처에 새 아이콘 이름이 들어있는지 확인하면 안전하다.
 
 ### 현재 사용 중인 아이콘
 
