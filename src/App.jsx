@@ -1778,6 +1778,12 @@ function ProposalTimelineWidget({steps,states,title="진행 상태"}){
           return(
             <div key={step.label} style={{flex:1,display:"flex",flexDirection:"column",alignItems:"center",position:"relative"}}>
               {i>0&&<div style={{position:"absolute",top:15,right:"50%",width:"100%",height:2,background:lineFilled?lineColor:"#e2e8f0",zIndex:0}}/>}
+              {st==="current"&&openIndex==null&&(
+                <div style={{position:"absolute",bottom:"calc(100% + 10px)",left:"50%",transform:"translateX(-50%)",background:"#1f2937",color:"white",borderRadius:8,padding:"6px 12px",fontSize:11,fontWeight:600,whiteSpace:"nowrap",zIndex:5,boxShadow:"0 2px 8px rgba(0,0,0,0.18)",animation:"fadeUp 0.3s ease"}}>
+                  아이콘을 클릭해서 상세 내용을 확인해보세요!
+                  <div style={{position:"absolute",top:"100%",left:"50%",transform:"translateX(-50%)",width:0,height:0,borderLeft:"5px solid transparent",borderRight:"5px solid transparent",borderTop:"5px solid #1f2937"}}/>
+                </div>
+              )}
               <button type="button" onClick={()=>setOpenIndex(prev=>prev===i?null:i)} style={{width:30,height:30,borderRadius:"50%",background:isFilled?(st==="upcoming"?"var(--accent)":stateColor):"#f1f5f9",display:"flex",alignItems:"center",justifyContent:"center",zIndex:1,position:"relative",animation:isOpen?"pulse 1.4s infinite":"none",border:isFilled?"none":"1.5px solid #e2e8f0",flexShrink:0,padding:0,cursor:"pointer",transition:"background 0.2s,border 0.2s"}}>
                 <Icon name={step.icon} size={15} color={isFilled?"white":"#94a3b8"}/>
               </button>
