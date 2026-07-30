@@ -1753,32 +1753,33 @@ function proposalTimelineStates(status){
     return"upcoming";
   });
 }
+const PROPOSAL_TIMELINE_META=PROPOSAL_TIMELINE_STEPS.map((label,i)=>({label,icon:PROPOSAL_TIMELINE_ICONS[i],desc:PROPOSAL_TIMELINE_DESC[i]}));
 
-function ProposalTimelineWidget({states,title="진행 상태"}){
+function ProposalTimelineWidget({steps,states,title="진행 상태"}){
   const [openIndex,setOpenIndex]=useState(null);
   return(
     <section style={{background:"white",borderRadius:20,padding:"18px 14px",border:"1.5px solid #f1f5f9"}}>
       {title&&<h2 style={{fontSize:15,fontWeight:800,color:"#111827",marginTop:0,marginBottom:20}}>{title}</h2>}
       <div style={{display:"flex",alignItems:"flex-start"}}>
-        {PROPOSAL_TIMELINE_STEPS.map((label,i)=>{
+        {steps.map((step,i)=>{
           const st=states[i];
           const prevSt=i>0?states[i-1]:null;
           const color=st==="upcoming"?"#e2e8f0":(st==="current"?"var(--accent)":"#15803D");
           return(
-            <div key={label} style={{flex:1,display:"flex",flexDirection:"column",alignItems:"center",position:"relative"}}>
+            <div key={step.label} style={{flex:1,display:"flex",flexDirection:"column",alignItems:"center",position:"relative"}}>
               {i>0&&<div style={{position:"absolute",top:15,right:"50%",width:"100%",height:2,background:prevSt==="upcoming"?"#e2e8f0":(prevSt==="current"?"var(--accent)":"#15803D"),zIndex:0}}/>}
               <button type="button" onClick={()=>setOpenIndex(prev=>prev===i?null:i)} style={{width:30,height:30,borderRadius:"50%",background:st==="upcoming"?"#f1f5f9":color,display:"flex",alignItems:"center",justifyContent:"center",zIndex:1,position:"relative",animation:st==="current"?"pulse 1.4s infinite":"none",border:st==="upcoming"?"1.5px solid #e2e8f0":"none",flexShrink:0,padding:0,cursor:"pointer"}}>
-                <Icon name={PROPOSAL_TIMELINE_ICONS[i]} size={15} color={st==="upcoming"?"#94a3b8":"white"}/>
+                <Icon name={step.icon} size={15} color={st==="upcoming"?"#94a3b8":"white"}/>
               </button>
-              <span style={{fontSize:11,marginTop:6,fontWeight:st==="current"?700:600,color:st==="upcoming"?"#94a3b8":"#374151"}}>{label}</span>
+              <span style={{fontSize:11,marginTop:6,fontWeight:st==="current"?700:600,color:st==="upcoming"?"#94a3b8":"#374151"}}>{step.label}</span>
             </div>
           );
         })}
       </div>
       {openIndex!=null&&(
         <div style={{marginTop:16,padding:"12px 14px",borderRadius:12,background:"#F8FAFC",border:"1px solid #E2E8F0",display:"flex",gap:8,alignItems:"flex-start"}}>
-          <Icon name={PROPOSAL_TIMELINE_ICONS[openIndex]} size={15} color="var(--accent)"/>
-          <div style={{fontSize:12,color:"#374151",lineHeight:1.6}}><b style={{color:"#111827"}}>{PROPOSAL_TIMELINE_STEPS[openIndex]}</b> — {PROPOSAL_TIMELINE_DESC[openIndex]}</div>
+          <Icon name={steps[openIndex].icon} size={15} color="var(--accent)"/>
+          <div style={{fontSize:12,color:"#374151",lineHeight:1.6}}><b style={{color:"#111827"}}>{steps[openIndex].label}</b> — {steps[openIndex].desc}</div>
         </div>
       )}
     </section>
@@ -1950,7 +1951,7 @@ function ProposalDetailView({proposal,user,onVote,onBack,bp}){
         <div style={{maxWidth:820,margin:"0 auto",display:"flex",flexDirection:"column",gap:16}}>
 
           {/* 상태 타임라인 */}
-          <ProposalTimelineWidget states={timeline}/>
+          <ProposalTimelineWidget steps={PROPOSAL_TIMELINE_META} states={timeline}/>
 
           {/* 제안 원문 */}
           <section style={{background:"white",borderRadius:20,padding:bp.isDesktop?"24px 28px":"18px 16px",border:"1.5px solid #f1f5f9"}}>
@@ -2061,6 +2062,7 @@ const PROPOSAL_ONBOARDING_META=[
     detail:"검토가 끝나면 '답변완료'로, 실제 정책에 반영되면 '반영완료'로 상태가 바뀌며 시행 시기까지 안내받을 수 있어요."},
 ];
 const PROPOSAL_ONBOARDING_STEPS=PROPOSAL_GUIDE_STEPS.map((summary,i)=>({...PROPOSAL_ONBOARDING_META[i],summary}));
+const PROPOSAL_ONBOARDING_TIMELINE_META=PROPOSAL_ONBOARDING_STEPS.map(s=>({label:s.title,icon:s.icon,desc:s.detail}));
 
 function ProposalOnboardingCarousel({bp}){
   const scrollRef=useRef(null);
@@ -2092,7 +2094,7 @@ function ProposalOnboardingCarousel({bp}){
       <div ref={scrollRef} onScroll={handleScroll} style={{display:"flex",overflowX:"auto",scrollSnapType:"x mandatory",WebkitOverflowScrolling:"touch"}}>
         {PROPOSAL_ONBOARDING_STEPS.map((step,i)=>(
           <div key={step.title} style={{flex:"0 0 100%",width:"100%",boxSizing:"border-box",scrollSnapAlign:"start",padding:`0 ${sidePad}px`,display:"flex",flexDirection:"column",gap:16}}>
-            <ProposalTimelineWidget states={PROPOSAL_TIMELINE_STEPS.map((_,idx)=>idx<i?"done":idx===i?"current":"upcoming")}/>
+            <ProposalTimelineWidget steps={PROPOSAL_ONBOARDING_TIMELINE_META} states={PROPOSAL_ONBOARDING_TIMELINE_META.map((_,idx)=>idx<i?"done":idx===i?"current":"upcoming")}/>
             <div style={{display:"flex",flexDirection:"column",gap:8}}>
               <div style={{display:"flex",alignItems:"center",gap:8}}>
                 <div style={{width:32,height:32,borderRadius:10,background:`linear-gradient(135deg,${step.gradient[0]},${step.gradient[1]})`,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>
