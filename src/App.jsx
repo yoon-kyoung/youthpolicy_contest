@@ -2098,17 +2098,21 @@ function ProposalWriteView({category,setCategory,title,setTitle,background,setBa
     }
     setAiChecking(true);
     try{
+      const controller=new AbortController();
+      const timer=setTimeout(()=>controller.abort(),25000);
       const res=await fetch(`${API_BASE}/api/moderate`,{
         method:"POST",
         headers:{"Content-Type":"application/json"},
         body:JSON.stringify({title,background,content,expectedEffect,existingProposals:(proposals||[]).map(p=>({id:p.id,title:p.title}))}),
+        signal:controller.signal,
       });
+      clearTimeout(timer);
       if(!res.ok)throw new Error(`HTTP ${res.status}`);
       const data=await res.json();
       setAiResult(data);
       setCheckedSignature(signature);
     }catch{
-      alert("AI 검토 중 오류가 발생했어요. 잠시 후 다시 시도해주세요.");
+      alert("AI 검토 서버에 연결하지 못했어요. 잠시 후 다시 시도해주세요.");
     }finally{
       setAiChecking(false);
     }
@@ -2187,17 +2191,28 @@ function ProposalWriteView({category,setCategory,title,setTitle,background,setBa
             </ProposalFormRow>
 
             {aiResult&&checkedSignature===signature&&(
-              <div style={{borderRadius:10,padding:"10px 14px",fontSize:12,lineHeight:1.6,background:aiResult.profanity?"#FEF2F2":"#EFF6FF",border:`1.5px solid ${aiResult.profanity?"#FECACA":"var(--accent-bg)"}`}}>
+              <div style={{borderRadius:10,padding:"12px 14px",fontSize:12,lineHeight:1.6,background:aiResult.profanity?"#FEF2F2":"#EFF6FF",border:`1.5px solid ${aiResult.profanity?"#FECACA":"var(--accent-bg)"}`}}>
+                <div style={{fontWeight:800,fontSize:12,color:"#111827",marginBottom:6,display:"flex",alignItems:"center",gap:5}}>
+                  <Icon name="smart_toy" size={14} color="var(--accent)"/>AI 검토 결과
+                </div>
                 <div style={{display:"flex",gap:6,alignItems:"flex-start",color:aiResult.profanity?"#B91C1C":"#15803D"}}>
                   <Icon name={aiResult.profanity?"error":"check_circle"} size={15} color={aiResult.profanity?"#DC2626":"#16A34A"}/>
-                  <span>{aiResult.profanity?`부적절한 표현이 감지되어 제출할 수 없어요: ${aiResult.profanityReason}`:"부적절한 표현이 없어요. 제안하기를 눌러주세요."}</span>
+                  <span>
+                    욕설·부적절한 표현 감지율 <b>{aiResult.profanityScore??0}%</b>
+                    {aiResult.profanity?` — 제출할 수 없어요: ${aiResult.profanityReason}`:" — 제안하기를 눌러주세요."}
+                  </span>
                 </div>
-                {aiResult.similar?.length>0&&(
-                  <div style={{marginTop:8,paddingTop:8,borderTop:"1px solid rgba(0,0,0,0.08)",color:"#374151"}}>
-                    <div style={{fontWeight:700,marginBottom:4}}>비슷한 제안이 이미 있어요</div>
-                    {aiResult.similar.map(s=>(<div key={s.id} style={{marginBottom:2}}>· {s.title} — {s.reason}</div>))}
-                  </div>
+                {aiResult.aiAvailable===false&&(
+                  <div style={{marginTop:6,color:"#9ca3af"}}>※ 유사 정책 분석 서버 응답이 지연되어, 욕설 검사만 완료됐어요.</div>
                 )}
+                <div style={{marginTop:8,paddingTop:8,borderTop:"1px solid rgba(0,0,0,0.08)",color:"#374151"}}>
+                  <div style={{fontWeight:700,marginBottom:4}}>유사 정책 확인</div>
+                  {aiResult.similar?.length>0?(
+                    aiResult.similar.map(s=>(<div key={s.id} style={{marginBottom:2}}>· {s.title} — {s.reason}</div>))
+                  ):(
+                    <div style={{color:"#6b7280"}}>비슷한 기존 제안을 찾지 못했어요.</div>
+                  )}
+                </div>
               </div>
             )}
 
