@@ -320,8 +320,8 @@ const NAV_ITEMS = [
 ];
 
 const THEMES = [
-  { key:'blue', color:'#007FFF', colorDark:'#0052A3', colorBg:'#E6F2FF', colorBgActive:'#F0F7FF', colorShadow:'rgba(0,127,255,0.25)', headerBg:'#ffffff', bodyBg:'#f0f7ff', title:'로얄블루' },
-  { key:'red',  color:'#DC2626', colorDark:'#991B1B', colorBg:'#FEE2E2', colorBgActive:'#FFF5F5', colorShadow:'rgba(220,38,38,0.25)',  headerBg:'#fff5f5', bodyBg:'#ffe4e4', title:'레드' },
+  { key:'blue', color:'#007FFF', colorDark:'#0052A3', colorBg:'#E6F2FF', colorBgActive:'#F0F7FF', colorShadow:'rgba(0,127,255,0.25)', orbColor1:'#4AA8FF', orbColor2:'#19CEBD', headerBg:'#ffffff', bodyBg:'#f0f7ff', title:'로얄블루' },
+  { key:'red',  color:'#DC2626', colorDark:'#991B1B', colorBg:'#FEE2E2', colorBgActive:'#FFF5F5', colorShadow:'rgba(220,38,38,0.25)',  orbColor1:'#7877C6', orbColor2:'#E16FA1', headerBg:'#ffffff', bodyBg:'#ffe4e4', title:'레드' },
 ];
 
 const MY_SUB_PAGES = [
@@ -3071,8 +3071,8 @@ function FeaturesPage({onBack,bp}){
   );
 }
 
-function ThemeStyle({color,colorDark,colorBg,colorBgActive,colorShadow,headerBg,bodyBg}){
-  return <style>{`:root{--accent:${color};--accent-dark:${colorDark};--accent-bg:${colorBg};--accent-bg-active:${colorBgActive};--accent-shadow:${colorShadow};--header-bg:${headerBg};--body-bg:${bodyBg}}`}</style>;
+function ThemeStyle({color,colorDark,colorBg,colorBgActive,colorShadow,orbColor1,orbColor2,headerBg,bodyBg}){
+  return <style>{`:root{--accent:${color};--accent-dark:${colorDark};--accent-bg:${colorBg};--accent-bg-active:${colorBgActive};--accent-shadow:${colorShadow};--orb1:${orbColor1};--orb2:${orbColor2};--header-bg:${headerBg};--body-bg:${bodyBg}}`}</style>;
 }
 
 function PaletteDots({themeKey,onChange}){
@@ -3336,7 +3336,7 @@ export default function App(){
     return(
       <>
         <style>{GLOBAL_CSS}</style>
-        <ThemeStyle color={theme.color} colorDark={theme.colorDark} colorBg={theme.colorBg} colorBgActive={theme.colorBgActive} colorShadow={theme.colorShadow} headerBg={theme.headerBg} bodyBg={theme.bodyBg}/>
+        <ThemeStyle color={theme.color} colorDark={theme.colorDark} colorBg={theme.colorBg} colorBgActive={theme.colorBgActive} colorShadow={theme.colorShadow} orbColor1={theme.orbColor1} orbColor2={theme.orbColor2} headerBg={theme.headerBg} bodyBg={theme.bodyBg}/>
         <LoginPage setPage={navigateTo} bp={bp}/>
       </>
     );
@@ -3346,7 +3346,7 @@ export default function App(){
     return(
       <>
         <style>{GLOBAL_CSS}</style>
-        <ThemeStyle color={theme.color} colorDark={theme.colorDark} colorBg={theme.colorBg} colorBgActive={theme.colorBgActive} colorShadow={theme.colorShadow} headerBg={theme.headerBg} bodyBg={theme.bodyBg}/>
+        <ThemeStyle color={theme.color} colorDark={theme.colorDark} colorBg={theme.colorBg} colorBgActive={theme.colorBgActive} colorShadow={theme.colorShadow} orbColor1={theme.orbColor1} orbColor2={theme.orbColor2} headerBg={theme.headerBg} bodyBg={theme.bodyBg}/>
         <SignupPage setPage={navigateTo} bp={bp}/>
       </>
     );
@@ -3356,7 +3356,7 @@ export default function App(){
     return(
       <div style={{height:"calc(100vh / var(--font-scale,1))",overflow:"hidden",display:"flex",flexDirection:"column",fontFamily:"'Pretendard Variable','Apple SD Gothic Neo','Noto Sans KR',sans-serif"}}>
         <style>{GLOBAL_CSS}</style>
-        <ThemeStyle color={theme.color} colorDark={theme.colorDark} colorBg={theme.colorBg} colorBgActive={theme.colorBgActive} colorShadow={theme.colorShadow} headerBg={theme.headerBg} bodyBg={theme.bodyBg}/>
+        <ThemeStyle color={theme.color} colorDark={theme.colorDark} colorBg={theme.colorBg} colorBgActive={theme.colorBgActive} colorShadow={theme.colorShadow} orbColor1={theme.orbColor1} orbColor2={theme.orbColor2} headerBg={theme.headerBg} bodyBg={theme.bodyBg}/>
         <div style={{flex:1,overflowY:"auto"}}>
           <FeaturesPage onBack={()=>navigateTo("chatbot")} bp={bp}/>
         </div>
@@ -3367,7 +3367,7 @@ export default function App(){
     return(
       <div style={{height:"calc(100vh / var(--font-scale,1))",overflow:"hidden",display:"flex",flexDirection:"column",fontFamily:"'Pretendard Variable','Apple SD Gothic Neo','Noto Sans KR',sans-serif"}}>
         <style>{GLOBAL_CSS}</style>
-        <ThemeStyle color={theme.color} colorDark={theme.colorDark} colorBg={theme.colorBg} colorBgActive={theme.colorBgActive} colorShadow={theme.colorShadow} headerBg={theme.headerBg} bodyBg={theme.bodyBg}/>
+        <ThemeStyle color={theme.color} colorDark={theme.colorDark} colorBg={theme.colorBg} colorBgActive={theme.colorBgActive} colorShadow={theme.colorShadow} orbColor1={theme.orbColor1} orbColor2={theme.orbColor2} headerBg={theme.headerBg} bodyBg={theme.bodyBg}/>
         <div style={{flex:1,overflowY:"auto"}}>
           <GuidePage onBack={()=>navigateTo("chatbot")} bp={bp}/>
         </div>
@@ -3379,7 +3379,7 @@ export default function App(){
     return(
       <div style={{display:"flex",height:"calc(100vh / var(--font-scale, 1))",overflow:"hidden",fontFamily:"'Pretendard Variable','Apple SD Gothic Neo','Noto Sans KR',sans-serif"}}>
         <style>{GLOBAL_CSS}</style>
-        <ThemeStyle color={theme.color} colorDark={theme.colorDark} colorBg={theme.colorBg} colorBgActive={theme.colorBgActive} colorShadow={theme.colorShadow} headerBg={theme.headerBg} bodyBg={theme.bodyBg}/>
+        <ThemeStyle color={theme.color} colorDark={theme.colorDark} colorBg={theme.colorBg} colorBgActive={theme.colorBgActive} colorShadow={theme.colorShadow} orbColor1={theme.orbColor1} orbColor2={theme.orbColor2} headerBg={theme.headerBg} bodyBg={theme.bodyBg}/>
         <Sidebar page={page} setPage={navigateTo} favIds={favIds} user={user} open={sidebarOpen} setOpen={setSidebarOpen} onLogoClick={goHome}/>
         <div style={{flex:1,display:"flex",flexDirection:"column",overflow:"hidden"}}>
           {!isDetail&&(
@@ -3446,7 +3446,7 @@ export default function App(){
   return(
     <div style={{display:"flex",flexDirection:"column",height:"calc(100vh / var(--font-scale, 1))",overflow:"hidden",fontFamily:"'Pretendard Variable','Apple SD Gothic Neo','Noto Sans KR',sans-serif"}}>
       <style>{GLOBAL_CSS}</style>
-      <ThemeStyle color={theme.color} colorDark={theme.colorDark} colorBg={theme.colorBg} colorBgActive={theme.colorBgActive} colorShadow={theme.colorShadow} headerBg={theme.headerBg} bodyBg={theme.bodyBg}/>
+      <ThemeStyle color={theme.color} colorDark={theme.colorDark} colorBg={theme.colorBg} colorBgActive={theme.colorBgActive} colorShadow={theme.colorShadow} orbColor1={theme.orbColor1} orbColor2={theme.orbColor2} headerBg={theme.headerBg} bodyBg={theme.bodyBg}/>
       {!isDetail&&(
         bp.isTablet
           ?<TopNav page={page} setPage={navigateTo} favIds={favIds} user={user} onLogout={handleLogout} themeKey={themeKey} onThemeChange={setThemeKey} fontScale={fontScale} onFontInc={incFont} onFontDec={decFont} onLogoClick={goHome}/>

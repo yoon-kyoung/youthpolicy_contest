@@ -761,8 +761,8 @@ export default function ChatBotView({ bp, favIds, onToggleFav, onGoDetail, reset
   if (!started) {
     return (
       <div style={{ height:'100%', overflow:'hidden', background:'#ffffff', position:'relative' }}>
-        <div style={{position:'absolute',left:'24.9%',top:'52%',width:'28.8vw',aspectRatio:'1',borderRadius:'50%',background:'#4AA8FF',filter:'blur(12vw)',pointerEvents:'none',zIndex:0}}/>
-        <div style={{position:'absolute',left:'43.2%',top:'46%',width:'19.4vw',aspectRatio:'1',borderRadius:'50%',background:'#19CEBD',filter:'blur(8vw)',pointerEvents:'none',zIndex:0}}/>
+        <div style={{position:'absolute',left:'24.9%',top:'52%',width:'28.8vw',aspectRatio:'1',borderRadius:'50%',background:'var(--orb1)',filter:'blur(12vw)',pointerEvents:'none',zIndex:0}}/>
+        <div style={{position:'absolute',left:'43.2%',top:'46%',width:'19.4vw',aspectRatio:'1',borderRadius:'50%',background:'var(--orb2)',filter:'blur(8vw)',pointerEvents:'none',zIndex:0}}/>
         {/* Privacy Notice — 오른쪽 하단 고정 */}
         <PrivacyNoticePanel bp={bp}/>
         {/* 실시간 인기 검색어 — 오른쪽 상단 고정 */}
