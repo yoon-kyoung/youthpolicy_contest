@@ -1589,6 +1589,10 @@ function CommunityView({bp,user,onGoProposal,initialCatFilter}){
   const [loadingPosts,setLoadingPosts]=useState(true);
   const cats=["전체","후기","정보","Q&A"];
   const filtered=posts.filter(p=>catFilter==="전체"||p.cat===catFilter);
+  const [pageNum,setPageNum]=useState(1);
+  useEffect(()=>{setPageNum(1);},[catFilter]);
+  const pageCount=Math.max(1,Math.ceil(filtered.length/4));
+  const pageItems=filtered.slice((pageNum-1)*4,pageNum*4);
 
   const fetchPosts=useCallback(async()=>{
     setLoadingPosts(true);
@@ -1678,7 +1682,7 @@ function CommunityView({bp,user,onGoProposal,initialCatFilter}){
               ><Icon name="edit" size={15} color="white"/>글 작성하기</button>
             </div>
           )}
-          {filtered.map((post,i)=>{
+          {pageItems.map((post,i)=>{
             const catColor=CAT_COLOR_MAP[post.cat]||{bg:"#f8fafc",border:"#e5e7eb",text:"#6b7280"};
             return(
               <div key={post.id} onClick={()=>setSelectedPost(post)} style={{background:"white",borderRadius:16,padding:bp.isDesktop?"20px 24px":"14px 16px",cursor:"pointer",border:"1.5px solid #E2E8F0",transition:"transform 0.15s,box-shadow 0.15s",animation:`fadeUp 0.25s ease ${i*50}ms both`}}
@@ -1705,6 +1709,7 @@ function CommunityView({bp,user,onGoProposal,initialCatFilter}){
               </div>
             );
           })}
+          {filtered.length>0&&<Pagination page={pageNum} pageCount={pageCount} onChange={setPageNum}/>}
         </div>
       </div>
     </div>
