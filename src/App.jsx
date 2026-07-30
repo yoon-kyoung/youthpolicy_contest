@@ -2030,6 +2030,69 @@ const PROPOSAL_FAQ=[
   {q:"채택되면 어떻게 되나요?",a:"실제 정책에 반영되면 '반영완료' 상태로 바뀌고 시행 시기가 함께 안내돼요."},
 ];
 
+const PROPOSAL_ONBOARDING_META=[
+  {icon:"edit_note",   gradient:["#38BDF8","#0369A1"], title:"제안 등록하기",
+    detail:"어떤 정책이, 왜 필요한지 구체적으로 적을수록 다른 청년들의 공감을 얻기 쉬워요. 배경과 기대 효과까지 함께 적어보세요."},
+  {icon:"favorite",    gradient:["#FB7185","#BE123C"], title:"공감투표 받기",
+    detail:"내 제안에 공감하는 청년이 많을수록 힘이 실려요. 다른 사람의 제안에도 공감을 눌러 함께 응원해주세요."},
+  {icon:"sync",        gradient:["#60A5FA","#1D4ED8"], title:"부처 매칭 시작",
+    detail:"임계치를 넘으면 제안 상태가 '부처매칭중'으로 바뀌고, 관련 정책을 담당하는 부처가 자동으로 연결돼요."},
+  {icon:"check_circle",gradient:["#FBBF24","#B45309"], title:"답변 받기",
+    detail:"검토가 끝나면 '답변완료'로, 실제 정책에 반영되면 '반영완료'로 상태가 바뀌며 시행 시기까지 안내받을 수 있어요."},
+];
+const PROPOSAL_ONBOARDING_STEPS=PROPOSAL_GUIDE_STEPS.map((summary,i)=>({...PROPOSAL_ONBOARDING_META[i],summary}));
+
+function ProposalOnboardingCarousel({bp}){
+  const scrollRef=useRef(null);
+  const [active,setActive]=useState(0);
+  const cardW=bp.isDesktop?300:bp.isTablet?280:230;
+  const gap=14;
+  const sidePad=bp.isDesktop?24:16;
+
+  const scrollToIndex=i=>{
+    scrollRef.current?.scrollTo({left:i*(cardW+gap),behavior:"smooth"});
+  };
+  const handleScroll=()=>{
+    const el=scrollRef.current;
+    if(!el)return;
+    const i=Math.round(el.scrollLeft/(cardW+gap));
+    setActive(Math.max(0,Math.min(PROPOSAL_ONBOARDING_STEPS.length-1,i)));
+  };
+
+  return(
+    <div style={{background:"white",borderRadius:16,border:"1.5px solid #E2E8F0",padding:"18px 0 16px",overflow:"hidden"}}>
+      <div style={{padding:`0 ${sidePad}px 14px`,display:"flex",alignItems:"center",gap:7}}>
+        <Icon name="edit_note" size={17} color="var(--accent)"/>
+        <div style={{fontSize:bp.isDesktop?16:15,fontWeight:800,color:"#111827"}}>정책제안 이렇게 진행돼요</div>
+      </div>
+      <div ref={scrollRef} onScroll={handleScroll} style={{display:"flex",gap,overflowX:"auto",scrollSnapType:"x mandatory",padding:`0 ${sidePad}px 6px`,WebkitOverflowScrolling:"touch"}}>
+        {PROPOSAL_ONBOARDING_STEPS.map((step,i)=>(
+          <div key={step.title} style={{flex:`0 0 ${cardW}px`,scrollSnapAlign:"start",borderRadius:16,border:"1.5px solid #E2E8F0",overflow:"hidden",display:"flex",flexDirection:"column"}}>
+            <div style={{position:"relative",height:112,background:`linear-gradient(135deg,${step.gradient[0]},${step.gradient[1]})`,display:"flex",alignItems:"center",justifyContent:"center",overflow:"hidden"}}>
+              <div style={{position:"absolute",width:86,height:86,borderRadius:"50%",background:"rgba(255,255,255,0.16)",top:-28,right:-18}}/>
+              <div style={{position:"absolute",width:56,height:56,borderRadius:"50%",background:"rgba(255,255,255,0.14)",bottom:-18,left:-8}}/>
+              <div style={{position:"absolute",top:10,left:12,width:22,height:22,borderRadius:"50%",background:"rgba(255,255,255,0.28)",color:"white",fontSize:12,fontWeight:800,display:"flex",alignItems:"center",justifyContent:"center"}}>{i+1}</div>
+              <div style={{width:52,height:52,borderRadius:"50%",background:"rgba(255,255,255,0.95)",display:"flex",alignItems:"center",justifyContent:"center",position:"relative",zIndex:1,boxShadow:"0 4px 14px rgba(0,0,0,0.16)"}}>
+                <Icon name={step.icon} size={24} color={step.gradient[1]}/>
+              </div>
+            </div>
+            <div style={{padding:"14px 16px 16px",display:"flex",flexDirection:"column",gap:6}}>
+              <div style={{fontSize:14,fontWeight:800,color:"#111827"}}>{step.title}</div>
+              <div style={{fontSize:12,fontWeight:700,color:"var(--accent)",lineHeight:1.5}}>{step.summary}</div>
+              <div style={{fontSize:12,color:"#6b7280",lineHeight:1.6}}>{step.detail}</div>
+            </div>
+          </div>
+        ))}
+      </div>
+      <div style={{display:"flex",justifyContent:"center",gap:6,marginTop:10}}>
+        {PROPOSAL_ONBOARDING_STEPS.map((_,i)=>(
+          <button key={i} onClick={()=>scrollToIndex(i)} aria-label={`${i+1}단계로 이동`} style={{width:active===i?18:6,height:6,borderRadius:20,border:"none",padding:0,cursor:"pointer",background:active===i?"var(--accent)":"#E2E8F0",transition:"all 0.2s"}}/>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 function ProposalGuideSection({icon,title,children}){
   return(
     <div style={{marginBottom:14}}>
@@ -2229,6 +2292,8 @@ function PolicyProposalPage({bp,user}){
 
       <div style={{padding:bp.isDesktop?"28px 40px 60px":bp.isTablet?"20px 24px 60px":"14px 14px 80px"}}>
         <div style={{maxWidth:860,margin:"0 auto",display:"flex",flexDirection:"column",gap:20}}>
+          <ProposalOnboardingCarousel bp={bp}/>
+
           <form onSubmit={handleSubmit} style={{background:"white",borderRadius:16,border:"1.5px solid #E2E8F0",padding:bp.isDesktop?24:16,display:"flex",flexDirection:"column",gap:12}}>
             <div style={{display:"flex",gap:8,flexWrap:"wrap"}}>
               {CATEGORIES.slice(1).map(c=>(
