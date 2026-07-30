@@ -1580,8 +1580,8 @@ function CommunityPostDetailView({post,bp,user,onBack,onLike}){
 
 // ─── 커뮤니티 뷰 ──────────────────────────────────────────────────────────
 
-function CommunityView({bp,user,onGoProposal}){
-  const [catFilter,setCatFilter]=useState("전체");
+function CommunityView({bp,user,onGoProposal,initialCatFilter}){
+  const [catFilter,setCatFilter]=useState(initialCatFilter||"전체");
   const [showWrite,setShowWrite]=useState(false);
   const [selectedPost,setSelectedPost]=useState(null);
   const [posts,setPosts]=useState([]);
@@ -2146,18 +2146,7 @@ function ProposalOnboardingCarousel({bp}){
   );
 }
 
-function ProposalGuideSection({icon,title,children}){
-  return(
-    <div style={{marginBottom:14}}>
-      <div style={{fontSize:11,fontWeight:700,color:"#374151",marginBottom:7,display:"flex",alignItems:"center",gap:5}}>
-        <Icon name={icon} size={12} color="var(--accent)"/>{title}
-      </div>
-      {children}
-    </div>
-  );
-}
-
-function ProposalGuidePanel({bp}){
+function ProposalGuidePanel({bp,onGoCommunity}){
   const [collapsed,setCollapsed]=useLocalStorage("yoa:proposalGuide:collapsed",true);
   const isMobile=bp.isMobile;
 
@@ -2172,18 +2161,10 @@ function ProposalGuidePanel({bp}){
       {!collapsed&&(
         <>
         <div style={{padding:isMobile?"14px 14px 6px":"16px 16px 8px",maxHeight:"48vh",overflowY:"auto"}}>
-          <ProposalGuideSection icon="edit_note" title="정책제안 방법">
-            <div style={{display:"flex",flexDirection:"column",gap:6}}>
-              {PROPOSAL_GUIDE_STEPS.map((step,i)=>(
-                <div key={step} style={{display:"flex",gap:8,alignItems:"flex-start"}}>
-                  <div style={{width:16,height:16,borderRadius:"50%",background:"var(--accent-bg)",color:"var(--accent)",fontSize:10,fontWeight:800,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,marginTop:1}}>{i+1}</div>
-                  <span style={{fontSize:12,color:"#374151",lineHeight:1.5}}>{step}</span>
-                </div>
-              ))}
+          <div style={{marginBottom:14}}>
+            <div style={{fontSize:14,fontWeight:800,color:"#111827",marginBottom:8,display:"flex",alignItems:"center",gap:5}}>
+              <Icon name="help" size={14} color="var(--accent)"/>자주 묻는 질문
             </div>
-          </ProposalGuideSection>
-
-          <ProposalGuideSection icon="help" title="자주 묻는 질문">
             <div style={{display:"flex",flexDirection:"column",gap:10}}>
               {PROPOSAL_FAQ.map(item=>(
                 <div key={item.q}>
@@ -2192,7 +2173,11 @@ function ProposalGuidePanel({bp}){
                 </div>
               ))}
             </div>
-          </ProposalGuideSection>
+          </div>
+
+          <button onClick={onGoCommunity} style={{width:"100%",display:"flex",alignItems:"center",justifyContent:"center",gap:6,padding:"10px 14px",borderRadius:10,border:"none",background:"var(--accent)",color:"white",fontSize:13,fontWeight:700,cursor:"pointer",transition:"opacity 0.15s"}}
+            onMouseEnter={e=>e.currentTarget.style.opacity="0.85"} onMouseLeave={e=>e.currentTarget.style.opacity="1"}
+          >직접 질문하러가기<Icon name="arrow_forward" size={14} color="white"/></button>
         </div>
 
         <button onClick={()=>setCollapsed(true)} style={{width:"100%",display:"flex",alignItems:"center",gap:12,padding:"14px 16px",background:"#F8FAFE",border:"none",borderTop:"1.5px solid #E2E8F0",cursor:"pointer",textAlign:"left"}}>
@@ -2226,7 +2211,7 @@ function ProposalGuidePanel({bp}){
   );
 }
 
-function PolicyProposalPage({bp,user}){
+function PolicyProposalPage({bp,user,onGoCommunity}){
   const [proposals,setProposals]=useLocalStorage("yoa:proposals",PROPOSAL_SEED);
   const [title,setTitle]=useState("");
   const [content,setContent]=useState("");
@@ -2400,7 +2385,7 @@ function PolicyProposalPage({bp,user}){
         </div>
       </div>
 
-      <ProposalGuidePanel bp={bp}/>
+      <ProposalGuidePanel bp={bp} onGoCommunity={onGoCommunity}/>
     </div>
   );
 }
@@ -3347,6 +3332,7 @@ export default function App(){
   const [fromPage,setFromPage]=useState("chatbot");
   const [favIds,setFavIds]=useLocalStorage("yoa:favs",new Set());
   const [mySub,setMySub]=useLocalStorage("yoa:mysub","info");
+  const [communitySub,setCommunitySub]=useLocalStorage("yoa:communitySub","전체");
   const [themeKey,setThemeKey]=useLocalStorage("yoa:theme","blue");
   const [fontScale,setFontScale]=useLocalStorage("yoa:fontscale",1);
   const [user,setUser]=useState(null);
@@ -3582,8 +3568,8 @@ export default function App(){
               :page==="search"    ?<div style={{flex:1,overflow:"hidden"}}><SearchView {...viewProps}/></div>
               :page==="chatbot"   ?<div style={{flex:1,overflow:"hidden"}}><ChatBotView bp={bp.isDesktop?'desktop':bp.isTablet?'tablet':'mobile'} favIds={favIds} onToggleFav={toggleFav} onGoDetail={goDetail} resetSignal={chatResetKey}/></div>
               :page==="mypage"    ?<div style={{flex:1,overflowY:"auto"}}><MyPageContainer supabaseUser={user} onLogout={handleLogout} initialTab={mySub||"info"} favIds={favIds} policies={policies} onToggleFav={toggleFav} onGoDetail={goDetail}/></div>
-              :page==="community" ?<div style={{flex:1,overflowY:"auto"}}><CommunityView bp={bp} user={user} onGoProposal={()=>navigateTo("proposal")}/></div>
-              :page==="proposal"  ?<div style={{flex:1,overflowY:"auto"}}><PolicyProposalPage bp={bp} user={user}/></div>
+              :page==="community" ?<div style={{flex:1,overflowY:"auto"}}><CommunityView bp={bp} user={user} onGoProposal={()=>navigateTo("proposal")} initialCatFilter={communitySub}/></div>
+              :page==="proposal"  ?<div style={{flex:1,overflowY:"auto"}}><PolicyProposalPage bp={bp} user={user} onGoCommunity={()=>{setCommunitySub("Q&A");navigateTo("community");}}/></div>
               :null
             }
           </div>
@@ -3640,8 +3626,8 @@ export default function App(){
           :page==="search"    ?<SearchView {...viewProps}/>
           :page==="chatbot"   ?<ChatBotView bp={bp.isDesktop?'desktop':bp.isTablet?'tablet':'mobile'} favIds={favIds} onToggleFav={toggleFav} onGoDetail={goDetail} resetSignal={chatResetKey}/>
           :page==="mypage"    ?<MyPageContainer supabaseUser={user} onLogout={handleLogout} initialTab={mySub||"info"} favIds={favIds} policies={policies} onToggleFav={toggleFav} onGoDetail={goDetail}/>
-          :page==="community" ?<CommunityView bp={bp} user={user} onGoProposal={()=>navigateTo("proposal")}/>
-          :page==="proposal"  ?<PolicyProposalPage bp={bp} user={user}/>
+          :page==="community" ?<CommunityView bp={bp} user={user} onGoProposal={()=>navigateTo("proposal")} initialCatFilter={communitySub}/>
+          :page==="proposal"  ?<PolicyProposalPage bp={bp} user={user} onGoCommunity={()=>{setCommunitySub("Q&A");navigateTo("community");}}/>
           :null
         }
       </main>
