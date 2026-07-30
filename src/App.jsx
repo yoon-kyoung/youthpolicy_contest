@@ -2162,7 +2162,7 @@ function ProposalGuidePanel({bp,onGoCommunity}){
         <>
         <div style={{padding:isMobile?"14px 14px 6px":"16px 16px 8px",maxHeight:"48vh",overflowY:"auto"}}>
           <div style={{marginBottom:14}}>
-            <div style={{fontSize:14,fontWeight:800,color:"#111827",marginBottom:8,display:"flex",alignItems:"center",gap:5}}>
+            <div style={{fontSize:14,fontWeight:800,color:"#111827",marginBottom:14,display:"flex",alignItems:"center",gap:5}}>
               <Icon name="help" size={14} color="var(--accent)"/>자주 묻는 질문
             </div>
             <div style={{display:"flex",flexDirection:"column",gap:10}}>
