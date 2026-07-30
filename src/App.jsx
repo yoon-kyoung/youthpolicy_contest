@@ -2201,7 +2201,7 @@ function ProposalGuidePanel({bp}){
           </div>
           <div style={{flex:1}}>
             <div style={{fontSize:13,fontWeight:800,color:"#111827",lineHeight:1.3}}>정책제안 안내</div>
-            <div style={{fontSize:11,color:"#6b7280",marginTop:2}}>제안 전 확인해보세요</div>
+            <div style={{fontSize:11,color:"#6b7280",marginTop:2}}>자주하는 질문</div>
           </div>
           <div style={{display:"flex",alignItems:"center",gap:5,color:"#9ca3af",fontSize:12,flexShrink:0}}>
             <span>접기</span>
@@ -2214,11 +2214,11 @@ function ProposalGuidePanel({bp}){
       {collapsed&&(
         <div onClick={()=>setCollapsed(false)} style={{display:"flex",flexDirection:"column",alignItems:"center",gap:6,cursor:"pointer"}}>
           <div style={{width:48,height:48,borderRadius:"50%",background:"linear-gradient(135deg,var(--accent-dark),var(--accent))",display:"flex",alignItems:"center",justifyContent:"center",boxShadow:"0 2px 12px var(--accent-shadow)"}}>
-            <Icon name="help" size={22} color="white"/>
+            <span style={{color:"white",fontSize:12,fontWeight:800,letterSpacing:"-0.02em"}}>FAQ</span>
           </div>
           <div style={{textAlign:"center",background:"white",borderRadius:10,padding:"3px 8px",boxShadow:"0 1px 6px rgba(0,0,0,0.08)"}}>
             <div style={{fontSize:11,fontWeight:800,color:"#111827",lineHeight:1.3}}>정책제안 안내</div>
-            <div style={{fontSize:10,color:"#6b7280",marginTop:1}}>제안 전 확인해보세요</div>
+            <div style={{fontSize:10,color:"#6b7280",marginTop:1}}>자주하는 질문</div>
           </div>
         </div>
       )}
@@ -2332,6 +2332,10 @@ function PolicyProposalPage({bp,user}){
     return <ProposalWriteView category={category} setCategory={setCategory} title={title} setTitle={setTitle} content={content} setContent={setContent} onSubmit={handleSubmit} onBack={()=>setShowForm(false)} bp={bp}/>;
   }
 
+  const now=new Date();
+  const pad=n=>String(n).padStart(2,"0");
+  const statsAsOf=`${now.getFullYear()}.${pad(now.getMonth()+1)}.${pad(now.getDate())}.${pad(now.getHours())}시 기준`;
+
   return(
     <div style={{background:"#f8fafc",minHeight:"100%"}}>
       <div style={{background:"linear-gradient(160deg,#0f172a 0%,var(--accent-dark) 60%,var(--accent) 100%)",padding:bp.isDesktop?"36px 40px 28px":bp.isTablet?"28px 24px 20px":"22px 16px 16px",color:"white"}}>
@@ -2346,14 +2350,15 @@ function PolicyProposalPage({bp,user}){
         <div style={{maxWidth:860,margin:"0 auto",display:"flex",flexDirection:"column",gap:20}}>
           <ProposalOnboardingCarousel bp={bp}/>
 
-          <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:bp.isMobile?8:12,background:"var(--accent-bg)",borderRadius:16,border:"1.5px solid #E2E8F0",padding:bp.isDesktop?"18px 24px":"14px 12px"}}>
+          <div style={{position:"relative",display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:bp.isMobile?8:12,background:"var(--accent-bg)",borderRadius:16,border:"1.5px solid #E2E8F0",padding:bp.isDesktop?"18px 24px":"14px 12px"}}>
+            <div style={{position:"absolute",top:8,right:12,fontSize:10,color:"#9ca3af",fontWeight:500}}>{statsAsOf}</div>
             {[
               {label:"누적 제안수", val:stats.total.toLocaleString()},
               {label:"답변율",      val:`${stats.rate}%`},
               {label:"반영 건수",   val:stats.adopted.toLocaleString()},
             ].map(s=>(
               <div key={s.label} style={{display:"flex",flexDirection:"column",alignItems:"center",gap:4,textAlign:"center"}}>
-                <div style={{display:"flex",alignItems:"center",gap:5,fontSize:bp.isMobile?11:12,color:"#9ca3af",fontWeight:600}}>{s.label}</div>
+                <div style={{display:"flex",alignItems:"center",gap:5,fontSize:bp.isMobile?11:12,color:"#111827",fontWeight:600}}>{s.label}</div>
                 <div style={{fontSize:bp.isDesktop?22:18,fontWeight:900,color:"#111827"}}>{s.val}</div>
               </div>
             ))}
