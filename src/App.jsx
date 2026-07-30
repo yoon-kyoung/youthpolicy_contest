@@ -2045,46 +2045,50 @@ const PROPOSAL_ONBOARDING_STEPS=PROPOSAL_GUIDE_STEPS.map((summary,i)=>({...PROPO
 function ProposalOnboardingCarousel({bp}){
   const scrollRef=useRef(null);
   const [active,setActive]=useState(0);
-  const cardW=bp.isDesktop?300:bp.isTablet?280:230;
-  const gap=14;
+  const total=PROPOSAL_ONBOARDING_STEPS.length;
   const sidePad=bp.isDesktop?24:16;
 
   const scrollToIndex=i=>{
-    scrollRef.current?.scrollTo({left:i*(cardW+gap),behavior:"smooth"});
+    const el=scrollRef.current;
+    if(!el)return;
+    el.scrollTo({left:i*el.clientWidth,behavior:"smooth"});
   };
   const handleScroll=()=>{
     const el=scrollRef.current;
-    if(!el)return;
-    const i=Math.round(el.scrollLeft/(cardW+gap));
-    setActive(Math.max(0,Math.min(PROPOSAL_ONBOARDING_STEPS.length-1,i)));
+    if(!el||!el.clientWidth)return;
+    const i=Math.round(el.scrollLeft/el.clientWidth);
+    setActive(Math.max(0,Math.min(total-1,i)));
   };
 
   return(
     <div style={{background:"white",borderRadius:16,border:"1.5px solid #E2E8F0",padding:"18px 0 16px",overflow:"hidden"}}>
-      <div style={{padding:`0 ${sidePad}px 14px`,display:"flex",alignItems:"center",gap:7}}>
-        <Icon name="edit_note" size={17} color="var(--accent)"/>
-        <div style={{fontSize:bp.isDesktop?16:15,fontWeight:800,color:"#111827"}}>정책제안 이렇게 진행돼요</div>
+      <div style={{padding:`0 ${sidePad}px 14px`,display:"flex",alignItems:"center",justifyContent:"space-between",gap:7}}>
+        <div style={{display:"flex",alignItems:"center",gap:7}}>
+          <Icon name="edit_note" size={17} color="var(--accent)"/>
+          <div style={{fontSize:bp.isDesktop?16:15,fontWeight:800,color:"#111827"}}>정책제안 이렇게 진행돼요</div>
+        </div>
+        <div style={{fontSize:12,fontWeight:700,color:"#9ca3af"}}>{active+1} / {total}</div>
       </div>
-      <div ref={scrollRef} onScroll={handleScroll} style={{display:"flex",gap,overflowX:"auto",scrollSnapType:"x mandatory",padding:`0 ${sidePad}px 6px`,WebkitOverflowScrolling:"touch"}}>
+      <div ref={scrollRef} onScroll={handleScroll} style={{display:"flex",overflowX:"auto",scrollSnapType:"x mandatory",WebkitOverflowScrolling:"touch"}}>
         {PROPOSAL_ONBOARDING_STEPS.map((step,i)=>(
-          <div key={step.title} style={{flex:`0 0 ${cardW}px`,scrollSnapAlign:"start",borderRadius:16,border:"1.5px solid #E2E8F0",overflow:"hidden",display:"flex",flexDirection:"column"}}>
-            <div style={{position:"relative",height:112,background:`linear-gradient(135deg,${step.gradient[0]},${step.gradient[1]})`,display:"flex",alignItems:"center",justifyContent:"center",overflow:"hidden"}}>
-              <div style={{position:"absolute",width:86,height:86,borderRadius:"50%",background:"rgba(255,255,255,0.16)",top:-28,right:-18}}/>
-              <div style={{position:"absolute",width:56,height:56,borderRadius:"50%",background:"rgba(255,255,255,0.14)",bottom:-18,left:-8}}/>
-              <div style={{position:"absolute",top:10,left:12,width:22,height:22,borderRadius:"50%",background:"rgba(255,255,255,0.28)",color:"white",fontSize:12,fontWeight:800,display:"flex",alignItems:"center",justifyContent:"center"}}>{i+1}</div>
-              <div style={{width:52,height:52,borderRadius:"50%",background:"rgba(255,255,255,0.95)",display:"flex",alignItems:"center",justifyContent:"center",position:"relative",zIndex:1,boxShadow:"0 4px 14px rgba(0,0,0,0.16)"}}>
-                <Icon name={step.icon} size={24} color={step.gradient[1]}/>
+          <div key={step.title} style={{flex:"0 0 100%",width:"100%",boxSizing:"border-box",scrollSnapAlign:"start",padding:`0 ${sidePad}px`,display:"flex",flexDirection:"column"}}>
+            <div style={{position:"relative",height:bp.isDesktop?220:180,borderRadius:18,background:`linear-gradient(135deg,${step.gradient[0]},${step.gradient[1]})`,display:"flex",alignItems:"center",justifyContent:"center",overflow:"hidden"}}>
+              <div style={{position:"absolute",width:140,height:140,borderRadius:"50%",background:"rgba(255,255,255,0.14)",top:-45,right:-30}}/>
+              <div style={{position:"absolute",width:90,height:90,borderRadius:"50%",background:"rgba(255,255,255,0.12)",bottom:-28,left:-16}}/>
+              <div style={{position:"absolute",top:14,left:16,width:26,height:26,borderRadius:"50%",background:"rgba(255,255,255,0.28)",color:"white",fontSize:13,fontWeight:800,display:"flex",alignItems:"center",justifyContent:"center"}}>{i+1}</div>
+              <div style={{width:bp.isDesktop?92:76,height:bp.isDesktop?92:76,borderRadius:"50%",background:"rgba(255,255,255,0.95)",display:"flex",alignItems:"center",justifyContent:"center",position:"relative",zIndex:1,boxShadow:"0 6px 20px rgba(0,0,0,0.18)"}}>
+                <Icon name={step.icon} size={bp.isDesktop?42:36} color={step.gradient[1]}/>
               </div>
             </div>
-            <div style={{padding:"14px 16px 16px",display:"flex",flexDirection:"column",gap:6}}>
-              <div style={{fontSize:14,fontWeight:800,color:"#111827"}}>{step.title}</div>
-              <div style={{fontSize:12,fontWeight:700,color:"var(--accent)",lineHeight:1.5}}>{step.summary}</div>
-              <div style={{fontSize:12,color:"#6b7280",lineHeight:1.6}}>{step.detail}</div>
+            <div style={{padding:"18px 4px 4px",display:"flex",flexDirection:"column",gap:8}}>
+              <div style={{fontSize:bp.isDesktop?19:17,fontWeight:800,color:"#111827"}}>{step.title}</div>
+              <div style={{fontSize:bp.isDesktop?14:13,fontWeight:700,color:"var(--accent)",lineHeight:1.5}}>{step.summary}</div>
+              <div style={{fontSize:bp.isDesktop?14:13,color:"#6b7280",lineHeight:1.7}}>{step.detail}</div>
             </div>
           </div>
         ))}
       </div>
-      <div style={{display:"flex",justifyContent:"center",gap:6,marginTop:10}}>
+      <div style={{display:"flex",justifyContent:"center",gap:6,marginTop:14}}>
         {PROPOSAL_ONBOARDING_STEPS.map((_,i)=>(
           <button key={i} onClick={()=>scrollToIndex(i)} aria-label={`${i+1}단계로 이동`} style={{width:active===i?18:6,height:6,borderRadius:20,border:"none",padding:0,cursor:"pointer",background:active===i?"var(--accent)":"#E2E8F0",transition:"all 0.2s"}}/>
         ))}
