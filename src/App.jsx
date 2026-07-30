@@ -1753,7 +1753,7 @@ function proposalTimelineStates(status){
     return"upcoming";
   });
 }
-const PROPOSAL_TIMELINE_META=PROPOSAL_TIMELINE_STEPS.map((label,i)=>({label,icon:PROPOSAL_TIMELINE_ICONS[i],desc:PROPOSAL_TIMELINE_DESC[i]}));
+const PROPOSAL_TIMELINE_META=PROPOSAL_TIMELINE_STEPS.map((label,i)=>({label,icon:PROPOSAL_TIMELINE_ICONS[i],detail:PROPOSAL_TIMELINE_DESC[i]}));
 
 function ProposalTimelineWidget({steps,states,title="진행 상태"}){
   const [openIndex,setOpenIndex]=useState(null);
@@ -1777,9 +1777,10 @@ function ProposalTimelineWidget({steps,states,title="진행 상태"}){
         })}
       </div>
       {openIndex!=null&&(
-        <div style={{marginTop:16,padding:"12px 14px",borderRadius:12,background:"#F8FAFC",border:"1px solid #E2E8F0",display:"flex",gap:8,alignItems:"flex-start"}}>
-          <Icon name={steps[openIndex].icon} size={15} color="var(--accent)"/>
-          <div style={{fontSize:12,color:"#374151",lineHeight:1.6}}><b style={{color:"#111827"}}>{steps[openIndex].label}</b> — {steps[openIndex].desc}</div>
+        <div style={{marginTop:16,padding:"14px 16px",borderRadius:12,background:"#F8FAFC",border:"1px solid #E2E8F0",display:"flex",flexDirection:"column",gap:6}}>
+          <div style={{fontSize:19,fontWeight:800,color:"#111827"}}>{steps[openIndex].title??steps[openIndex].label}</div>
+          {steps[openIndex].summary&&<div style={{fontSize:14,fontWeight:700,color:"var(--accent)",lineHeight:1.5}}>{steps[openIndex].summary}</div>}
+          <div style={{fontSize:14,color:"#6b7280",lineHeight:1.7}}>{steps[openIndex].detail}</div>
         </div>
       )}
     </section>
@@ -2062,7 +2063,7 @@ const PROPOSAL_ONBOARDING_META=[
     detail:"검토가 끝나면 '답변완료'로, 실제 정책에 반영되면 '반영완료'로 상태가 바뀌며 시행 시기까지 안내받을 수 있어요."},
 ];
 const PROPOSAL_ONBOARDING_STEPS=PROPOSAL_GUIDE_STEPS.map((summary,i)=>({...PROPOSAL_ONBOARDING_META[i],summary}));
-const PROPOSAL_ONBOARDING_TIMELINE_META=PROPOSAL_ONBOARDING_STEPS.map(s=>({label:s.title,icon:s.icon,desc:s.detail}));
+const PROPOSAL_ONBOARDING_TIMELINE_META=PROPOSAL_ONBOARDING_STEPS.map(s=>({label:s.title,icon:s.icon,summary:s.summary,detail:s.detail}));
 
 function ProposalOnboardingCarousel({bp}){
   const scrollRef=useRef(null);
