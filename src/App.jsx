@@ -2236,6 +2236,7 @@ function PolicyProposalPage({bp,user}){
   const [sort,setSort]=useState("recent");
   const [selectedProposal,setSelectedProposal]=useState(null);
   const [showForm,setShowForm]=useState(false);
+  const [pageNum,setPageNum]=useState(1);
 
   useEffect(()=>{
     const id=new URLSearchParams(window.location.search).get("proposal");
@@ -2318,6 +2319,10 @@ function PolicyProposalPage({bp,user}){
     return list;
   },[proposals,statusTab,catFilter,sort]);
 
+  useEffect(()=>{setPageNum(1);},[statusTab,catFilter,sort]);
+  const pageCount=Math.max(1,Math.ceil(filtered.length/4));
+  const pageItems=filtered.slice((pageNum-1)*4,pageNum*4);
+
   if(selectedProposal){
     const live=proposals.find(p=>p.id===selectedProposal.id)||selectedProposal;
     return <ProposalDetailView proposal={live} user={user} onVote={handleVote} onBack={closeProposal} bp={bp}/>;
@@ -2383,8 +2388,9 @@ function PolicyProposalPage({bp,user}){
                   <div style={{fontSize:13,color:"#9ca3af"}}>다른 상태 탭을 확인해보세요</div>
                 </div>
               )}
-              {filtered.map(p=><ProposalCard key={p.id} proposal={p} user={user} onVote={handleVote} onOpen={openProposal} bp={bp}/>)}
+              {pageItems.map(p=><ProposalCard key={p.id} proposal={p} user={user} onVote={handleVote} onOpen={openProposal} bp={bp}/>)}
             </div>
+            <Pagination page={pageNum} pageCount={pageCount} onChange={setPageNum}/>
           </div>
         </div>
       </div>
