@@ -1997,8 +1997,16 @@ function ProposalDetailView({proposal,user,onVote,onBack,bp}){
               </div>
             )}
             {proposal.attachment&&(
-              <div style={{display:"flex",alignItems:"center",gap:5,fontSize:13,color:"#6b7280"}}>
+              <div style={{display:"flex",alignItems:"center",gap:5,fontSize:13,color:"#6b7280",marginBottom:proposal.isTeam&&proposal.teamMembers?.length?10:0}}>
                 <Icon name="attach_file" size={15} color="#9ca3af"/>{proposal.attachment}
+              </div>
+            )}
+            {proposal.isTeam&&proposal.teamMembers?.length>0&&(
+              <div style={{display:"flex",alignItems:"center",gap:6,flexWrap:"wrap",fontSize:13,color:"#6b7280"}}>
+                <Icon name="group" size={15} color="#9ca3af"/>팀 제안
+                {proposal.teamMembers.map(id=>(
+                  <span key={id} style={{padding:"2px 9px",borderRadius:20,background:"var(--accent-bg)",color:"var(--accent)",fontSize:12,fontWeight:600}}>@{id}</span>
+                ))}
               </div>
             )}
             {proposal.status==="pending"&&(
@@ -2077,12 +2085,24 @@ function ProposalFormRow({label,children}){
 
 const PROPOSAL_MIN_LEN={background:100,content:300,expectedEffect:200};
 
-function ProposalWriteView({category,setCategory,title,setTitle,background,setBackground,content,setContent,expectedEffect,setExpectedEffect,attachmentName,setAttachmentName,proposals,onSubmit,onBack,bp}){
+function ProposalWriteView({category,setCategory,title,setTitle,background,setBackground,content,setContent,expectedEffect,setExpectedEffect,attachmentName,setAttachmentName,isTeam,setIsTeam,teamMembers,setTeamMembers,proposals,onSubmit,onBack,bp}){
   useEffect(()=>{window.scrollTo({top:0,behavior:"smooth"});},[]);
 
   const [aiChecking,setAiChecking]=useState(false);
   const [aiResult,setAiResult]=useState(null);
   const [checkedSignature,setCheckedSignature]=useState(null);
+  const [teamInput,setTeamInput]=useState("");
+
+  const addTeamMember=()=>{
+    const id=teamInput.trim().replace(/^@/,"");
+    if(!id||teamMembers.includes(id)){setTeamInput("");return;}
+    setTeamMembers([...teamMembers,id]);
+    setTeamInput("");
+  };
+  const removeTeamMember=id=>setTeamMembers(teamMembers.filter(m=>m!==id));
+  const handleTeamInputKeyDown=e=>{
+    if(e.key==="Enter"){e.preventDefault();addTeamMember();}
+  };
 
   const signature=`${category}|${title}|${background}|${content}|${expectedEffect}`;
   const aiPassed=!!aiResult&&!aiResult.profanity&&checkedSignature===signature;
@@ -2152,6 +2172,10 @@ function ProposalWriteView({category,setCategory,title,setTitle,background,setBa
           <p style={{fontSize:13,color:"#6b7280",margin:"0 0 20px"}}>여러분의 목소리가 공감투표를 통해 새로운 청년정책으로 이어질 수 있어요</p>
 
           <form onSubmit={handleFormSubmit} style={{background:"white",borderRadius:16,border:"1.5px solid #E2E8F0",padding:bp.isDesktop?24:16,display:"flex",flexDirection:"column",gap:16}}>
+            <ProposalFormRow label="제목">
+              <input value={title} onChange={e=>setTitle(e.target.value)} placeholder="제안 제목을 입력하세요" style={{width:"100%",padding:"11px 14px",borderRadius:10,border:"1.5px solid #E2E8F0",fontSize:14,fontFamily:"inherit",boxSizing:"border-box"}}/>
+            </ProposalFormRow>
+
             <ProposalFormRow label="정책 제안분야">
               <div style={{display:"flex",gap:8,flexWrap:"wrap"}}>
                 {CATEGORIES.slice(1).map(c=>(
@@ -2165,8 +2189,25 @@ function ProposalWriteView({category,setCategory,title,setTitle,background,setBa
               </div>
             </ProposalFormRow>
 
-            <ProposalFormRow label="제목">
-              <input value={title} onChange={e=>setTitle(e.target.value)} placeholder="제안 제목을 입력하세요" style={{width:"100%",padding:"11px 14px",borderRadius:10,border:"1.5px solid #E2E8F0",fontSize:14,fontFamily:"inherit",boxSizing:"border-box"}}/>
+            <ProposalFormRow label="진행 방식">
+              <label style={{display:"flex",alignItems:"center",gap:8,cursor:"pointer",width:"fit-content"}}>
+                <input type="checkbox" checked={isTeam} onChange={e=>setIsTeam(e.target.checked)} style={{width:16,height:16,accentColor:"var(--accent)",cursor:"pointer"}}/>
+                <span style={{fontSize:13,color:"#374151",fontWeight:500}}>팀으로 함께 제안해요</span>
+              </label>
+              {isTeam&&(
+                <div style={{marginTop:10}}>
+                  <div style={{display:"flex",flexWrap:"wrap",alignItems:"center",gap:6,padding:"8px 12px",borderRadius:10,border:"1.5px solid #E2E8F0",background:"white"}}>
+                    {teamMembers.map(id=>(
+                      <span key={id} style={{display:"inline-flex",alignItems:"center",gap:4,padding:"4px 10px",borderRadius:20,background:"var(--accent-bg)",color:"var(--accent)",fontSize:13,fontWeight:600,border:"1px solid var(--accent)",whiteSpace:"nowrap"}}>
+                        @{id}
+                        <button type="button" onClick={()=>removeTeamMember(id)} style={{background:"none",border:"none",color:"var(--accent)",fontSize:15,lineHeight:1,padding:0,cursor:"pointer"}}>×</button>
+                      </span>
+                    ))}
+                    <input value={teamInput} onChange={e=>setTeamInput(e.target.value)} onKeyDown={handleTeamInputKeyDown} placeholder={teamMembers.length===0?"팀원 아이디 입력 후 Enter":"+ 추가"} style={{flex:1,minWidth:120,border:"none",outline:"none",fontSize:13,padding:"2px 0",fontFamily:"inherit"}}/>
+                  </div>
+                  <div style={{fontSize:11,marginTop:4,color:"#9ca3af"}}>아이디를 입력하고 Enter를 누르면 @아이디 형태로 팀원이 추가돼요.</div>
+                </div>
+              )}
             </ProposalFormRow>
 
             <ProposalFormRow label="배경">
@@ -2352,6 +2393,8 @@ function PolicyProposalPage({bp,user,onGoCommunity}){
   const [content,setContent]=useState("");
   const [expectedEffect,setExpectedEffect]=useState("");
   const [attachmentName,setAttachmentName]=useState("");
+  const [isTeam,setIsTeam]=useState(false);
+  const [teamMembers,setTeamMembers]=useState([]);
   const [category,setCategory]=useState("job");
   const [statusTab,setStatusTab]=useState("all");
   const [catFilter,setCatFilter]=useState("all");
@@ -2389,6 +2432,8 @@ function PolicyProposalPage({bp,user,onGoCommunity}){
       content:content.trim(),
       expectedEffect:expectedEffect.trim(),
       attachment:attachmentName,
+      isTeam,
+      teamMembers:isTeam?teamMembers:[],
       category,
       author:user.user_metadata?.name||user.email||"익명",
       createdAt:new Date().toISOString(),
@@ -2404,6 +2449,8 @@ function PolicyProposalPage({bp,user,onGoCommunity}){
     setContent("");
     setExpectedEffect("");
     setAttachmentName("");
+    setIsTeam(false);
+    setTeamMembers([]);
     setShowForm(false);
   };
 
@@ -2455,7 +2502,7 @@ function PolicyProposalPage({bp,user,onGoCommunity}){
   }
 
   if(showForm){
-    return <ProposalWriteView category={category} setCategory={setCategory} title={title} setTitle={setTitle} background={background} setBackground={setBackground} content={content} setContent={setContent} expectedEffect={expectedEffect} setExpectedEffect={setExpectedEffect} attachmentName={attachmentName} setAttachmentName={setAttachmentName} proposals={proposals} onSubmit={handleSubmit} onBack={()=>setShowForm(false)} bp={bp}/>;
+    return <ProposalWriteView category={category} setCategory={setCategory} title={title} setTitle={setTitle} background={background} setBackground={setBackground} content={content} setContent={setContent} expectedEffect={expectedEffect} setExpectedEffect={setExpectedEffect} attachmentName={attachmentName} setAttachmentName={setAttachmentName} isTeam={isTeam} setIsTeam={setIsTeam} teamMembers={teamMembers} setTeamMembers={setTeamMembers} proposals={proposals} onSubmit={handleSubmit} onBack={()=>setShowForm(false)} bp={bp}/>;
   }
 
   const now=new Date();
