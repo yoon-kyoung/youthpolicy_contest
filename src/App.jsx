@@ -1580,7 +1580,7 @@ function CommunityPostDetailView({post,bp,user,onBack,onLike}){
 
 // ─── 커뮤니티 뷰 ──────────────────────────────────────────────────────────
 
-function CommunityView({bp,user}){
+function CommunityView({bp,user,onGoProposal}){
   const [catFilter,setCatFilter]=useState("전체");
   const [showWrite,setShowWrite]=useState(false);
   const [selectedPost,setSelectedPost]=useState(null);
@@ -1686,6 +1686,24 @@ function CommunityView({bp,user}){
               </div>
             );
           })}
+          {!loadingPosts&&(
+            <div onClick={()=>onGoProposal?.()} style={{marginTop:4,background:"linear-gradient(135deg,var(--accent-dark),var(--accent))",borderRadius:16,padding:bp.isDesktop?"22px 26px":"16px 16px",cursor:"pointer",color:"white",display:"flex",alignItems:"center",gap:16,transition:"transform 0.15s,box-shadow 0.15s"}}
+              onMouseEnter={e=>{e.currentTarget.style.transform="translateY(-2px)";e.currentTarget.style.boxShadow="0 10px 28px rgba(0,0,0,0.18)";}}
+              onMouseLeave={e=>{e.currentTarget.style.transform="";e.currentTarget.style.boxShadow="";}}
+            >
+              <div style={{flex:1,minWidth:0}}>
+                <div style={{display:"flex",alignItems:"center",gap:7,marginBottom:8}}>
+                  <span style={{fontSize:10,fontWeight:800,padding:"3px 8px",borderRadius:20,background:"rgba(255,255,255,0.22)",letterSpacing:"0.02em"}}>NEW</span>
+                  <span style={{fontSize:12,fontWeight:700,opacity:0.85}}>청년정책 역제안</span>
+                </div>
+                <div style={{fontSize:bp.isDesktop?16:14,fontWeight:800,lineHeight:1.4,marginBottom:4}}>커뮤니티에서 나눈 이야기, 이제 정책으로 제안해보세요</div>
+                <div style={{fontSize:bp.isDesktop?13:12,opacity:0.8,lineHeight:1.5}}>공감이 모이면 담당 부처에 자동으로 전달돼요</div>
+              </div>
+              <div style={{display:"flex",alignItems:"center",gap:5,flexShrink:0,padding:"9px 16px",borderRadius:20,background:"white",color:"var(--accent-dark)",fontSize:13,fontWeight:700,whiteSpace:"nowrap"}}>
+                제안 써보기<Icon name="arrow_forward" size={15} color="var(--accent-dark)"/>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>
@@ -3433,7 +3451,7 @@ export default function App(){
               :page==="search"    ?<div style={{flex:1,overflow:"hidden"}}><SearchView {...viewProps}/></div>
               :page==="chatbot"   ?<div style={{flex:1,overflow:"hidden"}}><ChatBotView bp={bp.isDesktop?'desktop':bp.isTablet?'tablet':'mobile'} favIds={favIds} onToggleFav={toggleFav} onGoDetail={goDetail} resetSignal={chatResetKey}/></div>
               :page==="mypage"    ?<div style={{flex:1,overflowY:"auto"}}><MyPageContainer supabaseUser={user} onLogout={handleLogout} initialTab={mySub||"info"} favIds={favIds} policies={policies} onToggleFav={toggleFav} onGoDetail={goDetail}/></div>
-              :page==="community" ?<div style={{flex:1,overflowY:"auto"}}><CommunityView bp={bp} user={user}/></div>
+              :page==="community" ?<div style={{flex:1,overflowY:"auto"}}><CommunityView bp={bp} user={user} onGoProposal={()=>navigateTo("proposal")}/></div>
               :page==="proposal"  ?<div style={{flex:1,overflowY:"auto"}}><PolicyProposalPage bp={bp} user={user}/></div>
               :null
             }
@@ -3491,7 +3509,7 @@ export default function App(){
           :page==="search"    ?<SearchView {...viewProps}/>
           :page==="chatbot"   ?<ChatBotView bp={bp.isDesktop?'desktop':bp.isTablet?'tablet':'mobile'} favIds={favIds} onToggleFav={toggleFav} onGoDetail={goDetail} resetSignal={chatResetKey}/>
           :page==="mypage"    ?<MyPageContainer supabaseUser={user} onLogout={handleLogout} initialTab={mySub||"info"} favIds={favIds} policies={policies} onToggleFav={toggleFav} onGoDetail={goDetail}/>
-          :page==="community" ?<CommunityView bp={bp} user={user}/>
+          :page==="community" ?<CommunityView bp={bp} user={user} onGoProposal={()=>navigateTo("proposal")}/>
           :page==="proposal"  ?<PolicyProposalPage bp={bp} user={user}/>
           :null
         }
