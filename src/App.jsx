@@ -1726,6 +1726,12 @@ const PROPOSAL_SORTS=[
   {value:"votes",  label:"공감순"},
 ];
 
+const PROPOSAL_CATEGORY_FILTERS=[
+  {value:"all", label:"전체"},
+  ...CATEGORIES.slice(1).map(c=>({value:c.value,label:c.label})),
+  {value:"etc", label:"기타"},
+];
+
 function proposalStatusMeta(status){
   switch(status){
     case "matching": return{label:"부처매칭중",icon:"sync",         bg:"#EFF6FF",border:"var(--accent-bg)",text:"var(--accent)"};
@@ -2175,6 +2181,7 @@ function PolicyProposalPage({bp,user}){
   const [content,setContent]=useState("");
   const [category,setCategory]=useState("job");
   const [statusTab,setStatusTab]=useState("all");
+  const [catFilter,setCatFilter]=useState("all");
   const [sort,setSort]=useState("recent");
   const [selectedProposal,setSelectedProposal]=useState(null);
 
@@ -2248,13 +2255,15 @@ function PolicyProposalPage({bp,user}){
 
   const filtered=useMemo(()=>{
     let list=proposals.filter(p=>{
-      if(statusTab==="all")return true;
-      if(statusTab==="pending")return p.status==="pending"||p.status==="matching";
-      return p.status===statusTab;
+      if(statusTab==="pending"){if(!(p.status==="pending"||p.status==="matching"))return false;}
+      else if(statusTab!=="all"&&p.status!==statusTab)return false;
+      if(catFilter==="etc"){if(CATEGORIES.slice(1).some(c=>c.value===p.category))return false;}
+      else if(catFilter!=="all"&&p.category!==catFilter)return false;
+      return true;
     });
     list=[...list].sort((a,b)=>sort==="votes"?(b.votes||0)-(a.votes||0):new Date(b.createdAt)-new Date(a.createdAt));
     return list;
-  },[proposals,statusTab,sort]);
+  },[proposals,statusTab,catFilter,sort]);
 
   if(selectedProposal){
     const live=proposals.find(p=>p.id===selectedProposal.id)||selectedProposal;
@@ -2298,6 +2307,12 @@ function PolicyProposalPage({bp,user}){
               <select value={sort} onChange={e=>setSort(e.target.value)} style={{fontSize:12,border:"1px solid #e2e8f0",borderRadius:8,padding:"5px 8px",background:"white",color:"#374151",outline:"none",fontFamily:"inherit",cursor:"pointer",flexShrink:0}}>
                 {PROPOSAL_SORTS.map(o=><option key={o.value} value={o.value}>{o.label}</option>)}
               </select>
+            </div>
+
+            <div style={{background:"white",borderRadius:"0 0 16px 16px",padding:"12px 16px",display:"flex",gap:5,flexWrap:"wrap",alignItems:"center"}}>
+              {PROPOSAL_CATEGORY_FILTERS.map(c=>(
+                <button key={c.value} onClick={()=>setCatFilter(c.value)} style={{padding:"4px 10px",borderRadius:20,border:"1.5px solid",borderColor:catFilter===c.value?"var(--accent)":"#E2E8F0",background:catFilter===c.value?"var(--accent)":"white",color:catFilter===c.value?"white":"#475569",fontSize:12,fontWeight:catFilter===c.value?700:400,cursor:"pointer",transition:"all 0.12s",whiteSpace:"nowrap"}}>{c.label}</button>
+              ))}
             </div>
 
             <div style={{display:"flex",flexDirection:"column",gap:10,marginTop:12}}>
