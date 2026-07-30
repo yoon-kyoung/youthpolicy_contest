@@ -2334,13 +2334,13 @@ function ProposalGuidePanel({bp,onGoCommunity}){
       )}
 
       {collapsed&&(
-        <div onClick={()=>setCollapsed(false)} style={{display:"flex",flexDirection:"column",alignItems:"center",gap:6,cursor:"pointer"}}>
-          <div style={{width:48,height:48,borderRadius:"50%",background:"linear-gradient(135deg,var(--accent-dark),var(--accent))",display:"flex",alignItems:"center",justifyContent:"center",boxShadow:"0 2px 12px var(--accent-shadow)"}}>
-            <span style={{color:"white",fontSize:12,fontWeight:800,letterSpacing:"-0.02em"}}>FAQ</span>
+        <div onClick={()=>setCollapsed(false)} style={{display:"flex",flexDirection:"column",alignItems:"center",gap:7,cursor:"pointer",transformOrigin:"top center",animation:"guideWiggle 5s ease-in-out infinite"}}>
+          <div style={{width:60,height:60,borderRadius:"50%",background:"linear-gradient(135deg,var(--accent-dark),var(--accent))",display:"flex",alignItems:"center",justifyContent:"center",boxShadow:"0 4px 16px var(--accent-shadow)"}}>
+            <span style={{color:"white",fontSize:15,fontWeight:800,letterSpacing:"-0.02em"}}>FAQ</span>
           </div>
-          <div style={{textAlign:"center",background:"white",borderRadius:10,padding:"3px 8px",boxShadow:"0 1px 6px rgba(0,0,0,0.08)"}}>
-            <div style={{fontSize:11,fontWeight:800,color:"#111827",lineHeight:1.3}}>정책제안 안내</div>
-            <div style={{fontSize:10,color:"#6b7280",marginTop:1}}>자주하는 질문</div>
+          <div style={{textAlign:"center",background:"white",borderRadius:12,padding:"5px 11px",boxShadow:"0 1px 6px rgba(0,0,0,0.08)"}}>
+            <div style={{fontSize:12,fontWeight:800,color:"#111827",lineHeight:1.3}}>정책제안 안내</div>
+            <div style={{fontSize:11,color:"#6b7280",marginTop:1}}>자주하는 질문</div>
           </div>
         </div>
       )}
@@ -3468,6 +3468,7 @@ const GLOBAL_CSS=`
   @keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
   @keyframes micRing{0%{box-shadow:0 0 0 0 rgba(220,38,38,0.35)}100%{box-shadow:0 0 0 10px rgba(220,38,38,0)}}
   @keyframes tickerFade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+  @keyframes guideWiggle{0%,92%,100%{transform:rotate(0deg)}93%{transform:rotate(-6deg)}94.5%{transform:rotate(5deg)}96%{transform:rotate(-4deg)}97.5%{transform:rotate(3deg)}99%{transform:rotate(0deg)}}
 `;
 
 export default function App(){
