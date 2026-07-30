@@ -71,3 +71,5 @@ import { Icon } from "./Icon"; // 상대경로 조정
 | `volume_up` | 챗봇 답변 듣기(TTS) 대기 상태 |
 | `stop` | 챗봇 답변 듣기(TTS) 재생 중 (클릭 시 중지) |
 | `attach_file` | 정책제안 작성 - 첨부자료 |
+| `more_horiz` | 정책제안 작성 - 카테고리 "기타" |
+| `error` | 정책제안 작성 - AI 검토 경고(부적절한 표현) |

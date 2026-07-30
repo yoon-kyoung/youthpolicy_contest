@@ -13,6 +13,7 @@ import ChatBotView from "./chatbot/ChatBotView";
 import AdminPage from "./chatbot/AdminPage";
 import AdminShell from "./admin/AdminShell";
 import { loadPolicies } from "./chatbot/policiesStore";
+import { API_BASE } from "./chatbot/config";
 import { supabase } from "./supabase";
 import Icon from "./styles/Icon";
 
@@ -2072,8 +2073,59 @@ function ProposalFormRow({label,children}){
   );
 }
 
-function ProposalWriteView({category,setCategory,title,setTitle,background,setBackground,content,setContent,expectedEffect,setExpectedEffect,attachmentName,setAttachmentName,onSubmit,onBack,bp}){
+const PROPOSAL_MIN_LEN={background:100,content:300,expectedEffect:300};
+
+function ProposalWriteView({category,setCategory,title,setTitle,background,setBackground,content,setContent,expectedEffect,setExpectedEffect,attachmentName,setAttachmentName,proposals,onSubmit,onBack,bp}){
   useEffect(()=>{window.scrollTo({top:0,behavior:"smooth"});},[]);
+
+  const [aiChecking,setAiChecking]=useState(false);
+  const [aiResult,setAiResult]=useState(null);
+  const [checkedSignature,setCheckedSignature]=useState(null);
+
+  const signature=`${category}|${title}|${background}|${content}|${expectedEffect}`;
+  const aiPassed=!!aiResult&&!aiResult.profanity&&checkedSignature===signature;
+  const lenOk={
+    background:background.trim().length>=PROPOSAL_MIN_LEN.background,
+    content:content.trim().length>=PROPOSAL_MIN_LEN.content,
+    expectedEffect:expectedEffect.trim().length>=PROPOSAL_MIN_LEN.expectedEffect,
+  };
+  const allLenOk=title.trim()&&lenOk.background&&lenOk.content&&lenOk.expectedEffect;
+
+  const runAiCheck=async()=>{
+    if(!allLenOk){
+      alert(`아직 작성이 부족해요.\n- 제목\n- 배경 ${PROPOSAL_MIN_LEN.background}자 이상 (현재 ${background.trim().length}자)\n- 제안내용 ${PROPOSAL_MIN_LEN.content}자 이상 (현재 ${content.trim().length}자)\n- 기대효과 ${PROPOSAL_MIN_LEN.expectedEffect}자 이상 (현재 ${expectedEffect.trim().length}자)`);
+      return;
+    }
+    setAiChecking(true);
+    try{
+      const res=await fetch(`${API_BASE}/api/moderate`,{
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({title,background,content,expectedEffect,existingProposals:(proposals||[]).map(p=>({id:p.id,title:p.title}))}),
+      });
+      if(!res.ok)throw new Error(`HTTP ${res.status}`);
+      const data=await res.json();
+      setAiResult(data);
+      setCheckedSignature(signature);
+    }catch{
+      alert("AI 검토 중 오류가 발생했어요. 잠시 후 다시 시도해주세요.");
+    }finally{
+      setAiChecking(false);
+    }
+  };
+
+  const handleFormSubmit=e=>{
+    e.preventDefault();
+    if(!allLenOk){
+      alert(`배경 ${PROPOSAL_MIN_LEN.background}자, 제안내용·기대효과는 각 ${PROPOSAL_MIN_LEN.content}자 이상 작성해야 제안할 수 있어요.`);
+      return;
+    }
+    if(!aiPassed){
+      alert("제안하기 전에 'AI 검토' 버튼으로 먼저 확인해주세요.");
+      return;
+    }
+    onSubmit(e);
+  };
 
   return(
     <div style={{background:"#F5F9FC",minHeight:"100%",animation:"fadeUp 0.25s ease"}}>
@@ -2093,7 +2145,7 @@ function ProposalWriteView({category,setCategory,title,setTitle,background,setBa
           <h1 style={{fontSize:bp.isDesktop?26:20,fontWeight:900,margin:"0 0 6px",letterSpacing:"-0.02em",color:"#111827"}}>필요한 정책을 직접 제안해보세요</h1>
           <p style={{fontSize:13,color:"#6b7280",margin:"0 0 20px"}}>여러분의 목소리가 공감투표를 통해 새로운 청년정책으로 이어질 수 있어요</p>
 
-          <form onSubmit={onSubmit} style={{background:"white",borderRadius:16,border:"1.5px solid #E2E8F0",padding:bp.isDesktop?24:16,display:"flex",flexDirection:"column",gap:16}}>
+          <form onSubmit={handleFormSubmit} style={{background:"white",borderRadius:16,border:"1.5px solid #E2E8F0",padding:bp.isDesktop?24:16,display:"flex",flexDirection:"column",gap:16}}>
             <ProposalFormRow label="정책 제안분야">
               <div style={{display:"flex",gap:8,flexWrap:"wrap"}}>
                 {CATEGORIES.slice(1).map(c=>(
@@ -2101,6 +2153,9 @@ function ProposalWriteView({category,setCategory,title,setTitle,background,setBa
                     <Icon name={c.icon} size={13} color={category===c.value?"var(--accent)":"#718096"}/>{c.label}
                   </button>
                 ))}
+                <button key="etc" type="button" onClick={()=>setCategory("etc")} style={{display:"flex",alignItems:"center",gap:4,padding:"6px 12px",borderRadius:20,border:"1.5px solid",cursor:"pointer",borderColor:category==="etc"?"var(--accent)":"#E2E8F0",background:category==="etc"?"var(--accent-bg)":"white",color:category==="etc"?"var(--accent)":"#718096",fontSize:12,fontWeight:category==="etc"?700:500}}>
+                  <Icon name="more_horiz" size={13} color={category==="etc"?"var(--accent)":"#718096"}/>기타
+                </button>
               </div>
             </ProposalFormRow>
 
@@ -2110,14 +2165,17 @@ function ProposalWriteView({category,setCategory,title,setTitle,background,setBa
 
             <ProposalFormRow label="배경">
               <textarea value={background} onChange={e=>setBackground(e.target.value)} placeholder="이 제안이 필요하게 된 배경을 적어주세요" rows={3} style={{width:"100%",padding:"11px 14px",borderRadius:10,border:"1.5px solid #E2E8F0",fontSize:14,fontFamily:"inherit",resize:"vertical",boxSizing:"border-box"}}/>
+              <div style={{fontSize:11,marginTop:4,color:lenOk.background?"#16A34A":"#9ca3af"}}>{background.trim().length} / {PROPOSAL_MIN_LEN.background}자 이상</div>
             </ProposalFormRow>
 
             <ProposalFormRow label="제안내용">
               <textarea value={content} onChange={e=>setContent(e.target.value)} placeholder="어떤 정책이 필요한지 구체적으로 적어주세요" rows={5} style={{width:"100%",padding:"11px 14px",borderRadius:10,border:"1.5px solid #E2E8F0",fontSize:14,fontFamily:"inherit",resize:"vertical",boxSizing:"border-box"}}/>
+              <div style={{fontSize:11,marginTop:4,color:lenOk.content?"#16A34A":"#9ca3af"}}>{content.trim().length} / {PROPOSAL_MIN_LEN.content}자 이상</div>
             </ProposalFormRow>
 
             <ProposalFormRow label="기대효과">
               <textarea value={expectedEffect} onChange={e=>setExpectedEffect(e.target.value)} placeholder="이 제안이 반영되면 어떤 효과가 있을지 적어주세요" rows={3} style={{width:"100%",padding:"11px 14px",borderRadius:10,border:"1.5px solid #E2E8F0",fontSize:14,fontFamily:"inherit",resize:"vertical",boxSizing:"border-box"}}/>
+              <div style={{fontSize:11,marginTop:4,color:lenOk.expectedEffect?"#16A34A":"#9ca3af"}}>{expectedEffect.trim().length} / {PROPOSAL_MIN_LEN.expectedEffect}자 이상</div>
             </ProposalFormRow>
 
             <ProposalFormRow label="첨부자료">
@@ -2128,9 +2186,29 @@ function ProposalWriteView({category,setCategory,title,setTitle,background,setBa
               </label>
             </ProposalFormRow>
 
-            <button type="submit" style={{alignSelf:"flex-end",padding:"9px 20px",borderRadius:20,background:"var(--accent)",border:"none",color:"white",fontSize:13,fontWeight:600,cursor:"pointer",transition:"opacity 0.15s"}}
-              onMouseEnter={e=>e.currentTarget.style.opacity="0.85"} onMouseLeave={e=>e.currentTarget.style.opacity="1"}
-            >제안하기</button>
+            {aiResult&&checkedSignature===signature&&(
+              <div style={{borderRadius:10,padding:"10px 14px",fontSize:12,lineHeight:1.6,background:aiResult.profanity?"#FEF2F2":"#EFF6FF",border:`1.5px solid ${aiResult.profanity?"#FECACA":"var(--accent-bg)"}`}}>
+                <div style={{display:"flex",gap:6,alignItems:"flex-start",color:aiResult.profanity?"#B91C1C":"#15803D"}}>
+                  <Icon name={aiResult.profanity?"error":"check_circle"} size={15} color={aiResult.profanity?"#DC2626":"#16A34A"}/>
+                  <span>{aiResult.profanity?`부적절한 표현이 감지되어 제출할 수 없어요: ${aiResult.profanityReason}`:"부적절한 표현이 없어요. 제안하기를 눌러주세요."}</span>
+                </div>
+                {aiResult.similar?.length>0&&(
+                  <div style={{marginTop:8,paddingTop:8,borderTop:"1px solid rgba(0,0,0,0.08)",color:"#374151"}}>
+                    <div style={{fontWeight:700,marginBottom:4}}>비슷한 제안이 이미 있어요</div>
+                    {aiResult.similar.map(s=>(<div key={s.id} style={{marginBottom:2}}>· {s.title} — {s.reason}</div>))}
+                  </div>
+                )}
+              </div>
+            )}
+
+            <div style={{display:"flex",justifyContent:"flex-end",gap:8}}>
+              <button type="button" onClick={runAiCheck} disabled={aiChecking} style={{padding:"9px 16px",borderRadius:20,background:"white",border:"1.5px solid var(--accent)",color:"var(--accent)",fontSize:13,fontWeight:600,cursor:aiChecking?"default":"pointer",opacity:aiChecking?0.6:1,transition:"opacity 0.15s"}}>
+                {aiChecking?"검토 중...":"AI 검토"}
+              </button>
+              <button type="submit" style={{padding:"9px 20px",borderRadius:20,background:"var(--accent)",border:"none",color:"white",fontSize:13,fontWeight:600,cursor:"pointer",transition:"opacity 0.15s"}}
+                onMouseEnter={e=>e.currentTarget.style.opacity="0.85"} onMouseLeave={e=>e.currentTarget.style.opacity="1"}
+              >제안하기</button>
+            </div>
           </form>
         </div>
       </div>
@@ -2286,7 +2364,7 @@ function PolicyProposalPage({bp,user,onGoCommunity}){
   const handleSubmit=e=>{
     e.preventDefault();
     if(!user){alert("로그인 후 제안을 등록할 수 있어요.");return;}
-    if(!title.trim()||!content.trim())return;
+    if(!title.trim()||background.trim().length<PROPOSAL_MIN_LEN.background||content.trim().length<PROPOSAL_MIN_LEN.content||expectedEffect.trim().length<PROPOSAL_MIN_LEN.expectedEffect)return;
     const proposal={
       id:Date.now(),
       title:title.trim(),
@@ -2360,7 +2438,7 @@ function PolicyProposalPage({bp,user,onGoCommunity}){
   }
 
   if(showForm){
-    return <ProposalWriteView category={category} setCategory={setCategory} title={title} setTitle={setTitle} background={background} setBackground={setBackground} content={content} setContent={setContent} expectedEffect={expectedEffect} setExpectedEffect={setExpectedEffect} attachmentName={attachmentName} setAttachmentName={setAttachmentName} onSubmit={handleSubmit} onBack={()=>setShowForm(false)} bp={bp}/>;
+    return <ProposalWriteView category={category} setCategory={setCategory} title={title} setTitle={setTitle} background={background} setBackground={setBackground} content={content} setContent={setContent} expectedEffect={expectedEffect} setExpectedEffect={setExpectedEffect} attachmentName={attachmentName} setAttachmentName={setAttachmentName} proposals={proposals} onSubmit={handleSubmit} onBack={()=>setShowForm(false)} bp={bp}/>;
   }
 
   const now=new Date();
