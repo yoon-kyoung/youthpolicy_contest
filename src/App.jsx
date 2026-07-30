@@ -2168,7 +2168,7 @@ function ProposalWriteView({category,setCategory,title,setTitle,background,setBa
 
       <div style={{padding:bp.isDesktop?"32px 40px 60px":bp.isTablet?"24px 24px 60px":"16px 16px 80px"}}>
         <div style={{maxWidth:820,margin:"0 auto"}}>
-          <h1 style={{fontSize:bp.isDesktop?26:20,fontWeight:900,margin:"0 0 6px",letterSpacing:"-0.02em",color:"#111827"}}>필요한 정책을 직접 제안해보세요</h1>
+          <h1 style={{fontSize:bp.isDesktop?26:20,fontWeight:900,margin:"0 0 6px",letterSpacing:"-0.02em",color:"#111827"}}>청년 정책제안서</h1>
           <p style={{fontSize:13,color:"#6b7280",margin:"0 0 20px"}}>여러분의 목소리가 공감투표를 통해 새로운 청년정책으로 이어질 수 있어요</p>
 
           <form onSubmit={handleFormSubmit} style={{background:"white",borderRadius:16,border:"1.5px solid #E2E8F0",padding:bp.isDesktop?24:16,display:"flex",flexDirection:"column",gap:16}}>
@@ -2197,7 +2197,7 @@ function ProposalWriteView({category,setCategory,title,setTitle,background,setBa
                 </label>
                 <label style={{display:"flex",alignItems:"center",gap:8,cursor:"pointer",width:"fit-content"}}>
                   <input type="checkbox" checked={isTeam} onChange={e=>setIsTeam(e.target.checked)} style={{width:16,height:16,accentColor:"var(--accent)",cursor:"pointer"}}/>
-                  <span style={{fontSize:13,color:"#374151",fontWeight:500}}>팀으로 함께 제안해요</span>
+                  <span style={{fontSize:13,color:"#374151",fontWeight:500}}>팀</span>
                 </label>
               </div>
               {isTeam&&(
