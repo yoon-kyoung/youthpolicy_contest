@@ -2048,6 +2048,47 @@ function ProposalDetailView({proposal,user,onVote,onBack,bp}){
   );
 }
 
+function ProposalWriteView({category,setCategory,title,setTitle,content,setContent,onSubmit,onBack,bp}){
+  useEffect(()=>{window.scrollTo({top:0,behavior:"smooth"});},[]);
+
+  return(
+    <div style={{background:"#F5F9FC",minHeight:"100%",animation:"fadeUp 0.25s ease"}}>
+      <div style={{background:"white",borderBottom:"1px solid #e5e7eb",padding:bp.isDesktop?"0 40px":"0 16px",position:"sticky",top:0,zIndex:40}}>
+        <div style={{height:bp.isDesktop?56:52,display:"flex",alignItems:"center",gap:12}}>
+          <button onClick={onBack} style={{display:"flex",alignItems:"center",gap:6,background:"none",border:"none",cursor:"pointer",color:"#374151",fontSize:14,fontWeight:600,padding:"8px 0",transition:"color 0.15s"}}
+            onMouseEnter={e=>e.currentTarget.style.color="var(--accent)"}
+            onMouseLeave={e=>e.currentTarget.style.color="#374151"}
+          ><Icon name="arrow_back" size={16}/> 뒤로가기</button>
+          <span style={{color:"#e5e7eb"}}>|</span>
+          <span style={{fontSize:13,color:"#9ca3af"}}>정책 제안하기</span>
+        </div>
+      </div>
+
+      <div style={{padding:bp.isDesktop?"32px 40px 60px":bp.isTablet?"24px 24px 60px":"16px 16px 80px"}}>
+        <div style={{maxWidth:820,margin:"0 auto"}}>
+          <h1 style={{fontSize:bp.isDesktop?26:20,fontWeight:900,margin:"0 0 6px",letterSpacing:"-0.02em",color:"#111827"}}>필요한 정책을 직접 제안해보세요</h1>
+          <p style={{fontSize:13,color:"#6b7280",margin:"0 0 20px"}}>여러분의 목소리가 공감투표를 통해 새로운 청년정책으로 이어질 수 있어요</p>
+
+          <form onSubmit={onSubmit} style={{background:"white",borderRadius:16,border:"1.5px solid #E2E8F0",padding:bp.isDesktop?24:16,display:"flex",flexDirection:"column",gap:12}}>
+            <div style={{display:"flex",gap:8,flexWrap:"wrap"}}>
+              {CATEGORIES.slice(1).map(c=>(
+                <button key={c.value} type="button" onClick={()=>setCategory(c.value)} style={{display:"flex",alignItems:"center",gap:4,padding:"6px 12px",borderRadius:20,border:"1.5px solid",cursor:"pointer",borderColor:category===c.value?"var(--accent)":"#E2E8F0",background:category===c.value?"var(--accent-bg)":"white",color:category===c.value?"var(--accent)":"#718096",fontSize:12,fontWeight:category===c.value?700:500}}>
+                  <Icon name={c.icon} size={13} color={category===c.value?"var(--accent)":"#718096"}/>{c.label}
+                </button>
+              ))}
+            </div>
+            <input value={title} onChange={e=>setTitle(e.target.value)} placeholder="제안 제목을 입력하세요" style={{padding:"11px 14px",borderRadius:10,border:"1.5px solid #E2E8F0",fontSize:14,fontFamily:"inherit"}}/>
+            <textarea value={content} onChange={e=>setContent(e.target.value)} placeholder="어떤 정책이 필요한지, 왜 필요한지 자유롭게 적어주세요" rows={9} style={{padding:"11px 14px",borderRadius:10,border:"1.5px solid #E2E8F0",fontSize:14,fontFamily:"inherit",resize:"vertical"}}/>
+            <button type="submit" style={{alignSelf:"flex-end",padding:"9px 20px",borderRadius:20,background:"var(--accent)",border:"none",color:"white",fontSize:13,fontWeight:600,cursor:"pointer",transition:"opacity 0.15s"}}
+              onMouseEnter={e=>e.currentTarget.style.opacity="0.85"} onMouseLeave={e=>e.currentTarget.style.opacity="1"}
+            >제안하기</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 const PROPOSAL_GUIDE_STEPS=[
   "카테고리를 고르고 제목·내용을 작성해 제안을 등록해요",
   "등록된 제안은 다른 청년들의 공감투표를 받아요",
@@ -2272,6 +2313,10 @@ function PolicyProposalPage({bp,user}){
     return <ProposalDetailView proposal={live} user={user} onVote={handleVote} onBack={closeProposal} bp={bp}/>;
   }
 
+  if(showForm){
+    return <ProposalWriteView category={category} setCategory={setCategory} title={title} setTitle={setTitle} content={content} setContent={setContent} onSubmit={handleSubmit} onBack={()=>setShowForm(false)} bp={bp}/>;
+  }
+
   return(
     <div style={{background:"#f8fafc",minHeight:"100%"}}>
       <div style={{background:"linear-gradient(160deg,#0f172a 0%,var(--accent-dark) 60%,var(--accent) 100%)",padding:bp.isDesktop?"36px 40px 28px":bp.isTablet?"28px 24px 20px":"22px 16px 16px",color:"white"}}>
@@ -2306,7 +2351,7 @@ function PolicyProposalPage({bp,user}){
                   <button key={t.value} onClick={()=>setStatusTab(t.value)} style={{padding:bp.isDesktop?"13px 16px":"11px 12px",border:"none",background:"none",cursor:"pointer",whiteSpace:"nowrap",fontSize:bp.isDesktop?14:13,fontWeight:statusTab===t.value?700:500,color:statusTab===t.value?"#111827":"#9ca3af",borderBottom:`2.5px solid ${statusTab===t.value?"#111827":"transparent"}`,transition:"all 0.15s"}}>{t.label} <span style={{opacity:0.6,fontSize:11}}>({statusCounts[t.value]??0})</span></button>
                 ))}
               </div>
-              <button type="button" onClick={()=>setShowForm(v=>!v)} style={{padding:"9px 20px",borderRadius:20,background:"var(--accent)",border:"none",color:"white",fontSize:13,fontWeight:600,cursor:"pointer",transition:"opacity 0.15s",flexShrink:0}}
+              <button type="button" onClick={()=>setShowForm(true)} style={{padding:"9px 20px",borderRadius:20,background:"var(--accent)",border:"none",color:"white",fontSize:13,fontWeight:600,cursor:"pointer",transition:"opacity 0.15s",flexShrink:0}}
                 onMouseEnter={e=>e.currentTarget.style.opacity="0.85"} onMouseLeave={e=>e.currentTarget.style.opacity="1"}
               >정책 제안하기</button>
             </div>
@@ -2331,23 +2376,6 @@ function PolicyProposalPage({bp,user}){
               {filtered.map(p=><ProposalCard key={p.id} proposal={p} user={user} onVote={handleVote} onOpen={openProposal} bp={bp}/>)}
             </div>
           </div>
-
-          {showForm&&(
-            <form onSubmit={handleSubmit} style={{background:"white",borderRadius:16,border:"1.5px solid #E2E8F0",padding:bp.isDesktop?24:16,display:"flex",flexDirection:"column",gap:12}}>
-              <div style={{display:"flex",gap:8,flexWrap:"wrap"}}>
-                {CATEGORIES.slice(1).map(c=>(
-                  <button key={c.value} type="button" onClick={()=>setCategory(c.value)} style={{display:"flex",alignItems:"center",gap:4,padding:"6px 12px",borderRadius:20,border:"1.5px solid",cursor:"pointer",borderColor:category===c.value?"var(--accent)":"#E2E8F0",background:category===c.value?"var(--accent-bg)":"white",color:category===c.value?"var(--accent)":"#718096",fontSize:12,fontWeight:category===c.value?700:500}}>
-                    <Icon name={c.icon} size={13} color={category===c.value?"var(--accent)":"#718096"}/>{c.label}
-                  </button>
-                ))}
-              </div>
-              <input value={title} onChange={e=>setTitle(e.target.value)} placeholder="제안 제목을 입력하세요" style={{padding:"11px 14px",borderRadius:10,border:"1.5px solid #E2E8F0",fontSize:14,fontFamily:"inherit"}}/>
-              <textarea value={content} onChange={e=>setContent(e.target.value)} placeholder="어떤 정책이 필요한지, 왜 필요한지 자유롭게 적어주세요" rows={5} style={{padding:"11px 14px",borderRadius:10,border:"1.5px solid #E2E8F0",fontSize:14,fontFamily:"inherit",resize:"vertical"}}/>
-              <button type="submit" style={{alignSelf:"flex-end",padding:"9px 20px",borderRadius:20,background:"var(--accent)",border:"none",color:"white",fontSize:13,fontWeight:600,cursor:"pointer",transition:"opacity 0.15s"}}
-                onMouseEnter={e=>e.currentTarget.style.opacity="0.85"} onMouseLeave={e=>e.currentTarget.style.opacity="1"}
-              >제안하기</button>
-            </form>
-          )}
         </div>
       </div>
 
