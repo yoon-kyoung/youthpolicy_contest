@@ -2368,7 +2368,7 @@ function PolicyProposalPage({bp,user}){
               </div>
               <button type="button" onClick={()=>setShowForm(true)} style={{padding:"9px 20px",borderRadius:20,background:"var(--accent)",border:"none",color:"white",fontSize:13,fontWeight:600,cursor:"pointer",transition:"opacity 0.15s",flexShrink:0}}
                 onMouseEnter={e=>e.currentTarget.style.opacity="0.85"} onMouseLeave={e=>e.currentTarget.style.opacity="1"}
-              >정책 제안하기</button>
+              >+ 정책 제안하기</button>
             </div>
 
             <div style={{background:"white",borderRadius:"0 0 16px 16px",padding:"12px 16px",display:"flex",gap:5,flexWrap:"wrap",alignItems:"center"}}>
