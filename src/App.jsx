@@ -2288,21 +2288,6 @@ function PolicyProposalPage({bp,user}){
             ))}
           </div>
 
-          <form onSubmit={handleSubmit} style={{background:"white",borderRadius:16,border:"1.5px solid #E2E8F0",padding:bp.isDesktop?24:16,display:"flex",flexDirection:"column",gap:12}}>
-            <div style={{display:"flex",gap:8,flexWrap:"wrap"}}>
-              {CATEGORIES.slice(1).map(c=>(
-                <button key={c.value} type="button" onClick={()=>setCategory(c.value)} style={{display:"flex",alignItems:"center",gap:4,padding:"6px 12px",borderRadius:20,border:"1.5px solid",cursor:"pointer",borderColor:category===c.value?"var(--accent)":"#E2E8F0",background:category===c.value?"var(--accent-bg)":"white",color:category===c.value?"var(--accent)":"#718096",fontSize:12,fontWeight:category===c.value?700:500}}>
-                  <Icon name={c.icon} size={13} color={category===c.value?"var(--accent)":"#718096"}/>{c.label}
-                </button>
-              ))}
-            </div>
-            <input value={title} onChange={e=>setTitle(e.target.value)} placeholder="제안 제목을 입력하세요" style={{padding:"11px 14px",borderRadius:10,border:"1.5px solid #E2E8F0",fontSize:14,fontFamily:"inherit"}}/>
-            <textarea value={content} onChange={e=>setContent(e.target.value)} placeholder="어떤 정책이 필요한지, 왜 필요한지 자유롭게 적어주세요" rows={5} style={{padding:"11px 14px",borderRadius:10,border:"1.5px solid #E2E8F0",fontSize:14,fontFamily:"inherit",resize:"vertical"}}/>
-            <button type="submit" style={{alignSelf:"flex-end",padding:"9px 20px",borderRadius:20,background:"var(--accent)",border:"none",color:"white",fontSize:13,fontWeight:600,cursor:"pointer",transition:"opacity 0.15s"}}
-              onMouseEnter={e=>e.currentTarget.style.opacity="0.85"} onMouseLeave={e=>e.currentTarget.style.opacity="1"}
-            >제안하기</button>
-          </form>
-
           <div>
             <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",borderBottom:"1px solid #e5e7eb",background:"white",borderRadius:"16px 16px 0 0",padding:"0 12px"}}>
               <div style={{display:"flex",gap:0,overflowX:"auto"}}>
@@ -2326,6 +2311,21 @@ function PolicyProposalPage({bp,user}){
               {filtered.map(p=><ProposalCard key={p.id} proposal={p} user={user} onVote={handleVote} onOpen={openProposal} bp={bp}/>)}
             </div>
           </div>
+
+          <form onSubmit={handleSubmit} style={{background:"white",borderRadius:16,border:"1.5px solid #E2E8F0",padding:bp.isDesktop?24:16,display:"flex",flexDirection:"column",gap:12}}>
+            <div style={{display:"flex",gap:8,flexWrap:"wrap"}}>
+              {CATEGORIES.slice(1).map(c=>(
+                <button key={c.value} type="button" onClick={()=>setCategory(c.value)} style={{display:"flex",alignItems:"center",gap:4,padding:"6px 12px",borderRadius:20,border:"1.5px solid",cursor:"pointer",borderColor:category===c.value?"var(--accent)":"#E2E8F0",background:category===c.value?"var(--accent-bg)":"white",color:category===c.value?"var(--accent)":"#718096",fontSize:12,fontWeight:category===c.value?700:500}}>
+                  <Icon name={c.icon} size={13} color={category===c.value?"var(--accent)":"#718096"}/>{c.label}
+                </button>
+              ))}
+            </div>
+            <input value={title} onChange={e=>setTitle(e.target.value)} placeholder="제안 제목을 입력하세요" style={{padding:"11px 14px",borderRadius:10,border:"1.5px solid #E2E8F0",fontSize:14,fontFamily:"inherit"}}/>
+            <textarea value={content} onChange={e=>setContent(e.target.value)} placeholder="어떤 정책이 필요한지, 왜 필요한지 자유롭게 적어주세요" rows={5} style={{padding:"11px 14px",borderRadius:10,border:"1.5px solid #E2E8F0",fontSize:14,fontFamily:"inherit",resize:"vertical"}}/>
+            <button type="submit" style={{alignSelf:"flex-end",padding:"9px 20px",borderRadius:20,background:"var(--accent)",border:"none",color:"white",fontSize:13,fontWeight:600,cursor:"pointer",transition:"opacity 0.15s"}}
+              onMouseEnter={e=>e.currentTarget.style.opacity="0.85"} onMouseLeave={e=>e.currentTarget.style.opacity="1"}
+            >제안하기</button>
+          </form>
         </div>
       </div>
 
