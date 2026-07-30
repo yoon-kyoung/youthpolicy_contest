@@ -2184,6 +2184,7 @@ function PolicyProposalPage({bp,user}){
   const [catFilter,setCatFilter]=useState("all");
   const [sort,setSort]=useState("recent");
   const [selectedProposal,setSelectedProposal]=useState(null);
+  const [showForm,setShowForm]=useState(false);
 
   useEffect(()=>{
     const id=new URLSearchParams(window.location.search).get("proposal");
@@ -2225,6 +2226,7 @@ function PolicyProposalPage({bp,user}){
     setProposals(prev=>[proposal,...prev]);
     setTitle("");
     setContent("");
+    setShowForm(false);
   };
 
   const handleVote=useCallback(id=>{
@@ -2304,15 +2306,18 @@ function PolicyProposalPage({bp,user}){
                   <button key={t.value} onClick={()=>setStatusTab(t.value)} style={{padding:bp.isDesktop?"13px 16px":"11px 12px",border:"none",background:"none",cursor:"pointer",whiteSpace:"nowrap",fontSize:bp.isDesktop?14:13,fontWeight:statusTab===t.value?700:500,color:statusTab===t.value?"#111827":"#9ca3af",borderBottom:`2.5px solid ${statusTab===t.value?"#111827":"transparent"}`,transition:"all 0.15s"}}>{t.label} <span style={{opacity:0.6,fontSize:11}}>({statusCounts[t.value]??0})</span></button>
                 ))}
               </div>
-              <select value={sort} onChange={e=>setSort(e.target.value)} style={{fontSize:12,border:"1px solid #e2e8f0",borderRadius:8,padding:"5px 8px",background:"white",color:"#374151",outline:"none",fontFamily:"inherit",cursor:"pointer",flexShrink:0}}>
-                {PROPOSAL_SORTS.map(o=><option key={o.value} value={o.value}>{o.label}</option>)}
-              </select>
+              <button type="button" onClick={()=>setShowForm(v=>!v)} style={{padding:"9px 20px",borderRadius:20,background:"var(--accent)",border:"none",color:"white",fontSize:13,fontWeight:600,cursor:"pointer",transition:"opacity 0.15s",flexShrink:0}}
+                onMouseEnter={e=>e.currentTarget.style.opacity="0.85"} onMouseLeave={e=>e.currentTarget.style.opacity="1"}
+              >정책 제안하기</button>
             </div>
 
             <div style={{background:"white",borderRadius:"0 0 16px 16px",padding:"12px 16px",display:"flex",gap:5,flexWrap:"wrap",alignItems:"center"}}>
               {PROPOSAL_CATEGORY_FILTERS.map(c=>(
                 <button key={c.value} onClick={()=>setCatFilter(c.value)} style={{padding:"4px 10px",borderRadius:20,border:"1.5px solid",borderColor:catFilter===c.value?"var(--accent)":"#E2E8F0",background:catFilter===c.value?"var(--accent)":"white",color:catFilter===c.value?"white":"#475569",fontSize:12,fontWeight:catFilter===c.value?700:400,cursor:"pointer",transition:"all 0.12s",whiteSpace:"nowrap"}}>{c.label}</button>
               ))}
+              <select value={sort} onChange={e=>setSort(e.target.value)} style={{fontSize:12,border:"1px solid #e2e8f0",borderRadius:8,padding:"5px 8px",background:"white",color:"#374151",outline:"none",fontFamily:"inherit",cursor:"pointer",flexShrink:0,marginLeft:"auto"}}>
+                {PROPOSAL_SORTS.map(o=><option key={o.value} value={o.value}>{o.label}</option>)}
+              </select>
             </div>
 
             <div style={{display:"flex",flexDirection:"column",gap:10,marginTop:12}}>
@@ -2327,20 +2332,22 @@ function PolicyProposalPage({bp,user}){
             </div>
           </div>
 
-          <form onSubmit={handleSubmit} style={{background:"white",borderRadius:16,border:"1.5px solid #E2E8F0",padding:bp.isDesktop?24:16,display:"flex",flexDirection:"column",gap:12}}>
-            <div style={{display:"flex",gap:8,flexWrap:"wrap"}}>
-              {CATEGORIES.slice(1).map(c=>(
-                <button key={c.value} type="button" onClick={()=>setCategory(c.value)} style={{display:"flex",alignItems:"center",gap:4,padding:"6px 12px",borderRadius:20,border:"1.5px solid",cursor:"pointer",borderColor:category===c.value?"var(--accent)":"#E2E8F0",background:category===c.value?"var(--accent-bg)":"white",color:category===c.value?"var(--accent)":"#718096",fontSize:12,fontWeight:category===c.value?700:500}}>
-                  <Icon name={c.icon} size={13} color={category===c.value?"var(--accent)":"#718096"}/>{c.label}
-                </button>
-              ))}
-            </div>
-            <input value={title} onChange={e=>setTitle(e.target.value)} placeholder="제안 제목을 입력하세요" style={{padding:"11px 14px",borderRadius:10,border:"1.5px solid #E2E8F0",fontSize:14,fontFamily:"inherit"}}/>
-            <textarea value={content} onChange={e=>setContent(e.target.value)} placeholder="어떤 정책이 필요한지, 왜 필요한지 자유롭게 적어주세요" rows={5} style={{padding:"11px 14px",borderRadius:10,border:"1.5px solid #E2E8F0",fontSize:14,fontFamily:"inherit",resize:"vertical"}}/>
-            <button type="submit" style={{alignSelf:"flex-end",padding:"9px 20px",borderRadius:20,background:"var(--accent)",border:"none",color:"white",fontSize:13,fontWeight:600,cursor:"pointer",transition:"opacity 0.15s"}}
-              onMouseEnter={e=>e.currentTarget.style.opacity="0.85"} onMouseLeave={e=>e.currentTarget.style.opacity="1"}
-            >제안하기</button>
-          </form>
+          {showForm&&(
+            <form onSubmit={handleSubmit} style={{background:"white",borderRadius:16,border:"1.5px solid #E2E8F0",padding:bp.isDesktop?24:16,display:"flex",flexDirection:"column",gap:12}}>
+              <div style={{display:"flex",gap:8,flexWrap:"wrap"}}>
+                {CATEGORIES.slice(1).map(c=>(
+                  <button key={c.value} type="button" onClick={()=>setCategory(c.value)} style={{display:"flex",alignItems:"center",gap:4,padding:"6px 12px",borderRadius:20,border:"1.5px solid",cursor:"pointer",borderColor:category===c.value?"var(--accent)":"#E2E8F0",background:category===c.value?"var(--accent-bg)":"white",color:category===c.value?"var(--accent)":"#718096",fontSize:12,fontWeight:category===c.value?700:500}}>
+                    <Icon name={c.icon} size={13} color={category===c.value?"var(--accent)":"#718096"}/>{c.label}
+                  </button>
+                ))}
+              </div>
+              <input value={title} onChange={e=>setTitle(e.target.value)} placeholder="제안 제목을 입력하세요" style={{padding:"11px 14px",borderRadius:10,border:"1.5px solid #E2E8F0",fontSize:14,fontFamily:"inherit"}}/>
+              <textarea value={content} onChange={e=>setContent(e.target.value)} placeholder="어떤 정책이 필요한지, 왜 필요한지 자유롭게 적어주세요" rows={5} style={{padding:"11px 14px",borderRadius:10,border:"1.5px solid #E2E8F0",fontSize:14,fontFamily:"inherit",resize:"vertical"}}/>
+              <button type="submit" style={{alignSelf:"flex-end",padding:"9px 20px",borderRadius:20,background:"var(--accent)",border:"none",color:"white",fontSize:13,fontWeight:600,cursor:"pointer",transition:"opacity 0.15s"}}
+                onMouseEnter={e=>e.currentTarget.style.opacity="0.85"} onMouseLeave={e=>e.currentTarget.style.opacity="1"}
+              >제안하기</button>
+            </form>
+          )}
         </div>
       </div>
 
