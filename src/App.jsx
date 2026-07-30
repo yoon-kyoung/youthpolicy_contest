@@ -1764,7 +1764,7 @@ function ProposalTimelineWidget({steps,states,title="진행 상태"}){
         {steps.map((step,i)=>{
           const st=states[i];
           const isOpen=openIndex===i;
-          const filled=idx=>states[idx]!=="upcoming"||openIndex===idx;
+          const filled=idx=>states[idx]!=="upcoming"||(openIndex!=null&&idx<=openIndex);
           const isFilled=filled(i);
           const stateColor=st==="current"?"var(--accent)":"#15803D";
           const lineFilled=i>0&&(filled(i-1)||isFilled);
