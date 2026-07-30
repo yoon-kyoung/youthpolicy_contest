@@ -2279,24 +2279,22 @@ function PolicyProposalPage({bp,user}){
         </div>
       </div>
 
-      <div style={{padding:bp.isDesktop?"20px 40px 0":bp.isTablet?"16px 24px 0":"12px 14px 0"}}>
-        <div style={{maxWidth:860,margin:"0 auto",display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:bp.isMobile?8:12,background:"white",borderRadius:16,border:"1.5px solid #E2E8F0",padding:bp.isDesktop?"18px 24px":"14px 12px"}}>
-          {[
-            {icon:"campaign",   label:"누적 제안수", val:stats.total.toLocaleString()},
-            {icon:"forum",      label:"답변율",      val:`${stats.rate}%`},
-            {icon:"celebration",label:"반영 건수",   val:stats.adopted.toLocaleString()},
-          ].map(s=>(
-            <div key={s.label} style={{display:"flex",flexDirection:"column",alignItems:"center",gap:4,textAlign:"center"}}>
-              <div style={{display:"flex",alignItems:"center",gap:5,fontSize:bp.isMobile?11:12,color:"#9ca3af",fontWeight:600}}><Icon name={s.icon} size={14} color="#9ca3af"/>{s.label}</div>
-              <div style={{fontSize:bp.isDesktop?22:18,fontWeight:900,color:"#111827"}}>{s.val}</div>
-            </div>
-          ))}
-        </div>
-      </div>
-
       <div style={{padding:bp.isDesktop?"28px 40px 60px":bp.isTablet?"20px 24px 60px":"14px 14px 80px"}}>
         <div style={{maxWidth:860,margin:"0 auto",display:"flex",flexDirection:"column",gap:20}}>
           <ProposalOnboardingCarousel bp={bp}/>
+
+          <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:bp.isMobile?8:12,background:"white",borderRadius:16,border:"1.5px solid #E2E8F0",padding:bp.isDesktop?"18px 24px":"14px 12px"}}>
+            {[
+              {icon:"campaign",   label:"누적 제안수", val:stats.total.toLocaleString()},
+              {icon:"forum",      label:"답변율",      val:`${stats.rate}%`},
+              {icon:"celebration",label:"반영 건수",   val:stats.adopted.toLocaleString()},
+            ].map(s=>(
+              <div key={s.label} style={{display:"flex",flexDirection:"column",alignItems:"center",gap:4,textAlign:"center"}}>
+                <div style={{display:"flex",alignItems:"center",gap:5,fontSize:bp.isMobile?11:12,color:"#9ca3af",fontWeight:600}}><Icon name={s.icon} size={14} color="#9ca3af"/>{s.label}</div>
+                <div style={{fontSize:bp.isDesktop?22:18,fontWeight:900,color:"#111827"}}>{s.val}</div>
+              </div>
+            ))}
+          </div>
 
           <form onSubmit={handleSubmit} style={{background:"white",borderRadius:16,border:"1.5px solid #E2E8F0",padding:bp.isDesktop?24:16,display:"flex",flexDirection:"column",gap:12}}>
             <div style={{display:"flex",gap:8,flexWrap:"wrap"}}>
