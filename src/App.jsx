@@ -736,6 +736,11 @@ function SearchView({favIds,onToggleFav,onGoDetail,bp,policies}){
   const [showRegionMap,setShowRegionMap]=useState(false);
   const query=useDebounce(rawQ,300);
 
+  useEffect(()=>{
+    if(!EDUCATION_LEVELS.includes(education))setEducation("전체");
+    if(!EMPLOYMENT_STATUSES.includes(employmentStatus))setEmploymentStatus("제한없음");
+  },[]);
+
   const catCounts=useMemo(()=>{
     const base=excludeExpired
       ?policies.filter(p=>{
