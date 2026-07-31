@@ -1474,30 +1474,32 @@ function CommunityPostDetailView({post,bp,user,onBack,onLike}){
 
   return(
     <div style={{background:"#f8fafc",minHeight:"100%"}}>
-      <div style={{background:"linear-gradient(160deg,#0f172a 0%,var(--accent-dark) 60%,var(--accent) 100%)",padding:bp.isDesktop?"36px 40px 32px":bp.isTablet?"28px 24px 24px":"22px 16px 20px",color:"white"}}>
-        <button onClick={onBack} style={{display:"flex",alignItems:"center",gap:6,background:"rgba(255,255,255,0.12)",border:"none",borderRadius:10,color:"white",padding:"7px 14px",cursor:"pointer",fontSize:13,fontWeight:600,marginBottom:20,transition:"background 0.15s"}}
+      <div style={{background:"linear-gradient(160deg,#0f172a 0%,var(--accent-dark) 60%,var(--accent) 100%)",padding:bp.isDesktop?"24px 40px":bp.isTablet?"20px 24px":"16px 16px"}}>
+        <button onClick={onBack} style={{display:"flex",alignItems:"center",gap:6,background:"rgba(255,255,255,0.12)",border:"none",borderRadius:10,color:"white",padding:"7px 14px",cursor:"pointer",fontSize:13,fontWeight:600,transition:"background 0.15s"}}
           onMouseEnter={e=>e.currentTarget.style.background="rgba(255,255,255,0.22)"} onMouseLeave={e=>e.currentTarget.style.background="rgba(255,255,255,0.12)"}
         ><Icon name="arrow_back" size={16} color="currentColor"/> 목록으로</button>
-        <div style={{display:"flex",gap:8,alignItems:"center",marginBottom:12,flexWrap:"wrap"}}>
-          <span style={{fontSize:11,fontWeight:700,padding:"3px 10px",borderRadius:20,background:cc.bg,color:cc.text,border:`1px solid ${cc.border}`}}>{post.cat}</span>
-          <span style={{fontSize:12,opacity:0.55}}>{fmtDate(post.created_at||post.date)}</span>
-        </div>
-        <h1 style={{fontSize:bp.isDesktop?26:bp.isTablet?22:18,fontWeight:900,margin:"0 0 16px",lineHeight:1.35,letterSpacing:"-0.02em"}}>{post.title}</h1>
-        <div style={{display:"flex",alignItems:"center",gap:12}}>
-          <div style={{width:32,height:32,borderRadius:"50%",background:"rgba(255,255,255,0.15)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:14,fontWeight:700,flexShrink:0}}>{post.author?.[0]||"?"}</div>
-          <div>
-            <div style={{fontSize:13,fontWeight:700}}>{maskName(post.author)}</div>
-            <div style={{fontSize:11,opacity:0.5}}>작성자</div>
-          </div>
-          <div style={{marginLeft:"auto",display:"flex",gap:14}}>
-            <span style={{fontSize:13,opacity:0.7,display:"flex",alignItems:"center",gap:4}}><Icon name="favorite" size={14} color="white"/> {(post.likes||0)+(liked?1:0)}</span>
-            <span style={{fontSize:13,opacity:0.7,display:"flex",alignItems:"center",gap:4}}><Icon name="chat_bubble" size={14} color="white"/> {totalComments}</span>
-          </div>
-        </div>
       </div>
       <div style={{padding:bp.isDesktop?"32px 40px":bp.isTablet?"24px 24px":"18px 14px",maxWidth:bp.isDesktop?820:"100%",margin:"0 auto"}}>
-        <div style={{background:"white",borderRadius:16,padding:bp.isDesktop?"28px 32px":bp.isTablet?"22px 24px":"18px 18px",border:"1.5px solid #f1f5f9",fontSize:bp.isDesktop?15:14,lineHeight:1.85,color:"#374151",whiteSpace:"pre-wrap",wordBreak:"break-word"}}>
-          {body}
+        <div style={{background:"white",borderRadius:16,padding:bp.isDesktop?"28px 32px":bp.isTablet?"22px 24px":"18px 18px",border:"1.5px solid #f1f5f9"}}>
+          <div style={{display:"flex",gap:8,alignItems:"center",marginBottom:12,flexWrap:"wrap"}}>
+            <span style={{fontSize:11,fontWeight:700,padding:"3px 10px",borderRadius:20,background:cc.bg,color:cc.text,border:`1px solid ${cc.border}`}}>{post.cat}</span>
+            <span style={{fontSize:12,color:"#9ca3af"}}>{fmtDate(post.created_at||post.date)}</span>
+          </div>
+          <h1 style={{fontSize:bp.isDesktop?26:bp.isTablet?22:18,fontWeight:900,margin:"0 0 16px",lineHeight:1.35,letterSpacing:"-0.02em",color:"#111827"}}>{post.title}</h1>
+          <div style={{display:"flex",alignItems:"center",gap:12,marginBottom:20,paddingBottom:20,borderBottom:"1px solid #f1f5f9"}}>
+            <div style={{width:32,height:32,borderRadius:"50%",background:"var(--accent-bg)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:14,fontWeight:700,color:"var(--accent)",flexShrink:0}}>{post.author?.[0]||"?"}</div>
+            <div>
+              <div style={{fontSize:13,fontWeight:700,color:"#111827"}}>{maskName(post.author)}</div>
+              <div style={{fontSize:11,color:"#9ca3af"}}>작성자</div>
+            </div>
+            <div style={{marginLeft:"auto",display:"flex",gap:14}}>
+              <span style={{fontSize:13,color:"#6b7280",display:"flex",alignItems:"center",gap:4}}><Icon name="favorite" size={14} color="#9ca3af"/> {(post.likes||0)+(liked?1:0)}</span>
+              <span style={{fontSize:13,color:"#6b7280",display:"flex",alignItems:"center",gap:4}}><Icon name="chat_bubble" size={14} color="#9ca3af"/> {totalComments}</span>
+            </div>
+          </div>
+          <div style={{fontSize:bp.isDesktop?15:14,lineHeight:1.85,color:"#374151",whiteSpace:"pre-wrap",wordBreak:"break-word"}}>
+            {body}
+          </div>
         </div>
         <div style={{display:"flex",justifyContent:"center",margin:"24px 0"}}>
           <button onClick={handleLike} style={{display:"flex",alignItems:"center",gap:8,padding:"11px 28px",borderRadius:30,fontSize:14,fontWeight:700,cursor:"pointer",border:`2px solid ${liked?"#fca5a5":"#e5e7eb"}`,background:liked?"#fff1f2":"white",color:liked?"#dc2626":"#6b7280",transition:"all 0.2s"}}
