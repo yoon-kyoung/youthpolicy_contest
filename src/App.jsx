@@ -1830,7 +1830,7 @@ function ProposalTimelineWidget({steps,states,title="진행 상태",clickFill=fa
                 <Icon name={step.icon} size={15} color={isFilled?"white":"#94a3b8"}/>
               </button>
               <span style={{fontSize:11,marginTop:6,fontWeight:(st==="current"||isOpen)?700:600,color:isFilled?"#374151":"#94a3b8"}}>{step.label}</span>
-              {st==="current"&&openIndex==null&&(
+              {clickFill&&st==="current"&&openIndex==null&&(
                 <div style={{position:"relative",marginTop:10,background:"#1f2937",color:"white",borderRadius:8,padding:"6px 12px",fontSize:11,fontWeight:600,whiteSpace:"nowrap",boxShadow:"0 2px 8px rgba(0,0,0,0.18)",animation:"fadeUp 0.3s ease"}}>
                   <div style={{position:"absolute",bottom:"100%",left:"50%",transform:"translateX(-50%)",width:0,height:0,borderLeft:"5px solid transparent",borderRight:"5px solid transparent",borderBottom:"5px solid #1f2937"}}/>
                   아이콘을 클릭해서 상세 내용을 확인해보세요!
