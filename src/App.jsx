@@ -1582,14 +1582,14 @@ function CommunityPostDetailView({post,bp,user,onBack,onLike}){
 // ─── 커뮤니티 뷰 ──────────────────────────────────────────────────────────
 
 function CommunityView({bp,user,onGoProposal,initialCatFilter}){
-  const [catFilter,setCatFilter]=useState(initialCatFilter||"전체");
+  const [catFilter,setCatFilter]=useState(initialCatFilter&&initialCatFilter!=="전체"?initialCatFilter:"후기");
   const [showWrite,setShowWrite]=useState(false);
   const [selectedPost,setSelectedPost]=useState(null);
   const [posts,setPosts]=useState([]);
   const [loadingPosts,setLoadingPosts]=useState(true);
   const [proposalBannerDismissed,setProposalBannerDismissed]=useLocalStorage("yoa:proposalBannerDismissed",false);
-  const cats=["전체","후기","정보","Q&A","정책제안 팀모집"];
-  const filtered=posts.filter(p=>catFilter==="전체"||p.cat===catFilter);
+  const cats=["후기","정보","Q&A","정책제안 팀모집"];
+  const filtered=posts.filter(p=>p.cat===catFilter);
   const [pageNum,setPageNum]=useState(1);
   useEffect(()=>{setPageNum(1);},[catFilter]);
   const pageCount=Math.max(1,Math.ceil(filtered.length/4));
@@ -3603,7 +3603,7 @@ export default function App(){
   const [fromPage,setFromPage]=useState("chatbot");
   const [favIds,setFavIds]=useLocalStorage("yoa:favs",new Set());
   const [mySub,setMySub]=useLocalStorage("yoa:mysub","info");
-  const [communitySub,setCommunitySub]=useLocalStorage("yoa:communitySub","전체");
+  const [communitySub,setCommunitySub]=useLocalStorage("yoa:communitySub","후기");
   const [themeKey,setThemeKey]=useLocalStorage("yoa:theme","blue");
   const [fontScale,setFontScale]=useLocalStorage("yoa:fontscale",1);
   const [user,setUser]=useState(null);
