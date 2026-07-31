@@ -14,7 +14,7 @@ import AdminPage from "./chatbot/AdminPage";
 import AdminShell from "./admin/AdminShell";
 import { loadPolicies } from "./chatbot/policiesStore";
 import { API_BASE } from "./chatbot/config";
-import { supabase } from "./supabase";
+import { supabase, getDisplayName } from "./supabase";
 import Icon from "./styles/Icon";
 
 // ─── policies.json → 내부 포맷 변환 ───────────────────────────────────────
@@ -2982,7 +2982,7 @@ function SignupPage({setPage,bp}){
 function NavUserDropdown({user,onLogout,onGoMyPage,compact=false,favCount=0,fontScale,onFontInc,onFontDec,themeKey,onThemeChange}){
   const [open,setOpen]=useState(false);
   const ref=useRef(null);
-  const name=user?.user_metadata?.name||user?.email||"";
+  const name=getDisplayName(user);
   const email=user?.email||"";
   const avatar=name.charAt(0);
 

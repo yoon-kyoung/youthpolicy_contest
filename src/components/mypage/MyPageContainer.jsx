@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { getDisplayName } from '../../supabase'
 import Icon from '../../styles/Icon'
 import PageHeader from './PageHeader'
 import TabBar from './TabBar'
@@ -11,6 +12,7 @@ import OnboardingTour from './OnboardingTour'
 
 const MOCK_USER = {
   name: '김청년',
+  displayName: '김청년',
   email: 'youth@example.com',
   phone: '010-1234-5678',
   joinDate: '2025-03-15',
@@ -49,7 +51,8 @@ export default function MyPageContainer({ supabaseUser, onLogout, initialTab, fa
   const [activeTab, setActiveTab] = useState(initialTab || 'info')
 
   const initialUser = supabaseUser ? {
-    name: supabaseUser.user_metadata?.full_name || supabaseUser.email?.split('@')[0] || '청년',
+    name: supabaseUser.user_metadata?.name || supabaseUser.email?.split('@')[0] || '청년',
+    displayName: getDisplayName(supabaseUser) || '청년',
     email: supabaseUser.email || '',
     phone: supabaseUser.user_metadata?.phone || '-',
     joinDate: supabaseUser.created_at?.slice(0, 10) || '',
@@ -116,9 +119,9 @@ export default function MyPageContainer({ supabaseUser, onLogout, initialTab, fa
 
         {/* 프로필 바 — 유저 정보 전체 */}
         <div style={styles.profileBar}>
-          <div style={styles.avatar}>{user.name?.charAt(0) || '?'}</div>
+          <div style={styles.avatar}>{user.displayName?.charAt(0) || '?'}</div>
           <div style={styles.profileInfo}>
-            <div style={styles.userName}>{user.name}</div>
+            <div style={styles.userName}>{user.displayName}</div>
             <div style={styles.userEmail}>{user.email}</div>
             <div style={styles.profileMeta}>
               <MetaItem icon="call" label="전화번호" value={user.phone} />

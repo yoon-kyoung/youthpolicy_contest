@@ -11,7 +11,7 @@ export default function UserInfoView({ user, onEdit }) {
     <div>
       <div style={styles.header}>
         <div>
-          <div style={styles.name}>{user.name}</div>
+          <div style={styles.name}>{user.displayName}</div>
           <div style={styles.email}>{user.email}</div>
         </div>
       </div>
