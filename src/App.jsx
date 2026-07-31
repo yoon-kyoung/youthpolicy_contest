@@ -1777,7 +1777,7 @@ function proposalTimelineStates(status){
 }
 const PROPOSAL_TIMELINE_META=PROPOSAL_TIMELINE_STEPS.map((label,i)=>({label,icon:PROPOSAL_TIMELINE_ICONS[i],detail:PROPOSAL_TIMELINE_DESC[i]}));
 
-function ProposalTimelineWidget({steps,states,title="진행 상태",clickFill=false}){
+function ProposalTimelineWidget({steps,states,title="진행 상태",clickFill=false,children}){
   const [openIndex,setOpenIndex]=useState(null);
   const clickedFilled=i=>clickFill&&openIndex!=null&&i<=openIndex;
   return(
@@ -1808,6 +1808,7 @@ function ProposalTimelineWidget({steps,states,title="진행 상태",clickFill=fa
           <div style={{fontSize:14,color:"#6b7280",lineHeight:1.7}}>{steps[openIndex].detail}</div>
         </div>
       )}
+      {children}
     </section>
   );
 }
@@ -2044,7 +2045,16 @@ function ProposalDetailView({proposal,user,onVote,onBack,bp}){
         <div style={{maxWidth:820,margin:"0 auto",display:"flex",flexDirection:"column",gap:16}}>
 
           {/* 상태 타임라인 */}
-          <ProposalTimelineWidget steps={PROPOSAL_TIMELINE_META} states={timeline}/>
+          <ProposalTimelineWidget steps={PROPOSAL_TIMELINE_META} states={timeline}>
+            {proposal.status==="pending"&&(
+              <div style={{marginTop:16}}>
+                <div style={{height:6,borderRadius:20,background:"#F1F5F9",overflow:"hidden"}}>
+                  <div style={{height:"100%",width:`${progress}%`,background:"var(--accent)",borderRadius:20,transition:"width 0.3s"}}/>
+                </div>
+                <div style={{fontSize:11,color:"#9ca3af",marginTop:4}}>공감 {votes}/{VOTE_THRESHOLD} · 임계치 도달 시 부처 매칭이 자동으로 시작돼요</div>
+              </div>
+            )}
+          </ProposalTimelineWidget>
 
           {/* 제안 원문 */}
           <section style={{background:"white",borderRadius:20,padding:bp.isDesktop?"24px 28px":"18px 16px",border:"1.5px solid #f1f5f9"}}>
@@ -2085,14 +2095,6 @@ function ProposalDetailView({proposal,user,onVote,onBack,bp}){
             {proposal.attachment&&(
               <div style={{display:"flex",alignItems:"center",gap:5,fontSize:13,color:"#6b7280"}}>
                 <Icon name="attach_file" size={15} color="#9ca3af"/>{proposal.attachment}
-              </div>
-            )}
-            {proposal.status==="pending"&&(
-              <div style={{marginTop:16}}>
-                <div style={{height:6,borderRadius:20,background:"#F1F5F9",overflow:"hidden"}}>
-                  <div style={{height:"100%",width:`${progress}%`,background:"var(--accent)",borderRadius:20,transition:"width 0.3s"}}/>
-                </div>
-                <div style={{fontSize:11,color:"#9ca3af",marginTop:4}}>공감 {votes}/{VOTE_THRESHOLD} · 임계치 도달 시 부처 매칭이 자동으로 시작돼요</div>
               </div>
             )}
           </section>
