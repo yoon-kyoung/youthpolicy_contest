@@ -1954,8 +1954,13 @@ function ProposalCard({proposal,user,onVote,onOpen,bp}){
 
       {proposal.status==="pending"&&(
         <div style={{marginTop:12}}>
-          <div style={{height:6,borderRadius:20,background:"#F1F5F9",overflow:"hidden"}}>
-            <div style={{height:"100%",width:`${progress}%`,background:"var(--accent)",borderRadius:20,transition:"width 0.3s"}}/>
+          <div style={{display:"flex",alignItems:"center",gap:10}}>
+            <div style={{flex:1,height:6,borderRadius:20,background:"#F1F5F9",overflow:"hidden"}}>
+              <div style={{height:"100%",width:`${progress}%`,background:"var(--accent)",borderRadius:20,transition:"width 0.3s"}}/>
+            </div>
+            <button onClick={handleVote} disabled={voted} style={{flexShrink:0,display:"flex",alignItems:"center",gap:5,lineHeight:1,padding:"6px 14px",borderRadius:20,border:voted?"1.5px solid #fca5a5":"1.5px solid #E2E8F0",background:voted?"#fff1f2":"white",color:voted?"#dc2626":"#6b7280",fontSize:12,fontWeight:700,cursor:voted?"default":"pointer",transition:"all 0.15s"}}>
+              <Icon name="favorite" filled={voted} size={14} color={voted?"#dc2626":"#9ca3af"}/>공감
+            </button>
           </div>
           <div style={{fontSize:11,color:"#9ca3af",marginTop:4}}>공감 {votes}/{VOTE_THRESHOLD} · 임계치 도달 시 부처 매칭이 자동으로 시작돼요</div>
         </div>
