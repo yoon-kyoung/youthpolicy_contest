@@ -1,5 +1,7 @@
 ﻿import { useState, useMemo, useEffect, useRef, useCallback } from "react";
 import MyPageContainer from "./components/mypage/MyPageContainer";
+import EducationButtonGroup from "./components/mypage/EducationButtonGroup";
+import EmploymentStatusButtonGroup from "./components/mypage/EmploymentStatusButtonGroup";
 import {
   Search, Bot, User, MessageCircle,
   Sparkles, ClipboardList, Calendar,
@@ -721,6 +723,8 @@ function SearchView({favIds,onToggleFav,onGoDetail,bp,policies}){
   const [excludeExpired,setExcludeExpired]=useLocalStorage("yoa:excludeExpired",false);
   const [ministry,setMinistry]=useLocalStorage("yoa:search:ministry","전체");
   const [region,setRegion]=useLocalStorage("yoa:search:region","전체");
+  const [education,setEducation]=useLocalStorage("yoa:search:education","");
+  const [employmentStatus,setEmploymentStatus]=useLocalStorage("yoa:search:employmentStatus","");
   const [showRegionMap,setShowRegionMap]=useState(false);
   const query=useDebounce(rawQ,300);
 
@@ -823,6 +827,12 @@ function SearchView({favIds,onToggleFav,onGoDetail,bp,policies}){
                     <button key={m} onClick={()=>setMinistry(m)} style={{padding:"4px 10px",borderRadius:20,border:"1.5px solid",borderColor:ministry===m?"var(--accent)":"#E2E8F0",background:ministry===m?"var(--accent)":"#FFFFFF",color:ministry===m?"#FFFFFF":"#475569",fontSize:12,fontWeight:ministry===m?700:400,cursor:"pointer",transition:"all 0.12s",whiteSpace:"nowrap"}}>{m}</button>
                   ))}
                 </div>
+              </div>
+              <div style={{borderTop:"1px solid #E2E8F0",paddingTop:10}}>
+                <EducationButtonGroup value={education} onChange={setEducation}/>
+              </div>
+              <div style={{borderTop:"1px solid #E2E8F0",paddingTop:10}}>
+                <EmploymentStatusButtonGroup value={employmentStatus} onChange={setEmploymentStatus}/>
               </div>
             </div>
           </div>
