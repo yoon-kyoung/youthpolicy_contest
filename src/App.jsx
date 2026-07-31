@@ -1940,7 +1940,6 @@ function ProposalCard({proposal,user,onVote,onOpen,bp}){
         <span style={{...TAG_BASE,background:s.bg,border:`1px solid ${s.border}`,color:s.text,gap:4}}><Icon name={s.icon} size={13} color={s.text}/>{s.label}</span>
       </div>
       <div style={{fontWeight:700,fontSize:bp.isDesktop?15:14,color:"#111827",marginBottom:6}}>{proposal.title}</div>
-      <div style={{fontSize:13,color:"#6b7280",lineHeight:1.6,whiteSpace:"pre-wrap"}}>{proposal.content}</div>
 
       {proposal.status==="pending"&&(
         <div style={{marginTop:12}}>
