@@ -2049,7 +2049,7 @@ function ProposalDetailView({proposal,user,onVote,onBack,bp}){
           {/* 제안 원문 */}
           <section style={{background:"white",borderRadius:20,padding:bp.isDesktop?"24px 28px":"18px 16px",border:"1.5px solid #f1f5f9"}}>
             <h2 style={{fontSize:15,fontWeight:800,color:"#111827",marginTop:0,marginBottom:14,display:"flex",alignItems:"center",gap:6}}>
-              <Icon name="description" size={16}/>제안 원문
+              <Icon name="description" size={16}/>정책 제안서
               {proposal.aiVerified&&(
                 <span style={{marginLeft:"auto",display:"flex",alignItems:"center",gap:4,fontSize:11,fontWeight:700,color:"#15803D",background:"#F0FDF4",border:"1px solid #BBF7D0",borderRadius:20,padding:"3px 10px"}}>
                   <Icon name="smart_toy" size={12} color="#15803D"/>AI 검토 완료
@@ -2057,7 +2057,7 @@ function ProposalDetailView({proposal,user,onVote,onBack,bp}){
               )}
             </h2>
             <div style={{marginBottom:14}}>
-              <div style={{fontSize:12,fontWeight:700,color:"#6b7280",marginBottom:4}}>진행 방식</div>
+              <div style={{fontSize:15,fontWeight:700,color:"#111827",marginBottom:4}}>진행 방식</div>
               <div style={{display:"flex",alignItems:"center",gap:6,flexWrap:"wrap",fontSize:14,color:"#374151"}}>
                 <Icon name={proposal.isTeam?"group":"person"} size={15} color="#9ca3af"/>{proposal.isTeam?"팀":"개인"}
                 {proposal.isTeam&&proposal.teamMembers?.map(id=>(
@@ -2067,17 +2067,17 @@ function ProposalDetailView({proposal,user,onVote,onBack,bp}){
             </div>
             {proposal.background&&(
               <div style={{marginBottom:14}}>
-                <div style={{fontSize:12,fontWeight:700,color:"#6b7280",marginBottom:4}}>배경</div>
+                <div style={{fontSize:15,fontWeight:700,color:"#111827",marginBottom:4}}>배경</div>
                 <p style={{margin:0,fontSize:14,color:"#374151",lineHeight:1.8,whiteSpace:"pre-wrap"}}>{proposal.background}</p>
               </div>
             )}
             <div style={{marginBottom:proposal.expectedEffect||proposal.attachment?14:0}}>
-              <div style={{fontSize:12,fontWeight:700,color:"#6b7280",marginBottom:4}}>제안 내용</div>
+              <div style={{fontSize:15,fontWeight:700,color:"#111827",marginBottom:4}}>제안 내용</div>
               <p style={{margin:0,fontSize:14,color:"#374151",lineHeight:1.8,whiteSpace:"pre-wrap"}}>{proposal.content}</p>
             </div>
             {proposal.expectedEffect&&(
               <div style={{marginBottom:proposal.attachment?14:0}}>
-                <div style={{fontSize:12,fontWeight:700,color:"#6b7280",marginBottom:4}}>기대 효과</div>
+                <div style={{fontSize:15,fontWeight:700,color:"#111827",marginBottom:4}}>기대 효과</div>
                 <p style={{margin:0,fontSize:14,color:"#374151",lineHeight:1.8,whiteSpace:"pre-wrap"}}>{proposal.expectedEffect}</p>
               </div>
             )}
