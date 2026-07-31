@@ -1294,7 +1294,7 @@ function MyPageView({favIds,onToggleFav,onGoDetail,bp,policies}){
 
 // ─── 커뮤니티 글쓰기 뷰 ──────────────────────────────────────────────────
 
-const CAT_COLOR_MAP={후기:{bg:"#F0FDF4",border:"#BBF7D0",text:"#15803D"},정보:{bg:"#EFF6FF",border:"var(--accent-bg)",text:"var(--accent)"},"Q&A":{bg:"#FFF1F2",border:"#FECDD3",text:"#BE123C"}};
+const CAT_COLOR_MAP={후기:{bg:"#F0FDF4",border:"#BBF7D0",text:"#15803D"},정보:{bg:"#EFF6FF",border:"var(--accent-bg)",text:"var(--accent)"},"정책제안 팀모집":{bg:"#FDF4FF",border:"#F5D0FE",text:"#A21CAF"},"Q&A":{bg:"#FFF1F2",border:"#FECDD3",text:"#BE123C"}};
 
 function CommunityWriteView({bp,user,onSubmit,onCancel}){
   const [cat,setCat]=useState("후기");
@@ -1303,7 +1303,7 @@ function CommunityWriteView({bp,user,onSubmit,onCancel}){
   const [author,setAuthor]=useState(user?.user_metadata?.name||"");
   const [errors,setErrors]=useState({});
   const [submitting,setSubmitting]=useState(false);
-  const cats=["후기","정보","Q&A"];
+  const cats=["후기","정보","정책제안 팀모집","Q&A"];
 
   const validate=()=>{
     const e={};
@@ -1348,7 +1348,7 @@ function CommunityWriteView({bp,user,onSubmit,onCancel}){
         <form onSubmit={handleSubmit} style={{maxWidth:bp.isDesktop?700:"100%",display:"flex",flexDirection:"column",gap:20}}>
           <div>
             <label style={{display:"block",fontSize:13,fontWeight:700,color:"#374151",marginBottom:8}}>카테고리</label>
-            <div style={{display:"flex",gap:8}}>
+            <div style={{display:"flex",gap:8,flexWrap:"wrap"}}>
               {cats.map(c=>{const cc=CAT_COLOR_MAP[c];const sel=cat===c;return(
                 <button key={c} type="button" onClick={()=>setCat(c)} style={{padding:"8px 18px",borderRadius:20,fontSize:13,fontWeight:sel?700:500,cursor:"pointer",transition:"all 0.15s",background:sel?cc.bg:"white",border:`1.5px solid ${sel?cc.border:"#e5e7eb"}`,color:sel?cc.text:"#9ca3af"}}>{c}</button>
               );})}
@@ -1587,7 +1587,7 @@ function CommunityView({bp,user,onGoProposal,initialCatFilter}){
   const [selectedPost,setSelectedPost]=useState(null);
   const [posts,setPosts]=useState([]);
   const [loadingPosts,setLoadingPosts]=useState(true);
-  const cats=["전체","후기","정보","Q&A"];
+  const cats=["전체","후기","정보","정책제안 팀모집","Q&A"];
   const filtered=posts.filter(p=>catFilter==="전체"||p.cat===catFilter);
   const [pageNum,setPageNum]=useState(1);
   useEffect(()=>{setPageNum(1);},[catFilter]);
