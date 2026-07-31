@@ -1713,7 +1713,7 @@ function CommunityView({bp,user,onGoProposal,initialCatFilter}){
                   <span style={{fontSize:12,color:"#9ca3af"}}>by <span style={{color:"#374151",fontWeight:600}}>{maskName(post.author)}</span></span>
                   <div style={{marginLeft:"auto",display:"flex",gap:12}}>
                     <span style={{fontSize:12,color:"#9ca3af",display:"flex",alignItems:"center",gap:3}}><Icon name="favorite" size={13} color="#9ca3af"/> {post.likes}</span>
-                    <span style={{fontSize:12,color:"#9ca3af",display:"flex",alignItems:"center",gap:3}}><Icon name="chat_bubble" size={13} color="#9ca3af"/> {post.comments||0}</span>
+                    <span style={{fontSize:12,color:"#9ca3af",display:"flex",alignItems:"center",gap:3}}><Icon name="chat_bubble" size={13} color="#9ca3af"/> {post.comments_count||0}</span>
                   </div>
                 </div>
               </div>
