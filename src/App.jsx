@@ -2428,7 +2428,7 @@ const PROPOSAL_FAQ=[
 
 const PROPOSAL_ONBOARDING_META=[
   {icon:"edit_note",   gradient:["#38BDF8","#0369A1"], title:"제안 등록하기",
-    detail:"어떤 정책이, 왜 필요한지 구체적으로 적을수록 다른 청년들의 공감을 얻기 쉬워요. 배경과 기대 효과까지 함께 적어보세요."},
+    detail:"어떤 정책이, 왜 필요한지 구체적으로 적을수록 다른 청년들의 공감을 얻기 쉬워요. 배경과 기대 효과까지 함께 적어보세요. 작성이 끝나면 'AI 검토' 버튼으로 부적절한 표현이 없는지 자동으로 확인한 뒤 등록할 수 있어요."},
   {icon:"favorite",    gradient:["#FB7185","#BE123C"], title:"공감투표 받기",
     detail:"내 제안에 공감하는 청년이 많을수록 힘이 실려요. 다른 사람의 제안에도 공감을 눌러 함께 응원해주세요."},
   {icon:"sync",        gradient:["#60A5FA","#1D4ED8"], title:"부처 매칭 시작",
