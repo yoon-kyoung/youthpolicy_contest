@@ -1861,9 +1861,18 @@ const PROPOSAL_SEED=[
     answer:"", answerOrg:"", answeredAt:""},
 ];
 
+const PROPOSAL_COMMENT_SEED={
+  prop8:[
+    {id:1,author:"이o은",text:"저도 강아지 키우고 있는데 임대주택은 아예 지원 대상에서 빠져 있어서 발만 동동 굴렀어요. 꼭 필요한 제도라고 생각해요.",createdAt:"2026-07-23T10:12:00.000Z"},
+    {id:2,author:"박o린",text:"공용 공간에서 짖는 소리나 알레르기 문제로 이웃 간 갈등이 오히려 늘어날 수도 있을 것 같아 걱정돼요.",createdAt:"2026-07-24T15:40:00.000Z"},
+    {id:3,author:"김o태",text:"반려동물 양육 인구가 이만큼 늘었는데 아직도 대부분 금지인 게 더 이상하다고 봐요. 적극 찬성합니다.",createdAt:"2026-07-26T09:05:00.000Z"},
+    {id:4,author:"최o준",text:"안 그래도 층간소음 민원이 많은데 반려동물까지 허용하면 관리 민원이 더 늘어나지 않을까 걱정됩니다.",createdAt:"2026-07-28T20:17:00.000Z"},
+  ],
+};
+
 function ProposalCard({proposal,user,onVote,onOpen,bp}){
   const [voted,setVoted]=useLocalStorage(`yoa:proposalVoted_${proposal.id}`,false);
-  const [comments]=useLocalStorage(`yoa:proposalComments_${proposal.id}`,[]);
+  const [comments]=useLocalStorage(`yoa:proposalComments_${proposal.id}`,PROPOSAL_COMMENT_SEED[proposal.id]||[]);
   const s=proposalStatusMeta(proposal.status);
   const c=CAT_COLORS[proposal.category]||{};
   const votes=proposal.votes||0;
@@ -1920,7 +1929,7 @@ function ProposalCard({proposal,user,onVote,onOpen,bp}){
 
 function ProposalDetailView({proposal,user,onVote,onBack,bp}){
   const [voted,setVoted]=useLocalStorage(`yoa:proposalVoted_${proposal.id}`,false);
-  const [comments,setComments]=useLocalStorage(`yoa:proposalComments_${proposal.id}`,[]);
+  const [comments,setComments]=useLocalStorage(`yoa:proposalComments_${proposal.id}`,PROPOSAL_COMMENT_SEED[proposal.id]||[]);
   const [commentText,setCommentText]=useState("");
   const [copied,setCopied]=useState(false);
   const s=proposalStatusMeta(proposal.status);
