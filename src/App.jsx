@@ -1939,9 +1939,13 @@ function ProposalCard({proposal,user,onVote,onOpen,bp}){
   const handleVote=e=>{
     e.stopPropagation();
     if(!user){alert("로그인 후 공감할 수 있어요.");return;}
-    if(voted)return;
-    setVoted(true);
-    onVote(proposal.id);
+    if(voted){
+      setVoted(false);
+      onVote(proposal.id,-1);
+    }else{
+      setVoted(true);
+      onVote(proposal.id,1);
+    }
   };
 
   return(
@@ -1955,7 +1959,7 @@ function ProposalCard({proposal,user,onVote,onOpen,bp}){
       {proposal.status==="pending"&&(
         <div style={{marginTop:12}}>
           <div style={{display:"flex",alignItems:"center",gap:10}}>
-            <button onClick={handleVote} disabled={voted} style={{flexShrink:0,display:"flex",alignItems:"center",justifyContent:"center",lineHeight:1,padding:"6px 10px",borderRadius:20,border:voted?"1.5px solid #fca5a5":"1.5px solid #E2E8F0",background:voted?"#fff1f2":"white",color:voted?"#dc2626":"#6b7280",cursor:voted?"default":"pointer",transition:"all 0.15s"}}>
+            <button disabled style={{flexShrink:0,display:"flex",alignItems:"center",justifyContent:"center",lineHeight:1,padding:"6px 10px",borderRadius:20,border:voted?"1.5px solid #fca5a5":"1.5px solid #E2E8F0",background:voted?"#fff1f2":"white",color:voted?"#dc2626":"#6b7280",cursor:"default",transition:"all 0.15s"}}>
               <Icon name="favorite" filled={voted} size={14} color={voted?"#dc2626":"#9ca3af"}/>
             </button>
             <div style={{flex:1,height:6,borderRadius:20,background:"#F1F5F9",overflow:"hidden"}}>
@@ -1978,7 +1982,7 @@ function ProposalCard({proposal,user,onVote,onOpen,bp}){
       <div style={{display:"flex",alignItems:"center",gap:8,marginTop:12,paddingTop:12,borderTop:"1px solid #E2E8F0",fontSize:12,color:"#9ca3af"}}>
         <span>by <span style={{color:"#374151",fontWeight:600}}>{maskName(proposal.author)}</span></span>
         <span>{(proposal.createdAt||"").slice(0,10)}</span>
-        <button onClick={handleVote} disabled={voted} style={{marginLeft:"auto",display:"flex",alignItems:"center",gap:5,lineHeight:1,padding:"6px 14px",borderRadius:20,border:voted?"1.5px solid #fca5a5":"1.5px solid #E2E8F0",background:voted?"#fff1f2":"white",color:voted?"#dc2626":"#6b7280",fontSize:12,fontWeight:700,cursor:voted?"default":"pointer",transition:"all 0.15s"}}>
+        <button onClick={handleVote} style={{marginLeft:"auto",display:"flex",alignItems:"center",gap:5,lineHeight:1,padding:"6px 14px",borderRadius:20,border:voted?"1.5px solid #fca5a5":"1.5px solid #E2E8F0",background:voted?"#fff1f2":"white",color:voted?"#dc2626":"#6b7280",fontSize:12,fontWeight:700,cursor:"pointer",transition:"all 0.15s"}}>
           <Icon name="favorite" filled={voted} size={14} color={voted?"#dc2626":"#9ca3af"}/>공감 {votes}
         </button>
         <span style={{display:"flex",alignItems:"center",gap:5,lineHeight:1,padding:"6px 14px",fontSize:12,fontWeight:700,color:"#6b7280"}}>
@@ -2004,9 +2008,13 @@ function ProposalDetailView({proposal,user,onVote,onBack,bp}){
 
   const handleVote=()=>{
     if(!user){alert("로그인 후 공감할 수 있어요.");return;}
-    if(voted)return;
-    setVoted(true);
-    onVote(proposal.id);
+    if(voted){
+      setVoted(false);
+      onVote(proposal.id,-1);
+    }else{
+      setVoted(true);
+      onVote(proposal.id,1);
+    }
   };
   const handleShare=()=>{
     const url=`${window.location.origin}${window.location.pathname}?proposal=${proposal.id}`;
@@ -2117,7 +2125,7 @@ function ProposalDetailView({proposal,user,onVote,onBack,bp}){
 
           {/* 공감 · 공유 */}
           <div style={{display:"flex",gap:10}}>
-            <button onClick={handleVote} disabled={voted} style={{flex:1,display:"flex",alignItems:"center",justifyContent:"center",gap:6,padding:"12px",borderRadius:14,border:voted?"1.5px solid #fca5a5":"1.5px solid #E2E8F0",background:voted?"#fff1f2":"white",color:voted?"#dc2626":"#374151",fontSize:14,fontWeight:700,cursor:voted?"default":"pointer",transition:"all 0.15s"}}>
+            <button onClick={handleVote} style={{flex:1,display:"flex",alignItems:"center",justifyContent:"center",gap:6,padding:"12px",borderRadius:14,border:voted?"1.5px solid #fca5a5":"1.5px solid #E2E8F0",background:voted?"#fff1f2":"white",color:voted?"#dc2626":"#374151",fontSize:14,fontWeight:700,cursor:"pointer",transition:"all 0.15s"}}>
               <Icon name="favorite" filled={voted} size={16} color={voted?"#dc2626":"#9ca3af"}/>공감 {votes}
             </button>
             <div style={{position:"relative",flex:1}}>
@@ -2546,10 +2554,10 @@ function PolicyProposalPage({bp,user,onGoCommunity}){
     setShowForm(false);
   };
 
-  const handleVote=useCallback(id=>{
+  const handleVote=useCallback((id,delta=1)=>{
     setProposals(prev=>prev.map(p=>{
       if(p.id!==id)return p;
-      const votes=(p.votes||0)+1;
+      const votes=Math.max(0,(p.votes||0)+delta);
       const status=p.status==="pending"&&votes>=VOTE_THRESHOLD?"matching":p.status;
       return{...p,votes,status};
     }));
