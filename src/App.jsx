@@ -1807,48 +1807,56 @@ const PROPOSAL_SEED=[
     background:"인턴 프로그램이 끝나면 자연스럽게 계약이 종료되는 사례가 많아, 청년들이 취업 준비를 다시 처음부터 시작해야 하는 경우가 많습니다.",
     content:"인턴 기간이 끝나면 계약이 종료되는 경우가 많아요. 정규직 전환 시 기업에 지원금을 지급하면 실제 채용으로 이어질 것 같습니다.",
     expectedEffect:"정규직 전환률이 높아지고, 기업 입장에서도 이미 검증된 인재를 채용할 유인이 생겨 채용 안정성이 향상될 것으로 기대됩니다.",
+    isTeam:false, teamMembers:[], attachment:"정규직전환_지원방안.hwp",
     author:"김o준", createdAt:"2026-04-10T09:00:00.000Z", status:"adopted",  votes:342,
     answer:"제안 내용을 반영해 2026년 하반기부터 정규직 전환 지원금 시범사업을 시행합니다.", answerOrg:"고용노동부", answeredAt:"2026-05-05"},
   {id:"prop2",category:"house", title:"1인가구 청년 전세보증금 반환보증료 전액 지원",
     background:"전세사기 피해가 늘면서 반환보증 가입이 사실상 필수가 되었지만, 1인가구 청년에게는 보증료 자체가 큰 부담입니다.",
     content:"전세사기 걱정에 반환보증에 가입하고 싶어도 보증료가 부담됩니다. 청년 1인가구는 보증료를 전액 지원해주세요.",
     expectedEffect:"보증 가입률이 높아져 전세사기 피해를 예방하고, 청년 1인가구의 주거 안정성이 개선될 것으로 기대됩니다.",
+    isTeam:true, teamMembers:["이o현","최o영"],
     author:"이o현", createdAt:"2026-05-02T09:00:00.000Z", status:"answered", votes:256,
     answer:"보증료 지원 예산 확대 방안을 검토 중이며, 결과는 추후 공지 예정입니다.", answerOrg:"국토교통부", answeredAt:"2026-05-20"},
   {id:"prop3",category:"money", title:"청년도약계좌 중도해지 시 정부기여금 일부 인정",
     background:"이직·이사 등 불가피한 사유로 중도해지를 하면 그동안 쌓아온 정부기여금을 전혀 받지 못해 오히려 저축을 포기하게 됩니다.",
     content:"불가피한 사정으로 중도해지하면 정부기여금을 전혀 못 받는데, 가입 기간에 비례해서라도 일부 인정해주셨으면 합니다.",
     expectedEffect:"중도해지 부담이 줄어들어 더 많은 청년이 안심하고 가입을 유지할 수 있을 것으로 기대됩니다.",
+    isTeam:false, teamMembers:[],
     author:"박o영", createdAt:"2026-06-01T09:00:00.000Z", status:"matching", votes:128,
     answer:"", answerOrg:"", answeredAt:""},
   {id:"prop4",category:"edu",   title:"국가장학금 소득분위 산정 기준 최신화",
     background:"소득분위 산정 기준이 몇 년째 그대로라 실제 가구 소득·재산 변화를 제대로 반영하지 못한다는 지적이 많습니다.",
     content:"재산 기준 산정에 실제 생활 여건이 잘 반영되지 않는 것 같습니다. 산정 기준을 최신 통계로 갱신해주세요.",
     expectedEffect:"형평성 있는 지원이 가능해지고, 실제 어려운 가구에 더 정확히 장학금이 돌아갈 것으로 기대됩니다.",
+    isTeam:true, teamMembers:["정o서","김o훈","오o린"], attachment:"국가장학금_기준개선안.pdf",
     author:"정o서", createdAt:"2026-05-20T09:00:00.000Z", status:"answered", votes:97,
     answer:"2027학년도부터 소득 산정 기준 개선을 추진할 예정입니다.", answerOrg:"교육부", answeredAt:"2026-06-02"},
   {id:"prop5",category:"edu",   title:"비전공자 개발 부트캠프 국비지원 비율 확대",
     background:"비전공자도 국비지원 부트캠프에 지원할 수 있지만, 본인부담금이 커서 참여를 포기하는 경우가 많습니다.",
     content:"비전공자도 국비지원 부트캠프에 참여할 수 있지만 본인부담금이 커서 부담됩니다. 지원 비율을 확대해주세요.",
     expectedEffect:"비전공자의 개발 직군 진입 장벽이 낮아져 청년 취업 선택지가 넓어질 것으로 기대됩니다.",
+    isTeam:false, teamMembers:[],
     author:"최o민", createdAt:"2026-06-20T09:00:00.000Z", status:"pending",  votes:41,
     answer:"", answerOrg:"", answeredAt:""},
   {id:"prop6",category:"health",title:"청년 마음건강 상담 지원 횟수 연 10회→20회 확대",
     background:"상담 10회로는 근본적인 회복까지 이어지기 어렵다는 의견이 많습니다.",
     content:"상담 10회로는 부족한 경우가 많습니다. 최소 20회까지는 지원 횟수를 늘려주셨으면 합니다.",
     expectedEffect:"충분한 상담 기간이 확보되어 청년들의 정신건강 회복률이 높아질 것으로 기대됩니다.",
+    isTeam:true, teamMembers:["한o아","윤o서"],
     author:"한o아", createdAt:"2026-07-05T09:00:00.000Z", status:"pending",  votes:19,
     answer:"", answerOrg:"", answeredAt:""},
   {id:"prop7",category:"job",   title:"지방 중소기업 청년 채용 시 교통비 지원 신설",
     background:"지방 중소기업은 대중교통이 불편해 통근 부담이 채용 기피로 이어지는 경우가 많습니다.",
     content:"지방 중소기업은 대중교통이 불편해 통근 부담이 큽니다. 채용 시 교통비를 별도로 지원해주세요.",
     expectedEffect:"지방 중소기업의 청년 채용이 늘고, 수도권 쏠림 현상 완화에도 도움이 될 것으로 기대됩니다.",
+    isTeam:false, teamMembers:[],
     author:"오o진", createdAt:"2026-07-15T09:00:00.000Z", status:"pending",  votes:7,
     answer:"", answerOrg:"", answeredAt:""},
   {id:"prop8",category:"house", title:"청년 매입임대주택 반려동물 동반 입주 허용",
     background:"1인가구 중 반려동물과 함께 거주하는 청년이 늘고 있지만, 대부분의 공공임대주택이 반려동물 동반을 금지하고 있습니다.",
     content:"공공임대주택 대부분이 반려동물 동반 입주를 금지하고 있어 입주를 포기하는 경우가 많습니다.",
     expectedEffect:"반려동물 동반 청년의 공공임대주택 선택권이 넓어질 것으로 기대됩니다.",
+    isTeam:false, teamMembers:[],
     author:"윤o혁", createdAt:"2026-07-22T09:00:00.000Z", status:"pending",  votes:3,
     answer:"", answerOrg:"", answeredAt:""},
 ];
@@ -1976,13 +1984,22 @@ function ProposalDetailView({proposal,user,onVote,onBack,bp}){
           {/* 제안 원문 */}
           <section style={{background:"white",borderRadius:20,padding:bp.isDesktop?"24px 28px":"18px 16px",border:"1.5px solid #f1f5f9"}}>
             <h2 style={{fontSize:15,fontWeight:800,color:"#111827",marginTop:0,marginBottom:14,display:"flex",alignItems:"center",gap:6}}><Icon name="description" size={16}/>제안 원문</h2>
+            <div style={{marginBottom:14}}>
+              <div style={{fontSize:12,fontWeight:700,color:"#6b7280",marginBottom:4}}>진행 방식</div>
+              <div style={{display:"flex",alignItems:"center",gap:6,flexWrap:"wrap",fontSize:14,color:"#374151"}}>
+                <Icon name={proposal.isTeam?"group":"person"} size={15} color="#9ca3af"/>{proposal.isTeam?"팀":"개인"}
+                {proposal.isTeam&&proposal.teamMembers?.map(id=>(
+                  <span key={id} style={{padding:"2px 9px",borderRadius:20,background:"var(--accent-bg)",color:"var(--accent)",fontSize:12,fontWeight:600}}>@{id}</span>
+                ))}
+              </div>
+            </div>
             {proposal.background&&(
               <div style={{marginBottom:14}}>
                 <div style={{fontSize:12,fontWeight:700,color:"#6b7280",marginBottom:4}}>배경</div>
                 <p style={{margin:0,fontSize:14,color:"#374151",lineHeight:1.8,whiteSpace:"pre-wrap"}}>{proposal.background}</p>
               </div>
             )}
-            <div style={{marginBottom:proposal.expectedEffect?14:0}}>
+            <div style={{marginBottom:proposal.expectedEffect||proposal.attachment?14:0}}>
               <div style={{fontSize:12,fontWeight:700,color:"#6b7280",marginBottom:4}}>제안 내용</div>
               <p style={{margin:0,fontSize:14,color:"#374151",lineHeight:1.8,whiteSpace:"pre-wrap"}}>{proposal.content}</p>
             </div>
@@ -1993,16 +2010,8 @@ function ProposalDetailView({proposal,user,onVote,onBack,bp}){
               </div>
             )}
             {proposal.attachment&&(
-              <div style={{display:"flex",alignItems:"center",gap:5,fontSize:13,color:"#6b7280",marginBottom:proposal.isTeam&&proposal.teamMembers?.length?10:0}}>
+              <div style={{display:"flex",alignItems:"center",gap:5,fontSize:13,color:"#6b7280"}}>
                 <Icon name="attach_file" size={15} color="#9ca3af"/>{proposal.attachment}
-              </div>
-            )}
-            {proposal.isTeam&&proposal.teamMembers?.length>0&&(
-              <div style={{display:"flex",alignItems:"center",gap:6,flexWrap:"wrap",fontSize:13,color:"#6b7280"}}>
-                <Icon name="group" size={15} color="#9ca3af"/>팀 제안
-                {proposal.teamMembers.map(id=>(
-                  <span key={id} style={{padding:"2px 9px",borderRadius:20,background:"var(--accent-bg)",color:"var(--accent)",fontSize:12,fontWeight:600}}>@{id}</span>
-                ))}
               </div>
             )}
             {proposal.status==="pending"&&(
