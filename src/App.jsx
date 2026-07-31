@@ -2048,7 +2048,7 @@ function ProposalDetailView({proposal,user,onVote,onBack,bp}){
 
           {/* 제안 원문 */}
           <section style={{background:"white",borderRadius:20,padding:bp.isDesktop?"24px 28px":"18px 16px",border:"1.5px solid #f1f5f9"}}>
-            <h2 style={{fontSize:15,fontWeight:800,color:"#111827",marginTop:0,marginBottom:14,display:"flex",alignItems:"center",gap:6}}>
+            <h2 style={{fontSize:15,fontWeight:800,color:"#111827",marginTop:0,marginBottom:0,display:"flex",alignItems:"center",gap:6}}>
               <Icon name="description" size={16}/>정책 제안서
               {proposal.aiVerified&&(
                 <span style={{marginLeft:"auto",display:"flex",alignItems:"center",gap:4,fontSize:11,fontWeight:700,color:"#15803D",background:"#F0FDF4",border:"1px solid #BBF7D0",borderRadius:20,padding:"3px 10px"}}>
@@ -2056,6 +2056,7 @@ function ProposalDetailView({proposal,user,onVote,onBack,bp}){
                 </span>
               )}
             </h2>
+            <div style={{height:1,background:"#f1f5f9",margin:"14px 0 16px"}}/>
             <div style={{marginBottom:14}}>
               <div style={{fontSize:15,fontWeight:700,color:"#111827",marginBottom:4}}>진행 방식</div>
               <div style={{display:"flex",alignItems:"center",gap:6,flexWrap:"wrap",fontSize:14,color:"#374151"}}>
