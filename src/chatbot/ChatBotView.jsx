@@ -274,7 +274,7 @@ function PrivacyNoticePanel({ bp }) {
 
   return (
     <div style={{
-      position: 'absolute', bottom: 90, right: 70,
+      position: 'absolute', bottom: 60, right: 70,
       width: collapsed ? 'auto' : (isMobile ? 'calc(100vw - 24px)' : '340px'),
       maxWidth: isMobile ? 'calc(100vw - 24px)' : '340px',
       zIndex: 10,

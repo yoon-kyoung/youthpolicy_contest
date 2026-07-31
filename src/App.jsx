@@ -2426,7 +2426,7 @@ function ProposalGuidePanel({bp,onGoCommunity}){
 
   return(
     <div style={{
-      position:"fixed",bottom:"calc(78px + env(safe-area-inset-bottom))",right:isMobile?38:48,
+      position:"fixed",bottom:"calc(48px + env(safe-area-inset-bottom))",right:isMobile?38:48,
       width:collapsed?"auto":(isMobile?"calc(100vw - 28px)":"340px"),
       maxWidth:isMobile?"calc(100vw - 28px)":"340px",
       zIndex:45,
