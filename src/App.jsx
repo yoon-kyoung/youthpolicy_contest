@@ -1,7 +1,5 @@
 ﻿import { useState, useMemo, useEffect, useRef, useCallback } from "react";
 import MyPageContainer from "./components/mypage/MyPageContainer";
-import EducationButtonGroup from "./components/mypage/EducationButtonGroup";
-import EmploymentStatusButtonGroup from "./components/mypage/EmploymentStatusButtonGroup";
 import {
   Search, Bot, User, MessageCircle,
   Sparkles, ClipboardList, Calendar,
@@ -193,6 +191,16 @@ const MINISTRIES = [
 const REGIONS = [
   "전체","서울","경기","인천","부산","대구","광주","대전","울산",
   "강원","충북","충남","전북","전남","경북","경남","제주","세종",
+];
+
+const EDUCATION_LEVELS = [
+  "전체","중졸 이하","고교 재학","고교 졸업","전문대 재학","전문대 졸업",
+  "대학 재학","대학 졸업","대학원 재학","대학원 졸업","기타",
+];
+
+const EMPLOYMENT_STATUSES = [
+  "제한없음","재직자","자영업자","미취업자","프리랜서",
+  "일용근로자","(예비)창업자","단기근로자","영농종사자","기타",
 ];
 
 // 지도형 지역 선택 모달용 대략적인 실제 지리 배치(%)
@@ -723,8 +731,8 @@ function SearchView({favIds,onToggleFav,onGoDetail,bp,policies}){
   const [excludeExpired,setExcludeExpired]=useLocalStorage("yoa:excludeExpired",false);
   const [ministry,setMinistry]=useLocalStorage("yoa:search:ministry","전체");
   const [region,setRegion]=useLocalStorage("yoa:search:region","전체");
-  const [education,setEducation]=useLocalStorage("yoa:search:education","");
-  const [employmentStatus,setEmploymentStatus]=useLocalStorage("yoa:search:employmentStatus","");
+  const [education,setEducation]=useLocalStorage("yoa:search:education","전체");
+  const [employmentStatus,setEmploymentStatus]=useLocalStorage("yoa:search:employmentStatus","제한없음");
   const [showRegionMap,setShowRegionMap]=useState(false);
   const query=useDebounce(rawQ,300);
 
@@ -829,10 +837,20 @@ function SearchView({favIds,onToggleFav,onGoDetail,bp,policies}){
                 </div>
               </div>
               <div style={{borderTop:"1px solid #E2E8F0",paddingTop:10}}>
-                <EducationButtonGroup value={education} onChange={setEducation}/>
+                <div style={{fontSize:11,fontWeight:700,color:"#374151",lineHeight:1,marginBottom:6,display:"flex",alignItems:"center",gap:4}}>학력</div>
+                <div style={{display:"flex",gap:5,flexWrap:"wrap"}}>
+                  {EDUCATION_LEVELS.map(e=>(
+                    <button key={e} onClick={()=>setEducation(e)} style={{padding:"4px 10px",borderRadius:20,border:"1.5px solid",borderColor:education===e?"var(--accent)":"#E2E8F0",background:education===e?"var(--accent)":"#FFFFFF",color:education===e?"#FFFFFF":"#475569",fontSize:12,fontWeight:education===e?700:400,cursor:"pointer",transition:"all 0.12s",whiteSpace:"nowrap"}}>{e}</button>
+                  ))}
+                </div>
               </div>
               <div style={{borderTop:"1px solid #E2E8F0",paddingTop:10}}>
-                <EmploymentStatusButtonGroup value={employmentStatus} onChange={setEmploymentStatus}/>
+                <div style={{fontSize:11,fontWeight:700,color:"#374151",lineHeight:1,marginBottom:6,display:"flex",alignItems:"center",gap:4}}>취업 상태</div>
+                <div style={{display:"flex",gap:5,flexWrap:"wrap"}}>
+                  {EMPLOYMENT_STATUSES.map(e=>(
+                    <button key={e} onClick={()=>setEmploymentStatus(e)} style={{padding:"4px 10px",borderRadius:20,border:"1.5px solid",borderColor:employmentStatus===e?"var(--accent)":"#E2E8F0",background:employmentStatus===e?"var(--accent)":"#FFFFFF",color:employmentStatus===e?"#FFFFFF":"#475569",fontSize:12,fontWeight:employmentStatus===e?700:400,cursor:"pointer",transition:"all 0.12s",whiteSpace:"nowrap"}}>{e}</button>
+                  ))}
+                </div>
               </div>
             </div>
           </div>
