@@ -1294,7 +1294,7 @@ function MyPageView({favIds,onToggleFav,onGoDetail,bp,policies}){
 
 // ─── 커뮤니티 글쓰기 뷰 ──────────────────────────────────────────────────
 
-const CAT_COLOR_MAP={후기:{bg:"#F0FDF4",border:"#BBF7D0",text:"#15803D"},정보:{bg:"#EFF6FF",border:"var(--accent-bg)",text:"var(--accent)"},"정책제안 팀모집":{bg:"#FDF4FF",border:"#F5D0FE",text:"#A21CAF"},"Q&A":{bg:"#FFF1F2",border:"#FECDD3",text:"#BE123C"}};
+const CAT_COLOR_MAP={후기:{bg:"#F0FDF4",border:"#BBF7D0",text:"#15803D"},정보:{bg:"#EFF6FF",border:"var(--accent-bg)",text:"var(--accent)"},"Q&A":{bg:"#FFF1F2",border:"#FECDD3",text:"#BE123C"},"정책제안 팀모집":{bg:"#FDF4FF",border:"#F5D0FE",text:"#A21CAF"}};
 
 function CommunityWriteView({bp,user,onSubmit,onCancel}){
   const [cat,setCat]=useState("후기");
@@ -1303,7 +1303,7 @@ function CommunityWriteView({bp,user,onSubmit,onCancel}){
   const [author,setAuthor]=useState(user?.user_metadata?.name||"");
   const [errors,setErrors]=useState({});
   const [submitting,setSubmitting]=useState(false);
-  const cats=["후기","정보","정책제안 팀모집","Q&A"];
+  const cats=["후기","정보","Q&A","정책제안 팀모집"];
 
   const validate=()=>{
     const e={};
@@ -1587,7 +1587,7 @@ function CommunityView({bp,user,onGoProposal,initialCatFilter}){
   const [selectedPost,setSelectedPost]=useState(null);
   const [posts,setPosts]=useState([]);
   const [loadingPosts,setLoadingPosts]=useState(true);
-  const cats=["전체","후기","정보","정책제안 팀모집","Q&A"];
+  const cats=["전체","후기","정보","Q&A","정책제안 팀모집"];
   const filtered=posts.filter(p=>catFilter==="전체"||p.cat===catFilter);
   const [pageNum,setPageNum]=useState(1);
   useEffect(()=>{setPageNum(1);},[catFilter]);
