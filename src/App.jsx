@@ -1446,7 +1446,6 @@ function CommunityPostDetailView({post,bp,user,onBack,onLike}){
   const [comments,setComments]=useState([]);
   const [liked,setLiked]=useLocalStorage(`yoa:liked_${post.id}`,false);
   const [commentText,setCommentText]=useState("");
-  const [commentAuthor,setCommentAuthor]=useState(user?.user_metadata?.name||"");
   const [commentError,setCommentError]=useState("");
   const [submittingComment,setSubmittingComment]=useState(false);
   const [editingId,setEditingId]=useState(null);
@@ -1470,13 +1469,12 @@ function CommunityPostDetailView({post,bp,user,onBack,onLike}){
   const handleComment=async e=>{
     e.preventDefault();
     if(!user){setCommentError("로그인 후 댓글을 작성할 수 있어요.");return;}
-    if(!commentAuthor.trim()){setCommentError("닉네임을 입력해주세요.");return;}
     if(!commentText.trim()){setCommentError("댓글 내용을 입력해주세요.");return;}
     setSubmittingComment(true);
     const{data,error}=await supabase.from("comments").insert({
       post_id:post.id,
       user_id:user.id,
-      author:maskName(commentAuthor.trim()),
+      author:maskName(user.user_metadata?.name||user.email||"익명"),
       content:commentText.trim(),
     }).select().single();
     setSubmittingComment(false);
@@ -1514,20 +1512,20 @@ function CommunityPostDetailView({post,bp,user,onBack,onLike}){
       </div>
       <div style={{padding:bp.isDesktop?"32px 40px":bp.isTablet?"24px 24px":"18px 14px",maxWidth:bp.isDesktop?820:"100%",margin:"0 auto"}}>
         <div style={{background:"white",borderRadius:16,padding:bp.isDesktop?"28px 32px":bp.isTablet?"22px 24px":"18px 18px",border:"1.5px solid #f1f5f9"}}>
-          <div style={{display:"flex",gap:8,alignItems:"center",marginBottom:12,flexWrap:"wrap"}}>
+          <div style={{display:"flex",gap:8,alignItems:"center",marginBottom:16,paddingBottom:16,borderBottom:"1px solid #f1f5f9",flexWrap:"wrap"}}>
             <span style={{fontSize:11,fontWeight:700,padding:"3px 10px",borderRadius:20,background:cc.bg,color:cc.text,border:`1px solid ${cc.border}`}}>{post.cat}</span>
             <span style={{fontSize:12,color:"#9ca3af"}}>{fmtDate(post.created_at||post.date)}</span>
           </div>
-          <h1 style={{fontSize:bp.isDesktop?26:bp.isTablet?22:18,fontWeight:900,margin:"0 0 16px",lineHeight:1.35,letterSpacing:"-0.02em",color:"#111827"}}>{post.title}</h1>
+          <h1 style={{fontSize:bp.isDesktop?26:bp.isTablet?22:18,fontWeight:900,margin:"0 0 16px",lineHeight:1.35,letterSpacing:"-0.02em",color:"#111827",paddingBottom:16,borderBottom:"1px solid #f1f5f9"}}>{post.title}</h1>
           <div style={{display:"flex",alignItems:"center",gap:12,marginBottom:20,paddingBottom:20,borderBottom:"1px solid #f1f5f9"}}>
-            <div style={{width:32,height:32,borderRadius:"50%",background:"var(--accent-bg)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:14,fontWeight:700,color:"var(--accent)",flexShrink:0}}>{post.author?.[0]||"?"}</div>
-            <div>
-              <div style={{fontSize:13,fontWeight:700,color:"#111827"}}>{maskName(post.author)}</div>
-              <div style={{fontSize:11,color:"#9ca3af"}}>작성자</div>
-            </div>
-            <div style={{marginLeft:"auto",display:"flex",gap:14}}>
-              <span style={{fontSize:13,color:"#6b7280",display:"flex",alignItems:"center",gap:4}}><Icon name="favorite" size={14} color="#9ca3af"/> {(post.likes||0)+(liked?1:0)}</span>
-              <span style={{fontSize:13,color:"#6b7280",display:"flex",alignItems:"center",gap:4}}><Icon name="chat_bubble" size={14} color="#9ca3af"/> {totalComments}</span>
+            <span style={{fontSize:13,color:"#6b7280",display:"flex",alignItems:"center",gap:4}}><Icon name="favorite" size={14} color="#9ca3af"/> {(post.likes||0)+(liked?1:0)}</span>
+            <span style={{fontSize:13,color:"#6b7280",display:"flex",alignItems:"center",gap:4}}><Icon name="chat_bubble" size={14} color="#9ca3af"/> {totalComments}</span>
+            <div style={{marginLeft:"auto",display:"flex",alignItems:"center",gap:12}}>
+              <div style={{width:32,height:32,borderRadius:"50%",background:"var(--accent-bg)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:14,fontWeight:700,color:"var(--accent)",flexShrink:0}}>{post.author?.[0]||"?"}</div>
+              <div>
+                <div style={{fontSize:13,fontWeight:700,color:"#111827"}}>{maskName(post.author)}</div>
+                <div style={{fontSize:11,color:"#9ca3af"}}>작성자</div>
+              </div>
             </div>
           </div>
           <div style={{fontSize:bp.isDesktop?15:14,lineHeight:1.85,color:"#374151",whiteSpace:"pre-wrap",wordBreak:"break-word"}}>
@@ -1543,10 +1541,6 @@ function CommunityPostDetailView({post,bp,user,onBack,onLike}){
         <div>
           <div style={{fontSize:15,fontWeight:800,color:"#111827",marginBottom:16}}>댓글 {totalComments}개</div>
           <form onSubmit={handleComment} style={{background:"white",borderRadius:14,padding:bp.isDesktop?"20px 24px":"16px 18px",border:"1.5px solid #f1f5f9",marginBottom:16,display:"flex",flexDirection:"column",gap:10}}>
-            <input type="text" placeholder="닉네임" value={commentAuthor} onChange={e=>setCommentAuthor(e.target.value)} maxLength={20}
-              style={{padding:"9px 12px",borderRadius:8,border:"1.5px solid #e5e7eb",fontSize:13,fontFamily:"inherit",outline:"none",width:"100%",boxSizing:"border-box"}}
-              onFocus={e=>e.target.style.borderColor="#6b7280"} onBlur={e=>e.target.style.borderColor="#e5e7eb"}
-            />
             <div style={{display:"flex",gap:8,alignItems:"flex-start"}}>
               <textarea placeholder="댓글을 입력하세요" value={commentText} onChange={e=>setCommentText(e.target.value)} rows={2} maxLength={500}
                 style={{flex:1,padding:"9px 12px",borderRadius:8,border:"1.5px solid #e5e7eb",fontSize:13,fontFamily:"inherit",outline:"none",resize:"none",lineHeight:1.6,boxSizing:"border-box"}}
