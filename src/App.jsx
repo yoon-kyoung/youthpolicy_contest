@@ -1781,18 +1781,20 @@ function CommunityView({bp,user,onGoProposal,initialCatFilter}){
       </div>
       <div style={{padding:bp.isDesktop?"28px 40px 60px":bp.isTablet?"20px 24px 60px":"14px 14px 80px"}}>
         <div style={{display:"flex",flexDirection:"column",gap:10,maxWidth:860,margin:"0 auto"}}>
-          {!loadingPosts&&!proposalBannerDismissed&&(
+          {!loadingPosts&&(catFilter==="정책제안 팀모집"||!proposalBannerDismissed)&&(
             <div onClick={()=>onGoProposal?.()} style={{position:"relative",background:"linear-gradient(135deg,var(--accent-dark),var(--accent))",borderRadius:16,padding:bp.isDesktop?"22px 26px":"16px 16px",cursor:"pointer",color:"white",display:"flex",alignItems:"center",gap:16,transition:"transform 0.15s,box-shadow 0.15s"}}
               onMouseEnter={e=>{e.currentTarget.style.transform="translateY(-2px)";e.currentTarget.style.boxShadow="0 10px 28px rgba(0,0,0,0.18)";}}
               onMouseLeave={e=>{e.currentTarget.style.transform="";e.currentTarget.style.boxShadow="";}}
             >
-              <button onClick={e=>{e.stopPropagation();setProposalBannerDismissed(true);}} aria-label="배너 닫기"
-                style={{position:"absolute",top:8,right:8,width:22,height:22,borderRadius:"50%",border:"none",background:"rgba(255,255,255,0.22)",color:"white",display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer",flexShrink:0,transition:"background 0.15s"}}
-                onMouseEnter={e=>e.currentTarget.style.background="rgba(255,255,255,0.35)"}
-                onMouseLeave={e=>e.currentTarget.style.background="rgba(255,255,255,0.22)"}
-              >
-                <Icon name="close" size={14} color="white"/>
-              </button>
+              {catFilter!=="정책제안 팀모집"&&(
+                <button onClick={e=>{e.stopPropagation();setProposalBannerDismissed(true);}} aria-label="배너 닫기"
+                  style={{position:"absolute",top:8,right:8,width:22,height:22,borderRadius:"50%",border:"none",background:"rgba(255,255,255,0.22)",color:"white",display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer",flexShrink:0,transition:"background 0.15s"}}
+                  onMouseEnter={e=>e.currentTarget.style.background="rgba(255,255,255,0.35)"}
+                  onMouseLeave={e=>e.currentTarget.style.background="rgba(255,255,255,0.22)"}
+                >
+                  <Icon name="close" size={14} color="white"/>
+                </button>
+              )}
               <div style={{flex:1,minWidth:0}}>
                 <div style={{display:"flex",alignItems:"center",gap:7,marginBottom:8}}>
                   <span style={{fontSize:10,fontWeight:800,padding:"3px 8px",borderRadius:20,background:"rgba(255,255,255,0.22)",letterSpacing:"0.02em"}}>NEW</span>
