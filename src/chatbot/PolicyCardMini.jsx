@@ -23,6 +23,7 @@ function DeadlinePill({ deadline }) {
 
 export default function PolicyCardMini({ policy, favIds, onToggleFav, onGoDetail }) {
   const [copied, setCopied] = useState(false)
+  const [expanded, setExpanded] = useState(false)
   const isFav = favIds?.has?.(policy.id) ?? false
 
   const handleShare = (e) => {
@@ -31,12 +32,15 @@ export default function PolicyCardMini({ policy, favIds, onToggleFav, onGoDetail
     navigator.clipboard?.writeText(url).then(() => { setCopied(true); setTimeout(() => setCopied(false), 2000) })
   }
 
+  const d = daysLeft(policy.deadline)
+  const support = policy.supportFull || policy.benefit || policy.description
+
   return (
     <div
-      onClick={() => onGoDetail?.(policy)}
+      onClick={() => setExpanded(o => !o)}
       style={{
         background: 'white', borderRadius: 16, border: '1.5px solid #E2E8F0',
-        padding: '14px 16px', cursor: onGoDetail ? 'pointer' : 'default', position: 'relative',
+        padding: '14px 16px', cursor: 'pointer', position: 'relative',
         display: 'flex', flexDirection: 'column', boxSizing: 'border-box',
         width: 240, maxWidth: '80vw', height: '100%',
         transition: 'transform 0.15s, box-shadow 0.15s',
@@ -60,8 +64,35 @@ export default function PolicyCardMini({ policy, favIds, onToggleFav, onGoDetail
         <CatBadge cat={policy.cat} /><DeadlinePill deadline={policy.deadline} />
       </div>
       <div style={{ fontWeight: 700, fontSize: 14, color: '#111827', lineHeight: 1.4, marginBottom: 4, paddingRight: 56 }}>{policy.title}</div>
-      <div style={{ fontSize: 12, color: '#9ca3af', marginBottom: 0 }}>{policy.org} · {policy.target}</div>
-      <div style={{ fontSize: 12, color: '#9ca3af', marginTop: 'auto', paddingTop: 12 }}>자세히 보기 →</div>
+      <div style={{ fontSize: 12, color: '#9ca3af', display: 'flex', alignItems: 'center', gap: 4 }}>
+        <span style={{ flex: 1 }}>{policy.org} · {policy.target}</span>
+        <Icon name="chevron_right" size={14} color="#d1d5db" style={{ flexShrink: 0, transition: 'transform 0.15s', transform: expanded ? 'rotate(90deg)' : 'rotate(0deg)' }} />
+      </div>
+
+      {expanded && (
+        <div style={{ marginTop: 10, paddingTop: 10, borderTop: '1px solid #f1f5f9', display: 'flex', flexDirection: 'column', gap: 6 }}>
+          {support && (
+            <div style={{
+              fontSize: 12, color: '#4b5563', lineHeight: 1.6,
+              display: '-webkit-box', WebkitBoxOrient: 'vertical', WebkitLineClamp: 3, overflow: 'hidden',
+            }}>{support}</div>
+          )}
+          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12 }}>
+            <span style={{ color: '#9ca3af' }}>신청 기한</span>
+            <span style={{ color: '#374151', fontWeight: 700 }}>{policy.deadline === '상시' ? '상시 접수' : `${policy.deadline}${d != null && d > 0 ? ` (D-${d})` : ''}`}</span>
+          </div>
+          {policy.amount > 0 && (
+            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12 }}>
+              <span style={{ color: '#9ca3af' }}>지원 금액</span>
+              <span style={{ color: '#374151', fontWeight: 700 }}>최대 {policy.amount.toLocaleString()}만원</span>
+            </div>
+          )}
+        </div>
+      )}
+
+      <button onClick={e => { e.stopPropagation(); onGoDetail?.(policy) }}
+        style={{ fontSize: 12, color: '#9ca3af', marginTop: 'auto', background: 'none', border: 'none', cursor: onGoDetail ? 'pointer' : 'default', textAlign: 'left', padding: 0, paddingTop: 12 }}
+      >자세히 보기 →</button>
     </div>
   )
 }
