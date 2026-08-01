@@ -1558,28 +1558,21 @@ function CommunityPostDetailView({post,bp,user,onBack,onLike,onUpdate}){
             )}
           </div>
           <h1 style={{fontSize:bp.isDesktop?26:bp.isTablet?22:18,fontWeight:900,margin:"0 0 16px",lineHeight:1.35,letterSpacing:"-0.02em",color:"#111827",paddingBottom:16,borderBottom:"1px solid #f1f5f9"}}>{post.title}</h1>
-          {isRecruit&&(
-            <>
-              <div style={{display:"flex",gap:16,flexWrap:"wrap",margin:"16px 0"}}>
-                <span style={{fontSize:12,color:"#6b7280",display:"flex",alignItems:"center",gap:4}}><Icon name="visibility" size={14} color="#9ca3af"/>조회 {post.views||0}</span>
-                <span style={{fontSize:12,color:"#6b7280",display:"flex",alignItems:"center",gap:4}}><Icon name="chat_bubble" size={14} color="#9ca3af"/>댓글 {totalComments}</span>
-                <span style={{fontSize:12,color:"#6b7280",display:"flex",alignItems:"center",gap:4}}><Icon name="forum" size={14} color="#9ca3af"/>채팅 {totalComments}</span>
-              </div>
-              <div style={{display:"flex",gap:12,marginBottom:20,flexWrap:"wrap"}}>
-                <div style={{flex:"1 1 140px",background:cc.bg,border:`1px solid ${cc.border}`,borderRadius:12,padding:"12px 16px"}}>
-                  <div style={{fontSize:11,fontWeight:700,color:cc.text,marginBottom:4}}>지역</div>
-                  <div style={{fontSize:14,fontWeight:700,color:"#111827"}}>{post.region||"-"}</div>
-                </div>
-                <div style={{flex:"1 1 140px",background:cc.bg,border:`1px solid ${cc.border}`,borderRadius:12,padding:"12px 16px"}}>
-                  <div style={{fontSize:11,fontWeight:700,color:cc.text,marginBottom:4}}>인원</div>
-                  <div style={{fontSize:14,fontWeight:700,color:"#111827"}}>{post.capacity||"-"}</div>
-                </div>
-              </div>
-            </>
-          )}
           <div style={{display:"flex",alignItems:"center",justifyContent:"flex-end",gap:12,marginBottom:20}}>
             <div style={{fontSize:13,fontWeight:700,color:"#111827"}}>{maskName(post.author)}</div>
           </div>
+          {isRecruit&&(
+            <div style={{display:"flex",gap:12,marginBottom:20,flexWrap:"wrap"}}>
+              <div style={{flex:"1 1 140px",background:cc.bg,border:`1px solid ${cc.border}`,borderRadius:12,padding:"12px 16px"}}>
+                <div style={{fontSize:11,fontWeight:700,color:cc.text,marginBottom:4}}>지역</div>
+                <div style={{fontSize:14,fontWeight:700,color:"#111827"}}>{post.region||"-"}</div>
+              </div>
+              <div style={{flex:"1 1 140px",background:cc.bg,border:`1px solid ${cc.border}`,borderRadius:12,padding:"12px 16px"}}>
+                <div style={{fontSize:11,fontWeight:700,color:cc.text,marginBottom:4}}>인원</div>
+                <div style={{fontSize:14,fontWeight:700,color:"#111827"}}>{post.capacity||"-"}</div>
+              </div>
+            </div>
+          )}
           <div style={{fontSize:bp.isDesktop?15:14,lineHeight:1.85,color:"#374151",whiteSpace:"pre-wrap",wordBreak:"break-word"}}>
             {body}
           </div>
