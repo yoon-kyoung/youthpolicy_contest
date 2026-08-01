@@ -225,7 +225,7 @@ export default function MyPageContainer({ supabaseUser, onLogout, initialTab, fa
         <ApplicationCalendar policies={policies} favIds={favIds} onGoDetail={onGoDetail} />
 
         {/* 탭 + 콘텐츠 */}
-        <div ref={tabContainerRef} style={styles.tabContainer}>
+        <div style={styles.tabContainer}>
           <TabBar active={activeTab} onChange={setActiveTab} />
           <div style={styles.tabContent}>
             {activeTab === 'info' && (
