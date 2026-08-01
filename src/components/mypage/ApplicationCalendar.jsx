@@ -1,14 +1,6 @@
 import { useState } from 'react'
 import Icon from '../../styles/Icon'
 
-const CAT = {
-  job:    { bg: '#E0F2FE', text: '#0369A1', border: '#BAE6FD', label: '일자리' },
-  house:  { bg: '#F0FDF4', text: '#15803D', border: '#BBF7D0', label: '주거' },
-  money:  { bg: '#FFFBEB', text: '#B45309', border: '#FDE68A', label: '금융' },
-  edu:    { bg: '#F5F3FF', text: '#6D28D9', border: '#DDD6FE', label: '교육' },
-  health: { bg: '#FFF1F2', text: '#BE123C', border: '#FECDD3', label: '복지' },
-}
-
 const STATUS_MAP = {
   ready:   { label: '준비중',   color: '#1D4ED8' },
   applied: { label: '지원완료', color: '#15803D' },
@@ -42,16 +34,24 @@ export default function ApplicationCalendar({ policies, favIds, onGoDetail }) {
   const firstDow   = (new Date(displayYear, displayMonth - 1, 1).getDay() + 6) % 7
   const daysInMonth = new Date(displayYear, displayMonth, 0).getDate()
 
-  // 저장한 정책 중 이 달 마감인 것 수집
+  // 저장한 정책 중 이 달에 마감·신청 시작이 걸리는 것 수집
+  // 신청 시작일 데이터가 없어서, 마감일 30일 전을 신청 시작일로 임의 계산한다.
+  const APPLY_START_LEAD_DAYS = 30
   const markedDays = {}
+  const addMark = (y, m, d, entry) => {
+    if (y !== displayYear || m !== displayMonth) return
+    if (!markedDays[d]) markedDays[d] = []
+    markedDays[d].push(entry)
+  }
   ;(policies || [])
     .filter(p => favIds?.has(p.id) && p.deadline && p.deadline !== '상시')
     .forEach(p => {
-      const [y, m, d] = p.deadline.split('-').map(Number)
-      if (y === displayYear && m === displayMonth) {
-        if (!markedDays[d]) markedDays[d] = []
-        markedDays[d].push(p)
-      }
+      const [dY, dM, dD] = p.deadline.split('-').map(Number)
+      addMark(dY, dM, dD, { ...p, eventType: 'deadline' })
+
+      const startDate = new Date(dY, dM - 1, dD)
+      startDate.setDate(startDate.getDate() - APPLY_START_LEAD_DAYS)
+      addMark(startDate.getFullYear(), startDate.getMonth() + 1, startDate.getDate(), { ...p, eventType: 'start' })
     })
 
   // 달력 셀 생성
@@ -116,26 +116,32 @@ export default function ApplicationCalendar({ policies, favIds, onGoDetail }) {
               {events.length > 0 && (
                 <div style={styles.events}>
                   {events.map((ev, idx) => {
-                    const c      = CAT[ev.cat] || { bg: '#f3f4f6', text: '#374151' }
-                    const st     = STATUS_MAP[statuses[ev.id]] || STATUS_MAP.ready
-                    const memo   = memos[ev.id] || ''
+                    const isDeadline = ev.eventType === 'deadline'
+                    const eventColor = isDeadline ? '#ef4444' : '#16a34a'
+                    const eventBg    = isDeadline ? '#FEF2F2' : '#F0FDF4'
+                    const st         = STATUS_MAP[statuses[ev.id]] || STATUS_MAP.ready
+                    const memo       = memos[ev.id] || ''
                     return (
                       <div
                         key={idx}
                         onClick={() => onGoDetail?.(ev)}
                         style={{
                           ...styles.eventBlock,
-                          backgroundColor: c.bg,
-                          borderLeft: `3px solid ${c.text}`,
+                          backgroundColor: eventBg,
+                          borderLeft: `3px solid ${eventColor}`,
                           cursor: onGoDetail ? 'pointer' : 'default',
                         }}
-                        title={ev.title}
+                        title={`${ev.title} ${isDeadline ? '마감' : '신청 시작'}`}
                       >
-                        <span style={{ ...styles.evTitle, color: c.text }}>{ev.title}</span>
-                        <div style={styles.evMeta}>
-                          <span style={{ ...styles.evStatus, color: st.color }}>● {st.label}</span>
-                          {memo && <span style={styles.evMemo}>{memo}</span>}
-                        </div>
+                        <span style={{ ...styles.evTitle, color: eventColor }}>
+                          {ev.title} {isDeadline ? '마감' : '신청 시작'}
+                        </span>
+                        {isDeadline && (
+                          <div style={styles.evMeta}>
+                            <span style={{ ...styles.evStatus, color: st.color }}>● {st.label}</span>
+                            {memo && <span style={styles.evMemo}>{memo}</span>}
+                          </div>
+                        )}
                       </div>
                     )
                   })}
@@ -149,7 +155,7 @@ export default function ApplicationCalendar({ policies, favIds, onGoDetail }) {
       {!hasEvents && (
         <div style={styles.noData}>
           <Icon name="bookmark" size={16} color="#d1d5db" />
-          이 달 마감인 저장 정책이 없습니다
+          이 달 마감·신청 시작인 저장 정책이 없습니다
         </div>
       )}
     </div>
