@@ -1333,14 +1333,12 @@ function CommunityWriteView({bp,user,onSubmit,onCancel}){
   const [cat,setCat]=useState("후기");
   const [title,setTitle]=useState("");
   const [content,setContent]=useState("");
-  const [author,setAuthor]=useState(user?.user_metadata?.name||"");
   const [errors,setErrors]=useState({});
   const [submitting,setSubmitting]=useState(false);
   const cats=["후기","정보","Q&A","정책제안 팀모집"];
 
   const validate=()=>{
     const e={};
-    if(!author.trim())e.author="닉네임을 입력해주세요.";
     if(!title.trim())e.title="제목을 입력해주세요.";
     if(!content.trim())e.content="내용을 입력해주세요.";
     else if(content.trim().length<10)e.content="내용을 10자 이상 입력해주세요.";
@@ -1356,7 +1354,7 @@ function CommunityWriteView({bp,user,onSubmit,onCancel}){
       user_id:user?.id||null,
       cat,
       title:title.trim(),
-      author:author.trim(),
+      author:maskName(user?.user_metadata?.name||user?.email||"익명"),
       content:content.trim(),
       likes:0,
       comments_count:0,
@@ -1386,14 +1384,6 @@ function CommunityWriteView({bp,user,onSubmit,onCancel}){
                 <button key={c} type="button" onClick={()=>setCat(c)} style={{padding:"8px 18px",borderRadius:20,fontSize:13,fontWeight:sel?700:500,cursor:"pointer",transition:"all 0.15s",background:sel?cc.bg:"white",border:`1.5px solid ${sel?cc.border:"#e5e7eb"}`,color:sel?cc.text:"#9ca3af"}}>{c}</button>
               );})}
             </div>
-          </div>
-          <div>
-            <label style={{display:"block",fontSize:13,fontWeight:700,color:"#374151",marginBottom:8}}>닉네임</label>
-            <input type="text" value={author} onChange={e=>setAuthor(e.target.value)} placeholder="사용할 닉네임을 입력하세요" maxLength={20}
-              style={{...inp,border:`1.5px solid ${errors.author?"#fca5a5":"#e5e7eb"}`,background:errors.author?"#fff8f8":"white"}}
-              onFocus={e=>e.target.style.borderColor=errors.author?"#f87171":"#6b7280"} onBlur={e=>e.target.style.borderColor=errors.author?"#fca5a5":"#e5e7eb"}
-            />
-            {errors.author&&<p style={{fontSize:12,color:"#dc2626",margin:"5px 0 0"}}>{errors.author}</p>}
           </div>
           <div>
             <label style={{display:"block",fontSize:13,fontWeight:700,color:"#374151",marginBottom:8}}>제목</label>
