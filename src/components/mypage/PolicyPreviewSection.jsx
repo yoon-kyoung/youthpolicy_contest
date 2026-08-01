@@ -89,8 +89,7 @@ export default function PolicyPreviewSection({ refreshKey = 0, userName }) {
       <div style={styles.header}>
         <div style={styles.titleRow}>
           <Icon name="auto_awesome" size={20} color="#007FFF"/>
-          <span style={styles.title}>{userName ? `${userName}님이 관심있을법한 정책` : '맞춤 정책 미리보기'}</span>
-          <span style={styles.badge}>API</span>
+          <span style={styles.title}>{userName ? `${userName}님이 관심 있을법한 정책` : '맞춤 정책 미리보기'}</span>
         </div>
         <p style={styles.subtitle}>
           {loading
@@ -162,15 +161,6 @@ const styles = {
     fontSize: 17,
     fontWeight: 700,
     color: '#111827',
-  },
-  badge: {
-    fontSize: 11,
-    fontWeight: 700,
-    color: '#ffffff',
-    backgroundColor: '#007FFF',
-    padding: '2px 7px',
-    borderRadius: 20,
-    letterSpacing: '0.5px',
   },
   subtitle: {
     fontSize: 13,
