@@ -1517,8 +1517,7 @@ function CommunityPostDetailView({post,bp,user,onBack,onLike}){
             <span style={{fontSize:12,color:"#9ca3af"}}>{fmtDate(post.created_at||post.date)}</span>
           </div>
           <h1 style={{fontSize:bp.isDesktop?26:bp.isTablet?22:18,fontWeight:900,margin:"0 0 16px",lineHeight:1.35,letterSpacing:"-0.02em",color:"#111827",paddingBottom:16,borderBottom:"1px solid #f1f5f9"}}>{post.title}</h1>
-          <div style={{display:"flex",alignItems:"center",justifyContent:"flex-end",gap:12,marginBottom:20,paddingBottom:20,borderBottom:"1px solid #f1f5f9"}}>
-            <div style={{fontSize:11,color:"#9ca3af"}}>작성자</div>
+          <div style={{display:"flex",alignItems:"center",justifyContent:"flex-end",gap:12,marginBottom:20}}>
             <div style={{fontSize:13,fontWeight:700,color:"#111827"}}>{maskName(post.author)}</div>
           </div>
           <div style={{fontSize:bp.isDesktop?15:14,lineHeight:1.85,color:"#374151",whiteSpace:"pre-wrap",wordBreak:"break-word"}}>
