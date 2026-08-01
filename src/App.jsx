@@ -1479,7 +1479,14 @@ function CommunityPostDetailView({post,bp,user,onBack,onLike,onUpdate}){
   const recruitDone=post.status==="모집완료";
   const [participants,setParticipants]=useState([]);
   const [joining,setJoining]=useState(false);
+  const [showJoinNotice,setShowJoinNotice]=useState(false);
   const joined=Boolean(user&&participants.some(p=>p.user_id===user.id));
+
+  useEffect(()=>{
+    if(!showJoinNotice)return;
+    const t=setTimeout(()=>setShowJoinNotice(false),4000);
+    return()=>clearTimeout(t);
+  },[showJoinNotice]);
 
   useEffect(()=>{
     supabase.from("comments").select("*").eq("post_id",post.id).order("created_at",{ascending:true})
@@ -1503,6 +1510,7 @@ function CommunityPostDetailView({post,bp,user,onBack,onLike,onUpdate}){
     if(recruitDone&&!joined)return;
     setJoining(true);
     if(joined){
+      setShowJoinNotice(false);
       await supabase.from("post_participants").delete().eq("post_id",post.id).eq("user_id",user.id);
       setParticipants(prev=>prev.filter(p=>p.user_id!==user.id));
     }else{
@@ -1511,7 +1519,7 @@ function CommunityPostDetailView({post,bp,user,onBack,onLike,onUpdate}){
         user_id:user.id,
         name:maskName(user.user_metadata?.name||user.email||"익명"),
       }).select().single();
-      if(data)setParticipants(prev=>[...prev,data]);
+      if(data){setParticipants(prev=>[...prev,data]);setShowJoinNotice(true);}
     }
     setJoining(false);
   };
@@ -1614,10 +1622,18 @@ function CommunityPostDetailView({post,bp,user,onBack,onLike,onUpdate}){
             onMouseLeave={e=>{e.currentTarget.style.borderColor=liked?"#fca5a5":"#e5e7eb";e.currentTarget.style.color=liked?"#dc2626":"#6b7280";e.currentTarget.style.background=liked?"#fff1f2":"white";}}
           ><Icon name={liked?"favorite":"favorite_border"} size={18} color={liked?"#dc2626":"#6b7280"}/>{liked?"공감 취소":"공감해요"} {post.likes||0}</button>
           {isRecruit&&(
-            <button onClick={handleJoin} disabled={joining||(recruitDone&&!joined)} style={{display:"flex",alignItems:"center",gap:8,padding:"11px 28px",borderRadius:30,fontSize:14,fontWeight:700,cursor:joining||(recruitDone&&!joined)?"default":"pointer",border:`2px solid ${joined?"var(--accent)":"#e5e7eb"}`,background:joined?"var(--accent-bg)":"white",color:recruitDone&&!joined?"#cbd5e1":joined?"var(--accent)":"#6b7280",opacity:joining?0.7:1,transition:"all 0.2s"}}
-              onMouseEnter={e=>{if(recruitDone&&!joined)return;e.currentTarget.style.borderColor="var(--accent)";e.currentTarget.style.color="var(--accent)";e.currentTarget.style.background="var(--accent-bg)";}}
-              onMouseLeave={e=>{if(recruitDone&&!joined)return;e.currentTarget.style.borderColor=joined?"var(--accent)":"#e5e7eb";e.currentTarget.style.color=joined?"var(--accent)":"#6b7280";e.currentTarget.style.background=joined?"var(--accent-bg)":"white";}}
-            ><Icon name={joined?"check_circle":"group"} size={18} color={recruitDone&&!joined?"#cbd5e1":joined?"var(--accent)":"#6b7280"}/>{recruitDone&&!joined?"모집 마감":joined?"참가 취소":"참가하기"} {participants.length}</button>
+            <div style={{position:"relative"}}>
+              {showJoinNotice&&(
+                <div style={{position:"absolute",bottom:"100%",left:"50%",transform:"translateX(-50%)",marginBottom:10,background:"#1f2937",color:"white",borderRadius:10,padding:"10px 16px",fontSize:12,fontWeight:600,lineHeight:1.5,width:220,textAlign:"center",boxShadow:"0 4px 14px rgba(0,0,0,0.2)",animation:"fadeUp 0.3s ease",zIndex:5}}>
+                  <div style={{position:"absolute",top:"100%",left:"50%",transform:"translateX(-50%)",width:0,height:0,borderLeft:"6px solid transparent",borderRight:"6px solid transparent",borderTop:"6px solid #1f2937"}}/>
+                  참가 신청이 완료됐어요! 담당자가 개별로 연락드릴 예정이에요.
+                </div>
+              )}
+              <button onClick={handleJoin} disabled={joining||(recruitDone&&!joined)} style={{display:"flex",alignItems:"center",gap:8,padding:"11px 28px",borderRadius:30,fontSize:14,fontWeight:700,cursor:joining||(recruitDone&&!joined)?"default":"pointer",border:`2px solid ${joined?"var(--accent)":"#e5e7eb"}`,background:joined?"var(--accent-bg)":"white",color:recruitDone&&!joined?"#cbd5e1":joined?"var(--accent)":"#6b7280",opacity:joining?0.7:1,transition:"all 0.2s"}}
+                onMouseEnter={e=>{if(recruitDone&&!joined)return;e.currentTarget.style.borderColor="var(--accent)";e.currentTarget.style.color="var(--accent)";e.currentTarget.style.background="var(--accent-bg)";}}
+                onMouseLeave={e=>{if(recruitDone&&!joined)return;e.currentTarget.style.borderColor=joined?"var(--accent)":"#e5e7eb";e.currentTarget.style.color=joined?"var(--accent)":"#6b7280";e.currentTarget.style.background=joined?"var(--accent-bg)":"white";}}
+              ><Icon name={joined?"check_circle":"group"} size={18} color={recruitDone&&!joined?"#cbd5e1":joined?"var(--accent)":"#6b7280"}/>{recruitDone&&!joined?"모집 마감":joined?"참가 취소":"참가하기"} {participants.length}</button>
+            </div>
           )}
         </div>
         <div>
