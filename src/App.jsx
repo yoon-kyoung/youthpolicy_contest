@@ -1477,6 +1477,9 @@ function CommunityPostDetailView({post,bp,user,onBack,onLike,onUpdate}){
   const isRecruit=post.cat==="정책제안 팀모집";
   const isOwner=Boolean(isRecruit&&user&&post.user_id&&user.id===post.user_id);
   const recruitDone=post.status==="모집완료";
+  const [participants,setParticipants]=useState([]);
+  const [joining,setJoining]=useState(false);
+  const joined=Boolean(user&&participants.some(p=>p.user_id===user.id));
 
   useEffect(()=>{
     supabase.from("comments").select("*").eq("post_id",post.id).order("created_at",{ascending:true})
@@ -1484,10 +1487,34 @@ function CommunityPostDetailView({post,bp,user,onBack,onLike,onUpdate}){
   },[post.id]);
 
   useEffect(()=>{
+    if(!isRecruit)return;
+    supabase.from("post_participants").select("*").eq("post_id",post.id)
+      .then(({data})=>setParticipants(data||[]));
+  },[isRecruit,post.id]);
+
+  useEffect(()=>{
     if(!isRecruit||viewed)return;
     setViewed(true);
     onUpdate?.(post.id,{views:(post.views||0)+1});
   },[isRecruit,viewed,post.id]);
+
+  const handleJoin=async()=>{
+    if(!user){alert("로그인 후 참가 신청을 할 수 있어요.");return;}
+    if(recruitDone&&!joined)return;
+    setJoining(true);
+    if(joined){
+      await supabase.from("post_participants").delete().eq("post_id",post.id).eq("user_id",user.id);
+      setParticipants(prev=>prev.filter(p=>p.user_id!==user.id));
+    }else{
+      const{data}=await supabase.from("post_participants").insert({
+        post_id:post.id,
+        user_id:user.id,
+        name:maskName(user.user_metadata?.name||user.email||"익명"),
+      }).select().single();
+      if(data)setParticipants(prev=>[...prev,data]);
+    }
+    setJoining(false);
+  };
 
   const handleStatusToggle=()=>{
     onUpdate?.(post.id,{status:recruitDone?"모집중":"모집완료"});
@@ -1581,11 +1608,17 @@ function CommunityPostDetailView({post,bp,user,onBack,onLike,onUpdate}){
             <span style={{fontSize:13,color:"#6b7280",display:"flex",alignItems:"center",gap:4}}><Icon name="chat_bubble" size={14} color="#9ca3af"/> {totalComments}</span>
           </div>
         </div>
-        <div style={{display:"flex",justifyContent:"center",margin:"24px 0"}}>
+        <div style={{display:"flex",justifyContent:"center",gap:10,margin:"24px 0",flexWrap:"wrap"}}>
           <button onClick={handleLike} style={{display:"flex",alignItems:"center",gap:8,padding:"11px 28px",borderRadius:30,fontSize:14,fontWeight:700,cursor:"pointer",border:`2px solid ${liked?"#fca5a5":"#e5e7eb"}`,background:liked?"#fff1f2":"white",color:liked?"#dc2626":"#6b7280",transition:"all 0.2s"}}
             onMouseEnter={e=>{e.currentTarget.style.borderColor="#fca5a5";e.currentTarget.style.color="#dc2626";e.currentTarget.style.background="#fff1f2";}}
             onMouseLeave={e=>{e.currentTarget.style.borderColor=liked?"#fca5a5":"#e5e7eb";e.currentTarget.style.color=liked?"#dc2626":"#6b7280";e.currentTarget.style.background=liked?"#fff1f2":"white";}}
           ><Icon name={liked?"favorite":"favorite_border"} size={18} color={liked?"#dc2626":"#6b7280"}/>{liked?"공감 취소":"공감해요"} {post.likes||0}</button>
+          {isRecruit&&(
+            <button onClick={handleJoin} disabled={joining||(recruitDone&&!joined)} style={{display:"flex",alignItems:"center",gap:8,padding:"11px 28px",borderRadius:30,fontSize:14,fontWeight:700,cursor:joining||(recruitDone&&!joined)?"default":"pointer",border:`2px solid ${joined?"var(--accent)":"#e5e7eb"}`,background:joined?"var(--accent-bg)":"white",color:recruitDone&&!joined?"#cbd5e1":joined?"var(--accent)":"#6b7280",opacity:joining?0.7:1,transition:"all 0.2s"}}
+              onMouseEnter={e=>{if(recruitDone&&!joined)return;e.currentTarget.style.borderColor="var(--accent)";e.currentTarget.style.color="var(--accent)";e.currentTarget.style.background="var(--accent-bg)";}}
+              onMouseLeave={e=>{if(recruitDone&&!joined)return;e.currentTarget.style.borderColor=joined?"var(--accent)":"#e5e7eb";e.currentTarget.style.color=joined?"var(--accent)":"#6b7280";e.currentTarget.style.background=joined?"var(--accent-bg)":"white";}}
+            ><Icon name={joined?"task_alt":"group"} size={18} color={recruitDone&&!joined?"#cbd5e1":joined?"var(--accent)":"#6b7280"}/>{recruitDone&&!joined?"모집 마감":joined?"참가 취소":"참가하기"} {participants.length}</button>
+          )}
         </div>
         <div>
           <div style={{fontSize:15,fontWeight:800,color:"#111827",marginBottom:16}}>댓글 {totalComments}개</div>
