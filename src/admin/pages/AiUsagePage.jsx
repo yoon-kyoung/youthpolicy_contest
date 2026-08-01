@@ -6,9 +6,9 @@ const CSV_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?forma
 const USD_TO_KRW = 1500
 
 const MODEL_PRICES = {
-  'solar-pro3': { in: 0.15, out: 0.60 },
-  'solar-pro2': { in: 0.15, out: 0.60 },
-  'solar-mini': { in: 0.15, out: 0.15 },
+  'solar-pro3': { in: 0, out: 0 },
+  'solar-pro2': { in: 0, out: 0 },
+  'solar-mini': { in: 0, out: 0 },
   'openai-direct:gpt-4o-mini': { in: 0.15, out: 0.60 },
   'gpt-4o-mini': { in: 0.15, out: 0.60 },
   'openrouter/free': { in: 0, out: 0 },
