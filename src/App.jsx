@@ -1839,8 +1839,7 @@ function CommunityView({bp,user,onGoProposal,initialCatFilter}){
                         <span style={{fontSize:11,fontWeight:700,padding:"2px 9px",borderRadius:20,background:post.status==="모집완료"?"#F1F5F9":"#F0FDF4",border:`1px solid ${post.status==="모집완료"?"#E2E8F0":"#BBF7D0"}`,color:post.status==="모집완료"?"#64748B":"#15803D"}}>{post.status||"모집중"}</span>
                       )}
                     </div>
-                    <div style={{fontWeight:700,fontSize:bp.isDesktop?15:14,color:"#111827",lineHeight:1.4,marginBottom:6}}>{post.title}</div>
-                    <div style={{fontSize:13,color:"#6b7280",lineHeight:1.6,overflow:"hidden",display:"-webkit-box",WebkitLineClamp:2,WebkitBoxOrient:"vertical"}}>{(post.content||post.preview||"").replace(/\\n/g," ")}</div>
+                    <div style={{fontWeight:700,fontSize:bp.isDesktop?15:14,color:"#111827",lineHeight:1.4}}>{post.title}</div>
                   </div>
                 </div>
                 <div style={{display:"flex",alignItems:"center",gap:14,marginTop:12,paddingTop:12,borderTop:"1px solid #E2E8F0"}}>
