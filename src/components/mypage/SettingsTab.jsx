@@ -10,13 +10,8 @@ export default function SettingsTab({ user, onUpdateUser, onLogout }) {
       {/* 정보 수정 */}
       <UserInfoCard user={user} onUpdateUser={onUpdateUser} />
 
-      {/* 계정 관리 */}
+      {/* 로그아웃 / 회원 탈퇴 */}
       <div style={styles.accountCard}>
-        <div style={styles.sectionTitle}>
-          <span className="material-symbols-rounded" style={{ fontSize: 18, color: '#374151' }}>manage_accounts</span>
-          계정 관리
-        </div>
-
         <div style={styles.actionRow}>
           <button style={styles.btn} type="button" onClick={onLogout}>
             <span className="material-symbols-rounded" style={{ fontSize: 16 }}>logout</span>
@@ -81,15 +76,6 @@ const styles = {
     borderRadius: 16,
     border: '1px solid #e5e7eb',
     padding: '20px 24px',
-  },
-  sectionTitle: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: 6,
-    fontSize: 15,
-    fontWeight: 700,
-    color: '#374151',
-    marginBottom: 16,
   },
   actionRow: {
     display: 'flex',

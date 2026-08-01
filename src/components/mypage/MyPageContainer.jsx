@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect } from 'react'
 import { getDisplayName } from '../../supabase'
 import Icon from '../../styles/Icon'
 import PageHeader from './PageHeader'
@@ -68,12 +68,7 @@ export default function MyPageContainer({ supabaseUser, onLogout, initialTab, fa
     } catch { return INITIAL_PREFS }
   })
   const [refreshKey, setRefreshKey] = useState(0)
-  const tabContainerRef = useRef(null)
-
-  const handleGoAccountSettings = () => {
-    setActiveTab('settings')
-    tabContainerRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
-  }
+  const [showAccountMenu, setShowAccountMenu] = useState(false)
   const [showPrefPrompt, setShowPrefPrompt] = useState(false)
   // 'prompt' → 투어 시작 여부 묻는 단계 / 'tour' → 투어 진행 중 / 'hidden' → 숨김
   const [tourState, setTourState] = useState(() =>
@@ -125,33 +120,41 @@ export default function MyPageContainer({ supabaseUser, onLogout, initialTab, fa
 
         {/* 프로필 바 — 유저 정보 전체 */}
         <div style={styles.profileBar}>
-          <div style={styles.avatar}>{user.displayName?.charAt(0) || '?'}</div>
-          <div style={styles.profileInfo}>
-            <div style={styles.userName}>{user.displayName}</div>
-            <div style={styles.userEmail}>{user.email}</div>
-            <div style={styles.profileMeta}>
-              <MetaItem icon="call" label="전화번호" value={user.phone} />
-              <div style={styles.metaDivider} />
-              <MetaItem icon="calendar_today" label="가입일" value={user.joinDate.replace(/-/g, '.')} />
-              <div style={styles.metaDivider} />
-              <MetaItem icon="login" label="최근 로그인" value={user.lastLogin.replace(/-/g, '.')} />
+          <div style={styles.profileRow}>
+            <div style={styles.avatar}>{user.displayName?.charAt(0) || '?'}</div>
+            <div style={styles.profileInfo}>
+              <div style={styles.userName}>{user.displayName}</div>
+              <div style={styles.userEmail}>{user.email}</div>
+              <div style={styles.profileMeta}>
+                <MetaItem icon="call" label="전화번호" value={user.phone} />
+                <div style={styles.metaDivider} />
+                <MetaItem icon="calendar_today" label="가입일" value={user.joinDate.replace(/-/g, '.')} />
+                <div style={styles.metaDivider} />
+                <MetaItem icon="login" label="최근 로그인" value={user.lastLogin.replace(/-/g, '.')} />
+              </div>
             </div>
+            <button
+              type="button"
+              onClick={() => setShowAccountMenu(v => !v)}
+              style={{
+                display: 'flex', alignItems: 'center', gap: 5, lineHeight: 1,
+                padding: '7px 14px', borderRadius: 8, flexShrink: 0,
+                border: '1px solid #E2E8F0', background: showAccountMenu ? '#F0F7FF' : 'white',
+                color: showAccountMenu ? '#007FFF' : '#475569',
+                fontSize: 13, fontWeight: 600, cursor: 'pointer',
+                transition: 'all 0.15s',
+              }}
+            >
+              <Icon name="manage_accounts" size={15} color="currentColor"/>
+              계정 관리
+            </button>
           </div>
-          <button
-            type="button"
-            onClick={handleGoAccountSettings}
-            style={{
-              display: 'flex', alignItems: 'center', gap: 5, lineHeight: 1,
-              padding: '7px 14px', borderRadius: 8, flexShrink: 0,
-              border: '1px solid #E2E8F0', background: activeTab === 'settings' ? '#F0F7FF' : 'white',
-              color: activeTab === 'settings' ? '#007FFF' : '#475569',
-              fontSize: 13, fontWeight: 600, cursor: 'pointer',
-              transition: 'all 0.15s',
-            }}
-          >
-            <Icon name="manage_accounts" size={15} color="currentColor"/>
-            계정 관리
-          </button>
+
+          {showAccountMenu && (
+            <div style={styles.accountMenu}>
+              <SettingsTab user={user} onUpdateUser={setUser} onLogout={onLogout} />
+            </div>
+          )}
         </div>
 
         {/* 투어 시작 여부 프롬프트 */}
@@ -242,9 +245,6 @@ export default function MyPageContainer({ supabaseUser, onLogout, initialTab, fa
             {activeTab === 'saved' && (
               <SavedPoliciesTab policies={policies} favIds={favIds} onToggleFav={onToggleFav} onGoDetail={onGoDetail} />
             )}
-            {activeTab === 'settings' && (
-              <SettingsTab user={user} onUpdateUser={setUser} onLogout={onLogout} />
-            )}
           </div>
         </div>
       </div>
@@ -283,13 +283,22 @@ const styles = {
   },
   profileBar: {
     display: 'flex',
-    alignItems: 'flex-start',
-    gap: 16,
+    flexDirection: 'column',
     backgroundColor: '#ffffff',
     borderRadius: 16,
     border: '1px solid #e5e7eb',
     padding: '24px 28px',
     boxShadow: '0 1px 3px rgba(0,0,0,0.06)',
+  },
+  profileRow: {
+    display: 'flex',
+    alignItems: 'flex-start',
+    gap: 16,
+  },
+  accountMenu: {
+    marginTop: 20,
+    paddingTop: 20,
+    borderTop: '1px solid #e5e7eb',
   },
   avatar: {
     width: 52,
