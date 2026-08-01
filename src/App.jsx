@@ -1617,7 +1617,7 @@ function CommunityPostDetailView({post,bp,user,onBack,onLike,onUpdate}){
             <button onClick={handleJoin} disabled={joining||(recruitDone&&!joined)} style={{display:"flex",alignItems:"center",gap:8,padding:"11px 28px",borderRadius:30,fontSize:14,fontWeight:700,cursor:joining||(recruitDone&&!joined)?"default":"pointer",border:`2px solid ${joined?"var(--accent)":"#e5e7eb"}`,background:joined?"var(--accent-bg)":"white",color:recruitDone&&!joined?"#cbd5e1":joined?"var(--accent)":"#6b7280",opacity:joining?0.7:1,transition:"all 0.2s"}}
               onMouseEnter={e=>{if(recruitDone&&!joined)return;e.currentTarget.style.borderColor="var(--accent)";e.currentTarget.style.color="var(--accent)";e.currentTarget.style.background="var(--accent-bg)";}}
               onMouseLeave={e=>{if(recruitDone&&!joined)return;e.currentTarget.style.borderColor=joined?"var(--accent)":"#e5e7eb";e.currentTarget.style.color=joined?"var(--accent)":"#6b7280";e.currentTarget.style.background=joined?"var(--accent-bg)":"white";}}
-            ><Icon name={joined?"task_alt":"group"} size={18} color={recruitDone&&!joined?"#cbd5e1":joined?"var(--accent)":"#6b7280"}/>{recruitDone&&!joined?"모집 마감":joined?"참가 취소":"참가하기"} {participants.length}</button>
+            ><Icon name={joined?"check_circle":"group"} size={18} color={recruitDone&&!joined?"#cbd5e1":joined?"var(--accent)":"#6b7280"}/>{recruitDone&&!joined?"모집 마감":joined?"참가 취소":"참가하기"} {participants.length}</button>
           )}
         </div>
         <div>
