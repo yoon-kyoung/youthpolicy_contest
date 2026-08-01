@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { getDisplayName } from '../../supabase'
 import Icon from '../../styles/Icon'
 import PageHeader from './PageHeader'
@@ -68,6 +68,12 @@ export default function MyPageContainer({ supabaseUser, onLogout, initialTab, fa
     } catch { return INITIAL_PREFS }
   })
   const [refreshKey, setRefreshKey] = useState(0)
+  const tabContainerRef = useRef(null)
+
+  const handleGoAccountSettings = () => {
+    setActiveTab('settings')
+    tabContainerRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  }
   const [showPrefPrompt, setShowPrefPrompt] = useState(false)
   // 'prompt' → 투어 시작 여부 묻는 단계 / 'tour' → 투어 진행 중 / 'hidden' → 숨김
   const [tourState, setTourState] = useState(() =>
@@ -133,7 +139,7 @@ export default function MyPageContainer({ supabaseUser, onLogout, initialTab, fa
           </div>
           <button
             type="button"
-            onClick={() => setActiveTab('settings')}
+            onClick={handleGoAccountSettings}
             style={{
               display: 'flex', alignItems: 'center', gap: 5, lineHeight: 1,
               padding: '7px 14px', borderRadius: 8, flexShrink: 0,
@@ -216,7 +222,7 @@ export default function MyPageContainer({ supabaseUser, onLogout, initialTab, fa
         <ApplicationCalendar policies={policies} favIds={favIds} onGoDetail={onGoDetail} />
 
         {/* 탭 + 콘텐츠 */}
-        <div style={styles.tabContainer}>
+        <div ref={tabContainerRef} style={styles.tabContainer}>
           <TabBar active={activeTab} onChange={setActiveTab} />
           <div style={styles.tabContent}>
             {activeTab === 'info' && (
