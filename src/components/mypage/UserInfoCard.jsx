@@ -3,7 +3,7 @@ import UserInfoView from './UserInfoView'
 import UserInfoEditForm from './UserInfoEditForm'
 import { supabase } from '../../supabase'
 
-export default function UserInfoCard({ user, onUpdateUser }) {
+export default function UserInfoCard({ user, onUpdateUser, headerActions }) {
   const [isEditing, setIsEditing] = useState(false)
   const [saveError, setSaveError] = useState('')
 
@@ -30,7 +30,7 @@ export default function UserInfoCard({ user, onUpdateUser }) {
           saveError={saveError}
         />
       ) : (
-        <UserInfoView user={user} onEdit={() => setIsEditing(true)} />
+        <UserInfoView user={user} onEdit={() => setIsEditing(true)} headerActions={headerActions} />
       )}
     </div>
   )

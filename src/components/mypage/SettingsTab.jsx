@@ -5,39 +5,38 @@ export default function SettingsTab({ user, onUpdateUser, onLogout }) {
   const [showWithdraw, setShowWithdraw] = useState(false)
   const [showModal, setShowModal]       = useState(false)
 
+  const headerActions = (
+    <div style={styles.actionRow}>
+      <button style={styles.btn} type="button" onClick={onLogout}>
+        <span className="material-symbols-rounded" style={{ fontSize: 16 }}>logout</span>
+        로그아웃
+      </button>
+      <button style={styles.btn} type="button" onClick={() => setShowWithdraw(v => !v)}>
+        <span className="material-symbols-rounded" style={{ fontSize: 16 }}>person_remove</span>
+        회원 탈퇴
+      </button>
+    </div>
+  )
+
   return (
     <div style={styles.wrapper}>
-      {/* 정보 수정 */}
-      <UserInfoCard user={user} onUpdateUser={onUpdateUser} />
+      {/* 정보 수정 / 로그아웃 / 회원 탈퇴 */}
+      <UserInfoCard user={user} onUpdateUser={onUpdateUser} headerActions={headerActions} />
 
-      {/* 로그아웃 / 회원 탈퇴 */}
-      <div style={styles.accountCard}>
-        <div style={styles.actionRow}>
-          <button style={styles.btn} type="button" onClick={onLogout}>
-            <span className="material-symbols-rounded" style={{ fontSize: 16 }}>logout</span>
-            로그아웃
-          </button>
-          <button style={styles.btn} type="button" onClick={() => setShowWithdraw(v => !v)}>
-            <span className="material-symbols-rounded" style={{ fontSize: 16 }}>person_remove</span>
-            회원 탈퇴
-          </button>
-        </div>
-
-        {showWithdraw && (
-          <div style={styles.withdrawBox}>
-            <span style={styles.warnText}>
-              <span className="material-symbols-rounded" style={{ fontSize: 15, verticalAlign: 'middle', color: '#ef4444' }}>warning</span>
-              {' '}탈퇴 시 모든 데이터가 삭제되며 복구가 불가합니다.
-            </span>
-            <div style={styles.withdrawBtns}>
-              <button style={styles.btn} type="button" onClick={() => setShowWithdraw(false)}>취소</button>
-              <button style={styles.btnDanger} type="button" onClick={() => { setShowWithdraw(false); setShowModal(true) }}>
-                탈퇴 확인
-              </button>
-            </div>
+      {showWithdraw && (
+        <div style={styles.withdrawBox}>
+          <span style={styles.warnText}>
+            <span className="material-symbols-rounded" style={{ fontSize: 15, verticalAlign: 'middle', color: '#ef4444' }}>warning</span>
+            {' '}탈퇴 시 모든 데이터가 삭제되며 복구가 불가합니다.
+          </span>
+          <div style={styles.withdrawBtns}>
+            <button style={styles.btn} type="button" onClick={() => setShowWithdraw(false)}>취소</button>
+            <button style={styles.btnDanger} type="button" onClick={() => { setShowWithdraw(false); setShowModal(true) }}>
+              탈퇴 확인
+            </button>
           </div>
-        )}
-      </div>
+        </div>
+      )}
 
       {/* 탈퇴 확인 모달 */}
       {showModal && (
@@ -69,12 +68,6 @@ const styles = {
     display: 'flex',
     flexDirection: 'column',
     gap: 20,
-  },
-  accountCard: {
-    backgroundColor: '#ffffff',
-    borderRadius: 16,
-    border: '1px solid #e5e7eb',
-    padding: '20px 24px',
   },
   actionRow: {
     display: 'flex',

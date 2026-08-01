@@ -6,7 +6,7 @@ function formatDate(str) {
   return str.replace(/-/g, '.')
 }
 
-export default function UserInfoView({ user, onEdit }) {
+export default function UserInfoView({ user, onEdit, headerActions }) {
   return (
     <div>
       <div style={styles.header}>
@@ -14,6 +14,7 @@ export default function UserInfoView({ user, onEdit }) {
           <div style={styles.name}>{user.displayName}</div>
           <div style={styles.email}>{user.email}</div>
         </div>
+        {headerActions}
       </div>
 
       <div style={styles.divider} />
@@ -47,6 +48,7 @@ const styles = {
   header: {
     display: 'flex',
     alignItems: 'center',
+    justifyContent: 'space-between',
     gap: 16,
     marginBottom: 20,
   },
