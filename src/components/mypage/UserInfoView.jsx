@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react'
 import Icon from '../../styles/Icon'
 
 
@@ -6,7 +7,26 @@ function formatDate(str) {
   return str.replace(/-/g, '.')
 }
 
+const PUSH_GRANTED_AT_KEY = 'yoa:push-granted-at'
+
+function usePushStatus() {
+  const [permission, setPermission] = useState('denied')
+
+  useEffect(() => {
+    if (typeof Notification === 'undefined') return
+    if (Notification.permission === 'granted' && !localStorage.getItem(PUSH_GRANTED_AT_KEY)) {
+      localStorage.setItem(PUSH_GRANTED_AT_KEY, new Date().toISOString().slice(0, 10))
+    }
+    setPermission(Notification.permission)
+  }, [])
+
+  if (permission !== 'granted') return '거부'
+  return formatDate(localStorage.getItem(PUSH_GRANTED_AT_KEY))
+}
+
 export default function UserInfoView({ user, onEdit, headerActions }) {
+  const pushStatus = usePushStatus()
+
   return (
     <div>
       <div style={styles.header}>
@@ -23,6 +43,7 @@ export default function UserInfoView({ user, onEdit, headerActions }) {
         <InfoRow label="전화번호" value={user.phone} />
         <InfoRow label="가입일" value={formatDate(user.joinDate)} />
         <InfoRow label="최근 로그인" value={formatDate(user.lastLogin)} />
+        <InfoRow label="푸시 알림" value={pushStatus} />
       </div>
 
       {onEdit && (
