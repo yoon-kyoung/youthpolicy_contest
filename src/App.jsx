@@ -1333,15 +1333,20 @@ function CommunityWriteView({bp,user,onSubmit,onCancel}){
   const [cat,setCat]=useState("후기");
   const [title,setTitle]=useState("");
   const [content,setContent]=useState("");
+  const [region,setRegion]=useState("");
+  const [capacity,setCapacity]=useState("");
   const [errors,setErrors]=useState({});
   const [submitting,setSubmitting]=useState(false);
   const cats=["후기","정보","Q&A","정책제안 팀모집"];
+  const isRecruit=cat==="정책제안 팀모집";
 
   const validate=()=>{
     const e={};
     if(!title.trim())e.title="제목을 입력해주세요.";
     if(!content.trim())e.content="내용을 입력해주세요.";
     else if(content.trim().length<10)e.content="내용을 10자 이상 입력해주세요.";
+    if(isRecruit&&!region.trim())e.region="지역을 입력해주세요.";
+    if(isRecruit&&!capacity.trim())e.capacity="모집 인원을 입력해주세요.";
     setErrors(e);
     return Object.keys(e).length===0;
   };
@@ -1358,6 +1363,10 @@ function CommunityWriteView({bp,user,onSubmit,onCancel}){
       content:content.trim(),
       likes:0,
       comments_count:0,
+      views:0,
+      region:isRecruit?region.trim():null,
+      capacity:isRecruit?capacity.trim():null,
+      status:isRecruit?"모집중":null,
     });
     setSubmitting(false);
   };
@@ -1385,6 +1394,26 @@ function CommunityWriteView({bp,user,onSubmit,onCancel}){
               );})}
             </div>
           </div>
+          {isRecruit&&(
+            <div style={{display:"flex",gap:14,flexWrap:"wrap"}}>
+              <div style={{flex:"1 1 160px"}}>
+                <label style={{display:"block",fontSize:13,fontWeight:700,color:"#374151",marginBottom:8}}>지역</label>
+                <input type="text" value={region} onChange={e=>setRegion(e.target.value)} placeholder="예: 서울, 전국(온라인)" maxLength={20}
+                  style={{...inp,border:`1.5px solid ${errors.region?"#fca5a5":"#e5e7eb"}`,background:errors.region?"#fff8f8":"white"}}
+                  onFocus={e=>e.target.style.borderColor=errors.region?"#f87171":"#6b7280"} onBlur={e=>e.target.style.borderColor=errors.region?"#fca5a5":"#e5e7eb"}
+                />
+                {errors.region&&<p style={{fontSize:12,color:"#dc2626",margin:"5px 0 0"}}>{errors.region}</p>}
+              </div>
+              <div style={{flex:"1 1 160px"}}>
+                <label style={{display:"block",fontSize:13,fontWeight:700,color:"#374151",marginBottom:8}}>인원</label>
+                <input type="text" value={capacity} onChange={e=>setCapacity(e.target.value)} placeholder="예: 2~3명" maxLength={20}
+                  style={{...inp,border:`1.5px solid ${errors.capacity?"#fca5a5":"#e5e7eb"}`,background:errors.capacity?"#fff8f8":"white"}}
+                  onFocus={e=>e.target.style.borderColor=errors.capacity?"#f87171":"#6b7280"} onBlur={e=>e.target.style.borderColor=errors.capacity?"#fca5a5":"#e5e7eb"}
+                />
+                {errors.capacity&&<p style={{fontSize:12,color:"#dc2626",margin:"5px 0 0"}}>{errors.capacity}</p>}
+              </div>
+            </div>
+          )}
           <div>
             <label style={{display:"block",fontSize:13,fontWeight:700,color:"#374151",marginBottom:8}}>제목</label>
             <input type="text" value={title} onChange={e=>setTitle(e.target.value)} placeholder="제목을 입력하세요 (최대 50자)" maxLength={50}
@@ -1432,9 +1461,10 @@ function maskName(name){
   return n[0]+"O".repeat(n.length-2)+n[n.length-1];
 }
 
-function CommunityPostDetailView({post,bp,user,onBack,onLike}){
+function CommunityPostDetailView({post,bp,user,onBack,onLike,onUpdate}){
   const [comments,setComments]=useState([]);
   const [liked,setLiked]=useLocalStorage(`yoa:liked_${post.id}`,false);
+  const [viewed,setViewed]=useLocalStorage(`yoa:viewed_${post.id}`,false);
   const [commentText,setCommentText]=useState("");
   const [commentError,setCommentError]=useState("");
   const [submittingComment,setSubmittingComment]=useState(false);
@@ -1444,11 +1474,24 @@ function CommunityPostDetailView({post,bp,user,onBack,onLike}){
   const totalComments=comments.length;
   const body=(post.content||post.preview||"").replace(/\\n/g,"\n");
   const fmtDate=iso=>iso?(iso.slice(0,10)):"";
+  const isRecruit=post.cat==="정책제안 팀모집";
+  const isOwner=Boolean(isRecruit&&user&&post.user_id&&user.id===post.user_id);
+  const recruitDone=post.status==="모집완료";
 
   useEffect(()=>{
     supabase.from("comments").select("*").eq("post_id",post.id).order("created_at",{ascending:true})
       .then(({data})=>setComments(data||[]));
   },[post.id]);
+
+  useEffect(()=>{
+    if(!isRecruit||viewed)return;
+    setViewed(true);
+    onUpdate?.(post.id,{views:(post.views||0)+1});
+  },[isRecruit,viewed,post.id]);
+
+  const handleStatusToggle=()=>{
+    onUpdate?.(post.id,{status:recruitDone?"모집중":"모집완료"});
+  };
 
   const handleLike=()=>{
     const next=!liked;
@@ -1505,8 +1548,35 @@ function CommunityPostDetailView({post,bp,user,onBack,onLike}){
           <div style={{display:"flex",gap:8,alignItems:"center",marginBottom:16,flexWrap:"wrap"}}>
             <span style={{fontSize:11,fontWeight:700,padding:"3px 10px",borderRadius:20,background:cc.bg,color:cc.text,border:`1px solid ${cc.border}`}}>{post.cat}</span>
             <span style={{fontSize:12,color:"#9ca3af"}}>{fmtDate(post.created_at||post.date)}</span>
+            {isRecruit&&(
+              <span style={{fontSize:11,fontWeight:700,padding:"3px 10px",borderRadius:20,background:recruitDone?"#F1F5F9":"#F0FDF4",border:`1px solid ${recruitDone?"#E2E8F0":"#BBF7D0"}`,color:recruitDone?"#64748B":"#15803D"}}>{post.status||"모집중"}</span>
+            )}
+            {isOwner&&(
+              <button type="button" onClick={handleStatusToggle} style={{marginLeft:"auto",padding:"4px 12px",borderRadius:20,border:"1.5px solid #e5e7eb",background:"white",color:"#374151",fontSize:12,fontWeight:600,cursor:"pointer",transition:"all 0.15s"}}
+                onMouseEnter={e=>{e.currentTarget.style.borderColor="var(--accent)";e.currentTarget.style.color="var(--accent)";}} onMouseLeave={e=>{e.currentTarget.style.borderColor="#e5e7eb";e.currentTarget.style.color="#374151";}}
+              >{recruitDone?"모집중으로 변경":"모집완료로 변경"}</button>
+            )}
           </div>
           <h1 style={{fontSize:bp.isDesktop?26:bp.isTablet?22:18,fontWeight:900,margin:"0 0 16px",lineHeight:1.35,letterSpacing:"-0.02em",color:"#111827",paddingBottom:16,borderBottom:"1px solid #f1f5f9"}}>{post.title}</h1>
+          {isRecruit&&(
+            <>
+              <div style={{display:"flex",gap:16,flexWrap:"wrap",margin:"16px 0"}}>
+                <span style={{fontSize:12,color:"#6b7280",display:"flex",alignItems:"center",gap:4}}><Icon name="visibility" size={14} color="#9ca3af"/>조회 {post.views||0}</span>
+                <span style={{fontSize:12,color:"#6b7280",display:"flex",alignItems:"center",gap:4}}><Icon name="chat_bubble" size={14} color="#9ca3af"/>댓글 {totalComments}</span>
+                <span style={{fontSize:12,color:"#6b7280",display:"flex",alignItems:"center",gap:4}}><Icon name="forum" size={14} color="#9ca3af"/>채팅 {totalComments}</span>
+              </div>
+              <div style={{display:"flex",gap:12,marginBottom:20,flexWrap:"wrap"}}>
+                <div style={{flex:"1 1 140px",background:cc.bg,border:`1px solid ${cc.border}`,borderRadius:12,padding:"12px 16px"}}>
+                  <div style={{fontSize:11,fontWeight:700,color:cc.text,marginBottom:4}}>지역</div>
+                  <div style={{fontSize:14,fontWeight:700,color:"#111827"}}>{post.region||"-"}</div>
+                </div>
+                <div style={{flex:"1 1 140px",background:cc.bg,border:`1px solid ${cc.border}`,borderRadius:12,padding:"12px 16px"}}>
+                  <div style={{fontSize:11,fontWeight:700,color:cc.text,marginBottom:4}}>인원</div>
+                  <div style={{fontSize:14,fontWeight:700,color:"#111827"}}>{post.capacity||"-"}</div>
+                </div>
+              </div>
+            </>
+          )}
           <div style={{display:"flex",alignItems:"center",justifyContent:"flex-end",gap:12,marginBottom:20}}>
             <div style={{fontSize:13,fontWeight:700,color:"#111827"}}>{maskName(post.author)}</div>
           </div>
@@ -1634,10 +1704,16 @@ function CommunityView({bp,user,onGoProposal,initialCatFilter}){
     if(selectedPost?.id===id)setSelectedPost(prev=>({...prev,likes:Math.max(0,next)}));
   },[selectedPost]);
 
+  const handlePostUpdate=useCallback(async(id,fields)=>{
+    await supabase.from("posts").update(fields).eq("id",id);
+    setPosts(prev=>prev.map(p=>p.id===id?{...p,...fields}:p));
+    if(selectedPost?.id===id)setSelectedPost(prev=>({...prev,...fields}));
+  },[selectedPost]);
+
   if(showWrite)return <CommunityWriteView bp={bp} user={user} onSubmit={handleAddPost} onCancel={()=>setShowWrite(false)}/>;
   if(selectedPost){
     const livePost=posts.find(p=>p.id===selectedPost.id)||selectedPost;
-    return <CommunityPostDetailView post={livePost} bp={bp} user={user} onBack={()=>setSelectedPost(null)} onLike={handleLike}/>;
+    return <CommunityPostDetailView post={livePost} bp={bp} user={user} onBack={()=>setSelectedPost(null)} onLike={handleLike} onUpdate={handlePostUpdate}/>;
   }
 
   return(
@@ -1717,6 +1793,9 @@ function CommunityView({bp,user,onGoProposal,initialCatFilter}){
                     <div style={{display:"flex",gap:7,alignItems:"center",marginBottom:8,flexWrap:"wrap"}}>
                       <span style={{fontSize:11,fontWeight:700,padding:"2px 9px",borderRadius:20,background:catColor.bg,border:`1px solid ${catColor.border}`,color:catColor.text}}>{post.cat}</span>
                       <span style={{fontSize:11,color:"#9ca3af"}}>{(post.created_at||post.date||"").slice(0,10)}</span>
+                      {post.cat==="정책제안 팀모집"&&(
+                        <span style={{fontSize:11,fontWeight:700,padding:"2px 9px",borderRadius:20,background:post.status==="모집완료"?"#F1F5F9":"#F0FDF4",border:`1px solid ${post.status==="모집완료"?"#E2E8F0":"#BBF7D0"}`,color:post.status==="모집완료"?"#64748B":"#15803D"}}>{post.status||"모집중"}</span>
+                      )}
                     </div>
                     <div style={{fontWeight:700,fontSize:bp.isDesktop?15:14,color:"#111827",lineHeight:1.4,marginBottom:6}}>{post.title}</div>
                     <div style={{fontSize:13,color:"#6b7280",lineHeight:1.6,overflow:"hidden",display:"-webkit-box",WebkitLineClamp:2,WebkitBoxOrient:"vertical"}}>{(post.preview||"").replace(/\\n/g," ")}</div>
