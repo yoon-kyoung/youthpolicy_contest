@@ -72,7 +72,7 @@ const MOCK_POLICIES = [
   },
 ]
 
-export default function PolicyPreviewSection({ refreshKey = 0 }) {
+export default function PolicyPreviewSection({ refreshKey = 0, userName }) {
   const [loading, setLoading] = useState(false)
   const prevKey = useRef(0)
 
@@ -89,7 +89,7 @@ export default function PolicyPreviewSection({ refreshKey = 0 }) {
       <div style={styles.header}>
         <div style={styles.titleRow}>
           <Icon name="auto_awesome" size={20} color="#007FFF"/>
-          <span style={styles.title}>맞춤 정책 미리보기</span>
+          <span style={styles.title}>{userName ? `${userName}님이 관심있을법한 정책` : '맞춤 정책 미리보기'}</span>
           <span style={styles.badge}>API</span>
         </div>
         <p style={styles.subtitle}>

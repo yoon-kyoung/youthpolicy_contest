@@ -203,7 +203,7 @@ const colLastStyle = {
   gap: 18,
 }
 
-export default function PreferenceTab({ prefs, onChange, onSave, refreshKey }) {
+export default function PreferenceTab({ prefs, onChange, onSave, refreshKey, userName }) {
   const [saveState, setSaveState] = useState('idle')
 
   const update = (field) => (value) => {
@@ -293,7 +293,7 @@ export default function PreferenceTab({ prefs, onChange, onSave, refreshKey }) {
       </button>
 
       {/* 정책 미리보기 */}
-      <PolicyPreviewSection refreshKey={refreshKey} />
+      <PolicyPreviewSection refreshKey={refreshKey} userName={userName} />
     </div>
   )
 }

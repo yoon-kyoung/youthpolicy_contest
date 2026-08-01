@@ -235,6 +235,7 @@ export default function MyPageContainer({ supabaseUser, onLogout, initialTab, fa
               <PreferenceTab
                 prefs={prefs}
                 onChange={setPrefs}
+                userName={user.displayName}
                 onSave={() => {
                   try { localStorage.setItem('yoa:prefs', JSON.stringify(prefs)) } catch {}
                   setRefreshKey(k => k + 1)
