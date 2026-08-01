@@ -3321,314 +3321,255 @@ function FAQItem({q,a}){
   );
 }
 
-function GuidePage({onBack,bp}){
-  const SECTIONS=[
-    {id:"what",      label:"청년ON이 뭐예요?"},
-    {id:"signup",    label:"회원가입 & 로그인"},
-    {id:"chatbot",   label:"AI 챗봇 사용법"},
-    {id:"search",    label:"정책 검색하기"},
-    {id:"save",      label:"정책 저장하기"},
-    {id:"mypage",    label:"마이페이지 활용"},
-    {id:"community", label:"커뮤니티"},
-    {id:"settings",  label:"화면 설정"},
-    {id:"faq",       label:"자주 묻는 질문"},
-  ];
-  const [activeId,setActiveId]=useState("what");
-  useEffect(()=>{
-    const observers=[];
-    SECTIONS.forEach(s=>{
-      const el=document.getElementById("guide-"+s.id);
-      if(!el)return;
-      const obs=new IntersectionObserver(([entry])=>{
-        if(entry.isIntersecting)setActiveId(s.id);
-      },{rootMargin:"-56px 0px -60% 0px"});
-      obs.observe(el);
-      observers.push(obs);
-    });
-    return()=>observers.forEach(o=>o.disconnect());
-  },[]);
-  function scrollTo(id){document.getElementById("guide-"+id)?.scrollIntoView({behavior:"smooth",block:"start"});}
+const aboutStyles={
+  mockCard:{background:"white",borderRadius:20,padding:20,boxShadow:"0 1px 4px rgba(0,0,0,0.06)"},
+};
+
+const ABOUT_CARDS=[
+  {icon:"smart_toy",accent:"#7C3AED",iconBg:"#EDE9FE",bg:"#F5F3FF",border:"#EDE0FF",
+    title:"AI 챗봇이 내 상황에 맞는 정책을 찾아드려요",
+    desc:"나이·지역·고민을 자유롭게 말하면 AI가 수백 개 정책 중 나에게 맞는 것만 골라 카드로 보여줘요. 마음에 들면 별표 한 번으로 저장할 수 있어요.",
+    mockup:(
+      <div style={aboutStyles.mockCard}>
+        <div style={{display:"flex",justifyContent:"flex-end",marginBottom:10}}>
+          <div style={{background:"var(--accent)",color:"white",borderRadius:"16px 16px 4px 16px",padding:"10px 14px",fontSize:13,maxWidth:"85%",lineHeight:1.5}}>27살 서울 사는데 월세 지원 있을까?</div>
+        </div>
+        <div style={{display:"flex",justifyContent:"flex-start"}}>
+          <div style={{background:"#F5F3FF",borderRadius:"16px 16px 16px 4px",padding:"12px 14px",fontSize:13,color:"#374151",maxWidth:"88%"}}>
+            <div style={{fontWeight:800,marginBottom:4}}>청년 월세 한시 특별지원</div>
+            <div style={{fontSize:12,color:"#6b7280"}}>월 최대 20만원 · 최장 12개월</div>
+          </div>
+        </div>
+      </div>
+    )},
+  {icon:"search",accent:"#2563EB",iconBg:"#DBEAFE",bg:"#EFF6FF",border:"#DCEAFF",
+    title:"지역·부처·학력까지, 촘촘한 정책 검색",
+    desc:"1500개가 넘는 정책을 지역·중앙부처·학력·취업 상태로 세밀하게 좁혀보고, 인기순·마감임박순·지원금 큰 순으로 정렬해서 확인할 수 있어요.",
+    mockup:(
+      <div style={aboutStyles.mockCard}>
+        <div style={{display:"flex",flexWrap:"wrap",gap:8,marginBottom:14}}>
+          {["서울","고용노동부","대학 재학"].map(t=>(
+            <span key={t} style={{borderRadius:20,border:"1px solid #BFDBFE",background:"#EFF6FF",color:"#1D4ED8",fontSize:12,fontWeight:700,padding:"5px 12px"}}>{t}</span>
+          ))}
+        </div>
+        <div style={{fontSize:13,color:"#6b7280",marginBottom:10}}>검색 결과 <b style={{color:"#2563EB"}}>128건</b></div>
+        {[["청년 창업 지원 바우처","D-30"],["청년 전세임대주택","상시"]].map(([t,d])=>(
+          <div key={t} style={{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"10px 12px",borderRadius:10,border:"1px solid #eef2ff",marginBottom:6,fontSize:13}}>
+            <span style={{fontWeight:600,color:"#111827"}}>{t}</span>
+            <span style={{fontSize:11,color:"#2563EB",fontWeight:700}}>{d}</span>
+          </div>
+        ))}
+      </div>
+    )},
+  {icon:"checklist",accent:"#E11D48",iconBg:"#FFE4E6",bg:"#FFF1F2",border:"#FFE1E6",
+    title:"저장하고, 신청 단계까지 체크리스트로 관리",
+    desc:"관심 정책은 별표로 저장해두고, 준비중 → 지원완료 → 심사중 → 결과대기 → 완료 단계를 체크하며 신청 진행 상황을 놓치지 않고 관리해요.",
+    mockup:(
+      <div style={aboutStyles.mockCard}>
+        <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:14}}>
+          <Icon name="bookmark" size={16} color="#E11D48"/>
+          <span style={{fontSize:13,fontWeight:800,color:"#111827"}}>청년 월세 한시 특별지원</span>
+        </div>
+        <div style={{display:"flex",gap:6,flexWrap:"wrap"}}>
+          {["준비중","지원완료","심사중","결과대기","완료"].map((s,i)=>(
+            <span key={s} style={{borderRadius:20,padding:"5px 11px",fontSize:11,fontWeight:700,background:i===1?"#FFE4E6":"#f3f4f6",color:i===1?"#E11D48":"#9ca3af"}}>{s}</span>
+          ))}
+        </div>
+      </div>
+    )},
+  {icon:"calendar_month",accent:"#4F46E5",iconBg:"#E0E7FF",bg:"#EEF2FF",border:"#E3E8FF",
+    title:"신청 시작은 초록, 마감은 빨강으로 캘린더에",
+    desc:"저장한 정책의 마감일과 (마감일 기준으로 계산한) 신청 시작일을 마이페이지 캘린더에 색으로 구분해 보여줘서, 시작도 마감도 놓치지 않아요.",
+    mockup:(
+      <div style={aboutStyles.mockCard}>
+        <div style={{fontSize:13,fontWeight:800,color:"#111827",marginBottom:12}}>2026년 8월</div>
+        <div style={{borderLeft:"3px solid #16a34a",background:"#F0FDF4",borderRadius:"0 8px 8px 0",padding:"6px 10px",fontSize:12,fontWeight:700,color:"#16a34a",marginBottom:8}}>청년 월세 특별지원 신청 시작</div>
+        <div style={{borderLeft:"3px solid #ef4444",background:"#FEF2F2",borderRadius:"0 8px 8px 0",padding:"6px 10px",fontSize:12,fontWeight:700,color:"#ef4444"}}>청년 월세 특별지원 마감</div>
+      </div>
+    )},
+  {icon:"tune",accent:"#16A34A",iconBg:"#DCFCE7",bg:"#F0FDF4",border:"#DBFCE7",
+    title:"맞춤 조건만 설정하면 나만을 위한 추천",
+    desc:"지역·나이·학력·취업 상태·전공·특화 분야를 설정하면 마이페이지에 '내 이름이 관심 있을법한 정책'이 실시간으로 채워져요.",
+    mockup:(
+      <div style={aboutStyles.mockCard}>
+        <div style={{display:"flex",alignItems:"center",gap:6,fontSize:13,fontWeight:800,color:"#111827",marginBottom:12}}>
+          <Icon name="auto_awesome" size={16} color="#16A34A"/>OO님이 관심 있을법한 정책
+        </div>
+        <div style={{border:"1px solid #DBFCE7",borderRadius:12,padding:"12px 14px"}}>
+          <span style={{fontSize:11,fontWeight:700,padding:"3px 9px",borderRadius:20,background:"#FFFBEB",color:"#B45309",border:"1px solid #FDE68A"}}>금융</span>
+          <div style={{fontWeight:800,color:"#111827",margin:"8px 0 4px"}}>청년도약계좌</div>
+          <div style={{fontSize:12,color:"#6b7280",lineHeight:1.6}}>월 최대 70만원 납입 시 정부 기여금 포함 5년 만기 최대 5,000만원</div>
+        </div>
+      </div>
+    )},
+  {icon:"forum",accent:"#B45309",iconBg:"#FEF3C7",bg:"#FFFBEB",border:"#FDECC8",
+    title:"후기·정보·Q&A를 나누는 청년 커뮤니티",
+    desc:"실제 신청 후기와 꿀팁을 나누고, 공감과 댓글로 소통해요. 궁금한 건 Q&A에 남기면 다른 청년들의 답을 받을 수 있어요.",
+    mockup:(
+      <div style={aboutStyles.mockCard}>
+        <div style={{display:"flex",gap:6,alignItems:"center",marginBottom:8}}>
+          <span style={{fontSize:11,fontWeight:700,padding:"2px 9px",borderRadius:20,background:"#F0FDF4",color:"#15803D",border:"1px solid #BBF7D0"}}>후기</span>
+          <span style={{fontSize:11,color:"#9ca3af"}}>2026-07-30</span>
+        </div>
+        <div style={{fontWeight:800,color:"#111827",marginBottom:10}}>청년도약계좌 드디어 개설! 생각보다 간단했어요</div>
+        <div style={{fontSize:12,color:"#9ca3af",display:"flex",alignItems:"center",gap:10}}>
+          <span>by 서O영</span>
+          <span style={{display:"flex",alignItems:"center",gap:3}}><Icon name="favorite" size={13} color="#9ca3af"/>5</span>
+          <span style={{display:"flex",alignItems:"center",gap:3}}><Icon name="chat_bubble" size={13} color="#9ca3af"/>3</span>
+        </div>
+      </div>
+    )},
+  {icon:"group",accent:"#A21CAF",iconBg:"#FAE8FF",bg:"#FDF4FF",border:"#F8DFFB",
+    title:"정책 제안 팀모집, 참가하기 한 번으로 신청",
+    desc:"같이 정책 제안을 준비할 팀원을 지역·인원과 함께 모집해요. 참가하기를 누르면 담당자가 개별로 연락드릴 예정이라는 안내를 바로 받아볼 수 있어요.",
+    mockup:(
+      <div style={aboutStyles.mockCard}>
+        <div style={{display:"flex",gap:6,alignItems:"center",marginBottom:10}}>
+          <span style={{fontSize:11,fontWeight:700,padding:"2px 9px",borderRadius:20,background:"#FDF4FF",color:"#A21CAF",border:"1px solid #F5D0FE"}}>정책제안 팀모집</span>
+          <span style={{fontSize:11,fontWeight:700,padding:"2px 9px",borderRadius:20,background:"#F0FDF4",color:"#15803D",border:"1px solid #BBF7D0"}}>모집중</span>
+        </div>
+        <div style={{fontWeight:800,color:"#111827",marginBottom:12}}>지방 청년 주거지원 제안 팀모집</div>
+        <div style={{display:"flex",gap:8}}>
+          <span style={{flex:1,textAlign:"center",padding:"8px 0",borderRadius:20,border:"2px solid #e5e7eb",color:"#6b7280",fontSize:12,fontWeight:700}}>공감해요 4</span>
+          <span style={{flex:1,textAlign:"center",padding:"8px 0",borderRadius:20,border:"2px solid #A21CAF",background:"#FDF4FF",color:"#A21CAF",fontSize:12,fontWeight:700}}>참가하기 2</span>
+        </div>
+      </div>
+    )},
+  {icon:"campaign",accent:"#0D9488",iconBg:"#CCFBF1",bg:"#F0FDFA",border:"#D5F7EE",
+    title:"커뮤니티 이야기를 정책으로, 청년정책 역제안",
+    desc:"커뮤니티에서 나눈 이야기를 정책으로 제안해보세요. 공감이 모이면 답변대기 → 부처매칭중 → 답변완료 단계를 거쳐 담당 부처에 자동으로 전달돼요.",
+    mockup:(
+      <div style={aboutStyles.mockCard}>
+        <div style={{display:"flex",alignItems:"center",justifyContent:"space-between"}}>
+          {["답변대기","부처매칭중","답변완료"].map((s,i)=>(
+            <div key={s} style={{display:"flex",flexDirection:"column",alignItems:"center",gap:6,flex:1}}>
+              <span style={{width:28,height:28,borderRadius:"50%",background:i<=1?"#0D9488":"#f1f5f9",color:i<=1?"white":"#94a3b8",display:"flex",alignItems:"center",justifyContent:"center",fontSize:12,fontWeight:800}}>{i+1}</span>
+              <span style={{fontSize:11,fontWeight:i===1?800:600,color:i<=1?"#0D9488":"#94a3b8"}}>{s}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    )},
+  {icon:"manage_accounts",accent:"#475569",iconBg:"#F1F5F9",bg:"#F8FAFC",border:"#EDF1F5",
+    title:"프로필 카드 안에서 끝내는 계정 관리",
+    desc:"계정 관리 버튼을 누르면 같은 카드 안에서 바로 정보 수정·로그아웃·회원 탈퇴가 펼쳐져요. 푸시 알림 허용 여부도 함께 확인할 수 있어요.",
+    mockup:(
+      <div style={aboutStyles.mockCard}>
+        <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:14}}>
+          <div>
+            <div style={{fontWeight:800,color:"#111827",fontSize:14}}>관리자</div>
+            <div style={{fontSize:12,color:"#9ca3af"}}>choco@gmail.com</div>
+          </div>
+          <div style={{display:"flex",gap:6}}>
+            <span style={{fontSize:11,fontWeight:700,color:"#374151",border:"1.5px solid #d1d5db",borderRadius:8,padding:"5px 10px"}}>로그아웃</span>
+            <span style={{fontSize:11,fontWeight:700,color:"#374151",border:"1.5px solid #d1d5db",borderRadius:8,padding:"5px 10px"}}>회원 탈퇴</span>
+          </div>
+        </div>
+        <div style={{display:"flex",flexDirection:"column",gap:8}}>
+          {[["가입일","2026.07.30"],["최근 로그인","2026.07.30"],["푸시 알림","거부"]].map(([a,b])=>(
+            <div key={a} style={{display:"flex",justifyContent:"space-between",fontSize:12}}>
+              <span style={{color:"#9ca3af",fontWeight:600}}>{a}</span>
+              <span style={{color:"#374151",fontWeight:700}}>{b}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    )},
+];
+
+function AboutCard({data,index,active,isDesktop}){
+  const reverse=isDesktop&&index%2===1;
+  return(
+    <div style={{
+      display:"flex",flexDirection:isDesktop?(reverse?"row-reverse":"row"):"column",
+      alignItems:"center",gap:isDesktop?44:20,
+      minHeight:isDesktop?300:"auto",
+      borderRadius:28,border:`1px solid ${data.border}`,background:data.bg,
+      padding:isDesktop?"40px 44px":"26px 22px",
+      boxShadow:"0 1px 3px rgba(0,0,0,0.05)",
+      opacity:active?1:0.55,
+      transform:active?"scale(1)":"scale(0.97)",
+      transition:"opacity 0.4s ease, transform 0.4s ease",
+      animation:`fadeUp 0.4s ease ${index*60}ms both`,
+    }}>
+      <div style={{flex:1,width:"100%"}}>
+        <span style={{display:"inline-flex",width:56,height:56,borderRadius:18,background:data.iconBg,alignItems:"center",justifyContent:"center",marginBottom:16}}>
+          <Icon name={data.icon} size={28} color={data.accent}/>
+        </span>
+        <div style={{fontSize:isDesktop?21:18,fontWeight:800,color:"#111827",marginBottom:10,lineHeight:1.4}}>{data.title}</div>
+        <div style={{fontSize:14,color:"#4b5563",lineHeight:1.75}}>{data.desc}</div>
+      </div>
+      <div style={{flex:1,width:"100%"}}>
+        {data.mockup}
+      </div>
+    </div>
+  );
+}
+
+function AboutPage({onBack,bp}){
   const isDesktop=bp?.isDesktop;
   const h=isDesktop?56:52;
-  const sec={padding:isDesktop?"56px 0 48px":"40px 0 32px",borderBottom:"1px solid #f1f5f9"};
-  const h3s={fontSize:isDesktop?22:18,fontWeight:800,color:"#111827",margin:"0 0 16px",display:"flex",alignItems:"center",gap:10};
-  const ps={fontSize:14,color:"#4b5563",lineHeight:1.75,margin:"0 0 12px"};
-  const tip={background:"var(--accent-bg-active)",border:"1px solid var(--accent-bg)",borderRadius:12,padding:"12px 16px",fontSize:13,color:"var(--accent)",lineHeight:1.6,margin:"12px 0"};
-  const warn={background:"#fef3c7",border:"1px solid #fde68a",borderRadius:12,padding:"12px 16px",fontSize:13,color:"#92400e",lineHeight:1.6,margin:"12px 0"};
-  const btnStyle={display:"block",width:"100%",textAlign:"left",background:"none",border:"none",cursor:"pointer",fontSize:12,color:"#6b7280",fontWeight:500,padding:"7px 10px",borderRadius:8,transition:"all 0.12s"};
+  const [activeIdx,setActiveIdx]=useState(0);
+  const cardRefs=useRef([]);
+
+  useEffect(()=>{
+    const observers=ABOUT_CARDS.map((_,i)=>{
+      const el=cardRefs.current[i];
+      if(!el)return null;
+      const obs=new IntersectionObserver(([entry])=>{
+        if(entry.isIntersecting&&entry.intersectionRatio>0.5)setActiveIdx(i);
+      },{threshold:[0.5,0.6,0.7]});
+      obs.observe(el);
+      return obs;
+    });
+    return()=>observers.forEach(o=>o?.disconnect());
+  },[]);
+
   return(
-    <div style={{background:"var(--body-bg,#f8fafc)",minHeight:"calc(100vh / var(--font-scale,1))",fontFamily:"'Pretendard Variable','Apple SD Gothic Neo','Noto Sans KR',sans-serif"}}>
-      <div style={{background:"var(--header-bg,white)",borderBottom:"1px solid #e5e7eb",padding:isDesktop?"0 40px":"0 18px",position:"sticky",top:0,zIndex:40}}>
+    <div style={{flex:1,display:"flex",flexDirection:"column",overflow:"hidden",background:"#F5F9FC",fontFamily:"'Pretendard Variable','Apple SD Gothic Neo','Noto Sans KR',sans-serif"}}>
+      <div style={{background:"white",borderBottom:"1px solid #e5e7eb",padding:isDesktop?"0 40px":"0 18px",flexShrink:0}}>
         <div style={{height:h,display:"flex",alignItems:"center",gap:12}}>
           <button onClick={onBack} style={{display:"flex",alignItems:"center",gap:6,background:"none",border:"none",cursor:"pointer",color:"#374151",fontSize:14,fontWeight:600,padding:"8px 0",transition:"color 0.15s"}}
             onMouseEnter={e=>e.currentTarget.style.color="var(--accent)"}
             onMouseLeave={e=>e.currentTarget.style.color="#374151"}
           ><Icon name="arrow_back" size={16} color="currentColor"/> 돌아가기</button>
           <span style={{color:"#e5e7eb"}}>|</span>
-          <span style={{fontSize:14,fontWeight:700,color:"#111827"}}>청년ON 사용 안내</span>
+          <span style={{fontSize:14,fontWeight:700,color:"#111827"}}>청년ON 알아보기</span>
         </div>
       </div>
-      <div style={{maxWidth:1000,margin:"0 auto",padding:isDesktop?"40px 40px 80px":"24px 18px 60px",display:"flex",gap:40,alignItems:"flex-start"}}>
-        {isDesktop&&(
-          <aside style={{width:170,flexShrink:0,position:"sticky",top:h+16,alignSelf:"flex-start"}}>
-            <div style={{background:"white",borderRadius:16,border:"1.5px solid #f1f5f9",padding:"18px 14px",boxShadow:"0 2px 12px rgba(0,0,0,0.04)"}}>
-              <div style={{fontSize:11,fontWeight:700,color:"#9ca3af",letterSpacing:"0.06em",marginBottom:12}}>목차</div>
-              {SECTIONS.map(s=>{
-                const active=activeId===s.id;
-                return(
-                  <button key={s.id} onClick={()=>scrollTo(s.id)} style={{
-                    ...btnStyle,
-                    background:active?"var(--accent-bg-active)":"none",
-                    color:active?"var(--accent)":"#6b7280",
-                    fontWeight:active?700:500,
-                    borderLeft:active?"2.5px solid var(--accent)":"2.5px solid transparent",
-                    paddingLeft:active?"8px":"10px",
-                  }}
-                    onMouseEnter={e=>{if(!active){e.currentTarget.style.background="#f1f5f9";e.currentTarget.style.color="#111827";}}}
-                    onMouseLeave={e=>{if(!active){e.currentTarget.style.background="none";e.currentTarget.style.color="#6b7280";}}}
-                  >{s.label}</button>
-                );
-              })}
+
+      <div style={{flex:1,overflowY:"auto",scrollSnapType:isDesktop?"y proximity":"none"}}>
+        <div style={{background:"linear-gradient(135deg,var(--accent-dark),var(--accent))",color:"white",padding:isDesktop?"64px 40px 56px":"44px 20px 36px",textAlign:"center"}}>
+          <span style={{display:"inline-block",background:"rgba(255,255,255,0.2)",border:"1px solid rgba(255,255,255,0.3)",borderRadius:20,padding:"4px 16px",fontSize:13,fontWeight:700,marginBottom:18}}>청년ON 기능 둘러보기</span>
+          <h2 style={{fontSize:isDesktop?36:24,fontWeight:900,margin:"0 0 14px",lineHeight:1.3,letterSpacing:"-0.02em"}}>정책 찾기부터 신청 관리, 커뮤니티까지<br/>청년ON 하나로 끝내보세요</h2>
+          <p style={{fontSize:isDesktop?15:13,opacity:0.85,maxWidth:520,margin:"0 auto",lineHeight:1.7}}>스크롤하면서 청년ON의 기능을 하나씩 살펴보세요.</p>
+        </div>
+
+        <div style={{maxWidth:920,margin:"0 auto",padding:isDesktop?"48px 40px":"28px 18px",display:"flex",flexDirection:"column",gap:isDesktop?28:18}}>
+          {ABOUT_CARDS.map((c,i)=>(
+            <div key={i} ref={el=>cardRefs.current[i]=el} style={{scrollSnapAlign:"center",scrollMarginTop:h+16}}>
+              <AboutCard data={c} index={i} active={activeIdx===i} isDesktop={isDesktop}/>
             </div>
-          </aside>
-        )}
-        <main style={{flex:1,minWidth:0}}>
+          ))}
+        </div>
 
-          <section id="guide-what" style={sec}>
-            <h3 style={h3s}><Icon name="info" size={22} color="var(--accent)"/> 청년ON이 뭐예요?</h3>
-            <p style={ps}><b>청년ON</b>은 정부·지자체의 수백 개 청년 지원 정책을 한 곳에 모아 두고, AI 챗봇이 내 상황에 맞는 정책을 골라 추천해 주는 <b>무료 플랫폼</b>이에요.</p>
-            <div style={{display:"flex",gap:10,margin:"16px 0",flexWrap:"wrap"}}>
-              {[{icon:"search",label:"정책 검색"},{icon:"smart_toy",label:"AI 챗봇"},{icon:"bookmark",label:"정책 저장"},{icon:"checklist",label:"신청 체크리스트"},{icon:"calendar_month",label:"정책 캘린더"},{icon:"forum",label:"커뮤니티"}].map((f,i)=>(
-                <div key={i} style={{background:"white",border:"1.5px solid #f1f5f9",borderRadius:10,padding:"8px 14px",display:"flex",alignItems:"center",gap:7,fontSize:13,fontWeight:600,color:"#374151"}}>
-                  <Icon name={f.icon} size={15} color="var(--accent)"/>{f.label}
-                </div>
-              ))}
-            </div>
-            <div style={{display:"flex",alignItems:"center",gap:6,flexWrap:"wrap",padding:"16px 20px",background:"white",borderRadius:14,border:"1.5px solid #f1f5f9",margin:"16px 0"}}>
-              {[{n:"1",t:"정책 검색",s:"키워드·카테고리"},{n:"2",t:"AI 추천",s:"내 상황 설명"},{n:"3",t:"정책 저장",s:"북마크 클릭"},{n:"4",t:"신청 관리",s:"체크리스트"}].map((s,i)=>(
-                <div key={i} style={{display:"contents"}}>
-                  <div style={{display:"flex",flexDirection:"column",alignItems:"center",gap:4,padding:"6px 14px"}}>
-                    <span style={{width:30,height:30,borderRadius:"50%",background:"var(--accent)",color:"white",fontSize:13,fontWeight:800,display:"flex",alignItems:"center",justifyContent:"center"}}>{s.n}</span>
-                    <span style={{fontSize:13,fontWeight:700,color:"#111827"}}>{s.t}</span>
-                    <span style={{fontSize:11,color:"#9ca3af"}}>{s.s}</span>
-                  </div>
-                  {i<3&&<span style={{color:"#d1d5db",fontSize:18}}>›</span>}
-                </div>
-              ))}
-            </div>
-            <div style={tip}>로그인 없이도 정책 검색·AI 챗봇을 이용할 수 있어요. 정책 저장·체크리스트는 회원가입 후 이용 가능합니다.</div>
-          </section>
-
-          <section id="guide-signup" style={sec}>
-            <h3 style={h3s}><Icon name="person_add" size={22} color="var(--accent)"/> 회원가입 & 로그인</h3>
-            <ol style={{paddingLeft:20,margin:"0 0 12px"}}>
-              {["오른쪽 위 <b>로그인</b> 버튼을 클릭합니다.","이메일 주소와 비밀번호를 입력하세요.","아직 계정이 없다면 <b>회원가입</b>을 눌러 이메일로 가입합니다.","가입 후 인증 메일이 발송됩니다. 인증을 완료하면 모든 기능을 사용할 수 있어요."].map((t,i)=>(
-                <li key={i} style={{fontSize:14,color:"#4b5563",lineHeight:1.75,marginBottom:6}} dangerouslySetInnerHTML={{__html:t}}/>
-              ))}
-            </ol>
-            <div style={tip}>로그인하면 정책 저장, 체크리스트, 맞춤 추천 등 모든 기능을 사용할 수 있어요.</div>
-          </section>
-
-          <section id="guide-chatbot" style={sec}>
-            <h3 style={h3s}><Icon name="smart_toy" size={22} color="var(--accent)"/> AI 챗봇 사용법</h3>
-            <p style={ps}>AI 챗봇에게 내 상황을 자유롭게 설명하면 관련 청년 정책을 카드 형태로 추천해 줍니다.</p>
-            <ol style={{paddingLeft:20,margin:"0 0 12px"}}>
-              {["왼쪽(또는 하단) 내비게이션에서 <b>AI 챗봇</b>을 클릭합니다.","채팅창에 내 상황을 자유롭게 입력하세요.<br/>(예: \"취업준비 중인 25살인데 주거 지원 받을 수 있나요?\")","AI가 관련 정책을 카드로 보여줍니다. 카드를 클릭하면 상세 내용을 볼 수 있어요.","관심 있는 정책은 <b>별표(★)</b>를 눌러 바로 저장하세요."].map((t,i)=>(
-                <li key={i} style={{fontSize:14,color:"#4b5563",lineHeight:1.75,marginBottom:6}} dangerouslySetInnerHTML={{__html:t}}/>
-              ))}
-            </ol>
-            <div style={tip}>\"취업준비생\", \"1인 가구\", \"서울 거주\" 처럼 내 상황을 구체적으로 적을수록 더 정확한 정책을 추천받을 수 있어요.</div>
-            <div style={warn}>AI 챗봇은 정보 제공 목적이며, 정확한 자격 요건은 반드시 해당 기관 공식 사이트에서 확인하세요.</div>
-          </section>
-
-          <section id="guide-search" style={sec}>
-            <h3 style={h3s}><Icon name="search" size={22} color="var(--accent)"/> 정책 검색하기</h3>
-            <p style={ps}>검색 페이지에서 카테고리·키워드로 원하는 정책을 빠르게 찾을 수 있습니다.</p>
-            <table style={{width:"100%",borderCollapse:"collapse",fontSize:13,margin:"8px 0 12px",borderRadius:12,overflow:"hidden",border:"1.5px solid #f1f5f9"}}>
-              <tbody>
-                <tr style={{background:"#f8fafc"}}>
-                  <th style={{textAlign:"left",padding:"10px 14px",color:"#374151",fontWeight:700,borderBottom:"2px solid #e5e7eb",width:110}}>검색 방법</th>
-                  <th style={{textAlign:"left",padding:"10px 14px",color:"#374151",fontWeight:700,borderBottom:"2px solid #e5e7eb"}}>이럴 때 사용해요</th>
-                </tr>
-                {[["카테고리 필터","일자리·창업, 주거·금융, 교육, 복지·문화 중 분야를 골라 검색"],["키워드 검색","\"월세\", \"취업 바우처\" 처럼 원하는 단어로 검색"],["지역 필터","내 지역에 맞는 정책만 보기"],["인기순/최신순","조회수 높은 정책 또는 새로 등록된 정책 순으로 보기"]].map(([a,b],i)=>(
-                  <tr key={i} style={{borderBottom:"1px solid #f1f5f9"}}>
-                    <td style={{padding:"10px 14px",fontWeight:600,color:"#374151"}}>{a}</td>
-                    <td style={{padding:"10px 14px",color:"#6b7280"}}>{b}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-            <div style={tip}>검색어와 카테고리를 함께 사용하면 더 정확한 결과를 볼 수 있어요.</div>
-          </section>
-
-          <section id="guide-save" style={sec}>
-            <h3 style={h3s}><Icon name="bookmark" size={22} color="var(--accent)"/> 정책 저장하기</h3>
-            <p style={ps}>관심 있는 정책을 저장해 두면 마이페이지에서 한눈에 모아 볼 수 있습니다.</p>
-            <ol style={{paddingLeft:20,margin:"0 0 12px"}}>
-              {["정책 카드 또는 상세 페이지에서 <b>별표(★) 아이콘</b>을 클릭합니다.","별표가 노란색으로 채워지면 저장 완료입니다.","저장한 정책은 오른쪽 위 드롭다운 → <b>마이페이지</b>에서 모두 볼 수 있어요.","다시 별표를 클릭하면 저장이 취소됩니다."].map((t,i)=>(
-                <li key={i} style={{fontSize:14,color:"#4b5563",lineHeight:1.75,marginBottom:6}} dangerouslySetInnerHTML={{__html:t}}/>
-              ))}
-            </ol>
-            <div style={tip}>로그인하지 않으면 저장이 되지 않아요. 로그인 후 별표를 눌러보세요!</div>
-          </section>
-
-          <section id="guide-mypage" style={sec}>
-            <h3 style={h3s}><Icon name="person" size={22} color="var(--accent)"/> 마이페이지 활용</h3>
-            <p style={ps}>마이페이지에서 저장한 정책, 맞춤 추천, 신청 체크리스트를 한 곳에서 관리할 수 있습니다.</p>
-            <div style={{display:"grid",gridTemplateColumns:isDesktop?"repeat(2,1fr)":"1fr",gap:12,margin:"8px 0"}}>
-              {[{icon:"bookmark",title:"저장한 정책",desc:"별표로 저장한 모든 정책을 한 번에 볼 수 있어요."},{icon:"auto_awesome",title:"맞춤 추천",desc:"나이·지역·관심 분야를 설정하면 딱 맞는 정책을 추천해 드려요."},{icon:"checklist",title:"신청 체크리스트",desc:"정책별 신청 단계를 체크하며 진행 상황을 관리해요."},{icon:"calendar_month",title:"정책 캘린더",desc:"마감 임박 정책을 캘린더로 확인하고 놓치지 않아요."}].map((f,i)=>(
-                <div key={i} style={{background:"white",border:"1.5px solid #f1f5f9",borderRadius:14,padding:"16px 18px",display:"flex",gap:14,alignItems:"flex-start"}}>
-                  <div style={{width:38,height:38,borderRadius:10,background:"var(--accent-bg-active)",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>
-                    <Icon name={f.icon} size={20} color="var(--accent)"/>
-                  </div>
-                  <div>
-                    <div style={{fontSize:14,fontWeight:700,color:"#111827",marginBottom:4}}>{f.title}</div>
-                    <div style={{fontSize:13,color:"#6b7280",lineHeight:1.6}}>{f.desc}</div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </section>
-
-          <section id="guide-community" style={sec}>
-            <h3 style={h3s}><Icon name="forum" size={22} color="var(--accent)"/> 커뮤니티</h3>
-            <p style={ps}>청년ON 커뮤니티에서 다른 청년들과 정책 정보를 나누고 질문해 보세요.</p>
-            <ul style={{paddingLeft:20,margin:"0 0 12px"}}>
-              {["정책 후기, 신청 팁 등을 자유롭게 게시글로 공유할 수 있어요.","다른 사용자의 글에 <b>공감(♥)</b>이나 <b>댓글</b>을 달 수 있어요.","게시글 작성은 <b>로그인 후</b> 가능합니다."].map((t,i)=>(
-                <li key={i} style={{fontSize:14,color:"#4b5563",lineHeight:1.75,marginBottom:6}} dangerouslySetInnerHTML={{__html:t}}/>
-              ))}
-            </ul>
-            <div style={tip}>직접 신청해 본 정책의 후기를 남기면 다른 청년들에게 큰 도움이 됩니다!</div>
-          </section>
-
-          <section id="guide-settings" style={sec}>
-            <h3 style={h3s}><Icon name="tune" size={22} color="var(--accent)"/> 화면 설정</h3>
-            <p style={ps}>오른쪽 위 프로필 드롭다운(로그인 시)에서 화면 배율과 색상 테마를 바꿀 수 있어요.</p>
-            <table style={{width:"100%",borderCollapse:"collapse",fontSize:13,margin:"8px 0 12px",border:"1.5px solid #f1f5f9",borderRadius:12,overflow:"hidden"}}>
-              <tbody>
-                <tr style={{background:"#f8fafc"}}>
-                  <th style={{textAlign:"left",padding:"10px 14px",color:"#374151",fontWeight:700,borderBottom:"2px solid #e5e7eb",width:130}}>설정</th>
-                  <th style={{textAlign:"left",padding:"10px 14px",color:"#374151",fontWeight:700,borderBottom:"2px solid #e5e7eb"}}>설명</th>
-                </tr>
-                {[["배율조정 (−/+)","글자와 요소의 크기를 줄이거나 키울 수 있어요. 80%~120% 사이로 조정 가능합니다."],["로얄블루 테마","파란 계열의 시원한 색상입니다."],["레드 테마","따뜻한 빨간 계열의 색상입니다."]].map(([a,b],i)=>(
-                  <tr key={i} style={{borderBottom:"1px solid #f1f5f9"}}>
-                    <td style={{padding:"10px 14px",fontWeight:600,color:"#374151"}}>{a}</td>
-                    <td style={{padding:"10px 14px",color:"#6b7280"}}>{b}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-            <div style={tip}>로그인 상태에서 오른쪽 위 이름을 클릭하면 드롭다운 안에서 바로 화면 설정을 바꿀 수 있어요.</div>
-          </section>
-
-          <section id="guide-faq" style={{...sec,borderBottom:"none"}}>
-            <h3 style={h3s}><Icon name="help" size={22} color="var(--accent)"/> 자주 묻는 질문</h3>
-            <div style={{display:"flex",flexDirection:"column",gap:8}}>
-              {[{q:"로그인 없이 이용할 수 있나요?",a:"정책 검색과 AI 챗봇은 로그인 없이 이용 가능합니다. 정책 저장, 체크리스트, 맞춤 추천 기능은 로그인 후 이용하실 수 있어요."},
-                {q:"비용이 드나요?",a:"청년ON의 모든 기능은 무료로 이용하실 수 있습니다."},
-                {q:"내 지역 정책만 볼 수 있나요?",a:"검색 페이지에서 지역 필터를 선택하면 특정 지역의 정책만 볼 수 있어요. 마이페이지의 '맞춤 추천'에서 내 지역을 설정하면 자동으로 맞춤 정책을 추천받습니다."},
-                {q:"정책 정보가 실시간으로 업데이트되나요?",a:"청년ON의 정책 데이터는 주기적으로 업데이트됩니다. 중요한 정책은 반드시 해당 기관의 공식 사이트에서 최신 정보를 확인하세요."},
-                {q:"저장한 정책이 사라졌어요.",a:"로그인 상태에서 저장한 정책은 계정에 연동됩니다. 로그아웃 후 다시 로그인하면 저장 목록을 확인할 수 있어요."}
-              ].map((it,i)=><FAQItem key={i} q={it.q} a={it.a}/>)}
-            </div>
-          </section>
-
-          <div style={{textAlign:"center",padding:"40px 0 0"}}>
+        <div style={{maxWidth:760,margin:"0 auto",padding:isDesktop?"8px 40px 64px":"8px 18px 48px"}}>
+          <h3 style={{fontSize:isDesktop?22:18,fontWeight:800,color:"#111827",textAlign:"center",margin:"0 0 20px"}}>자주 묻는 질문</h3>
+          <div style={{display:"flex",flexDirection:"column",gap:8}}>
+            {[{q:"로그인 없이 이용할 수 있나요?",a:"정책 검색과 AI 챗봇은 로그인 없이 이용 가능합니다. 정책 저장, 체크리스트, 맞춤 추천, 커뮤니티 글쓰기·참가하기 기능은 로그인 후 이용하실 수 있어요."},
+              {q:"비용이 드나요?",a:"청년ON의 모든 기능은 무료로 이용하실 수 있습니다."},
+              {q:"정책제안 팀모집에 참가하면 바로 연락이 오나요?",a:"참가하기를 누르면 담당자가 개별로 연락드릴 예정이라는 안내가 뜨고, 게시글 작성자에게 참가 정보가 전달됩니다."},
+              {q:"저장한 정책이 사라졌어요.",a:"로그인 상태에서 저장한 정책은 계정에 연동됩니다. 로그아웃 후 다시 로그인하면 저장 목록과 캘린더 표시를 그대로 확인할 수 있어요."},
+            ].map((it,i)=><FAQItem key={i} q={it.q} a={it.a}/>)}
+          </div>
+          <div style={{textAlign:"center",padding:"32px 0 0"}}>
             <button onClick={onBack} style={{background:"var(--accent)",color:"white",border:"none",borderRadius:14,padding:"14px 36px",fontSize:15,fontWeight:800,cursor:"pointer",boxShadow:"0 4px 20px var(--accent-shadow)",transition:"opacity 0.15s"}}
               onMouseEnter={e=>e.currentTarget.style.opacity="0.88"}
               onMouseLeave={e=>e.currentTarget.style.opacity="1"}
             >지금 정책 찾아보기 →</button>
           </div>
-        </main>
-      </div>
-    </div>
-  );
-}
-
-function FeaturesPage({onBack,bp}){
-  const FEATURES=[
-    {icon:'search',        title:'정책 검색',        desc:'카테고리·지역·부처 필터로 수백 개 청년 지원 정책을 빠르게 찾아드립니다.'},
-    {icon:'smart_toy',     title:'AI 챗봇 추천',     desc:'내 상황을 자유롭게 입력하면 AI가 관련 정책을 카드로 안내합니다.'},
-    {icon:'bookmark',      title:'정책 저장',         desc:'관심 정책에 북마크를 달아 마이페이지에서 한눈에 모아 볼 수 있습니다.'},
-    {icon:'checklist',     title:'신청 체크리스트',   desc:'정책별 신청 단계를 체크하며 놓치는 것 없이 지원 절차를 완료합니다.'},
-    {icon:'calendar_month',title:'정책 캘린더',       desc:'마감 임박 정책을 캘린더로 확인하고 중요한 날짜를 놓치지 않습니다.'},
-    {icon:'auto_awesome',  title:'맞춤 추천',         desc:'나이·지역·관심 분야를 설정하면 나에게 딱 맞는 정책을 추천받습니다.'},
-  ];
-  const STEPS=[
-    {num:'1',title:'회원가입',    desc:'구글·이메일로 간편 가입. 로그인 없이도 정책 검색은 자유롭게 이용 가능합니다.'},
-    {num:'2',title:'정책 탐색',   desc:'검색창에 키워드를 입력하거나 AI 챗봇에 내 상황을 설명해 정책을 찾습니다.'},
-    {num:'3',title:'저장 & 관리', desc:'정책을 저장하고 체크리스트로 신청 절차를 관리합니다.'},
-  ];
-  const h=bp.isDesktop?56:52;
-  return(
-    <div style={{background:'#F5F9FC',fontFamily:"'Pretendard Variable','Apple SD Gothic Neo','Noto Sans KR',sans-serif"}}>
-      <div style={{background:'white',borderBottom:'1px solid #e5e7eb',padding:bp.isDesktop?'0 40px':'0 18px',position:'sticky',top:0,zIndex:40}}>
-        <div style={{height:h,display:'flex',alignItems:'center',gap:12}}>
-          <button onClick={onBack} style={{display:'flex',alignItems:'center',gap:6,background:'none',border:'none',cursor:'pointer',color:'#374151',fontSize:14,fontWeight:600,padding:'8px 0',transition:'color 0.15s'}}
-            onMouseEnter={e=>e.currentTarget.style.color='var(--accent)'}
-            onMouseLeave={e=>e.currentTarget.style.color='#374151'}
-          ><Icon name="arrow_back" size={16} color="currentColor"/> 돌아가기</button>
-          <span style={{color:'#e5e7eb'}}>|</span>
-          <span style={{fontSize:14,fontWeight:700,color:'#111827'}}>청년ON 기능 소개</span>
         </div>
       </div>
-
-      <div style={{background:'linear-gradient(135deg,var(--accent-dark),var(--accent))',color:'white',padding:bp.isDesktop?'72px 40px 64px':'52px 20px 44px',textAlign:'center',position:'relative',overflow:'hidden'}}>
-        <div style={{position:'absolute',right:'-5%',top:'-30%',width:400,height:400,borderRadius:'50%',background:'rgba(255,255,255,0.06)'}}/>
-        <div style={{position:'relative'}}>
-          <span style={{display:'inline-block',background:'rgba(255,255,255,0.2)',border:'1px solid rgba(255,255,255,0.3)',borderRadius:20,padding:'4px 16px',fontSize:13,fontWeight:700,marginBottom:20}}>청년 지원 정책 탐색 플랫폼</span>
-          <h2 style={{fontSize:bp.isDesktop?44:26,fontWeight:900,margin:'0 0 16px',lineHeight:1.25,letterSpacing:'-0.02em'}}>내게 맞는 청년 정책,<br/><span style={{color:'#93c5fd'}}>청년ON</span>이 찾아드립니다</h2>
-          <p style={{fontSize:bp.isDesktop?17:14,opacity:0.85,maxWidth:560,margin:'0 auto 36px',lineHeight:1.75}}>수백 개의 정부·지자체 청년 지원 정책을 한 곳에서.<br/>검색·AI 추천·신청 체크리스트까지 모두 무료로.</p>
-          <button onClick={onBack} style={{background:'white',color:'var(--accent)',border:'none',borderRadius:12,padding:bp.isDesktop?'14px 32px':'12px 24px',fontSize:bp.isDesktop?15:14,fontWeight:800,cursor:'pointer',boxShadow:'0 4px 20px rgba(0,0,0,0.15)',transition:'opacity 0.15s'}}
-            onMouseEnter={e=>e.currentTarget.style.opacity='0.88'}
-            onMouseLeave={e=>e.currentTarget.style.opacity='1'}
-          >지금 정책 찾아보기 →</button>
-        </div>
-      </div>
-
-      <section style={{padding:bp.isDesktop?'72px 40px':'52px 18px',maxWidth:1100,margin:'0 auto'}}>
-        <h3 style={{fontSize:bp.isDesktop?30:22,fontWeight:900,color:'#111827',textAlign:'center',margin:'0 0 8px'}}>주요 기능</h3>
-        <p style={{fontSize:15,color:'#6b7280',textAlign:'center',margin:'0 0 40px'}}>정책 탐색부터 신청 관리까지 한 곳에서.</p>
-        <div style={{display:'grid',gridTemplateColumns:bp.isDesktop?'repeat(3,1fr)':bp.isTablet?'repeat(2,1fr)':'1fr',gap:16}}>
-          {FEATURES.map((f,i)=>(
-            <div key={i} style={{background:'white',borderRadius:20,border:'1.5px solid #f1f5f9',padding:'28px 24px',transition:'box-shadow 0.2s'}}
-              onMouseEnter={e=>e.currentTarget.style.boxShadow='0 8px 28px rgba(0,0,0,0.08)'}
-              onMouseLeave={e=>e.currentTarget.style.boxShadow=''}
-            >
-              <div style={{width:50,height:50,borderRadius:14,background:'var(--accent-bg-active)',display:'flex',alignItems:'center',justifyContent:'center',marginBottom:16}}>
-                <Icon name={f.icon} size={26} color="var(--accent)"/>
-              </div>
-              <h4 style={{fontSize:16,fontWeight:800,color:'#111827',margin:'0 0 8px'}}>{f.title}</h4>
-              <p style={{fontSize:14,color:'#6b7280',lineHeight:1.75,margin:0}}>{f.desc}</p>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      <section style={{background:'white',padding:bp.isDesktop?'72px 40px':'52px 18px'}}>
-        <div style={{maxWidth:900,margin:'0 auto'}}>
-          <h3 style={{fontSize:bp.isDesktop?30:22,fontWeight:900,color:'#111827',textAlign:'center',margin:'0 0 8px'}}>이렇게 사용합니다</h3>
-          <p style={{fontSize:15,color:'#6b7280',textAlign:'center',margin:'0 0 40px'}}>3단계면 충분합니다.</p>
-          <div style={{display:'grid',gridTemplateColumns:bp.isDesktop?'repeat(3,1fr)':'1fr',gap:20}}>
-            {STEPS.map((s,i)=>(
-              <div key={i} style={{textAlign:'center',padding:'36px 28px',borderRadius:20,border:'1.5px solid #f1f5f9'}}>
-                <div style={{width:52,height:52,borderRadius:'50%',background:'linear-gradient(135deg,var(--accent-dark),var(--accent))',color:'white',fontSize:22,fontWeight:900,display:'flex',alignItems:'center',justifyContent:'center',margin:'0 auto 18px',boxShadow:'0 4px 16px var(--accent-shadow)'}}>{s.num}</div>
-                <h4 style={{fontSize:16,fontWeight:800,color:'#111827',margin:'0 0 10px'}}>{s.title}</h4>
-                <p style={{fontSize:14,color:'#6b7280',lineHeight:1.75,margin:0}}>{s.desc}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section style={{background:'linear-gradient(135deg,var(--accent-dark),var(--accent))',color:'white',padding:bp.isDesktop?'72px 40px':'52px 20px',textAlign:'center'}}>
-        <h3 style={{fontSize:bp.isDesktop?32:22,fontWeight:900,margin:'0 0 12px'}}>지금 바로 내 정책을 찾아보세요</h3>
-        <p style={{fontSize:15,opacity:0.85,margin:'0 0 32px',lineHeight:1.7}}>가입 없이도 검색 가능. 회원가입하면 저장·맞춤 추천까지.</p>
-        <button onClick={onBack} style={{background:'white',color:'var(--accent)',border:'none',borderRadius:12,padding:'14px 32px',fontSize:15,fontWeight:800,cursor:'pointer',boxShadow:'0 4px 20px rgba(0,0,0,0.15)',transition:'opacity 0.15s'}}
-          onMouseEnter={e=>e.currentTarget.style.opacity='0.88'}
-          onMouseLeave={e=>e.currentTarget.style.opacity='1'}
-        >지금 시작하기 →</button>
-      </section>
     </div>
   );
 }
@@ -3917,24 +3858,13 @@ export default function App(){
     );
   }
 
-  if(page==="features"){
+  if(page==="about"){
     return(
       <div style={{height:"calc(100vh / var(--font-scale,1))",overflow:"hidden",display:"flex",flexDirection:"column",fontFamily:"'Pretendard Variable','Apple SD Gothic Neo','Noto Sans KR',sans-serif"}}>
         <style>{GLOBAL_CSS}</style>
         <ThemeStyle color={theme.color} colorDark={theme.colorDark} colorBg={theme.colorBg} colorBgActive={theme.colorBgActive} colorShadow={theme.colorShadow} orbColor1={theme.orbColor1} orbColor2={theme.orbColor2} headerBg={theme.headerBg} bodyBg={theme.bodyBg}/>
-        <div style={{flex:1,overflowY:"auto"}}>
-          <FeaturesPage onBack={()=>navigateTo("chatbot")} bp={bp}/>
-        </div>
-      </div>
-    );
-  }
-  if(page==="guide"){
-    return(
-      <div style={{height:"calc(100vh / var(--font-scale,1))",overflow:"hidden",display:"flex",flexDirection:"column",fontFamily:"'Pretendard Variable','Apple SD Gothic Neo','Noto Sans KR',sans-serif"}}>
-        <style>{GLOBAL_CSS}</style>
-        <ThemeStyle color={theme.color} colorDark={theme.colorDark} colorBg={theme.colorBg} colorBgActive={theme.colorBgActive} colorShadow={theme.colorShadow} orbColor1={theme.orbColor1} orbColor2={theme.orbColor2} headerBg={theme.headerBg} bodyBg={theme.bodyBg}/>
-        <div style={{flex:1,overflowY:"auto"}}>
-          <GuidePage onBack={()=>navigateTo("chatbot")} bp={bp}/>
+        <div style={{flex:1,overflow:"hidden",display:"flex",flexDirection:"column"}}>
+          <AboutPage onBack={()=>navigateTo("chatbot")} bp={bp}/>
         </div>
       </div>
     );
@@ -3966,14 +3896,10 @@ export default function App(){
                 <div style={{display:"flex",gap:8,alignItems:"center"}}>
                   {!user&&<FontSizeControl scale={fontScale} onInc={incFont} onDec={decFont}/>}
                   {!user&&<PaletteDots themeKey={themeKey} onChange={setThemeKey}/>}
-                  <button onClick={()=>navigateTo("features")} style={{background:"none",border:"1.5px solid #e2e8f0",cursor:"pointer",color:"#6b7280",fontSize:13,fontWeight:600,padding:"5px 10px",borderRadius:8,transition:"all 0.12s"}}
+                  <button onClick={()=>navigateTo("about")} style={{background:"none",border:"1.5px solid #e2e8f0",cursor:"pointer",color:"#6b7280",fontSize:13,fontWeight:600,padding:"5px 10px",borderRadius:8,transition:"all 0.12s"}}
                     onMouseEnter={e=>{e.currentTarget.style.borderColor="var(--accent)";e.currentTarget.style.color="var(--accent)";}}
                     onMouseLeave={e=>{e.currentTarget.style.borderColor="#e2e8f0";e.currentTarget.style.color="#6b7280";}}
-                  >기능</button>
-                  <button onClick={()=>navigateTo("guide")} style={{background:"none",border:"1.5px solid #e2e8f0",cursor:"pointer",color:"#6b7280",fontSize:13,fontWeight:600,padding:"5px 10px",borderRadius:8,transition:"all 0.12s"}}
-                    onMouseEnter={e=>{e.currentTarget.style.borderColor="var(--accent)";e.currentTarget.style.color="var(--accent)";}}
-                    onMouseLeave={e=>{e.currentTarget.style.borderColor="#e2e8f0";e.currentTarget.style.color="#6b7280";}}
-                  >사용법</button>
+                  >청년ON 알아보기</button>
                   {user?(
                     <NavUserDropdown user={user} onLogout={handleLogout} onGoMyPage={()=>navigateTo("mypage")} favCount={favIds.size} fontScale={fontScale} onFontInc={incFont} onFontDec={decFont} themeKey={themeKey} onThemeChange={setThemeKey}/>
                   ):(
@@ -4019,14 +3945,10 @@ export default function App(){
             <header style={{background:'var(--header-bg,white)',borderBottom:"1px solid #e5e7eb",padding:"0 16px",position:"sticky",top:0,zIndex:50}}>
               <div style={{height:52,display:"flex",alignItems:"center",justifyContent:"space-between"}}>
                 <div style={{display:"flex",alignItems:"center",gap:4}}>
-                  <button onClick={()=>navigateTo("features")} style={{background:"none",border:"none",cursor:"pointer",color:"#374151",fontSize:13,fontWeight:700,padding:"6px 8px",borderRadius:8,transition:"all 0.12s",whiteSpace:"nowrap"}}
+                  <button onClick={()=>navigateTo("about")} style={{background:"none",border:"none",cursor:"pointer",color:"#374151",fontSize:13,fontWeight:700,padding:"6px 8px",borderRadius:8,transition:"all 0.12s",whiteSpace:"nowrap"}}
                     onMouseEnter={e=>e.currentTarget.style.background="#f3f4f6"}
                     onMouseLeave={e=>e.currentTarget.style.background="none"}
-                  >기능</button>
-                  <button onClick={()=>navigateTo("guide")} style={{background:"none",border:"none",cursor:"pointer",color:"#374151",fontSize:13,fontWeight:700,padding:"6px 8px",borderRadius:8,transition:"all 0.12s",whiteSpace:"nowrap"}}
-                    onMouseEnter={e=>e.currentTarget.style.background="#f3f4f6"}
-                    onMouseLeave={e=>e.currentTarget.style.background="none"}
-                  >사용법</button>
+                  >알아보기</button>
                   <button onClick={goHome} style={{display:"flex",alignItems:"center",gap:8,background:"none",border:"none",cursor:"pointer",padding:0}}>
                     <img src={import.meta.env.BASE_URL + 'logo.png'} alt="청년ON" style={{width:30,height:30,borderRadius:9}}/>
                     <div style={{fontWeight:900,fontSize:15,color:"#111827"}}>청년ON</div>
