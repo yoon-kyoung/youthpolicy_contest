@@ -3377,16 +3377,6 @@ const ABOUT_CARDS=[
         </div>
       </div>
     )},
-  {icon:"calendar_month",accent:"#4F46E5",iconBg:"#E0E7FF",bg:"#EEF2FF",border:"#E3E8FF",
-    title:"신청 시작은 초록, 마감은 빨강으로 캘린더에",
-    desc:"저장한 정책의 마감일과 (마감일 기준으로 계산한) 신청 시작일을 마이페이지 캘린더에 색으로 구분해 보여줘서, 시작도 마감도 놓치지 않아요.",
-    mockup:(
-      <div style={aboutStyles.mockCard}>
-        <div style={{fontSize:13,fontWeight:800,color:"#111827",marginBottom:12}}>2026년 8월</div>
-        <div style={{borderLeft:"3px solid #16a34a",background:"#F0FDF4",borderRadius:"0 8px 8px 0",padding:"6px 10px",fontSize:12,fontWeight:700,color:"#16a34a",marginBottom:8}}>청년 월세 특별지원 신청 시작</div>
-        <div style={{borderLeft:"3px solid #ef4444",background:"#FEF2F2",borderRadius:"0 8px 8px 0",padding:"6px 10px",fontSize:12,fontWeight:700,color:"#ef4444"}}>청년 월세 특별지원 마감</div>
-      </div>
-    )},
   {icon:"tune",accent:"#16A34A",iconBg:"#DCFCE7",bg:"#F0FDF4",border:"#DBFCE7",
     title:"맞춤 조건만 설정하면 나만을 위한 추천",
     desc:"지역·나이·학력·취업 상태·전공·특화 분야를 설정하면 마이페이지에 '내 이름이 관심 있을법한 정책'이 실시간으로 채워져요.",
@@ -3450,31 +3440,6 @@ const ABOUT_CARDS=[
         </div>
       </div>
     )},
-  {icon:"manage_accounts",accent:"#475569",iconBg:"#F1F5F9",bg:"#F8FAFC",border:"#EDF1F5",
-    title:"프로필 카드 안에서 끝내는 계정 관리",
-    desc:"계정 관리 버튼을 누르면 같은 카드 안에서 바로 정보 수정·로그아웃·회원 탈퇴가 펼쳐져요. 푸시 알림 허용 여부도 함께 확인할 수 있어요.",
-    mockup:(
-      <div style={aboutStyles.mockCard}>
-        <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:14}}>
-          <div>
-            <div style={{fontWeight:800,color:"#111827",fontSize:14}}>관리자</div>
-            <div style={{fontSize:12,color:"#9ca3af"}}>choco@gmail.com</div>
-          </div>
-          <div style={{display:"flex",gap:6}}>
-            <span style={{fontSize:11,fontWeight:700,color:"#374151",border:"1.5px solid #d1d5db",borderRadius:8,padding:"5px 10px"}}>로그아웃</span>
-            <span style={{fontSize:11,fontWeight:700,color:"#374151",border:"1.5px solid #d1d5db",borderRadius:8,padding:"5px 10px"}}>회원 탈퇴</span>
-          </div>
-        </div>
-        <div style={{display:"flex",flexDirection:"column",gap:8}}>
-          {[["가입일","2026.07.30"],["최근 로그인","2026.07.30"],["푸시 알림","거부"]].map(([a,b])=>(
-            <div key={a} style={{display:"flex",justifyContent:"space-between",fontSize:12}}>
-              <span style={{color:"#9ca3af",fontWeight:600}}>{a}</span>
-              <span style={{color:"#374151",fontWeight:700}}>{b}</span>
-            </div>
-          ))}
-        </div>
-      </div>
-    )},
 ];
 
 function AboutCard({data,index,isDesktop}){
@@ -3493,7 +3458,7 @@ function AboutCard({data,index,isDesktop}){
         <span style={{display:"inline-flex",width:56,height:56,borderRadius:18,background:data.iconBg,alignItems:"center",justifyContent:"center",marginBottom:16}}>
           <Icon name={data.icon} size={28} color={data.accent}/>
         </span>
-        <div style={{fontSize:isDesktop?21:18,fontWeight:800,color:"#111827",marginBottom:10,lineHeight:1.4}}>{data.title}</div>
+        <div style={{fontSize:isDesktop?21:18,fontWeight:800,color:"#111827",marginBottom:10,lineHeight:1.4,wordBreak:"keep-all"}}>{data.title}</div>
         <div style={{fontSize:14,color:"#4b5563",lineHeight:1.75}}>{data.desc}</div>
       </div>
       <div style={{flex:1,width:"100%"}}>
