@@ -69,7 +69,6 @@ const styles = {
     display: 'flex',
     flexDirection: 'column',
     gap: 20,
-    maxWidth: 560,
   },
   accountCard: {
     backgroundColor: '#ffffff',
