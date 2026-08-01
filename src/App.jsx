@@ -3477,20 +3477,17 @@ const ABOUT_CARDS=[
     )},
 ];
 
-function AboutCard({data,index,active,isDesktop}){
+function AboutCard({data,index,isDesktop}){
   const reverse=isDesktop&&index%2===1;
   return(
     <div style={{
       display:"flex",flexDirection:isDesktop?(reverse?"row-reverse":"row"):"column",
       alignItems:"center",gap:isDesktop?44:20,
-      minHeight:isDesktop?300:"auto",
+      minHeight:isDesktop?340:"auto",
       borderRadius:28,border:`1px solid ${data.border}`,background:data.bg,
       padding:isDesktop?"40px 44px":"26px 22px",
       boxShadow:"0 1px 3px rgba(0,0,0,0.05)",
-      opacity:active?1:0.55,
-      transform:active?"scale(1)":"scale(0.97)",
-      transition:"opacity 0.4s ease, transform 0.4s ease",
-      animation:`fadeUp 0.4s ease ${index*60}ms both`,
+      width:"100%",boxSizing:"border-box",
     }}>
       <div style={{flex:1,width:"100%"}}>
         <span style={{display:"inline-flex",width:56,height:56,borderRadius:18,background:data.iconBg,alignItems:"center",justifyContent:"center",marginBottom:16}}>
@@ -3506,24 +3503,68 @@ function AboutCard({data,index,active,isDesktop}){
   );
 }
 
+function AboutCarousel({isDesktop}){
+  const total=ABOUT_CARDS.length;
+  const [idx,setIdx]=useState(0);
+  const touchStartX=useRef(null);
+
+  const goPrev=()=>setIdx(i=>(i-1+total)%total);
+  const goNext=()=>setIdx(i=>(i+1)%total);
+
+  const onTouchStart=e=>{touchStartX.current=e.touches[0].clientX;};
+  const onTouchEnd=e=>{
+    if(touchStartX.current==null)return;
+    const dx=e.changedTouches[0].clientX-touchStartX.current;
+    if(dx>50)goPrev();
+    else if(dx<-50)goNext();
+    touchStartX.current=null;
+  };
+
+  const navBtn={
+    position:"absolute",top:"50%",transform:"translateY(-50%)",zIndex:2,
+    width:isDesktop?44:36,height:isDesktop?44:36,borderRadius:"50%",
+    border:"1.5px solid #e5e7eb",background:"white",color:"#374151",cursor:"pointer",
+    display:"flex",alignItems:"center",justifyContent:"center",boxShadow:"0 4px 14px rgba(0,0,0,0.08)",
+    transition:"all 0.12s",
+  };
+
+  return(
+    <div style={{position:"relative"}}>
+      <button onClick={goPrev} aria-label="이전" style={{...navBtn,left:isDesktop?-22:-8}}
+        onMouseEnter={e=>{e.currentTarget.style.borderColor="var(--accent)";e.currentTarget.style.color="var(--accent)";}}
+        onMouseLeave={e=>{e.currentTarget.style.borderColor="#e5e7eb";e.currentTarget.style.color="#374151";}}
+      ><Icon name="chevron_left" size={isDesktop?22:18} color="currentColor"/></button>
+      <button onClick={goNext} aria-label="다음" style={{...navBtn,right:isDesktop?-22:-8}}
+        onMouseEnter={e=>{e.currentTarget.style.borderColor="var(--accent)";e.currentTarget.style.color="var(--accent)";}}
+        onMouseLeave={e=>{e.currentTarget.style.borderColor="#e5e7eb";e.currentTarget.style.color="#374151";}}
+      ><Icon name="chevron_right" size={isDesktop?22:18} color="currentColor"/></button>
+
+      <div style={{overflow:"hidden",borderRadius:28}} onTouchStart={onTouchStart} onTouchEnd={onTouchEnd}>
+        <div style={{display:"flex",transform:`translateX(-${idx*100}%)`,transition:"transform 0.4s ease"}}>
+          {ABOUT_CARDS.map((c,i)=>(
+            <div key={i} style={{flex:"0 0 100%",boxSizing:"border-box",padding:2}}>
+              <AboutCard data={c} index={i} isDesktop={isDesktop}/>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div style={{display:"flex",justifyContent:"center",gap:7,marginTop:22}}>
+        {ABOUT_CARDS.map((_,i)=>(
+          <button key={i} onClick={()=>setIdx(i)} aria-label={`${i+1}번째로 이동`} style={{
+            width:idx===i?22:8,height:8,borderRadius:4,border:"none",padding:0,cursor:"pointer",
+            background:idx===i?"var(--accent)":"#e2e8f0",transition:"all 0.2s",
+          }}/>
+        ))}
+      </div>
+      <div style={{textAlign:"center",marginTop:8,fontSize:12,color:"#9ca3af",fontWeight:700}}>{idx+1} / {total}</div>
+    </div>
+  );
+}
+
 function AboutPage({onBack,bp}){
   const isDesktop=bp?.isDesktop;
   const h=isDesktop?56:52;
-  const [activeIdx,setActiveIdx]=useState(0);
-  const cardRefs=useRef([]);
-
-  useEffect(()=>{
-    const observers=ABOUT_CARDS.map((_,i)=>{
-      const el=cardRefs.current[i];
-      if(!el)return null;
-      const obs=new IntersectionObserver(([entry])=>{
-        if(entry.isIntersecting&&entry.intersectionRatio>0.5)setActiveIdx(i);
-      },{threshold:[0.5,0.6,0.7]});
-      obs.observe(el);
-      return obs;
-    });
-    return()=>observers.forEach(o=>o?.disconnect());
-  },[]);
 
   return(
     <div style={{flex:1,display:"flex",flexDirection:"column",overflow:"hidden",background:"#F5F9FC",fontFamily:"'Pretendard Variable','Apple SD Gothic Neo','Noto Sans KR',sans-serif"}}>
@@ -3538,19 +3579,15 @@ function AboutPage({onBack,bp}){
         </div>
       </div>
 
-      <div style={{flex:1,overflowY:"auto",scrollSnapType:isDesktop?"y proximity":"none"}}>
+      <div style={{flex:1,overflowY:"auto"}}>
         <div style={{background:"linear-gradient(135deg,var(--accent-dark),var(--accent))",color:"white",padding:isDesktop?"64px 40px 56px":"44px 20px 36px",textAlign:"center"}}>
           <span style={{display:"inline-block",background:"rgba(255,255,255,0.2)",border:"1px solid rgba(255,255,255,0.3)",borderRadius:20,padding:"4px 16px",fontSize:13,fontWeight:700,marginBottom:18}}>청년ON 기능 둘러보기</span>
           <h2 style={{fontSize:isDesktop?36:24,fontWeight:900,margin:"0 0 14px",lineHeight:1.3,letterSpacing:"-0.02em"}}>정책 찾기부터 신청 관리, 커뮤니티까지<br/>청년ON 하나로 끝내보세요</h2>
-          <p style={{fontSize:isDesktop?15:13,opacity:0.85,maxWidth:520,margin:"0 auto",lineHeight:1.7}}>스크롤하면서 청년ON의 기능을 하나씩 살펴보세요.</p>
+          <p style={{fontSize:isDesktop?15:13,opacity:0.85,maxWidth:520,margin:"0 auto",lineHeight:1.7}}>양옆으로 넘기면서 청년ON의 기능을 하나씩 살펴보세요.</p>
         </div>
 
-        <div style={{maxWidth:920,margin:"0 auto",padding:isDesktop?"48px 40px":"28px 18px",display:"flex",flexDirection:"column",gap:isDesktop?28:18}}>
-          {ABOUT_CARDS.map((c,i)=>(
-            <div key={i} ref={el=>cardRefs.current[i]=el} style={{scrollSnapAlign:"center",scrollMarginTop:h+16}}>
-              <AboutCard data={c} index={i} active={activeIdx===i} isDesktop={isDesktop}/>
-            </div>
-          ))}
+        <div style={{maxWidth:920,margin:"0 auto",padding:isDesktop?"48px 64px":"28px 26px"}}>
+          <AboutCarousel isDesktop={isDesktop}/>
         </div>
 
         <div style={{maxWidth:760,margin:"0 auto",padding:isDesktop?"8px 40px 64px":"8px 18px 48px"}}>
