@@ -1512,24 +1512,24 @@ function CommunityPostDetailView({post,bp,user,onBack,onLike}){
       </div>
       <div style={{padding:bp.isDesktop?"32px 40px":bp.isTablet?"24px 24px":"18px 14px",maxWidth:bp.isDesktop?820:"100%",margin:"0 auto"}}>
         <div style={{background:"white",borderRadius:16,padding:bp.isDesktop?"28px 32px":bp.isTablet?"22px 24px":"18px 18px",border:"1.5px solid #f1f5f9"}}>
-          <div style={{display:"flex",gap:8,alignItems:"center",marginBottom:16,paddingBottom:16,borderBottom:"1px solid #f1f5f9",flexWrap:"wrap"}}>
+          <div style={{display:"flex",gap:8,alignItems:"center",marginBottom:16,flexWrap:"wrap"}}>
             <span style={{fontSize:11,fontWeight:700,padding:"3px 10px",borderRadius:20,background:cc.bg,color:cc.text,border:`1px solid ${cc.border}`}}>{post.cat}</span>
             <span style={{fontSize:12,color:"#9ca3af"}}>{fmtDate(post.created_at||post.date)}</span>
           </div>
           <h1 style={{fontSize:bp.isDesktop?26:bp.isTablet?22:18,fontWeight:900,margin:"0 0 16px",lineHeight:1.35,letterSpacing:"-0.02em",color:"#111827",paddingBottom:16,borderBottom:"1px solid #f1f5f9"}}>{post.title}</h1>
-          <div style={{display:"flex",alignItems:"center",gap:12,marginBottom:20,paddingBottom:20,borderBottom:"1px solid #f1f5f9"}}>
-            <span style={{fontSize:13,color:"#6b7280",display:"flex",alignItems:"center",gap:4}}><Icon name="favorite" size={14} color="#9ca3af"/> {(post.likes||0)+(liked?1:0)}</span>
-            <span style={{fontSize:13,color:"#6b7280",display:"flex",alignItems:"center",gap:4}}><Icon name="chat_bubble" size={14} color="#9ca3af"/> {totalComments}</span>
-            <div style={{marginLeft:"auto",display:"flex",alignItems:"center",gap:12}}>
-              <div style={{width:32,height:32,borderRadius:"50%",background:"var(--accent-bg)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:14,fontWeight:700,color:"var(--accent)",flexShrink:0}}>{post.author?.[0]||"?"}</div>
-              <div>
-                <div style={{fontSize:13,fontWeight:700,color:"#111827"}}>{maskName(post.author)}</div>
-                <div style={{fontSize:11,color:"#9ca3af"}}>작성자</div>
-              </div>
+          <div style={{display:"flex",alignItems:"center",justifyContent:"flex-end",gap:12,marginBottom:20,paddingBottom:20,borderBottom:"1px solid #f1f5f9"}}>
+            <div style={{width:32,height:32,borderRadius:"50%",background:"var(--accent-bg)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:14,fontWeight:700,color:"var(--accent)",flexShrink:0}}>{post.author?.[0]||"?"}</div>
+            <div>
+              <div style={{fontSize:13,fontWeight:700,color:"#111827"}}>{maskName(post.author)}</div>
+              <div style={{fontSize:11,color:"#9ca3af"}}>작성자</div>
             </div>
           </div>
           <div style={{fontSize:bp.isDesktop?15:14,lineHeight:1.85,color:"#374151",whiteSpace:"pre-wrap",wordBreak:"break-word"}}>
             {body}
+          </div>
+          <div style={{display:"flex",justifyContent:"flex-end",gap:14,marginTop:20}}>
+            <span style={{fontSize:13,color:"#6b7280",display:"flex",alignItems:"center",gap:4}}><Icon name="favorite" size={14} color="#9ca3af"/> {(post.likes||0)+(liked?1:0)}</span>
+            <span style={{fontSize:13,color:"#6b7280",display:"flex",alignItems:"center",gap:4}}><Icon name="chat_bubble" size={14} color="#9ca3af"/> {totalComments}</span>
           </div>
         </div>
         <div style={{display:"flex",justifyContent:"center",margin:"24px 0"}}>
