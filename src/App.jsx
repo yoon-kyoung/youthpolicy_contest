@@ -3018,6 +3018,10 @@ function SignupPage({setPage,bp}){
     });
     setLoading(false);
     if(err){setErrors({msg:err.message});return;}
+    if(data?.session){
+      setPage("chatbot");
+      return;
+    }
     setErrors({msg:"가입이 완료됐어요! 로그인해주세요."});
     setTimeout(()=>setPage("login"),1500);
   };
