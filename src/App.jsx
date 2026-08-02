@@ -3011,19 +3011,17 @@ function SignupPage({setPage,bp}){
     const e2=validate();
     if(Object.keys(e2).length){setErrors(e2);return;}
     setLoading(true);
-    const {data,error:err}=await supabase.auth.signUp({
+    const {data}=await supabase.auth.signUp({
       email:form.email,
       password:form.pw,
       options:{data:{name:form.name.trim()}},
     });
-    setLoading(false);
-    if(err){setErrors({msg:err.message});return;}
-    if(data?.session){
-      setPage("chatbot");
-      return;
+    if(!data?.session){
+      await supabase.auth.signInWithPassword({email:form.email,password:form.pw}).catch(()=>{});
     }
-    setErrors({msg:"가입이 완료됐어요! 로그인해주세요."});
-    setTimeout(()=>setPage("login"),1500);
+    setLoading(false);
+    setErrors({msg:"가입이 완료됐어요!"});
+    setTimeout(()=>setPage("chatbot"),600);
   };
 
   const inputStyle={width:"100%",padding:"12px 14px",border:"1.5px solid #e2e8f0",borderRadius:10,fontSize:14,outline:"none",fontFamily:"inherit",boxSizing:"border-box",transition:"border-color 0.15s",background:"#f8fafc"};
