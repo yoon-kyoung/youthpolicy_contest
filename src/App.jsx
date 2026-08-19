@@ -323,8 +323,8 @@ const SORT_OPTIONS = [
 ];
 
 const NAV_ITEMS = [
-  { page:"search",    icon:"search",    label:"검색" },
   { page:"chatbot",   icon:"smart_toy", label:"AI챗봇" },
+  { page:"search",    icon:"search",    label:"검색" },
   { page:"proposal",  icon:"campaign",  label:"정책제안" },
   { page:"community", icon:"forum",     label:"커뮤니티" },
   { page:"mypage",    icon:"person",    label:"마이페이지", hasSub:true },
