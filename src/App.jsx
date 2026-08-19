@@ -387,6 +387,30 @@ function useReveal(threshold=0.12) {
   return [ref,visible];
 }
 
+function HScrollFade({children,style,fadeColor="#ffffff"}){
+  const ref=useRef(null);
+  const [canScrollRight,setCanScrollRight]=useState(false);
+  const check=useCallback(()=>{
+    const el=ref.current;
+    if(!el)return;
+    setCanScrollRight(el.scrollWidth-el.clientWidth-el.scrollLeft>4);
+  },[]);
+  useEffect(()=>{
+    check();
+    const el=ref.current;
+    if(!el)return;
+    el.addEventListener("scroll",check,{passive:true});
+    window.addEventListener("resize",check);
+    return()=>{el.removeEventListener("scroll",check);window.removeEventListener("resize",check);};
+  },[check]);
+  return(
+    <div style={{position:"relative",minWidth:0}}>
+      <div ref={ref} style={{display:"flex",overflowX:"auto",...style}}>{children}</div>
+      {canScrollRight&&<div style={{position:"absolute",top:0,right:0,bottom:0,width:28,pointerEvents:"none",background:`linear-gradient(to right, rgba(255,255,255,0), ${fadeColor})`}}/>}
+    </div>
+  );
+}
+
 function useDebounce(val,ms){
   const [dv,setDv]=useState(val);
   useEffect(()=>{const t=setTimeout(()=>setDv(val),ms);return ()=>clearTimeout(t);},[val,ms]);
@@ -900,31 +924,31 @@ function SearchView({favIds,onToggleFav,onGoDetail,bp,policies}){
         <div style={{background:"#FFFFFF",border:"1px solid #E2E8F0",borderRadius:10,padding:"10px 12px",display:"flex",flexDirection:"column",gap:8,marginTop:2}}>
           <div>
             <div style={{fontSize:11,fontWeight:700,color:"#374151",marginBottom:6,display:"flex",alignItems:"center",gap:4}}>지역</div>
-            <div style={{display:"flex",gap:4,overflowX:"auto",paddingBottom:2}}>
+            <HScrollFade style={{gap:4,paddingBottom:2}} fadeColor="#FFFFFF">
               {REGIONS.map(r=>(
                 <button key={r} onClick={()=>setRegion(r)} style={{padding:"3px 9px",borderRadius:20,border:"1.5px solid",borderColor:region===r?"var(--accent)":"#E2E8F0",background:region===r?"var(--accent)":"#FFFFFF",color:region===r?"#FFFFFF":"#475569",fontSize:11,fontWeight:region===r?700:400,cursor:"pointer",whiteSpace:"nowrap",flexShrink:0}}>{r}</button>
               ))}
               <button onClick={()=>setShowRegionMap(true)} style={{display:"flex",alignItems:"center",gap:3,padding:"3px 9px",borderRadius:20,border:"1.5px solid #E2E8F0",background:"#FFFFFF",color:"#475569",fontSize:11,fontWeight:400,cursor:"pointer",whiteSpace:"nowrap",flexShrink:0}}>
                 <Icon name="map" size={12} color="#475569"/>지도로 보기
               </button>
-            </div>
+            </HScrollFade>
           </div>
           <div style={{borderTop:"1px solid #E2E8F0",paddingTop:8}}>
             <div style={{fontSize:11,fontWeight:700,color:"#374151",marginBottom:6,display:"flex",alignItems:"center",gap:4}}>중앙부처</div>
-            <div style={{display:"flex",gap:4,overflowX:"auto",paddingBottom:2}}>
+            <HScrollFade style={{gap:4,paddingBottom:2}} fadeColor="#FFFFFF">
               {MINISTRIES.map(m=>(
                 <button key={m} onClick={()=>setMinistry(m)} style={{padding:"3px 9px",borderRadius:20,border:"1.5px solid",borderColor:ministry===m?"var(--accent)":"#E2E8F0",background:ministry===m?"var(--accent)":"#FFFFFF",color:ministry===m?"#FFFFFF":"#475569",fontSize:11,fontWeight:ministry===m?700:400,cursor:"pointer",whiteSpace:"nowrap",flexShrink:0}}>{m}</button>
               ))}
-            </div>
+            </HScrollFade>
           </div>
         </div>
       </div>
-      <div style={{padding:"8px 14px 6px",overflowX:"auto",background:"white",borderBottom:"1px solid #f1f5f9"}}>
-        <div style={{display:"flex",gap:7}}>
+      <div style={{padding:"8px 14px 6px",background:"white",borderBottom:"1px solid #f1f5f9"}}>
+        <HScrollFade style={{gap:7}} fadeColor="#FFFFFF">
           {CATEGORIES.map(c=>(
             <button key={c.value} onClick={()=>setCat(c.value)} style={{display:"flex",alignItems:"center",gap:4,whiteSpace:"nowrap",padding:"6px 12px",borderRadius:20,border:"1.5px solid",cursor:"pointer",borderColor:cat===c.value?"var(--accent)":"#E2E8F0",background:cat===c.value?"var(--accent-bg)":"white",color:cat===c.value?"var(--accent)":"#718096",fontSize:12,fontWeight:cat===c.value?700:500,transition:"all 0.12s"}}><Icon name={c.icon} size={14} color={cat===c.value?"var(--accent)":"#718096"}/>{c.label} <span style={{opacity:0.65,fontSize:11}}>({catCounts[c.value]??0})</span></button>
           ))}
-        </div>
+        </HScrollFade>
       </div>
       <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",padding:"10px 14px 4px"}}>
         <div style={{fontSize:13,color:"#6b7280"}}>{query&&<span>"{query}" 검색 결과</span>}</div>
@@ -1769,11 +1793,11 @@ function CommunityView({bp,user,onGoProposal,initialCatFilter}){
       </div>
       <div style={{background:"white",borderBottom:"1px solid #e5e7eb",padding:bp.isDesktop?"0 40px":"0 14px"}}>
         <div style={{maxWidth:860,margin:"0 auto",display:"flex",alignItems:"center",justifyContent:"space-between"}}>
-          <div style={{display:"flex",gap:0,overflowX:"auto"}}>
+          <HScrollFade style={{gap:0,minWidth:0}} fadeColor="#ffffff">
             {cats.map(c=>(
-              <button key={c} onClick={()=>setCatFilter(c)} style={{padding:bp.isDesktop?"13px 18px":"11px 14px",border:"none",background:"none",cursor:"pointer",whiteSpace:"nowrap",fontSize:bp.isDesktop?14:13,fontWeight:catFilter===c?700:500,color:catFilter===c?"#111827":"#9ca3af",borderBottom:`2.5px solid ${catFilter===c?"#111827":"transparent"}`,transition:"all 0.15s"}}>{c}</button>
+              <button key={c} onClick={()=>setCatFilter(c)} style={{padding:bp.isDesktop?"13px 18px":"11px 14px",border:"none",background:"none",cursor:"pointer",whiteSpace:"nowrap",flexShrink:0,fontSize:bp.isDesktop?14:13,fontWeight:catFilter===c?700:500,color:catFilter===c?"#111827":"#9ca3af",borderBottom:`2.5px solid ${catFilter===c?"#111827":"transparent"}`,transition:"all 0.15s"}}>{c}</button>
             ))}
-          </div>
+          </HScrollFade>
           <button onClick={()=>user?setShowWrite(true):alert("로그인 후 글을 작성할 수 있어요.")} style={{padding:"7px 16px",borderRadius:20,background:"var(--accent)",border:"none",color:"white",fontSize:13,fontWeight:600,cursor:"pointer",whiteSpace:"nowrap",flexShrink:0,transition:"opacity 0.15s"}}
             onMouseEnter={e=>e.currentTarget.style.opacity="0.85"} onMouseLeave={e=>e.currentTarget.style.opacity="1"}
           >+ 글쓰기</button>
@@ -3625,6 +3649,34 @@ function FontSizeControl({scale,onInc,onDec}){
   );
 }
 
+function MobileSettingsMenu({fontScale,onFontInc,onFontDec,themeKey,onThemeChange}){
+  const [open,setOpen]=useState(false);
+  const ref=useRef(null);
+
+  useEffect(()=>{
+    if(!open)return;
+    const handle=e=>{if(ref.current&&!ref.current.contains(e.target))setOpen(false);};
+    document.addEventListener("mousedown",handle);
+    return()=>document.removeEventListener("mousedown",handle);
+  },[open]);
+
+  return(
+    <div ref={ref} style={{position:"relative"}}>
+      <button onClick={()=>setOpen(o=>!o)} title="화면 설정"
+        style={{width:28,height:28,borderRadius:"50%",background:open?"#f1f5f9":"none",border:"none",cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",padding:0}}
+      >
+        <Icon name="more_horiz" size={18} color="#6b7280"/>
+      </button>
+      {open&&(
+        <div style={{position:"absolute",top:"calc(100% + 8px)",right:0,background:"white",borderRadius:14,border:"1.5px solid #e5e7eb",boxShadow:"0 8px 32px rgba(0,0,0,0.12)",padding:"12px 14px",zIndex:200,animation:"fadeUp 0.15s ease",display:"flex",alignItems:"center",gap:14}}>
+          <FontSizeControl scale={fontScale} onInc={onFontInc} onDec={onFontDec}/>
+          <PaletteDots themeKey={themeKey} onChange={onThemeChange}/>
+        </div>
+      )}
+    </div>
+  );
+}
+
 function TopNav({page,setPage,favIds,user,onLogout,themeKey,onThemeChange,fontScale,onFontInc,onFontDec,onLogoClick}){
   const mainPage=page==="detail"?"":["search","chatbot","mypage","community","proposal"].find(p=>page.startsWith(p))||"search";
   return(
@@ -3947,27 +3999,26 @@ export default function App(){
           ?<TopNav page={page} setPage={navigateTo} favIds={favIds} user={user} onLogout={handleLogout} themeKey={themeKey} onThemeChange={setThemeKey} fontScale={fontScale} onFontInc={incFont} onFontDec={decFont} onLogoClick={goHome}/>
           :(
             <header style={{background:'var(--header-bg,white)',borderBottom:"1px solid #e5e7eb",padding:"0 16px",position:"sticky",top:0,zIndex:50}}>
-              <div style={{height:52,display:"flex",alignItems:"center",justifyContent:"space-between"}}>
-                <div style={{display:"flex",alignItems:"center",gap:4}}>
-                  <button onClick={()=>navigateTo("about")} style={{background:"none",border:"none",cursor:"pointer",color:"#374151",fontSize:13,fontWeight:700,padding:"6px 8px",borderRadius:8,transition:"all 0.12s",whiteSpace:"nowrap"}}
+              <div style={{height:52,display:"flex",alignItems:"center",justifyContent:"space-between",gap:4}}>
+                <div style={{display:"flex",alignItems:"center",gap:4,minWidth:0,flexShrink:1}}>
+                  <button onClick={()=>navigateTo("about")} style={{background:"none",border:"none",cursor:"pointer",color:"#374151",fontSize:13,fontWeight:700,padding:"6px 8px",borderRadius:8,transition:"all 0.12s",whiteSpace:"nowrap",flexShrink:0}}
                     onMouseEnter={e=>e.currentTarget.style.background="#f3f4f6"}
                     onMouseLeave={e=>e.currentTarget.style.background="none"}
                   >알아보기</button>
-                  <button onClick={goHome} style={{display:"flex",alignItems:"center",gap:8,background:"none",border:"none",cursor:"pointer",padding:0}}>
-                    <img src={import.meta.env.BASE_URL + 'logo.png'} alt="청년ON" style={{width:30,height:30,borderRadius:9}}/>
-                    <div style={{fontWeight:900,fontSize:15,color:"#111827"}}>청년ON</div>
+                  <button onClick={goHome} style={{display:"flex",alignItems:"center",gap:8,background:"none",border:"none",cursor:"pointer",padding:0,flexShrink:0}}>
+                    <img src={import.meta.env.BASE_URL + 'logo.png'} alt="청년ON" style={{width:30,height:30,borderRadius:9,flexShrink:0}}/>
+                    <div style={{fontWeight:900,fontSize:15,color:"#111827",whiteSpace:"nowrap"}}>청년ON</div>
                   </button>
                 </div>
-                <div style={{display:"flex",gap:6,alignItems:"center"}}>
-                  {!user&&<FontSizeControl scale={fontScale} onInc={incFont} onDec={decFont}/>}
-                  {!user&&<PaletteDots themeKey={themeKey} onChange={setThemeKey}/>}
-                  <div style={{fontSize:12,color:favIds.size>0?"#b45309":"#9ca3af",fontWeight:600,display:"flex",alignItems:"center",gap:3}}><Icon name="star" size={13} color={favIds.size>0?"#FFD200":"#9ca3af"}/>{favIds.size}건</div>
+                <div style={{display:"flex",gap:6,alignItems:"center",flexShrink:0}}>
+                  {!user&&<MobileSettingsMenu fontScale={fontScale} onFontInc={incFont} onFontDec={decFont} themeKey={themeKey} onThemeChange={setThemeKey}/>}
+                  <div style={{fontSize:12,color:favIds.size>0?"#b45309":"#9ca3af",fontWeight:600,display:"flex",alignItems:"center",gap:3,whiteSpace:"nowrap",flexShrink:0}}><Icon name="star" size={13} color={favIds.size>0?"#FFD200":"#9ca3af"}/>{favIds.size}건</div>
                   {user?.user_metadata?.role==="admin"&&(
-                    <button onClick={()=>window.location.hash="#admin"} style={{padding:"5px 10px",borderRadius:7,border:"1px solid #fde68a",background:"#fffbeb",color:"#b45309",fontSize:12,fontWeight:700,cursor:"pointer",display:"flex",alignItems:"center"}}><Icon name="admin_panel_settings" size={15} color="#b45309"/></button>
+                    <button onClick={()=>window.location.hash="#admin"} style={{padding:"5px 10px",borderRadius:7,border:"1px solid #fde68a",background:"#fffbeb",color:"#b45309",fontSize:12,fontWeight:700,cursor:"pointer",display:"flex",alignItems:"center",flexShrink:0}}><Icon name="admin_panel_settings" size={15} color="#b45309"/></button>
                   )}
                   {user
                     ?<NavUserDropdown user={user} onLogout={handleLogout} onGoMyPage={()=>navigateTo("mypage")} compact favCount={favIds.size} fontScale={fontScale} onFontInc={incFont} onFontDec={decFont} themeKey={themeKey} onThemeChange={setThemeKey}/>
-                    :<button onClick={()=>navigateTo("login")} style={{padding:"5px 12px",borderRadius:7,border:"none",background:'var(--accent)',color:"white",fontSize:12,fontWeight:600,cursor:"pointer"}}>로그인</button>
+                    :<button onClick={()=>navigateTo("login")} style={{padding:"5px 12px",borderRadius:7,border:"none",background:'var(--accent)',color:"white",fontSize:12,fontWeight:600,cursor:"pointer",whiteSpace:"nowrap",flexShrink:0}}>로그인</button>
                   }
                 </div>
               </div>
