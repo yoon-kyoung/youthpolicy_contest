@@ -4001,14 +4001,14 @@ export default function App(){
             <header style={{background:'var(--header-bg,white)',borderBottom:"1px solid #e5e7eb",padding:"0 16px",position:"sticky",top:0,zIndex:50}}>
               <div style={{height:52,display:"flex",alignItems:"center",justifyContent:"space-between",gap:4}}>
                 <div style={{display:"flex",alignItems:"center",gap:4,minWidth:0,flexShrink:1}}>
-                  <button onClick={()=>navigateTo("about")} style={{background:"none",border:"none",cursor:"pointer",color:"#374151",fontSize:13,fontWeight:700,padding:"6px 8px",borderRadius:8,transition:"all 0.12s",whiteSpace:"nowrap",flexShrink:0}}
-                    onMouseEnter={e=>e.currentTarget.style.background="#f3f4f6"}
-                    onMouseLeave={e=>e.currentTarget.style.background="none"}
-                  >알아보기</button>
                   <button onClick={goHome} style={{display:"flex",alignItems:"center",gap:8,background:"none",border:"none",cursor:"pointer",padding:0,flexShrink:0}}>
                     <img src={import.meta.env.BASE_URL + 'logo.png'} alt="청년ON" style={{width:30,height:30,borderRadius:9,flexShrink:0}}/>
                     <div style={{fontWeight:900,fontSize:15,color:"#111827",whiteSpace:"nowrap"}}>청년ON</div>
                   </button>
+                  <button onClick={()=>navigateTo("about")} style={{background:"none",border:"none",cursor:"pointer",color:"#374151",fontSize:13,fontWeight:700,padding:"6px 8px",borderRadius:8,transition:"all 0.12s",whiteSpace:"nowrap",flexShrink:0}}
+                    onMouseEnter={e=>e.currentTarget.style.background="#f3f4f6"}
+                    onMouseLeave={e=>e.currentTarget.style.background="none"}
+                  >알아보기</button>
                 </div>
                 <div style={{display:"flex",gap:6,alignItems:"center",flexShrink:0}}>
                   {!user&&<MobileSettingsMenu fontScale={fontScale} onFontInc={incFont} onFontDec={decFont} themeKey={themeKey} onThemeChange={setThemeKey}/>}
