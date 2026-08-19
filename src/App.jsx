@@ -924,31 +924,31 @@ function SearchView({favIds,onToggleFav,onGoDetail,bp,policies}){
         <div style={{background:"#FFFFFF",border:"1px solid #E2E8F0",borderRadius:10,padding:"10px 12px",display:"flex",flexDirection:"column",gap:8,marginTop:2}}>
           <div>
             <div style={{fontSize:11,fontWeight:700,color:"#374151",marginBottom:6,display:"flex",alignItems:"center",gap:4}}>지역</div>
-            <HScrollFade style={{gap:4,paddingBottom:2}} fadeColor="#FFFFFF">
+            <div style={{display:"flex",flexWrap:"wrap",gap:5}}>
               {REGIONS.map(r=>(
-                <button key={r} onClick={()=>setRegion(r)} style={{padding:"3px 9px",borderRadius:20,border:"1.5px solid",borderColor:region===r?"var(--accent)":"#E2E8F0",background:region===r?"var(--accent)":"#FFFFFF",color:region===r?"#FFFFFF":"#475569",fontSize:11,fontWeight:region===r?700:400,cursor:"pointer",whiteSpace:"nowrap",flexShrink:0}}>{r}</button>
+                <button key={r} onClick={()=>setRegion(r)} style={{padding:"3px 9px",borderRadius:20,border:"1.5px solid",borderColor:region===r?"var(--accent)":"#E2E8F0",background:region===r?"var(--accent)":"#FFFFFF",color:region===r?"#FFFFFF":"#475569",fontSize:11,fontWeight:region===r?700:400,cursor:"pointer",whiteSpace:"nowrap"}}>{r}</button>
               ))}
-              <button onClick={()=>setShowRegionMap(true)} style={{display:"flex",alignItems:"center",gap:3,padding:"3px 9px",borderRadius:20,border:"1.5px solid #E2E8F0",background:"#FFFFFF",color:"#475569",fontSize:11,fontWeight:400,cursor:"pointer",whiteSpace:"nowrap",flexShrink:0}}>
+              <button onClick={()=>setShowRegionMap(true)} style={{display:"flex",alignItems:"center",gap:3,padding:"3px 9px",borderRadius:20,border:"1.5px solid #E2E8F0",background:"#FFFFFF",color:"#475569",fontSize:11,fontWeight:400,cursor:"pointer",whiteSpace:"nowrap"}}>
                 <Icon name="map" size={12} color="#475569"/>지도로 보기
               </button>
-            </HScrollFade>
+            </div>
           </div>
           <div style={{borderTop:"1px solid #E2E8F0",paddingTop:8}}>
             <div style={{fontSize:11,fontWeight:700,color:"#374151",marginBottom:6,display:"flex",alignItems:"center",gap:4}}>중앙부처</div>
-            <HScrollFade style={{gap:4,paddingBottom:2}} fadeColor="#FFFFFF">
+            <div style={{display:"flex",flexWrap:"wrap",gap:5}}>
               {MINISTRIES.map(m=>(
-                <button key={m} onClick={()=>setMinistry(m)} style={{padding:"3px 9px",borderRadius:20,border:"1.5px solid",borderColor:ministry===m?"var(--accent)":"#E2E8F0",background:ministry===m?"var(--accent)":"#FFFFFF",color:ministry===m?"#FFFFFF":"#475569",fontSize:11,fontWeight:ministry===m?700:400,cursor:"pointer",whiteSpace:"nowrap",flexShrink:0}}>{m}</button>
+                <button key={m} onClick={()=>setMinistry(m)} style={{padding:"3px 9px",borderRadius:20,border:"1.5px solid",borderColor:ministry===m?"var(--accent)":"#E2E8F0",background:ministry===m?"var(--accent)":"#FFFFFF",color:ministry===m?"#FFFFFF":"#475569",fontSize:11,fontWeight:ministry===m?700:400,cursor:"pointer",whiteSpace:"nowrap"}}>{m}</button>
               ))}
-            </HScrollFade>
+            </div>
           </div>
         </div>
       </div>
       <div style={{padding:"8px 14px 6px",background:"white",borderBottom:"1px solid #f1f5f9"}}>
-        <HScrollFade style={{gap:7}} fadeColor="#FFFFFF">
+        <div style={{display:"flex",flexWrap:"wrap",gap:7}}>
           {CATEGORIES.map(c=>(
             <button key={c.value} onClick={()=>setCat(c.value)} style={{display:"flex",alignItems:"center",gap:4,whiteSpace:"nowrap",padding:"6px 12px",borderRadius:20,border:"1.5px solid",cursor:"pointer",borderColor:cat===c.value?"var(--accent)":"#E2E8F0",background:cat===c.value?"var(--accent-bg)":"white",color:cat===c.value?"var(--accent)":"#718096",fontSize:12,fontWeight:cat===c.value?700:500,transition:"all 0.12s"}}><Icon name={c.icon} size={14} color={cat===c.value?"var(--accent)":"#718096"}/>{c.label} <span style={{opacity:0.65,fontSize:11}}>({catCounts[c.value]??0})</span></button>
           ))}
-        </HScrollFade>
+        </div>
       </div>
       <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",padding:"10px 14px 4px"}}>
         <div style={{fontSize:13,color:"#6b7280"}}>{query&&<span>"{query}" 검색 결과</span>}</div>
