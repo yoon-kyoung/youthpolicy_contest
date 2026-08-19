@@ -808,7 +808,7 @@ export default function ChatBotView({ bp, favIds, onToggleFav, onGoDetail, reset
               onKeyDown={e=>e.key==='Enter'&&sendMessage()}
               autoFocus
               style={{
-                flex:1,border:'none',background:'transparent',
+                flex:1,minWidth:0,border:'none',background:'transparent',
                 fontSize:bp==='mobile'?13:15,fontFamily:'inherit',outline:'none',
                 color:'#111827',
               }}
