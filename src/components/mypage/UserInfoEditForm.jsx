@@ -5,6 +5,7 @@ export default function UserInfoEditForm({ user, onSave, onCancel, saveError }) 
   const [form, setForm] = useState({
     name: user.name,
     phone: user.phone,
+    pushEnabled: user.pushEnabled ?? true,
     currentPw: '',
     newPw: '',
     confirmPw: '',
@@ -36,7 +37,7 @@ export default function UserInfoEditForm({ user, onSave, onCancel, saveError }) 
       setErrors(errs)
       return
     }
-    onSave({ name: form.name, phone: form.phone })
+    onSave({ name: form.name, phone: form.phone, pushEnabled: form.pushEnabled })
   }
 
   return (
@@ -54,6 +55,17 @@ export default function UserInfoEditForm({ user, onSave, onCancel, saveError }) 
       <Field label="전화번호" error={errors.phone}>
         <input style={inputStyle(!!errors.phone)} value={form.phone} onChange={set('phone')} placeholder="010-0000-0000" />
       </Field>
+
+      <div style={styles.pushRow}>
+        <div>
+          <div style={styles.pushLabel}>푸시 알림</div>
+          <div style={styles.pushDesc}>정책 마감일, 신청 결과 등을 알려드려요</div>
+        </div>
+        <Switch
+          checked={form.pushEnabled}
+          onChange={() => setForm(prev => ({ ...prev, pushEnabled: !prev.pushEnabled }))}
+        />
+      </div>
 
       <button
         type="button"
@@ -87,6 +99,40 @@ export default function UserInfoEditForm({ user, onSave, onCancel, saveError }) 
         <button type="submit" style={styles.saveBtn}>저장</button>
       </div>
     </form>
+  )
+}
+
+function Switch({ checked, onChange }) {
+  return (
+    <button
+      type="button"
+      role="switch"
+      aria-checked={checked}
+      onClick={onChange}
+      style={{
+        width: 44,
+        height: 24,
+        borderRadius: 999,
+        border: 'none',
+        padding: 2,
+        cursor: 'pointer',
+        flexShrink: 0,
+        backgroundColor: checked ? '#007FFF' : '#d1d5db',
+        transition: 'background-color 0.15s',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: checked ? 'flex-end' : 'flex-start',
+      }}
+    >
+      <span style={{
+        width: 20,
+        height: 20,
+        borderRadius: '50%',
+        backgroundColor: '#ffffff',
+        boxShadow: '0 1px 3px rgba(0,0,0,0.25)',
+        transition: 'transform 0.15s',
+      }} />
+    </button>
   )
 }
 
@@ -130,6 +176,26 @@ const styles = {
     fontSize: 12,
     color: '#ef4444',
     marginTop: 4,
+  },
+  pushRow: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: 12,
+    padding: '12px 14px',
+    borderRadius: 10,
+    backgroundColor: '#f9fafb',
+    marginBottom: 14,
+  },
+  pushLabel: {
+    fontSize: 14,
+    fontWeight: 600,
+    color: '#111827',
+  },
+  pushDesc: {
+    fontSize: 12,
+    color: '#9ca3af',
+    marginTop: 2,
   },
   pwToggleBtn: {
     fontSize: 13,
