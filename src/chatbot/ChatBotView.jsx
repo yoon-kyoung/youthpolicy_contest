@@ -1101,7 +1101,7 @@ export default function ChatBotView({ bp, favIds, onToggleFav, onGoDetail, reset
                 disabled={loading}
                 autoFocus
                 style={{
-                  flex:1,padding:'12px 14px',borderRadius:12,border:`1.5px solid ${C.borderGray}`,
+                  flex:1,minWidth:0,padding:'12px 14px',borderRadius:12,border:`1.5px solid ${C.borderGray}`,
                   background:C.secondary,fontSize:14,fontFamily:'inherit',outline:'none',
                   transition:'border-color 0.15s',
                 }}
@@ -1110,7 +1110,7 @@ export default function ChatBotView({ bp, favIds, onToggleFav, onGoDetail, reset
               />
               <MicButton listening={micListening} supported={micSupported} onClick={toggleMic} disabled={loading} size={44}/>
               <button onClick={()=>sendMessage()} disabled={loading} style={{
-                padding:'12px 20px',borderRadius:12,border:'none',cursor:'pointer',
+                padding:'12px 20px',borderRadius:12,border:'none',cursor:'pointer',flexShrink:0,whiteSpace:'nowrap',
                 background:C.primary,color:C.neutralWhite,fontWeight:800,fontSize:14,
                 opacity:loading?0.6:1,transition:'opacity 0.15s,background 0.15s',
               }}
