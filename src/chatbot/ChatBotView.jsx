@@ -809,7 +809,7 @@ export default function ChatBotView({ bp, favIds, onToggleFav, onGoDetail, reset
               autoFocus
               style={{
                 flex:1,border:'none',background:'transparent',
-                fontSize:bp==='mobile'?14:15,fontFamily:'inherit',outline:'none',
+                fontSize:bp==='mobile'?13:15,fontFamily:'inherit',outline:'none',
                 color:'#111827',
               }}
             />
