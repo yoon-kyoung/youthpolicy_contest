@@ -2786,28 +2786,30 @@ function PolicyProposalPage({bp,user,onGoCommunity}){
         <div style={{maxWidth:860,margin:"0 auto",display:"flex",flexDirection:"column",gap:20}}>
           <ProposalOnboardingCarousel bp={bp}/>
 
-          <div style={{position:"relative",display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:bp.isMobile?8:12,background:"var(--accent-bg)",borderRadius:16,border:"1.5px solid #E2E8F0",padding:bp.isDesktop?"18px 24px":"14px 12px"}}>
-            <div style={{position:"absolute",top:8,right:12,fontSize:10,color:"#9ca3af",fontWeight:500}}>{statsAsOf}</div>
-            {[
-              {label:"누적 제안수", val:stats.total.toLocaleString()},
-              {label:"답변율",      val:`${stats.rate}%`},
-              {label:"반영 건수",   val:stats.adopted.toLocaleString()},
-            ].map(s=>(
-              <div key={s.label} style={{display:"flex",flexDirection:"column",alignItems:"center",gap:4,textAlign:"center"}}>
-                <div style={{display:"flex",alignItems:"center",gap:5,fontSize:bp.isMobile?11:12,color:"#111827",fontWeight:600}}>{s.label}</div>
-                <div style={{fontSize:bp.isDesktop?22:18,fontWeight:900,color:"#111827"}}>{s.val}</div>
-              </div>
-            ))}
+          <div style={{background:"var(--accent-bg)",borderRadius:16,border:"1.5px solid #E2E8F0",padding:bp.isDesktop?"14px 24px 10px":"10px 12px 8px"}}>
+            <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:bp.isMobile?8:12}}>
+              {[
+                {label:"누적 제안수", val:stats.total.toLocaleString()},
+                {label:"답변율",      val:`${stats.rate}%`},
+                {label:"반영 건수",   val:stats.adopted.toLocaleString()},
+              ].map(s=>(
+                <div key={s.label} style={{display:"flex",flexDirection:"column",alignItems:"center",gap:4,textAlign:"center"}}>
+                  <div style={{display:"flex",alignItems:"center",gap:5,fontSize:bp.isMobile?11:12,color:"#111827",fontWeight:600}}>{s.label}</div>
+                  <div style={{fontSize:bp.isDesktop?22:18,fontWeight:900,color:"#111827"}}>{s.val}</div>
+                </div>
+              ))}
+            </div>
+            <div style={{textAlign:"right",fontSize:10,color:"#9ca3af",fontWeight:500,marginTop:8}}>{statsAsOf}</div>
           </div>
 
           <div>
-            <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",borderBottom:"1px solid #e5e7eb",background:"white",borderRadius:"16px 16px 0 0",padding:"0 12px"}}>
-              <div style={{display:"flex",gap:0,overflowX:"auto"}}>
+            <div style={{display:"flex",alignItems:"center",gap:8,borderBottom:"1px solid #e5e7eb",background:"white",borderRadius:"16px 16px 0 0",padding:"0 12px"}}>
+              <HScrollFade style={{gap:0,flex:1}} fadeColor="#ffffff">
                 {PROPOSAL_STATUS_TABS.map(t=>(
-                  <button key={t.value} onClick={()=>setStatusTab(t.value)} style={{padding:bp.isDesktop?"13px 16px":"11px 12px",border:"none",background:"none",cursor:"pointer",whiteSpace:"nowrap",fontSize:bp.isDesktop?14:13,fontWeight:statusTab===t.value?700:500,color:statusTab===t.value?"#111827":"#9ca3af",borderBottom:`2.5px solid ${statusTab===t.value?"#111827":"transparent"}`,transition:"all 0.15s"}}>{t.label} <span style={{opacity:0.6,fontSize:11}}>({statusCounts[t.value]??0})</span></button>
+                  <button key={t.value} onClick={()=>setStatusTab(t.value)} style={{flexShrink:0,padding:bp.isDesktop?"13px 16px":"11px 10px",border:"none",background:"none",cursor:"pointer",whiteSpace:"nowrap",fontSize:bp.isDesktop?14:12,fontWeight:statusTab===t.value?700:500,color:statusTab===t.value?"#111827":"#9ca3af",borderBottom:`2.5px solid ${statusTab===t.value?"#111827":"transparent"}`,transition:"all 0.15s"}}>{t.label} <span style={{opacity:0.6,fontSize:11}}>({statusCounts[t.value]??0})</span></button>
                 ))}
-              </div>
-              <button type="button" onClick={()=>setShowForm(true)} style={{padding:"9px 20px",borderRadius:20,background:"var(--accent)",border:"none",color:"white",fontSize:13,fontWeight:600,cursor:"pointer",transition:"opacity 0.15s",flexShrink:0}}
+              </HScrollFade>
+              <button type="button" onClick={()=>setShowForm(true)} style={{padding:bp.isMobile?"8px 14px":"9px 20px",borderRadius:20,background:"var(--accent)",border:"none",color:"white",fontSize:bp.isMobile?12:13,fontWeight:600,cursor:"pointer",transition:"opacity 0.15s",flexShrink:0,whiteSpace:"nowrap"}}
                 onMouseEnter={e=>e.currentTarget.style.opacity="0.85"} onMouseLeave={e=>e.currentTarget.style.opacity="1"}
               >+ 정책 제안하기</button>
             </div>
@@ -2836,7 +2838,7 @@ function PolicyProposalPage({bp,user,onGoCommunity}){
         </div>
       </div>
 
-      <ProposalGuidePanel bp={bp} onGoCommunity={onGoCommunity}/>
+      {!bp.isMobile&&<ProposalGuidePanel bp={bp} onGoCommunity={onGoCommunity}/>}
     </div>
   );
 }
