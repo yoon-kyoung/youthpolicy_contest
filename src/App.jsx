@@ -836,6 +836,7 @@ function SearchView({favIds,onToggleFav,onGoDetail,bp,policies}){
     setSavingPreset(false);
   };
 
+  const [compareMode,setCompareMode]=useState(false);
   const [compareIds,setCompareIds]=useState([]);
   const [showCompare,setShowCompare]=useState(false);
   const toggleCompare=(id)=>{
@@ -844,6 +845,10 @@ function SearchView({favIds,onToggleFav,onGoDetail,bp,policies}){
       if(prev.length>=3)return prev;
       return [...prev,id];
     });
+  };
+  const toggleCompareMode=()=>{
+    setCompareMode(v=>!v);
+    setCompareIds([]);
   };
   const compareList=policies.filter(p=>compareIds.includes(p.id));
 
@@ -952,7 +957,7 @@ function SearchView({favIds,onToggleFav,onGoDetail,bp,policies}){
                 <span style={{fontSize:13,color:"#374151",fontWeight:500}}>마감 제외</span>
               </label>
               {query&&<div style={{fontSize:13,color:"#6b7280",whiteSpace:"nowrap"}}>"{query}" 검색 결과</div>}
-              <button onClick={()=>setShowCompare(true)} disabled={compareIds.length<2} style={{display:"flex",alignItems:"center",gap:6,padding:"8px 14px",borderRadius:20,border:"none",background:compareIds.length<2?"#E2E8F0":"var(--accent)",color:compareIds.length<2?"#94A3B8":"white",fontSize:13,fontWeight:700,cursor:compareIds.length<2?"default":"pointer",whiteSpace:"nowrap",flexShrink:0,marginLeft:"auto"}}><Icon name="bar_chart" size={15} color={compareIds.length<2?"#94A3B8":"white"}/>정책 비교하기{compareIds.length>0?` (${compareIds.length})`:""}</button>
+              <button onClick={toggleCompareMode} style={{display:"flex",alignItems:"center",gap:6,padding:"8px 14px",borderRadius:20,border:compareMode?"none":"1.5px solid #E2E8F0",background:compareMode?"var(--accent)":"white",color:compareMode?"white":"#475569",fontSize:13,fontWeight:700,cursor:"pointer",whiteSpace:"nowrap",flexShrink:0,marginLeft:"auto"}}><Icon name={compareMode?"close":"bar_chart"} size={15} color={compareMode?"white":"#475569"}/>{compareMode?"비교 모드 종료":"정책 비교하기"}</button>
             </div>
             <div style={{background:"#FFFFFF",border:"1px solid #E2E8F0",borderRadius:12,padding:"12px 16px",display:"flex",flexDirection:"column",gap:10,marginTop:4}}>
               <div>
@@ -1013,7 +1018,7 @@ function SearchView({favIds,onToggleFav,onGoDetail,bp,policies}){
           {filtered.length===0
             ?<div style={{textAlign:"center",padding:"80px 0",color:"#9ca3af"}}><div style={{marginBottom:12}}><Icon name="search" size={48} color="#9ca3af"/></div><div style={{fontSize:16,fontWeight:600,color:"#374151",marginBottom:6}}>검색 결과가 없어요</div><div style={{fontSize:13}}>다른 키워드나 카테고리를 시도해 보세요</div></div>
             :<>
-              <div style={{display:"grid",gridTemplateColumns:`repeat(${cols},1fr)`,gap:14}}>{pageItems.map((p,i)=><PolicyCard key={p.id} policy={p} favIds={favIds} onToggle={onToggleFav} onGoDetail={onGoDetail} delay={i*40} compareChecked={compareIds.includes(p.id)} onToggleCompare={toggleCompare}/>)}</div>
+              <div style={{display:"grid",gridTemplateColumns:`repeat(${cols},1fr)`,gap:14}}>{pageItems.map((p,i)=><PolicyCard key={p.id} policy={p} favIds={favIds} onToggle={onToggleFav} onGoDetail={onGoDetail} delay={i*40} compareChecked={compareIds.includes(p.id)} onToggleCompare={compareMode?toggleCompare:undefined}/>)}</div>
               <Pagination page={pageNum} pageCount={pageCount} onChange={setPageNum}/>
             </>
           }
