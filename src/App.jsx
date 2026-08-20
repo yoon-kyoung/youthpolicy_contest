@@ -847,6 +847,27 @@ function SearchView({favIds,onToggleFav,onGoDetail,bp,policies}){
   };
   const compareList=policies.filter(p=>compareIds.includes(p.id));
 
+  const myFiltersRow=(
+    <div style={{display:"flex",alignItems:"center",gap:6,flexWrap:"wrap"}}>
+      <span style={{fontSize:12,fontWeight:700,color:"#64748B",display:"flex",alignItems:"center",gap:4,flexShrink:0}}><Icon name="bookmark" size={13} color="#64748B"/>내 필터</span>
+      {presets.map(p=>(
+        <div key={p.id} style={{display:"flex",alignItems:"center",gap:2,background:"#F8FAFC",border:"1.5px solid #E2E8F0",borderRadius:20,paddingRight:4}}>
+          <button onClick={()=>applyPreset(p)} style={{padding:"4px 4px 4px 10px",borderRadius:20,border:"none",background:"none",color:"#334155",fontSize:12,fontWeight:500,cursor:"pointer",whiteSpace:"nowrap"}}>{p.name}</button>
+          <button onClick={()=>deletePreset(p.id)} title="삭제" style={{background:"none",border:"none",cursor:"pointer",color:"#cbd5e1",padding:2,display:"flex",alignItems:"center"}}><Icon name="close" size={12} color="#cbd5e1"/></button>
+        </div>
+      ))}
+      {!savingPreset?(
+        <button onClick={openSavePreset} style={{display:"flex",alignItems:"center",gap:4,padding:"4px 10px",borderRadius:20,border:"1.5px dashed #CBD5E1",background:"#FFFFFF",color:"#64748B",fontSize:12,fontWeight:500,cursor:"pointer",whiteSpace:"nowrap"}}><Icon name="add" size={13} color="#64748B"/>현재 조건 저장</button>
+      ):(
+        <div style={{display:"flex",alignItems:"center",gap:6}}>
+          <input value={presetName} onChange={e=>setPresetName(e.target.value)} onKeyDown={e=>{if(e.key==="Enter")confirmSavePreset();if(e.key==="Escape")setSavingPreset(false);}} autoFocus placeholder="필터 이름" style={{padding:"4px 10px",borderRadius:20,border:"1.5px solid var(--accent)",fontSize:12,outline:"none",width:140,fontFamily:"inherit"}}/>
+          <button onClick={confirmSavePreset} style={{padding:"4px 10px",borderRadius:20,border:"none",background:"var(--accent)",color:"white",fontSize:12,fontWeight:600,cursor:"pointer"}}>저장</button>
+          <button onClick={()=>setSavingPreset(false)} style={{background:"none",border:"none",cursor:"pointer",color:"#9ca3af",padding:2,display:"flex",alignItems:"center"}}><Icon name="close" size={14} color="#9ca3af"/></button>
+        </div>
+      )}
+    </div>
+  );
+
   useEffect(()=>{
     if(!EDUCATION_LEVELS.includes(education))setEducation("전체");
     if(!EMPLOYMENT_STATUSES.includes(employmentStatus))setEmploymentStatus("제한없음");
@@ -951,7 +972,8 @@ function SearchView({favIds,onToggleFav,onGoDetail,bp,policies}){
                     <button key={m} onClick={()=>setMinistry(m)} style={{padding:"4px 10px",borderRadius:20,border:"1.5px solid",borderColor:ministry===m?"var(--accent)":"#E2E8F0",background:ministry===m?"var(--accent)":"#FFFFFF",color:ministry===m?"#FFFFFF":"#475569",fontSize:12,fontWeight:ministry===m?700:400,cursor:"pointer",transition:"all 0.12s",whiteSpace:"nowrap"}}>{m}</button>
                   ))}
                 </div>
-                {!showMoreFilters&&<div style={{display:"flex",justifyContent:"flex-end",marginTop:8}}>
+                {!showMoreFilters&&<div style={{display:"flex",justifyContent:"space-between",alignItems:"center",gap:8,marginTop:8}}>
+                  {myFiltersRow}
                   <button onClick={()=>setShowMoreFilters(v=>!v)} title="학력·취업 상태 더보기" style={{display:"flex",alignItems:"center",justifyContent:"center",width:30,height:30,borderRadius:"50%",border:"none",background:"var(--accent)",color:"#FFFFFF",cursor:"pointer",boxShadow:"0 2px 6px rgba(0,0,0,0.2)",flexShrink:0}}>
                     <Icon name="expand_more" size={18} color="#FFFFFF"/>
                   </button>
@@ -973,7 +995,8 @@ function SearchView({favIds,onToggleFav,onGoDetail,bp,policies}){
                     <button key={e} onClick={()=>setEmploymentStatus(e)} style={{padding:"4px 10px",borderRadius:20,border:"1.5px solid",borderColor:employmentStatus===e?"var(--accent)":"#E2E8F0",background:employmentStatus===e?"var(--accent)":"#FFFFFF",color:employmentStatus===e?"#FFFFFF":"#475569",fontSize:12,fontWeight:employmentStatus===e?700:400,cursor:"pointer",transition:"all 0.12s",whiteSpace:"nowrap"}}>{e}</button>
                   ))}
                 </div>
-                <div style={{display:"flex",justifyContent:"flex-end",marginTop:8}}>
+                <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",gap:8,marginTop:8}}>
+                  {myFiltersRow}
                   <button onClick={()=>setShowMoreFilters(v=>!v)} title="학력·취업 상태 접기" style={{display:"flex",alignItems:"center",justifyContent:"center",width:30,height:30,borderRadius:"50%",border:"none",background:"var(--accent)",color:"#FFFFFF",cursor:"pointer",boxShadow:"0 2px 6px rgba(0,0,0,0.2)",flexShrink:0}}>
                     <Icon name="expand_less" size={18} color="#FFFFFF"/>
                   </button>
@@ -981,24 +1004,6 @@ function SearchView({favIds,onToggleFav,onGoDetail,bp,policies}){
               </div>
               </>}
             </div>
-          </div>
-          <div style={{display:"flex",alignItems:"center",gap:6,flexWrap:"wrap",marginBottom:14}}>
-            <span style={{fontSize:12,fontWeight:700,color:"#64748B",display:"flex",alignItems:"center",gap:4,flexShrink:0}}><Icon name="bookmark" size={13} color="#64748B"/>내 필터</span>
-            {presets.map(p=>(
-              <div key={p.id} style={{display:"flex",alignItems:"center",gap:2,background:"#F8FAFC",border:"1.5px solid #E2E8F0",borderRadius:20,paddingRight:4}}>
-                <button onClick={()=>applyPreset(p)} style={{padding:"4px 4px 4px 10px",borderRadius:20,border:"none",background:"none",color:"#334155",fontSize:12,fontWeight:500,cursor:"pointer",whiteSpace:"nowrap"}}>{p.name}</button>
-                <button onClick={()=>deletePreset(p.id)} title="삭제" style={{background:"none",border:"none",cursor:"pointer",color:"#cbd5e1",padding:2,display:"flex",alignItems:"center"}}><Icon name="close" size={12} color="#cbd5e1"/></button>
-              </div>
-            ))}
-            {!savingPreset?(
-              <button onClick={openSavePreset} style={{display:"flex",alignItems:"center",gap:4,padding:"4px 10px",borderRadius:20,border:"1.5px dashed #CBD5E1",background:"#FFFFFF",color:"#64748B",fontSize:12,fontWeight:500,cursor:"pointer",whiteSpace:"nowrap"}}><Icon name="add" size={13} color="#64748B"/>현재 조건 저장</button>
-            ):(
-              <div style={{display:"flex",alignItems:"center",gap:6}}>
-                <input value={presetName} onChange={e=>setPresetName(e.target.value)} onKeyDown={e=>{if(e.key==="Enter")confirmSavePreset();if(e.key==="Escape")setSavingPreset(false);}} autoFocus placeholder="필터 이름" style={{padding:"4px 10px",borderRadius:20,border:"1.5px solid var(--accent)",fontSize:12,outline:"none",width:140,fontFamily:"inherit"}}/>
-                <button onClick={confirmSavePreset} style={{padding:"4px 10px",borderRadius:20,border:"none",background:"var(--accent)",color:"white",fontSize:12,fontWeight:600,cursor:"pointer"}}>저장</button>
-                <button onClick={()=>setSavingPreset(false)} style={{background:"none",border:"none",cursor:"pointer",color:"#9ca3af",padding:2,display:"flex",alignItems:"center"}}><Icon name="close" size={14} color="#9ca3af"/></button>
-              </div>
-            )}
           </div>
           <div style={{fontSize:12,color:"#94A3B8",marginBottom:10,fontWeight:500}}>
             {query?`"${query}" 검색 결과 · `:"전체 "}<span style={{color:"var(--accent)",fontWeight:700}}>{filtered.length}건</span>
