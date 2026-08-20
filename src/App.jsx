@@ -758,6 +758,7 @@ function SearchView({favIds,onToggleFav,onGoDetail,bp,policies}){
   const [education,setEducation]=useLocalStorage("yoa:search:education","전체");
   const [employmentStatus,setEmploymentStatus]=useLocalStorage("yoa:search:employmentStatus","제한없음");
   const [showRegionMap,setShowRegionMap]=useState(false);
+  const [showMoreFilters,setShowMoreFilters]=useState(false);
   const query=useDebounce(rawQ,300);
 
   useEffect(()=>{
@@ -855,6 +856,9 @@ function SearchView({favIds,onToggleFav,onGoDetail,bp,policies}){
                   <button onClick={()=>setShowRegionMap(true)} style={{display:"flex",alignItems:"center",gap:4,padding:"4px 10px",borderRadius:20,border:"1.5px solid #E2E8F0",background:"#FFFFFF",color:"#475569",fontSize:12,fontWeight:400,cursor:"pointer",whiteSpace:"nowrap",flexShrink:0,marginLeft:2}}>
                     <Icon name="map" size={13} color="#475569"/>지도로 보기
                   </button>
+                  <button onClick={()=>setShowMoreFilters(v=>!v)} style={{display:"flex",alignItems:"center",gap:4,padding:"4px 10px",borderRadius:20,border:"1.5px solid #E2E8F0",background:showMoreFilters?"var(--accent-bg-active)":"#FFFFFF",color:showMoreFilters?"var(--accent)":"#475569",fontSize:12,fontWeight:400,cursor:"pointer",whiteSpace:"nowrap",flexShrink:0,marginLeft:"auto"}}>
+                    <Icon name={showMoreFilters?"expand_less":"expand_more"} size={14} color={showMoreFilters?"var(--accent)":"#475569"}/>학력·취업 상태
+                  </button>
                 </div>
               </div>
               <div style={{borderTop:"1px solid #E2E8F0",paddingTop:10}}>
@@ -865,6 +869,7 @@ function SearchView({favIds,onToggleFav,onGoDetail,bp,policies}){
                   ))}
                 </div>
               </div>
+              {showMoreFilters&&<>
               <div style={{borderTop:"1px solid #E2E8F0",paddingTop:10}}>
                 <div style={{fontSize:11,fontWeight:700,color:"#374151",lineHeight:1,marginBottom:6,display:"flex",alignItems:"center",gap:4}}>학력</div>
                 <div style={{display:"flex",gap:5,flexWrap:"wrap"}}>
@@ -881,6 +886,7 @@ function SearchView({favIds,onToggleFav,onGoDetail,bp,policies}){
                   ))}
                 </div>
               </div>
+              </>}
             </div>
           </div>
           <div style={{fontSize:12,color:"#94A3B8",marginBottom:10,fontWeight:500}}>
