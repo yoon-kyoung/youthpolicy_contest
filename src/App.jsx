@@ -941,7 +941,7 @@ function SearchView({favIds,onToggleFav,onGoDetail,bp,policies}){
             <div style={{display:"flex",alignItems:"center",gap:12,marginBottom:10}}>
               <div style={{position:"relative",flex:1}}>
                 <input type="search" value={rawQ} onChange={e=>setRawQ(e.target.value)} placeholder="검색어 입력 (정책명, 기관명, 혜택 등)"
-                  style={{width:"100%",padding:"11px 42px 11px 16px",border:"1.5px solid #E2E8F0",borderRadius:12,fontSize:14,outline:"none",fontFamily:"inherit",background:"white",boxSizing:"border-box",transition:"border-color 0.15s"}}
+                  style={{width:"100%",padding:"9px 40px 9px 14px",border:"1.5px solid #E2E8F0",borderRadius:12,fontSize:13,outline:"none",fontFamily:"inherit",background:"white",boxSizing:"border-box",transition:"border-color 0.15s"}}
                   onFocus={e=>e.target.style.borderColor="var(--accent)"}
                   onBlur={e=>e.target.style.borderColor="#E2E8F0"}
                 />
@@ -952,6 +952,7 @@ function SearchView({favIds,onToggleFav,onGoDetail,bp,policies}){
                 <span style={{fontSize:13,color:"#374151",fontWeight:500}}>마감 제외</span>
               </label>
               {query&&<div style={{fontSize:13,color:"#6b7280",whiteSpace:"nowrap"}}>"{query}" 검색 결과</div>}
+              <button onClick={()=>setShowCompare(true)} disabled={compareIds.length<2} style={{display:"flex",alignItems:"center",gap:6,padding:"8px 14px",borderRadius:20,border:"none",background:compareIds.length<2?"#E2E8F0":"var(--accent)",color:compareIds.length<2?"#94A3B8":"white",fontSize:13,fontWeight:700,cursor:compareIds.length<2?"default":"pointer",whiteSpace:"nowrap",flexShrink:0,marginLeft:"auto"}}><Icon name="bar_chart" size={15} color={compareIds.length<2?"#94A3B8":"white"}/>정책 비교하기{compareIds.length>0?` (${compareIds.length})`:""}</button>
             </div>
             <div style={{background:"#FFFFFF",border:"1px solid #E2E8F0",borderRadius:12,padding:"12px 16px",display:"flex",flexDirection:"column",gap:10,marginTop:4}}>
               <div>
