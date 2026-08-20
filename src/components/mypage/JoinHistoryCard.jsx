@@ -28,6 +28,11 @@ function loadLS(key, init) {
 export default function JoinHistoryCard({ policies, favIds, onGoDetail }) {
   const saved = (policies || []).filter(p => favIds?.has(p.id))
 
+  const todayStr = new Date().toISOString().slice(0, 10)
+  const isClosed = (p) => p.deadline !== '상시' && p.deadline < todayStr
+  const activeList = saved.filter(p => !isClosed(p))
+  const closedList = saved.filter(isClosed)
+
   const [statuses,  setStatuses]  = useState(() => loadLS(LS_STATUS, {}))
   const [memos,     setMemos]     = useState(() => loadLS(LS_MEMO,   {}))
   const [drafts,    setDrafts]    = useState({})   // 아직 저장 안 된 메모 초안
@@ -57,28 +62,7 @@ export default function JoinHistoryCard({ policies, favIds, onGoDetail }) {
     setTimeout(() => setSavedFlag(prev => ({ ...prev, [policyId]: false })), 2000)
   }
 
-  return (
-    <div style={styles.card}>
-      <div style={styles.header}>
-        <div style={styles.titleWrap}>
-          <Icon name="receipt_long" size={16} color="#111827" />
-          <span style={styles.title}>신청 내역</span>
-        </div>
-        <span style={styles.count}>{saved.length}건</span>
-      </div>
-
-      {saved.length === 0 ? (
-        <div style={styles.empty}>
-          <Icon name="bookmark" size={36} color="#d1d5db" />
-          <div style={styles.emptyTitle}>저장한 정책이 없습니다</div>
-          <div style={styles.emptyDesc}>
-            검색 또는 AI 챗봇에서 정책을 저장하면<br />
-            여기서 진행 상태와 메모를 관리할 수 있어요
-          </div>
-        </div>
-      ) : (
-        <div style={styles.list}>
-          {saved.map(p => {
+  const renderItem = (p) => {
             const c           = CAT[p.cat] || { bg: '#f3f4f6', text: '#374151', label: '기타' }
             const currentStatus = statuses[p.id] || 'ready'
             const currentIdx  = STATUS_ORDER.indexOf(currentStatus)
@@ -186,8 +170,52 @@ export default function JoinHistoryCard({ policies, favIds, onGoDetail }) {
                 )}
               </div>
             )
-          })}
+  }
+
+  return (
+    <div style={styles.card}>
+      <div style={styles.header}>
+        <div style={styles.titleWrap}>
+          <Icon name="receipt_long" size={16} color="#111827" />
+          <span style={styles.title}>신청 내역</span>
         </div>
+        <span style={styles.count}>{activeList.length}건</span>
+      </div>
+
+      {saved.length === 0 ? (
+        <div style={styles.empty}>
+          <Icon name="bookmark" size={36} color="#d1d5db" />
+          <div style={styles.emptyTitle}>저장한 정책이 없습니다</div>
+          <div style={styles.emptyDesc}>
+            검색 또는 AI 챗봇에서 정책을 저장하면<br />
+            여기서 진행 상태와 메모를 관리할 수 있어요
+          </div>
+        </div>
+      ) : (
+        <>
+          {activeList.length === 0 ? (
+            <div style={styles.emptyDesc}>진행 중인 신청이 없습니다</div>
+          ) : (
+            <div style={styles.list}>
+              {activeList.map(renderItem)}
+            </div>
+          )}
+
+          {closedList.length > 0 && (
+            <>
+              <div style={styles.subHeader}>
+                <div style={styles.titleWrap}>
+                  <Icon name="event" size={16} color="#111827" />
+                  <span style={styles.title}>마감내역</span>
+                </div>
+                <span style={styles.count}>{closedList.length}건</span>
+              </div>
+              <div style={styles.list}>
+                {closedList.map(renderItem)}
+              </div>
+            </>
+          )}
+        </>
       )}
     </div>
   )
@@ -211,6 +239,15 @@ const styles = {
     display: 'flex',
     alignItems: 'center',
     gap: 6,
+  },
+  subHeader: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginTop: 20,
+    marginBottom: 16,
+    paddingTop: 20,
+    borderTop: '1px solid #f3f4f6',
   },
   title: {
     fontSize: 16,
