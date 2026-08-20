@@ -2822,7 +2822,7 @@ function PolicyProposalPage({bp,user,onGoCommunity}){
                   <button key={t.value} onClick={()=>setStatusTab(t.value)} style={{flexShrink:0,padding:bp.isDesktop?"13px 16px":"11px 10px",border:"none",background:"none",cursor:"pointer",whiteSpace:"nowrap",fontSize:bp.isDesktop?14:12,fontWeight:statusTab===t.value?700:500,color:statusTab===t.value?"#111827":"#9ca3af",borderBottom:`2.5px solid ${statusTab===t.value?"#111827":"transparent"}`,transition:"all 0.15s"}}>{t.label} <span style={{opacity:0.6,fontSize:11}}>({statusCounts[t.value]??0})</span></button>
                 ))}
               </HScrollFade>
-              <button type="button" onClick={()=>setShowForm(true)} style={{padding:bp.isMobile?"8px 14px":"9px 20px",borderRadius:20,background:"var(--accent)",border:"none",color:"white",fontSize:bp.isMobile?12:13,fontWeight:600,cursor:"pointer",transition:"opacity 0.15s",flexShrink:0,whiteSpace:"nowrap"}}
+              <button type="button" onClick={()=>setShowForm(true)} style={{padding:bp.isMobile?"8px 14px":"9px 20px",borderRadius:20,background:"var(--accent)",border:"none",color:"white",fontSize:bp.isMobile?12:13,fontWeight:600,cursor:"pointer",transition:"opacity 0.15s",flexShrink:0,whiteSpace:"nowrap",marginLeft:"auto"}}
                 onMouseEnter={e=>e.currentTarget.style.opacity="0.85"} onMouseLeave={e=>e.currentTarget.style.opacity="1"}
               >+ 정책 제안하기</button>
             </div>
