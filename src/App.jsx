@@ -865,11 +865,11 @@ function SearchView({favIds,onToggleFav,onGoDetail,bp,policies}){
                     <button key={m} onClick={()=>setMinistry(m)} style={{padding:"4px 10px",borderRadius:20,border:"1.5px solid",borderColor:ministry===m?"var(--accent)":"#E2E8F0",background:ministry===m?"var(--accent)":"#FFFFFF",color:ministry===m?"#FFFFFF":"#475569",fontSize:12,fontWeight:ministry===m?700:400,cursor:"pointer",transition:"all 0.12s",whiteSpace:"nowrap"}}>{m}</button>
                   ))}
                 </div>
-                <div style={{display:"flex",justifyContent:"flex-end",marginTop:8}}>
+                {!showMoreFilters&&<div style={{display:"flex",justifyContent:"flex-end",marginTop:8}}>
                   <button onClick={()=>setShowMoreFilters(v=>!v)} title="학력·취업 상태 더보기" style={{display:"flex",alignItems:"center",justifyContent:"center",width:30,height:30,borderRadius:"50%",border:"none",background:"var(--accent)",color:"#FFFFFF",cursor:"pointer",boxShadow:"0 2px 6px rgba(0,0,0,0.2)",flexShrink:0}}>
-                    <Icon name={showMoreFilters?"expand_less":"expand_more"} size={18} color="#FFFFFF"/>
+                    <Icon name="expand_more" size={18} color="#FFFFFF"/>
                   </button>
-                </div>
+                </div>}
               </div>
               {showMoreFilters&&<>
               <div style={{borderTop:"1px solid #E2E8F0",paddingTop:10}}>
@@ -886,6 +886,11 @@ function SearchView({favIds,onToggleFav,onGoDetail,bp,policies}){
                   {EMPLOYMENT_STATUSES.map(e=>(
                     <button key={e} onClick={()=>setEmploymentStatus(e)} style={{padding:"4px 10px",borderRadius:20,border:"1.5px solid",borderColor:employmentStatus===e?"var(--accent)":"#E2E8F0",background:employmentStatus===e?"var(--accent)":"#FFFFFF",color:employmentStatus===e?"#FFFFFF":"#475569",fontSize:12,fontWeight:employmentStatus===e?700:400,cursor:"pointer",transition:"all 0.12s",whiteSpace:"nowrap"}}>{e}</button>
                   ))}
+                </div>
+                <div style={{display:"flex",justifyContent:"flex-end",marginTop:8}}>
+                  <button onClick={()=>setShowMoreFilters(v=>!v)} title="학력·취업 상태 접기" style={{display:"flex",alignItems:"center",justifyContent:"center",width:30,height:30,borderRadius:"50%",border:"none",background:"var(--accent)",color:"#FFFFFF",cursor:"pointer",boxShadow:"0 2px 6px rgba(0,0,0,0.2)",flexShrink:0}}>
+                    <Icon name="expand_less" size={18} color="#FFFFFF"/>
+                  </button>
                 </div>
               </div>
               </>}
