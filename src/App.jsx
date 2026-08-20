@@ -1402,7 +1402,7 @@ function CommunityWriteView({bp,user,onSubmit,onCancel}){
           onMouseEnter={e=>e.currentTarget.style.background="rgba(255,255,255,0.22)"} onMouseLeave={e=>e.currentTarget.style.background="rgba(255,255,255,0.12)"}
         ><Icon name="arrow_back" size={18} color="currentColor"/></button>
         <div>
-          <div style={{fontSize:12,opacity:0.6,marginBottom:4}}>청년 정책 커뮤니티</div>
+          <div style={{fontSize:12,opacity:0.6,marginBottom:4}}>청년 ON 커뮤니티</div>
           <h1 style={{fontSize:bp.isDesktop?24:bp.isTablet?20:17,fontWeight:900,margin:0,letterSpacing:"-0.02em",display:"flex",alignItems:"center",gap:8}}><Icon name="edit" size={bp.isDesktop?22:18} color="white"/>새 글 작성</h1>
         </div>
       </div>
@@ -1784,7 +1784,7 @@ function CommunityView({bp,user,onGoProposal,initialCatFilter}){
     <div style={{background:"#f8fafc",minHeight:"100%"}}>
       <div style={{background:"linear-gradient(160deg,#0f172a 0%,var(--accent-dark) 60%,var(--accent) 100%)",padding:bp.isDesktop?"36px 40px 28px":bp.isTablet?"28px 24px 20px":"22px 16px 16px",color:"white"}}>
         <div style={{maxWidth:860,margin:"0 auto"}}>
-          <div style={{fontSize:12,opacity:0.6,marginBottom:8}}>청년 정책 커뮤니티</div>
+          <div style={{fontSize:12,opacity:0.6,marginBottom:8}}>청년 ON 커뮤니티</div>
           <h1 style={{fontSize:bp.isDesktop?32:bp.isTablet?24:20,fontWeight:900,margin:"0 0 8px",letterSpacing:"-0.02em",display:"flex",alignItems:"center",gap:10}}>함께 나누는 정책 이야기 <Icon name="forum" size={bp.isDesktop?28:bp.isTablet?22:18} color="rgba(255,255,255,0.75)"/></h1>
           <p style={{fontSize:bp.isDesktop?15:13,opacity:0.7,margin:0}}>실제 신청 후기, 꿀팁, 궁금한 점을 자유롭게 나눠보세요</p>
         </div>
@@ -2905,7 +2905,7 @@ function LoginPage({setPage,bp}){
             <h2 style={{fontSize:36,fontWeight:900,color:"white",margin:"0 0 16px",lineHeight:1.25,letterSpacing:"-0.02em"}}>한 눈에 보는<br/>청년 정책</h2>
             <p style={{fontSize:15,color:"rgba(255,255,255,0.65)",lineHeight:1.8,margin:"0 0 40px"}}>취업·주거·금융·교육·건강까지<br/>나에게 딱 맞는 청년 정책을 찾아보세요.</p>
             <div style={{display:"flex",flexDirection:"column",gap:12}}>
-              {[{icon:"auto_awesome",text:"AI가 찾아주고 내가 고르는 청년 정책 DB"},{icon:"calendar_month",text:"마감일 캘린더 & 체크리스트로 꼼꼼한 신청 관리"},{icon:"forum",text:"생생한 후기가 쏟아지는 청년 정책 커뮤니티"}].map(({icon,text})=>(
+              {[{icon:"auto_awesome",text:"AI가 찾아주고 내가 고르는 청년 정책 DB"},{icon:"calendar_month",text:"마감일 캘린더 & 체크리스트로 꼼꼼한 신청 관리"},{icon:"forum",text:"생생한 후기가 쏟아지는 청년 ON 커뮤니티"}].map(({icon,text})=>(
                 <div key={text} style={{display:"flex",alignItems:"center",gap:10,color:"rgba(255,255,255,0.8)",fontSize:14}}>
                   <Icon name={icon} size={18} color="rgba(255,255,255,0.8)"/>{text}
                 </div>
@@ -3066,7 +3066,7 @@ function SignupPage({setPage,bp}){
             <h2 style={{fontSize:36,fontWeight:900,color:"white",margin:"0 0 16px",lineHeight:1.25,letterSpacing:"-0.02em"}}>나를 위한<br/>청년 정책 큐레이터</h2>
             <p style={{fontSize:15,color:"rgba(255,255,255,0.65)",lineHeight:1.8,margin:"0 0 40px"}}>AI와 대화로 나만의 맞춤 정책 찾고<br/>한 곳에서 똑똑하게 관리해요.</p>
             <div style={{display:"flex",flexDirection:"column",gap:12}}>
-              {[{icon:"auto_awesome",text:"AI가 찾아주고 내가 고르는 청년 정책 DB"},{icon:"calendar_month",text:"마감일 캘린더 & 체크리스트로 꼼꼼한 신청 관리"},{icon:"forum",text:"생생한 후기가 쏟아지는 청년 정책 커뮤니티"}].map(({icon,text})=>(
+              {[{icon:"auto_awesome",text:"AI가 찾아주고 내가 고르는 청년 정책 DB"},{icon:"calendar_month",text:"마감일 캘린더 & 체크리스트로 꼼꼼한 신청 관리"},{icon:"forum",text:"생생한 후기가 쏟아지는 청년 ON 커뮤니티"}].map(({icon,text})=>(
                 <div key={text} style={{display:"flex",alignItems:"center",gap:10,color:"rgba(255,255,255,0.8)",fontSize:14}}>
                   <Icon name={icon} size={18} color="rgba(255,255,255,0.8)"/>{text}
                 </div>
