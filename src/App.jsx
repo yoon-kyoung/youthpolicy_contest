@@ -856,9 +856,6 @@ function SearchView({favIds,onToggleFav,onGoDetail,bp,policies}){
                   <button onClick={()=>setShowRegionMap(true)} style={{display:"flex",alignItems:"center",gap:4,padding:"4px 10px",borderRadius:20,border:"1.5px solid #E2E8F0",background:"#FFFFFF",color:"#475569",fontSize:12,fontWeight:400,cursor:"pointer",whiteSpace:"nowrap",flexShrink:0,marginLeft:2}}>
                     <Icon name="map" size={13} color="#475569"/>지도로 보기
                   </button>
-                  <button onClick={()=>setShowMoreFilters(v=>!v)} style={{display:"flex",alignItems:"center",gap:4,padding:"4px 10px",borderRadius:20,border:"1.5px solid #E2E8F0",background:showMoreFilters?"var(--accent-bg-active)":"#FFFFFF",color:showMoreFilters?"var(--accent)":"#475569",fontSize:12,fontWeight:400,cursor:"pointer",whiteSpace:"nowrap",flexShrink:0,marginLeft:"auto"}}>
-                    <Icon name={showMoreFilters?"expand_less":"expand_more"} size={14} color={showMoreFilters?"var(--accent)":"#475569"}/>학력·취업 상태
-                  </button>
                 </div>
               </div>
               <div style={{borderTop:"1px solid #E2E8F0",paddingTop:10}}>
@@ -867,6 +864,11 @@ function SearchView({favIds,onToggleFav,onGoDetail,bp,policies}){
                   {MINISTRIES.map(m=>(
                     <button key={m} onClick={()=>setMinistry(m)} style={{padding:"4px 10px",borderRadius:20,border:"1.5px solid",borderColor:ministry===m?"var(--accent)":"#E2E8F0",background:ministry===m?"var(--accent)":"#FFFFFF",color:ministry===m?"#FFFFFF":"#475569",fontSize:12,fontWeight:ministry===m?700:400,cursor:"pointer",transition:"all 0.12s",whiteSpace:"nowrap"}}>{m}</button>
                   ))}
+                </div>
+                <div style={{display:"flex",justifyContent:"flex-end",marginTop:8}}>
+                  <button onClick={()=>setShowMoreFilters(v=>!v)} title="학력·취업 상태 더보기" style={{display:"flex",alignItems:"center",justifyContent:"center",width:30,height:30,borderRadius:"50%",border:"none",background:"var(--accent)",color:"#FFFFFF",cursor:"pointer",boxShadow:"0 2px 6px rgba(0,0,0,0.2)",flexShrink:0}}>
+                    <Icon name={showMoreFilters?"expand_less":"expand_more"} size={18} color="#FFFFFF"/>
+                  </button>
                 </div>
               </div>
               {showMoreFilters&&<>
