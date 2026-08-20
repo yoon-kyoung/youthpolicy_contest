@@ -759,7 +759,30 @@ function SearchView({favIds,onToggleFav,onGoDetail,bp,policies}){
   const [employmentStatus,setEmploymentStatus]=useLocalStorage("yoa:search:employmentStatus","제한없음");
   const [showRegionMap,setShowRegionMap]=useState(false);
   const [showMoreFilters,setShowMoreFilters]=useState(false);
+  const [presets,setPresets]=useLocalStorage("yoa:search:presets",[]);
+  const [savingPreset,setSavingPreset]=useState(false);
+  const [presetName,setPresetName]=useState("");
   const query=useDebounce(rawQ,300);
+
+  const presetLabel=(p)=>[
+    p.cat!=="all"?CATEGORIES.find(c=>c.value===p.cat)?.label:null,
+    p.region!=="전체"?p.region:null,
+    p.ministry!=="전체"?p.ministry:null,
+    p.education!=="전체"?p.education:null,
+    p.employmentStatus!=="제한없음"?p.employmentStatus:null,
+  ].filter(Boolean).join(" · ")||"전체 조건";
+
+  const applyPreset=(p)=>{
+    setCat(p.cat);setRegion(p.region);setMinistry(p.ministry);setEducation(p.education);setEmploymentStatus(p.employmentStatus);
+  };
+  const deletePreset=(id)=>setPresets(presets.filter(p=>p.id!==id));
+  const openSavePreset=()=>{setPresetName(presetLabel({cat,region,ministry,education,employmentStatus}));setSavingPreset(true);};
+  const confirmSavePreset=()=>{
+    const name=presetName.trim();
+    if(!name)return;
+    setPresets([...presets,{id:`${Date.now()}-${Math.random().toString(36).slice(2,7)}`,name,cat,region,ministry,education,employmentStatus}]);
+    setSavingPreset(false);
+  };
 
   useEffect(()=>{
     if(!EDUCATION_LEVELS.includes(education))setEducation("전체");
@@ -895,6 +918,24 @@ function SearchView({favIds,onToggleFav,onGoDetail,bp,policies}){
               </div>
               </>}
             </div>
+          </div>
+          <div style={{display:"flex",alignItems:"center",gap:6,flexWrap:"wrap",marginBottom:14}}>
+            <span style={{fontSize:12,fontWeight:700,color:"#64748B",display:"flex",alignItems:"center",gap:4,flexShrink:0}}><Icon name="bookmark" size={13} color="#64748B"/>내 필터</span>
+            {presets.map(p=>(
+              <div key={p.id} style={{display:"flex",alignItems:"center",gap:2,background:"#F8FAFC",border:"1.5px solid #E2E8F0",borderRadius:20,paddingRight:4}}>
+                <button onClick={()=>applyPreset(p)} style={{padding:"4px 4px 4px 10px",borderRadius:20,border:"none",background:"none",color:"#334155",fontSize:12,fontWeight:500,cursor:"pointer",whiteSpace:"nowrap"}}>{p.name}</button>
+                <button onClick={()=>deletePreset(p.id)} title="삭제" style={{background:"none",border:"none",cursor:"pointer",color:"#cbd5e1",padding:2,display:"flex",alignItems:"center"}}><Icon name="close" size={12} color="#cbd5e1"/></button>
+              </div>
+            ))}
+            {!savingPreset?(
+              <button onClick={openSavePreset} style={{display:"flex",alignItems:"center",gap:4,padding:"4px 10px",borderRadius:20,border:"1.5px dashed #CBD5E1",background:"#FFFFFF",color:"#64748B",fontSize:12,fontWeight:500,cursor:"pointer",whiteSpace:"nowrap"}}><Icon name="add" size={13} color="#64748B"/>현재 조건 저장</button>
+            ):(
+              <div style={{display:"flex",alignItems:"center",gap:6}}>
+                <input value={presetName} onChange={e=>setPresetName(e.target.value)} onKeyDown={e=>{if(e.key==="Enter")confirmSavePreset();if(e.key==="Escape")setSavingPreset(false);}} autoFocus placeholder="필터 이름" style={{padding:"4px 10px",borderRadius:20,border:"1.5px solid var(--accent)",fontSize:12,outline:"none",width:140,fontFamily:"inherit"}}/>
+                <button onClick={confirmSavePreset} style={{padding:"4px 10px",borderRadius:20,border:"none",background:"var(--accent)",color:"white",fontSize:12,fontWeight:600,cursor:"pointer"}}>저장</button>
+                <button onClick={()=>setSavingPreset(false)} style={{background:"none",border:"none",cursor:"pointer",color:"#9ca3af",padding:2,display:"flex",alignItems:"center"}}><Icon name="close" size={14} color="#9ca3af"/></button>
+              </div>
+            )}
           </div>
           <div style={{fontSize:12,color:"#94A3B8",marginBottom:10,fontWeight:500}}>
             {query?`"${query}" 검색 결과 · `:"전체 "}<span style={{color:"var(--accent)",fontWeight:700}}>{filtered.length}건</span>
