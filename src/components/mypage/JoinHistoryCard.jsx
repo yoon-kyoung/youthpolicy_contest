@@ -21,6 +21,34 @@ const STATUS_ORDER = STATUSES.map(s => s.id)
 const LS_STATUS = 'yoa:apply-status'
 const LS_MEMO   = 'yoa:apply-memo'
 
+// 데모용 초기값 — 실제 신청 내역처럼 보이도록 항목별로 다른 상태/메모를 기본값으로 채워둔다.
+// 사용자가 직접 상태를 바꾸거나 메모를 저장하면 그 값이 우선한다.
+const DEFAULT_STATUS = {
+  '20260527005400113224': 'applied', // 청년 국가기술자격 응시료 지원 사업
+  '20260527005400213222': 'done',    // 2026년 청년근로자 교통비 지원사업
+  '20260513005400213200': 'review',  // 부산 청년 임차보증금 대출(머물자리론)
+  '20260422005400212859': 'waiting', // 서귀포시 스타트업베이 운영
+  '20260406005400212459': 'ready',   // 청년도전지원사업
+  '20260406005400212455': 'applied', // (동구) 청년도전지원사업
+  '20250901005400211556': 'done',    // 경북청년 예비창업가 육성사업
+  '20250702005400111145': 'waiting', // 산림산업 현장 맞춤형 인재양성(R&D)
+  '20250520005400210862': 'ready',   // 부산 청년돌봄이음
+  '20250316005400210633': 'review',  // 청년안심주택 공급활성화
+}
+
+const DEFAULT_MEMO = {
+  '20260527005400113224': '필기 합격증 스캔해서 제출함',
+  '20260527005400213222': '6월에 지원 완료, 교통비 3개월치 수령함',
+  '20260513005400213200': '은행 서류 제출 완료, 심사 결과 기다리는 중',
+  '20260422005400212859': '입주 신청서 제출 완료, 결과 발표 대기 중',
+  '20260406005400212459': '참여신청서 작성 중, 마감 전에 제출 예정',
+  '20260406005400212455': '동구청 방문 접수 완료',
+  '20250901005400211556': '작년에 선정되어 사업비 수령 완료',
+  '20250702005400111145': '서류 제출 후 결과 확인 못한 채 마감됨',
+  '20250520005400210862': '신청 서류 준비 중',
+  '20250316005400210633': '무이자 대출 심사 진행 중',
+}
+
 function loadLS(key, init) {
   try { return JSON.parse(localStorage.getItem(key)) ?? init } catch { return init }
 }
@@ -49,7 +77,7 @@ export default function JoinHistoryCard({ policies, favIds, onGoDetail }) {
     setMemoOpen(prev => ({ ...prev, [policyId]: !prev[policyId] }))
     // 열 때 현재 저장된 값으로 초기화
     if (!memoOpen[policyId]) {
-      setDrafts(prev => ({ ...prev, [policyId]: memos[policyId] || '' }))
+      setDrafts(prev => ({ ...prev, [policyId]: memos[policyId] ?? DEFAULT_MEMO[policyId] ?? '' }))
     }
   }
 
@@ -64,12 +92,13 @@ export default function JoinHistoryCard({ policies, favIds, onGoDetail }) {
 
   const renderItem = (p) => {
             const c           = CAT[p.cat] || { bg: '#f3f4f6', text: '#374151', label: '기타' }
-            const currentStatus = statuses[p.id] || 'ready'
+            const currentStatus = statuses[p.id] || DEFAULT_STATUS[p.id] || 'ready'
             const currentIdx  = STATUS_ORDER.indexOf(currentStatus)
             const isOpen      = !!memoOpen[p.id]
-            const draft       = drafts[p.id] ?? memos[p.id] ?? ''
+            const savedMemo   = memos[p.id] ?? DEFAULT_MEMO[p.id] ?? ''
+            const draft       = drafts[p.id] ?? savedMemo
             const isSaved     = !!savedFlag[p.id]
-            const hasMemo     = !!(memos[p.id])
+            const hasMemo     = !!savedMemo
 
             return (
               <div key={p.id} style={styles.item}>
@@ -136,7 +165,7 @@ export default function JoinHistoryCard({ policies, favIds, onGoDetail }) {
                   }}
                 >
                   <Icon name={isOpen ? 'expand_less' : 'edit_note'} size={14} color={isOpen ? '#1D4ED8' : hasMemo ? '#374151' : '#9ca3af'} />
-                  {hasMemo && !isOpen ? `메모 보기 · ${memos[p.id]}` : isOpen ? '메모 접기' : '메모 추가'}
+                  {hasMemo && !isOpen ? `메모 보기 · ${savedMemo}` : isOpen ? '메모 접기' : '메모 추가'}
                 </button>
 
                 {/* 메모 입력 영역 (접기/펴기) */}
