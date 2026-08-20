@@ -256,6 +256,54 @@ function RegionMapModal({region,onSelect,onClose}){
     </div>
   );
 }
+function CompareModal({policies,onRemove,onClose}){
+  const rows=[
+    {label:"카테고리",render:p=><span style={{display:"inline-flex",alignItems:"center",gap:4,fontSize:12,fontWeight:700,padding:"3px 9px",borderRadius:20,background:(CAT_COLORS[p.cat]||{}).bg||"#f3f4f6",color:(CAT_COLORS[p.cat]||{}).text||"#374151"}}>{CATEGORIES.find(c=>c.value===p.cat)?.label||"기타"}</span>},
+    {label:"지역",render:p=>p.region},
+    {label:"기관",render:p=>p.org},
+    {label:"대상",render:p=>p.target},
+    {label:"지원금",render:p=>p.amount>0?`${p.amount.toLocaleString()}만원`:"-"},
+    {label:"마감",render:p=>p.deadline==="상시"?"상시 접수":p.deadline},
+    {label:"지원 내용",render:p=><div style={{whiteSpace:"pre-wrap",fontSize:12,lineHeight:1.6,maxHeight:160,overflowY:"auto"}}>{p.supportFull||"-"}</div>},
+  ];
+  return(
+    <div onClick={onClose} style={{position:"fixed",inset:0,background:"rgba(15,23,42,0.5)",zIndex:200,display:"flex",alignItems:"center",justifyContent:"center",padding:20}}>
+      <div onClick={e=>e.stopPropagation()} style={{background:"white",borderRadius:20,padding:"20px 20px 24px",width:"100%",maxWidth:820,maxHeight:"85vh",overflowY:"auto",boxShadow:"0 20px 60px rgba(0,0,0,0.25)"}}>
+        <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:16}}>
+          <div style={{fontSize:16,fontWeight:800,color:"#111827",display:"flex",alignItems:"center",gap:6}}><Icon name="bar_chart" size={18} color="var(--accent)"/>정책 비교</div>
+          <button onClick={onClose} style={{background:"#f1f5f9",border:"none",borderRadius:"50%",width:26,height:26,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center"}}><Icon name="close" size={14} color="#6b7280"/></button>
+        </div>
+        <div style={{overflowX:"auto"}}>
+          <table style={{width:"100%",borderCollapse:"collapse",minWidth:policies.length*180+100}}>
+            <thead>
+              <tr>
+                <th style={{width:90}}></th>
+                {policies.map(p=>(
+                  <th key={p.id} style={{textAlign:"left",padding:"0 10px 12px",verticalAlign:"top",minWidth:180}}>
+                    <div style={{display:"flex",alignItems:"flex-start",justifyContent:"space-between",gap:6}}>
+                      <div style={{fontSize:13,fontWeight:700,color:"#111827",lineHeight:1.4}}>{p.title}</div>
+                      <button onClick={()=>onRemove(p.id)} title="비교함에서 빼기" style={{flexShrink:0,background:"none",border:"none",cursor:"pointer",color:"#cbd5e1",padding:2,display:"flex"}}><Icon name="close" size={14} color="#cbd5e1"/></button>
+                    </div>
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {rows.map(r=>(
+                <tr key={r.label} style={{borderTop:"1px solid #F1F5F9"}}>
+                  <td style={{padding:"10px 10px 10px 0",fontSize:12,fontWeight:700,color:"#64748B",whiteSpace:"nowrap",verticalAlign:"top"}}>{r.label}</td>
+                  {policies.map(p=>(
+                    <td key={p.id} style={{padding:"10px",fontSize:13,color:"#334155",verticalAlign:"top"}}>{r.render(p)}</td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  );
+}
 export const CAT_COLORS = {
   job:    { bg:"#E0F2FE", border:"#BAE6FD", text:"#0369A1", dot:"#0369A1", grad:"linear-gradient(135deg,#0C4A6E,#0369A1)" },
   house:  { bg:"#DCFCE7", border:"#BBF7D0", text:"#15803D", dot:"#15803D", grad:"linear-gradient(135deg,#14532D,#15803D)" },
@@ -514,7 +562,7 @@ function Pagination({page,pageCount,onChange}){
   );
 }
 
-function PolicyCard({policy,favIds,onToggle,onGoDetail,compact,delay=0}){
+function PolicyCard({policy,favIds,onToggle,onGoDetail,compact,delay=0,compareChecked,onToggleCompare}){
   const [ref,visible]=useReveal();
   const [copied,setCopied]=useState(false);
   const isFav=favIds.has(policy.id);
@@ -537,6 +585,10 @@ function PolicyCard({policy,favIds,onToggle,onGoDetail,compact,delay=0}){
       onMouseEnter={e=>{e.currentTarget.style.transform="translateY(-3px)";e.currentTarget.style.boxShadow="0 8px 28px rgba(0,0,0,0.09)";}}
       onMouseLeave={e=>{e.currentTarget.style.transform="translateY(0)";e.currentTarget.style.boxShadow="";}}
     >
+      {onToggleCompare&&<button onClick={e=>{e.stopPropagation();onToggleCompare(policy.id);}}
+        title="비교함에 담기"
+        style={{position:"absolute",top:9,left:10,width:20,height:20,borderRadius:6,border:compareChecked?"none":"1.5px solid #cbd5e1",background:compareChecked?"var(--accent)":"#FFFFFF",cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",padding:0,zIndex:5}}
+      >{compareChecked&&<Icon name="check" size={13} color="#FFFFFF"/>}</button>}
       {policy.hot&&<span style={{position:"absolute",top:10,right:74,fontSize:11,color:"#FF4D4D",background:"#FFF0F0",padding:"2px 7px",borderRadius:20,fontWeight:700,display:"inline-flex",alignItems:"center",gap:3}}><Icon name="local_fire_department" size={12} color="#FF4D4D"/> 인기</span>}
       <button onClick={handleShare}
         style={{position:"absolute",top:9,right:38,background:"none",border:"none",cursor:"pointer",color:"#d1d5db",padding:4,transition:"color 0.15s,transform 0.12s",display:"flex",alignItems:"center"}}
@@ -784,6 +836,17 @@ function SearchView({favIds,onToggleFav,onGoDetail,bp,policies}){
     setSavingPreset(false);
   };
 
+  const [compareIds,setCompareIds]=useState([]);
+  const [showCompare,setShowCompare]=useState(false);
+  const toggleCompare=(id)=>{
+    setCompareIds(prev=>{
+      if(prev.includes(id))return prev.filter(x=>x!==id);
+      if(prev.length>=3)return prev;
+      return [...prev,id];
+    });
+  };
+  const compareList=policies.filter(p=>compareIds.includes(p.id));
+
   useEffect(()=>{
     if(!EDUCATION_LEVELS.includes(education))setEducation("전체");
     if(!EMPLOYMENT_STATUSES.includes(employmentStatus))setEmploymentStatus("제한없음");
@@ -944,13 +1007,23 @@ function SearchView({favIds,onToggleFav,onGoDetail,bp,policies}){
           {filtered.length===0
             ?<div style={{textAlign:"center",padding:"80px 0",color:"#9ca3af"}}><div style={{marginBottom:12}}><Icon name="search" size={48} color="#9ca3af"/></div><div style={{fontSize:16,fontWeight:600,color:"#374151",marginBottom:6}}>검색 결과가 없어요</div><div style={{fontSize:13}}>다른 키워드나 카테고리를 시도해 보세요</div></div>
             :<>
-              <div style={{display:"grid",gridTemplateColumns:`repeat(${cols},1fr)`,gap:14}}>{pageItems.map((p,i)=><PolicyCard key={p.id} policy={p} favIds={favIds} onToggle={onToggleFav} onGoDetail={onGoDetail} delay={i*40}/>)}</div>
+              <div style={{display:"grid",gridTemplateColumns:`repeat(${cols},1fr)`,gap:14}}>{pageItems.map((p,i)=><PolicyCard key={p.id} policy={p} favIds={favIds} onToggle={onToggleFav} onGoDetail={onGoDetail} delay={i*40} compareChecked={compareIds.includes(p.id)} onToggleCompare={toggleCompare}/>)}</div>
               <Pagination page={pageNum} pageCount={pageCount} onChange={setPageNum}/>
             </>
           }
           </div>
         </div>
+        {compareIds.length>0&&
+          <div style={{position:"sticky",bottom:0,left:0,right:0,display:"flex",justifyContent:"center",padding:"14px 0",pointerEvents:"none"}}>
+            <div style={{display:"flex",alignItems:"center",gap:12,background:"#111827",borderRadius:30,padding:"10px 12px 10px 18px",boxShadow:"0 10px 30px rgba(0,0,0,0.25)",pointerEvents:"auto"}}>
+              <span style={{color:"white",fontSize:13,fontWeight:600}}>비교함 {compareIds.length}/3</span>
+              <button onClick={()=>setCompareIds([])} style={{background:"none",border:"none",color:"rgba(255,255,255,0.6)",fontSize:13,cursor:"pointer",padding:"4px 6px"}}>비우기</button>
+              <button onClick={()=>setShowCompare(true)} disabled={compareIds.length<2} style={{display:"flex",alignItems:"center",gap:6,padding:"8px 18px",borderRadius:20,border:"none",background:compareIds.length<2?"#374151":"var(--accent)",color:"white",fontSize:13,fontWeight:700,cursor:compareIds.length<2?"default":"pointer",whiteSpace:"nowrap"}}><Icon name="bar_chart" size={15} color="white"/>비교하기</button>
+            </div>
+          </div>
+        }
         {showRegionMap&&<RegionMapModal region={region} onSelect={r=>{setRegion(r);setShowRegionMap(false);}} onClose={()=>setShowRegionMap(false)}/>}
+        {showCompare&&<CompareModal policies={compareList} onRemove={toggleCompare} onClose={()=>setShowCompare(false)}/>}
       </div>
     );
   }
