@@ -278,8 +278,8 @@ function CompareModal({policies,onRemove,onClose}){
     {label:"지원 내용",render:p=><div style={{whiteSpace:"pre-wrap",fontSize:12,lineHeight:1.6,maxHeight:160,overflowY:"auto"}}>{p.supportFull||"-"}</div>},
   ];
   return(
-    <div onClick={onClose} style={{position:"fixed",inset:0,background:"rgba(15,23,42,0.5)",zIndex:200,display:"flex",alignItems:"center",justifyContent:"center",padding:20}}>
-      <div onClick={e=>e.stopPropagation()} style={{background:"white",borderRadius:20,padding:"20px 20px 24px",width:"100%",maxWidth:820,maxHeight:"85vh",overflowY:"auto",boxShadow:"0 20px 60px rgba(0,0,0,0.25)"}}>
+    <div style={{width:"100%",maxWidth:820,pointerEvents:"auto"}}>
+      <div style={{background:"white",borderRadius:20,padding:"20px 20px 24px",maxHeight:"55vh",overflowY:"auto",boxShadow:"0 -10px 40px rgba(0,0,0,0.18)",border:"1.5px solid #E2E8F0",animation:"fadeUp 0.25s ease"}}>
         <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:16}}>
           <div style={{fontSize:16,fontWeight:800,color:"#111827",display:"flex",alignItems:"center",gap:6}}><Icon name="bar_chart" size={18} color="var(--accent)"/>정책 비교</div>
           <button onClick={onClose} style={{background:"#f1f5f9",border:"none",borderRadius:"50%",width:26,height:26,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center"}}><Icon name="close" size={14} color="#6b7280"/></button>
@@ -940,7 +940,7 @@ function SearchView({favIds,onToggleFav,onGoDetail,bp,policies}){
   if(bp.isDesktop){
     return(
       <div style={{display:"flex",height:"100%",background:"#F5F9FC"}}>
-        <div style={{width:220,flexShrink:0,background:"white",borderRight:"1px solid #E2E8F0",padding:"24px 16px",overflowY:"auto"}}>
+        <div style={{width:220,flexShrink:0,background:"white",borderRight:"1px solid #E2E8F0",padding:"24px 16px",overflowY:"auto",filter:compareMode?"grayscale(1) opacity(0.55)":"none",transition:"filter 0.2s"}}>
           <div style={{fontSize:13,fontWeight:700,color:"#475569",marginBottom:14}}>카테고리</div>
           {CATEGORIES.map(c=>(
             <button key={c.value} onClick={()=>setCat(c.value)}
@@ -980,7 +980,7 @@ function SearchView({favIds,onToggleFav,onGoDetail,bp,policies}){
               {query&&<div style={{fontSize:13,color:"#6b7280",whiteSpace:"nowrap"}}>"{query}" 검색 결과</div>}
               <button onClick={toggleCompareMode} style={{display:"flex",alignItems:"center",gap:6,padding:"8px 14px",borderRadius:20,border:compareMode?"none":"1.5px solid #E2E8F0",background:compareMode?"var(--accent)":"white",color:compareMode?"white":"#475569",fontSize:13,fontWeight:700,cursor:"pointer",whiteSpace:"nowrap",flexShrink:0,marginLeft:"auto"}}><Icon name={compareMode?"close":"bar_chart"} size={15} color={compareMode?"white":"#475569"}/>{compareMode?"비교 모드 종료":"정책 비교하기"}</button>
             </div>
-            <div style={{background:"#FFFFFF",border:"1px solid #E2E8F0",borderRadius:12,padding:"12px 16px",display:"flex",flexDirection:"column",gap:10,marginTop:4}}>
+            <div style={{background:"#FFFFFF",border:"1px solid #E2E8F0",borderRadius:12,padding:"12px 16px",display:"flex",flexDirection:"column",gap:10,marginTop:4,filter:compareMode?"grayscale(1) opacity(0.55)":"none",transition:"filter 0.2s"}}>
               <div>
                 <div style={{fontSize:11,fontWeight:700,color:"#374151",lineHeight:1,marginBottom:6,display:"flex",alignItems:"center",gap:4}}>지역</div>
                 <div style={{display:"flex",gap:5,flexWrap:"wrap",alignItems:"center"}}>
@@ -1046,16 +1046,16 @@ function SearchView({favIds,onToggleFav,onGoDetail,bp,policies}){
           </div>
         </div>
         {compareIds.length>0&&
-          <div style={{position:"sticky",bottom:0,left:0,right:0,display:"flex",justifyContent:"center",padding:"14px 0",pointerEvents:"none"}}>
+          <div style={{position:"fixed",bottom:0,left:0,right:0,zIndex:200,display:"flex",flexDirection:"column",alignItems:"center",gap:10,padding:"0 20px 14px",pointerEvents:"none"}}>
+            {showCompare&&<CompareModal policies={compareList} onRemove={toggleCompare} onClose={()=>setShowCompare(false)}/>}
             <div style={{display:"flex",alignItems:"center",gap:12,background:"#111827",borderRadius:30,padding:"10px 12px 10px 18px",boxShadow:"0 10px 30px rgba(0,0,0,0.25)",pointerEvents:"auto"}}>
               <span style={{color:"white",fontSize:13,fontWeight:600}}>비교함 {compareIds.length}/3</span>
               <button onClick={()=>setCompareIds([])} style={{background:"none",border:"none",color:"rgba(255,255,255,0.6)",fontSize:13,cursor:"pointer",padding:"4px 6px"}}>비우기</button>
-              <button onClick={()=>setShowCompare(true)} disabled={compareIds.length<2} style={{display:"flex",alignItems:"center",gap:6,padding:"8px 18px",borderRadius:20,border:"none",background:compareIds.length<2?"#374151":"var(--accent)",color:"white",fontSize:13,fontWeight:700,cursor:compareIds.length<2?"default":"pointer",whiteSpace:"nowrap"}}><Icon name="bar_chart" size={15} color="white"/>비교하기</button>
+              <button onClick={()=>setShowCompare(v=>!v)} disabled={compareIds.length<2} style={{display:"flex",alignItems:"center",gap:6,padding:"8px 18px",borderRadius:20,border:"none",background:compareIds.length<2?"#374151":"var(--accent)",color:"white",fontSize:13,fontWeight:700,cursor:compareIds.length<2?"default":"pointer",whiteSpace:"nowrap"}}><Icon name="bar_chart" size={15} color="white"/>{showCompare?"닫기":"비교하기"}</button>
             </div>
           </div>
         }
         {showRegionMap&&<RegionMapModal region={region} onSelect={r=>{setRegion(r);setShowRegionMap(false);}} onClose={()=>setShowRegionMap(false)}/>}
-        {showCompare&&<CompareModal policies={compareList} onRemove={toggleCompare} onClose={()=>setShowCompare(false)}/>}
       </div>
     );
   }
