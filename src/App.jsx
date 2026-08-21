@@ -2617,6 +2617,12 @@ function ProposalWriteView({category,setCategory,title,setTitle,background,setBa
     return [...new Set([...HASHTAG_SUGGESTIONS,...fromProposals])];
   },[proposals]);
 
+  const autoTags=useMemo(()=>{
+    const found=[...new Set(tagPool.filter(t=>title.includes(t)))];
+    const specific=found.filter(t=>!found.some(o=>o!==t&&o.length>t.length&&o.includes(t)));
+    return specific.slice(0,6);
+  },[title,tagPool]);
+
   const handleSaveDraft=()=>{
     onSaveDraft();
     setDraftSaved(true);
@@ -2709,7 +2715,14 @@ function ProposalWriteView({category,setCategory,title,setTitle,background,setBa
 
           <form onSubmit={handleFormSubmit} style={{background:"white",borderRadius:16,border:"1.5px solid #E2E8F0",padding:bp.isDesktop?24:16,display:"flex",flexDirection:"column",gap:16}}>
             <ProposalFormRow label="제목">
-              <HashtagAutocompleteField as="input" value={title} onChange={setTitle} tagPool={tagPool} placeholder="제안 제목을 입력하세요 (#해시태그 입력 시 자동완성)" style={{width:"100%",padding:"11px 14px",borderRadius:10,border:"1.5px solid #E2E8F0",fontSize:14,fontFamily:"inherit",boxSizing:"border-box"}}/>
+              <input value={title} onChange={e=>setTitle(e.target.value)} placeholder="제안 제목을 입력하세요" style={{width:"100%",padding:"11px 14px",borderRadius:10,border:"1.5px solid #E2E8F0",fontSize:14,fontFamily:"inherit",boxSizing:"border-box"}}/>
+              {autoTags.length>0&&(
+                <div style={{display:"flex",gap:6,flexWrap:"wrap",marginTop:8}}>
+                  {autoTags.map(t=>(
+                    <span key={t} style={{fontSize:12,fontWeight:600,padding:"3px 10px",borderRadius:20,background:"var(--accent-bg)",color:"var(--accent)"}}>#{t}</span>
+                  ))}
+                </div>
+              )}
             </ProposalFormRow>
 
             <ProposalFormRow label="정책 제안분야">
