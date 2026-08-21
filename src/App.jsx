@@ -193,6 +193,12 @@ const REGIONS = [
   "강원","충북","충남","전북","전남","경북","경남","제주","세종",
 ];
 
+const HASHTAG_SUGGESTIONS = [
+  ...REGIONS.slice(1),
+  ...CATEGORIES.slice(1).flatMap(c=>c.label.split("·")),
+  "주거지원","취업준비","창업지원","등록금","전세","월세","육아","대학생","청년",
+];
+
 const EDUCATION_LEVELS = [
   "전체","중졸 이하","고교 재학","고교 졸업","전문대 재학","전문대 졸업",
   "대학 재학","대학 졸업","대학원 재학","대학원 졸업","기타",
@@ -2477,6 +2483,68 @@ function ProposalFormRow({label,children}){
   );
 }
 
+function HashtagAutocompleteField({as="input",value,onChange,tagPool,placeholder,rows,style}){
+  const ref=useRef(null);
+  const [caret,setCaret]=useState(null);
+  const [activeIdx,setActiveIdx]=useState(0);
+
+  const match=useMemo(()=>{
+    if(caret==null)return null;
+    const m=value.slice(0,caret).match(/#([^\s#]*)$/);
+    return m?{query:m[1],start:caret-m[0].length}:null;
+  },[value,caret]);
+
+  const suggestions=useMemo(()=>{
+    if(!match)return [];
+    return tagPool.filter(t=>t!==match.query&&t.startsWith(match.query)).slice(0,6);
+  },[match,tagPool]);
+
+  useEffect(()=>{setActiveIdx(0);},[suggestions.length,match?.query]);
+
+  const applySuggestion=tag=>{
+    if(!match)return;
+    const newCaret=match.start+tag.length+2;
+    onChange(value.slice(0,match.start)+"#"+tag+" "+value.slice(caret));
+    setCaret(newCaret);
+    requestAnimationFrame(()=>{ref.current?.setSelectionRange(newCaret,newCaret);});
+  };
+
+  const handleKeyDown=e=>{
+    if(!suggestions.length)return;
+    if(e.key==="ArrowDown"){e.preventDefault();setActiveIdx(i=>(i+1)%suggestions.length);}
+    else if(e.key==="ArrowUp"){e.preventDefault();setActiveIdx(i=>(i-1+suggestions.length)%suggestions.length);}
+    else if(e.key==="Enter"||e.key==="Tab"){e.preventDefault();applySuggestion(suggestions[activeIdx]);}
+    else if(e.key==="Escape"){setCaret(null);}
+  };
+
+  const Field=as;
+  return(
+    <div style={{position:"relative"}}>
+      <Field
+        ref={ref}
+        value={value}
+        placeholder={placeholder}
+        rows={rows}
+        style={style}
+        onChange={e=>{onChange(e.target.value);setCaret(e.target.selectionStart);}}
+        onClick={e=>setCaret(e.target.selectionStart)}
+        onKeyUp={e=>setCaret(e.target.selectionStart)}
+        onKeyDown={handleKeyDown}
+        onBlur={()=>setTimeout(()=>setCaret(null),120)}
+      />
+      {suggestions.length>0&&(
+        <div style={{position:"absolute",top:"100%",left:0,marginTop:4,background:"white",border:"1.5px solid #E2E8F0",borderRadius:10,boxShadow:"0 4px 16px rgba(0,0,0,0.1)",zIndex:30,overflow:"hidden",minWidth:140}}>
+          {suggestions.map((t,i)=>(
+            <div key={t} onMouseDown={e=>{e.preventDefault();applySuggestion(t);}} style={{padding:"8px 14px",fontSize:13,fontWeight:i===activeIdx?700:500,color:i===activeIdx?"var(--accent)":"#374151",background:i===activeIdx?"var(--accent-bg)":"white",cursor:"pointer"}}>
+              #{t}
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
 const PROPOSAL_MIN_LEN={background:100,content:300,expectedEffect:200};
 
 function ProposalWriteView({category,setCategory,title,setTitle,background,setBackground,content,setContent,expectedEffect,setExpectedEffect,attachmentName,setAttachmentName,isTeam,setIsTeam,teamMembers,setTeamMembers,proposals,onSubmit,onSaveDraft,onBack,bp}){
@@ -2487,6 +2555,14 @@ function ProposalWriteView({category,setCategory,title,setTitle,background,setBa
   const [checkedSignature,setCheckedSignature]=useState(null);
   const [teamInput,setTeamInput]=useState("");
   const [draftSaved,setDraftSaved]=useState(false);
+
+  const tagPool=useMemo(()=>{
+    const fromProposals=(proposals||[]).flatMap(p=>{
+      const text=[p.title,p.content,p.background,p.expectedEffect].filter(Boolean).join(" ");
+      return (text.match(/#[^\s#]+/g)||[]).map(t=>t.slice(1));
+    });
+    return [...new Set([...HASHTAG_SUGGESTIONS,...fromProposals])];
+  },[proposals]);
 
   const handleSaveDraft=()=>{
     onSaveDraft();
@@ -2574,7 +2650,7 @@ function ProposalWriteView({category,setCategory,title,setTitle,background,setBa
 
           <form onSubmit={handleFormSubmit} style={{background:"white",borderRadius:16,border:"1.5px solid #E2E8F0",padding:bp.isDesktop?24:16,display:"flex",flexDirection:"column",gap:16}}>
             <ProposalFormRow label="제목">
-              <input value={title} onChange={e=>setTitle(e.target.value)} placeholder="제안 제목을 입력하세요" style={{width:"100%",padding:"11px 14px",borderRadius:10,border:"1.5px solid #E2E8F0",fontSize:14,fontFamily:"inherit",boxSizing:"border-box"}}/>
+              <HashtagAutocompleteField as="input" value={title} onChange={setTitle} tagPool={tagPool} placeholder="제안 제목을 입력하세요 (#해시태그 입력 시 자동완성)" style={{width:"100%",padding:"11px 14px",borderRadius:10,border:"1.5px solid #E2E8F0",fontSize:14,fontFamily:"inherit",boxSizing:"border-box"}}/>
             </ProposalFormRow>
 
             <ProposalFormRow label="정책 제안분야">
@@ -2623,7 +2699,7 @@ function ProposalWriteView({category,setCategory,title,setTitle,background,setBa
             </ProposalFormRow>
 
             <ProposalFormRow label="제안내용">
-              <textarea value={content} onChange={e=>setContent(e.target.value)} placeholder="어떤 정책이 필요한지 구체적으로 적어주세요" rows={5} style={{width:"100%",padding:"11px 14px",borderRadius:10,border:"1.5px solid #E2E8F0",fontSize:14,fontFamily:"inherit",resize:"vertical",boxSizing:"border-box"}}/>
+              <HashtagAutocompleteField as="textarea" value={content} onChange={setContent} tagPool={tagPool} placeholder="어떤 정책이 필요한지 구체적으로 적어주세요 (#해시태그 입력 시 자동완성)" rows={5} style={{width:"100%",padding:"11px 14px",borderRadius:10,border:"1.5px solid #E2E8F0",fontSize:14,fontFamily:"inherit",resize:"vertical",boxSizing:"border-box"}}/>
               <div style={{fontSize:11,marginTop:4,color:lenOk.content?"#16A34A":"#9ca3af"}}>{content.trim().length} / {PROPOSAL_MIN_LEN.content}자 이상</div>
             </ProposalFormRow>
 
