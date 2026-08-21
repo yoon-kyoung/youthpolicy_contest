@@ -209,9 +209,17 @@ function useSpeechSynthesis() {
   return { supported, speakingId, speak, stop }
 }
 
+function linkify(text) {
+  return text.split(/(https?:\/\/[^\s)]+)/g).map((seg, j) =>
+    /^https?:\/\//.test(seg)
+      ? <a key={j} href={seg} target="_blank" rel="noopener noreferrer" style={{ color: 'var(--accent)', wordBreak: 'break-all' }}>{seg}</a>
+      : seg,
+  )
+}
+
 function renderInline(text) {
   return text.split(/(\*\*[^*]+\*\*)/g).map((p, i) =>
-    /^\*\*[^*]+\*\*$/.test(p) ? <strong key={i}>{p.slice(2, -2)}</strong> : <span key={i}>{p}</span>,
+    /^\*\*[^*]+\*\*$/.test(p) ? <strong key={i}>{linkify(p.slice(2, -2))}</strong> : <span key={i}>{linkify(p)}</span>,
   )
 }
 
