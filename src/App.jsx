@@ -823,7 +823,7 @@ function PolicyDetailView({policy,favIds,onToggle,onBack,onGoDetail,bp,policies}
 
 function SearchView({favIds,onToggleFav,onGoDetail,bp,policies}){
   const [rawQ,setRawQ]=useState("");
-  const [cat,setCat]=useLocalStorage("yoa:cat","all");
+  const [cat,setCat]=useState("all");
   const [sort,setSort]=useLocalStorage("yoa:sort","popular");
   const [excludeExpired,setExcludeExpired]=useLocalStorage("yoa:excludeExpired",false);
   const [ministry,setMinistry]=useLocalStorage("yoa:search:ministry","전체");
