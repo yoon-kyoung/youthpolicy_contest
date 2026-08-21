@@ -2668,8 +2668,8 @@ function ProposalWriteView({category,setCategory,title,setTitle,background,setBa
 
             <div style={{display:"flex",justifyContent:"flex-end",gap:8}}>
               <div style={{position:"relative"}}>
-                <button type="button" onClick={handleSaveDraft} style={{display:"flex",alignItems:"center",gap:5,padding:"9px 16px",borderRadius:20,background:"white",border:"1.5px solid #E2E8F0",color:"#374151",fontSize:13,fontWeight:600,cursor:"pointer",transition:"opacity 0.15s"}}>
-                  <Icon name="save" size={15} color="#6b7280"/>임시저장
+                <button type="button" onClick={handleSaveDraft} style={{padding:"9px 16px",borderRadius:20,background:"white",border:"1.5px solid #E2E8F0",color:"#374151",fontSize:13,fontWeight:600,cursor:"pointer",transition:"opacity 0.15s"}}>
+                  임시저장
                 </button>
                 {draftSaved&&<div style={{position:"absolute",bottom:"calc(100% + 8px)",left:"50%",transform:"translateX(-50%)",background:"#1f2937",color:"white",borderRadius:8,padding:"6px 14px",fontSize:12,fontWeight:600,whiteSpace:"nowrap",zIndex:20,boxShadow:"0 2px 8px rgba(0,0,0,0.18)",animation:"fadeUp 0.2s ease"}}>임시저장 되었습니다</div>}
               </div>
