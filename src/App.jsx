@@ -1455,10 +1455,10 @@ function CalendarView({onGoDetail,bp,policies}){
                       onMouseEnter={e=>{e.currentTarget.style.transform="translateY(-2px)";e.currentTarget.style.boxShadow="0 4px 16px rgba(0,0,0,0.07)";}}
                       onMouseLeave={e=>{e.currentTarget.style.transform="";e.currentTarget.style.boxShadow="";}}
                     >
-                      <div><Icon name={CAT_ICON[p.cat]||"apps"} size={22} color={CAT_COLORS[p.cat]?.text}/></div>
-                      <div style={{flex:1}}>
-                        <div style={{fontWeight:700,fontSize:13,color:"#111827"}}>{p.title}</div>
-                        <div style={{fontSize:11,color:"#9ca3af",marginTop:2}}>{p.org} · {p.benefit}</div>
+                      <div style={{flexShrink:0}}><Icon name={CAT_ICON[p.cat]||"apps"} size={22} color={CAT_COLORS[p.cat]?.text}/></div>
+                      <div style={{flex:1,minWidth:0}}>
+                        <div style={{fontWeight:700,fontSize:13,color:"#111827",overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{p.title}</div>
+                        <div style={{fontSize:11,color:"#9ca3af",marginTop:2,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{p.org} · {p.benefit}</div>
                       </div>
                       {(()=>{const dd=daysLeft(p.deadline);const s=dDayStyle(dd);return<span style={{fontSize:12,color:s.color,fontWeight:700,background:s.bg,border:`1px solid ${s.border}`,padding:"3px 8px",borderRadius:20,whiteSpace:"nowrap"}}>D-{dd}</span>;})()}
                     </div>
@@ -1924,7 +1924,7 @@ function CommunityPostDetailView({post,bp,user,policies,onGoDetail,favIds,onTogg
             </div>
           )}
           <div style={{display:"flex",justifyContent:"flex-end",gap:14,marginTop:20}}>
-            <span style={{fontSize:13,color:"#6b7280",display:"flex",alignItems:"center",gap:4}}><Icon name="favorite" size={14} color="#9ca3af"/> {(post.likes||0)+(liked?1:0)}</span>
+            <span style={{fontSize:13,color:"#6b7280",display:"flex",alignItems:"center",gap:4}}><Icon name="favorite" size={14} color="#9ca3af"/> {post.likes||0}</span>
             <span style={{fontSize:13,color:"#6b7280",display:"flex",alignItems:"center",gap:4}}><Icon name="chat_bubble" size={14} color="#9ca3af"/> {totalComments}</span>
           </div>
         </div>
@@ -2367,6 +2367,13 @@ function ProposalDetailView({proposal,user,onVote,onBack,bp}){
   const [voted,setVoted]=useLocalStorage(`yoa:proposalVoted_${proposal.id}`,false);
   const [comments,setComments]=useState([]);
   const [commentText,setCommentText]=useState("");
+  const commentRef=useRef(null);
+  useEffect(()=>{
+    const el=commentRef.current;
+    if(!el)return;
+    el.style.height="auto";
+    el.style.height=Math.min(el.scrollHeight,120)+"px";
+  },[commentText]);
   const [copied,setCopied]=useState(false);
   const s=proposalStatusMeta(proposal.status);
   const c=CAT_COLORS[proposal.category]||{grad:"linear-gradient(135deg,var(--accent-dark),var(--accent))",bg:"var(--accent-bg)",border:"var(--accent-bg)",text:"var(--accent)"};
@@ -2522,7 +2529,7 @@ function ProposalDetailView({proposal,user,onVote,onBack,bp}){
           <section style={{background:"white",borderRadius:20,padding:bp.isDesktop?"24px 28px":"18px 16px",border:"1.5px solid #f1f5f9"}}>
             <h2 style={{fontSize:15,fontWeight:800,color:"#111827",marginTop:0,marginBottom:14,display:"flex",alignItems:"center",gap:6}}><Icon name="chat_bubble" size={16}/>추가 의견 <span style={{color:"#9ca3af",fontWeight:600}}>({comments.length})</span></h2>
             <form onSubmit={handleAddComment} style={{display:"flex",gap:8,marginBottom:comments.length?16:0}}>
-              <input value={commentText} onChange={e=>setCommentText(e.target.value)} placeholder="다른 청년들에게 보충 의견을 남겨보세요" style={{flex:1,padding:"10px 14px",borderRadius:10,border:"1.5px solid #E2E8F0",fontSize:13,fontFamily:"inherit"}}/>
+              <textarea ref={commentRef} value={commentText} onChange={e=>setCommentText(e.target.value)} onKeyDown={e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();handleAddComment(e);}}} placeholder="다른 청년들에게 보충 의견을 남겨보세요 (Shift+Enter로 줄바꿈)" rows={1} style={{flex:1,padding:"10px 14px",borderRadius:10,border:"1.5px solid #E2E8F0",fontSize:13,fontFamily:"inherit",resize:"none",overflow:"hidden",maxHeight:120,lineHeight:1.5}}/>
               <button type="submit" style={{padding:"9px 18px",borderRadius:10,background:"var(--accent)",border:"none",color:"white",fontSize:13,fontWeight:700,cursor:"pointer",flexShrink:0,transition:"opacity 0.15s"}}
                 onMouseEnter={e=>e.currentTarget.style.opacity="0.85"} onMouseLeave={e=>e.currentTarget.style.opacity="1"}
               >등록</button>

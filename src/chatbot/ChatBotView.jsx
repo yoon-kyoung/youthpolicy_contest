@@ -453,6 +453,19 @@ export default function ChatBotView({ bp, favIds, onToggleFav, onGoDetail, reset
     },
   ])
   const [input, setInput] = useState('')
+  const promptRef = useRef(null)
+  useEffect(() => {
+    const el = promptRef.current
+    if (!el) return
+    el.style.height = 'auto'
+    el.style.height = Math.min(el.scrollHeight, 120) + 'px'
+  }, [input])
+  const handlePromptKeyDown = (e) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault()
+      sendMessage()
+    }
+  }
   const { supported: micSupported, listening: micListening, toggle: toggleMic } = useSpeechRecognition({
     onResult: (text) => setInput(text),
   })
@@ -809,17 +822,19 @@ export default function ChatBotView({ bp, favIds, onToggleFav, onGoDetail, reset
             onBlurCapture={e=>{e.currentTarget.style.borderColor='#e5e7eb';e.currentTarget.style.boxShadow='0 2px 10px rgba(0,0,0,0.06)'}}
           >
             <Icon name="search" size={20} color="#9ca3af"/>
-            <input
-              type="text"
+            <textarea
+              ref={promptRef}
+              rows={1}
               placeholder="자유롭게 물어보세요 (예: 27살 서울 월세 지원)"
               value={input}
               onChange={e=>setInput(e.target.value)}
-              onKeyDown={e=>e.key==='Enter'&&sendMessage()}
+              onKeyDown={handlePromptKeyDown}
               autoFocus
               style={{
                 flex:1,minWidth:0,border:'none',background:'transparent',
                 fontSize:bp==='mobile'?13:15,fontFamily:'inherit',outline:'none',
-                color:'#111827',
+                color:'#111827',resize:'none',overflow:'hidden',maxHeight:120,
+                lineHeight:1.5,padding:0,
               }}
             />
             <MicButton listening={micListening} supported={micSupported} onClick={toggleMic}/>
@@ -1104,18 +1119,20 @@ export default function ChatBotView({ bp, favIds, onToggleFav, onGoDetail, reset
                 cursor:'pointer',fontSize:18,lineHeight:1,transition:'all 0.15s',flexShrink:0,
                 display:'flex',alignItems:'center',justifyContent:'center',
               }} title="옵션 선택"><Icon name="tune" size={18}/></button>
-              <input
-                type="text"
+              <textarea
+                ref={promptRef}
+                rows={1}
                 placeholder="자유롭게 물어보세요 (예: 27살 서울 월세 지원)"
                 value={input}
                 onChange={(e)=>setInput(e.target.value)}
-                onKeyDown={(e)=>e.key==='Enter'&&sendMessage()}
+                onKeyDown={handlePromptKeyDown}
                 disabled={loading}
                 autoFocus
                 style={{
                   flex:1,minWidth:0,padding:'12px 14px',borderRadius:12,border:`1.5px solid ${C.borderGray}`,
                   background:C.secondary,fontSize:14,fontFamily:'inherit',outline:'none',
-                  transition:'border-color 0.15s',
+                  transition:'border-color 0.15s',resize:'none',overflow:'hidden',maxHeight:120,
+                  lineHeight:1.5,
                 }}
                 onFocus={e=>{e.target.style.borderColor=C.primary}}
                 onBlur={e=>{e.target.style.borderColor=C.borderGray}}
