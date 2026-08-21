@@ -953,7 +953,10 @@ export default function ChatBotView({ bp, favIds, onToggleFav, onGoDetail, reset
                     ))}
                   </span>
                 ):(
-                  msg.text.split('\n').map((line, j)=><p key={j} style={{margin:'2px 0'}}>{renderInline(line)}</p>)
+                  msg.text.split('\n').map((line, j)=>{
+                    const isNewItem = /^\d+\.\s/.test(line.trim())
+                    return <p key={j} style={{margin: isNewItem && j>0 ? '14px 0 2px' : '2px 0'}}>{renderInline(line)}</p>
+                  })
                 )}
               </div>
               {msg.from === 'bot' && !msg.streaming && msg.text && ttsSupported && (
