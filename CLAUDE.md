@@ -51,7 +51,7 @@ fontTools(`pip install fonttools`)로 `TTFont(path)`를 열어 `'fvar' in f`와 
 | `person` | 마이페이지 |
 | `forum` | 커뮤니티 네비 |
 | `auto_awesome` | 나의 맞춤 정책 |
-| `task_alt` | 신청 체크리스트 |
+| `task_alt` | 커뮤니티 후기 "실제 신청 인증" 배지 / 정책제안 - 신청 정책 선택됨 표시 |
 | `calendar_month` | 정책 캘린더 |
 | `star` | 저장 (fill=1 저장됨, fill=0 저장하기) |
 | `local_fire_department` | 인기 |
