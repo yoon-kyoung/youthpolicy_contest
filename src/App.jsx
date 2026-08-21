@@ -2002,21 +2002,17 @@ function CommunityView({bp,user,policies,favIds,onToggleFav,onGoProposal,onGoDet
   const [proposalBannerDismissed,setProposalBannerDismissed]=useLocalStorage("yoa:proposalBannerDismissed",false);
   const [search,setSearch]=useState("");
   const [sortBy,setSortBy]=useState("recent");
-  const [policyCatFilter,setPolicyCatFilter]=useState("all");
-  const [regionFilter,setRegionFilter]=useState("전체");
   const cats=["후기","정보","Q&A","정책제안 팀모집"];
   const filtered=posts
     .filter(p=>p.cat===catFilter)
     .filter(p=>!search.trim()||p.title.includes(search.trim())||(p.content||"").includes(search.trim()))
-    .filter(p=>policyCatFilter==="all"||p.policy_cat===policyCatFilter)
-    .filter(p=>regionFilter==="전체"||p.region===regionFilter)
     .sort((a,b)=>
       sortBy==="likes"?(b.likes||0)-(a.likes||0)
       :sortBy==="comments"?(b.comments_count||0)-(a.comments_count||0)
       :new Date(b.created_at)-new Date(a.created_at)
     );
   const [pageNum,setPageNum]=useState(1);
-  useEffect(()=>{setPageNum(1);},[catFilter,search,sortBy,policyCatFilter,regionFilter]);
+  useEffect(()=>{setPageNum(1);},[catFilter,search,sortBy]);
   const pageCount=Math.max(1,Math.ceil(filtered.length/4));
   const pageItems=filtered.slice((pageNum-1)*4,pageNum*4);
 
@@ -2078,29 +2074,16 @@ function CommunityView({bp,user,policies,favIds,onToggleFav,onGoProposal,onGoDet
         </div>
       </div>
       <div style={{background:"white",borderBottom:"1px solid #f1f5f9",padding:bp.isDesktop?"14px 40px":"12px 14px"}}>
-        <div style={{maxWidth:860,margin:"0 auto",display:"flex",flexDirection:"column",gap:10}}>
-          <div style={{display:"flex",gap:8,alignItems:"center"}}>
-            <div style={{position:"relative",flex:1}}>
-              <Icon name="search" size={15} color="#9ca3af" style={{position:"absolute",left:12,top:"50%",transform:"translateY(-50%)"}}/>
-              <input value={search} onChange={e=>setSearch(e.target.value)} placeholder="제목·내용 검색" style={{width:"100%",padding:"8px 12px 8px 34px",borderRadius:10,border:"1.5px solid #E2E8F0",fontSize:13,fontFamily:"inherit",boxSizing:"border-box",outline:"none"}}/>
-            </div>
-            <select value={sortBy} onChange={e=>setSortBy(e.target.value)} style={{flexShrink:0,fontSize:12,border:"1px solid #E2E8F0",borderRadius:8,padding:"7px 8px",background:"white",color:"#374151",outline:"none",fontFamily:"inherit",cursor:"pointer"}}>
-              <option value="recent">최신순</option>
-              <option value="likes">인기순</option>
-              <option value="comments">댓글많은순</option>
-            </select>
+        <div style={{maxWidth:860,margin:"0 auto",display:"flex",gap:8,alignItems:"center"}}>
+          <div style={{position:"relative",flex:1}}>
+            <Icon name="search" size={15} color="#9ca3af" style={{position:"absolute",left:12,top:"50%",transform:"translateY(-50%)"}}/>
+            <input value={search} onChange={e=>setSearch(e.target.value)} placeholder="제목·내용 검색" style={{width:"100%",padding:"8px 12px 8px 34px",borderRadius:10,border:"1.5px solid #E2E8F0",fontSize:13,fontFamily:"inherit",boxSizing:"border-box",outline:"none"}}/>
           </div>
-          <div style={{display:"flex",gap:5,flexWrap:"wrap",alignItems:"center"}}>
-            <button onClick={()=>setPolicyCatFilter("all")} style={{padding:"4px 10px",borderRadius:20,border:"1.5px solid",borderColor:policyCatFilter==="all"?"var(--accent)":"#E2E8F0",background:policyCatFilter==="all"?"var(--accent)":"white",color:policyCatFilter==="all"?"white":"#718096",fontSize:11,fontWeight:policyCatFilter==="all"?700:400,cursor:"pointer",whiteSpace:"nowrap"}}>전체 분야</button>
-            {CATEGORIES.slice(1).map(c=>(
-              <button key={c.value} onClick={()=>setPolicyCatFilter(c.value)} style={{padding:"4px 10px",borderRadius:20,border:"1.5px solid",borderColor:policyCatFilter===c.value?"var(--accent)":"#E2E8F0",background:policyCatFilter===c.value?"var(--accent)":"white",color:policyCatFilter===c.value?"white":"#718096",fontSize:11,fontWeight:policyCatFilter===c.value?700:400,cursor:"pointer",whiteSpace:"nowrap"}}>{c.label}</button>
-            ))}
-            <span style={{width:1,height:14,background:"#E2E8F0",margin:"0 2px"}}/>
-            <button onClick={()=>setRegionFilter("전체")} style={{padding:"4px 10px",borderRadius:20,border:"1.5px solid",borderColor:regionFilter==="전체"?"var(--accent)":"#E2E8F0",background:regionFilter==="전체"?"var(--accent)":"white",color:regionFilter==="전체"?"white":"#718096",fontSize:11,fontWeight:regionFilter==="전체"?700:400,cursor:"pointer",whiteSpace:"nowrap"}}>전체 지역</button>
-            {REGIONS.slice(1).map(r=>(
-              <button key={r} onClick={()=>setRegionFilter(r)} style={{padding:"4px 10px",borderRadius:20,border:"1.5px solid",borderColor:regionFilter===r?"var(--accent)":"#E2E8F0",background:regionFilter===r?"var(--accent)":"white",color:regionFilter===r?"white":"#718096",fontSize:11,fontWeight:regionFilter===r?700:400,cursor:"pointer",whiteSpace:"nowrap"}}>{r}</button>
-            ))}
-          </div>
+          <select value={sortBy} onChange={e=>setSortBy(e.target.value)} style={{flexShrink:0,fontSize:12,border:"1px solid #E2E8F0",borderRadius:8,padding:"7px 8px",background:"white",color:"#374151",outline:"none",fontFamily:"inherit",cursor:"pointer"}}>
+            <option value="recent">최신순</option>
+            <option value="likes">인기순</option>
+            <option value="comments">댓글많은순</option>
+          </select>
         </div>
       </div>
       <div style={{padding:bp.isDesktop?"28px 40px 60px":bp.isTablet?"20px 24px 60px":"14px 14px 80px"}}>
