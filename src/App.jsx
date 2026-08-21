@@ -259,13 +259,13 @@ const KOREA_MAP_POLYGONS = [
 function RegionMapModal({region,onSelect,onClose}){
   return(
     <div onClick={onClose} style={{position:"fixed",inset:0,background:"rgba(15,23,42,0.5)",zIndex:200,display:"flex",alignItems:"center",justifyContent:"center",padding:20}}>
-      <div onClick={e=>e.stopPropagation()} style={{background:"white",borderRadius:20,padding:"20px 20px 24px",width:"100%",maxWidth:360,maxHeight:"85vh",overflowY:"auto",boxShadow:"0 20px 60px rgba(0,0,0,0.25)"}}>
-        <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:14}}>
+      <div onClick={e=>e.stopPropagation()} style={{background:"white",borderRadius:20,padding:"20px 20px 24px",width:"100%",maxWidth:360,maxHeight:"92vh",overflowY:"auto",boxShadow:"0 20px 60px rgba(0,0,0,0.25)",display:"flex",flexDirection:"column"}}>
+        <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:14,flexShrink:0}}>
           <div style={{fontSize:16,fontWeight:800,color:"#111827",display:"flex",alignItems:"center",gap:6}}><Icon name="map" size={18} color="var(--accent)"/>지역 선택</div>
           <button onClick={onClose} style={{background:"#f1f5f9",border:"none",borderRadius:"50%",width:26,height:26,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center"}}><Icon name="close" size={14} color="#6b7280"/></button>
         </div>
-        <button onClick={()=>onSelect("전체")} style={{width:"100%",padding:"8px 0",borderRadius:10,border:"1.5px solid",borderColor:region==="전체"?"var(--accent)":"#E2E8F0",background:region==="전체"?"var(--accent)":"#FFFFFF",color:region==="전체"?"#FFFFFF":"#475569",fontSize:13,fontWeight:region==="전체"?700:500,cursor:"pointer",marginBottom:14}}>전체 지역 보기</button>
-        <div style={{position:"relative",width:"100%",aspectRatio:"601/1155",background:"linear-gradient(180deg,#EFF6FF,#F8FAFC)",borderRadius:16,border:"1px solid #E2E8F0",overflow:"hidden"}}>
+        <button onClick={()=>onSelect("전체")} style={{width:"100%",padding:"8px 0",borderRadius:10,border:"1.5px solid",borderColor:region==="전체"?"var(--accent)":"#E2E8F0",background:region==="전체"?"var(--accent)":"#FFFFFF",color:region==="전체"?"#FFFFFF":"#475569",fontSize:13,fontWeight:region==="전체"?700:500,cursor:"pointer",marginBottom:14,flexShrink:0}}>전체 지역 보기</button>
+        <div style={{position:"relative",width:"auto",height:"min(58vh,520px)",aspectRatio:"601/1155",margin:"0 auto",background:"linear-gradient(180deg,#EFF6FF,#F8FAFC)",borderRadius:16,border:"1px solid #E2E8F0",overflow:"hidden",flexShrink:0}}>
           <svg viewBox="0 0 601 1155" preserveAspectRatio="xMidYMid meet" style={{position:"absolute",inset:0,width:"100%",height:"100%"}}>
             {KOREA_MAP_POLYGONS.map((pts,i)=>(
               <polygon key={i} points={pts} fill="#DCEAFE" stroke="#B9D3F1" strokeWidth="2" strokeLinejoin="round"/>
