@@ -1495,16 +1495,60 @@ function MyPageView({favIds,onToggleFav,onGoDetail,bp,policies}){
 
 const CAT_COLOR_MAP={후기:{bg:"#F0FDF4",border:"#BBF7D0",text:"#15803D"},정보:{bg:"#EFF6FF",border:"var(--accent-bg)",text:"var(--accent)"},"Q&A":{bg:"#FFF1F2",border:"#FECDD3",text:"#BE123C"},"정책제안 팀모집":{bg:"#FDF4FF",border:"#F5D0FE",text:"#A21CAF"}};
 
-function CommunityWriteView({bp,user,onSubmit,onCancel}){
+function PolicyPickerField({policies,value,onChange}){
+  const [query,setQuery]=useState("");
+  const suggestions=useMemo(()=>{
+    const q=query.trim();
+    if(!q)return [];
+    return (policies||[]).filter(p=>p.title?.includes(q)).slice(0,8);
+  },[query,policies]);
+
+  if(value){
+    return(
+      <div style={{display:"flex",alignItems:"center",gap:8,padding:"10px 14px",borderRadius:10,border:"1.5px solid #E2E8F0",background:"white"}}>
+        <Icon name="task_alt" size={16} color="var(--accent)"/>
+        <span style={{flex:1,fontSize:13,fontWeight:600,color:"#111827"}}>{value.title}</span>
+        <button type="button" onClick={()=>onChange(null)} style={{background:"none",border:"none",color:"#9ca3af",fontSize:16,lineHeight:1,padding:0,cursor:"pointer"}}>×</button>
+      </div>
+    );
+  }
+  return(
+    <div style={{position:"relative"}}>
+      <input value={query} onChange={e=>setQuery(e.target.value)} placeholder="신청한 정책명을 검색해보세요" style={{width:"100%",padding:"11px 14px",borderRadius:10,border:"1.5px solid #E2E8F0",fontSize:14,fontFamily:"inherit",boxSizing:"border-box"}}/>
+      {suggestions.length>0&&(
+        <div style={{position:"absolute",top:"100%",left:0,right:0,marginTop:4,background:"white",border:"1.5px solid #E2E8F0",borderRadius:10,boxShadow:"0 4px 16px rgba(0,0,0,0.1)",zIndex:30,overflow:"hidden"}}>
+          {suggestions.map(p=>(
+            <div key={p.id} onMouseDown={e=>{e.preventDefault();onChange(p);setQuery("");}} style={{padding:"9px 14px",fontSize:13,color:"#374151",cursor:"pointer",borderBottom:"1px solid #f1f5f9"}}>
+              <div style={{fontWeight:600}}>{p.title}</div>
+              {p.org&&<div style={{fontSize:11,color:"#9ca3af",marginTop:2}}>{p.org}</div>}
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function CommunityWriteView({bp,user,policies,onSubmit,onCancel}){
   const [cat,setCat]=useState("후기");
   const [title,setTitle]=useState("");
   const [content,setContent]=useState("");
   const [region,setRegion]=useState("");
   const [capacity,setCapacity]=useState("");
+  const [appliedPolicy,setAppliedPolicy]=useState(null);
   const [errors,setErrors]=useState({});
   const [submitting,setSubmitting]=useState(false);
   const cats=["후기","정보","Q&A","정책제안 팀모집"];
   const isRecruit=cat==="정책제안 팀모집";
+  const isReview=cat==="후기";
+
+  const selfVerified=useMemo(()=>{
+    if(!appliedPolicy)return false;
+    try{
+      const statuses=JSON.parse(localStorage.getItem("yoa:apply-status"))||{};
+      return ["applied","review","waiting","done"].includes(statuses[appliedPolicy.id]);
+    }catch{return false;}
+  },[appliedPolicy]);
 
   const validate=()=>{
     const e={};
@@ -1533,6 +1577,9 @@ function CommunityWriteView({bp,user,onSubmit,onCancel}){
       region:isRecruit?region.trim():null,
       capacity:isRecruit?capacity.trim():null,
       status:isRecruit?"모집중":null,
+      verified:isReview?selfVerified:false,
+      applied_policy_id:isReview?(appliedPolicy?.id||null):null,
+      applied_policy_title:isReview?(appliedPolicy?.title||null):null,
     });
     setSubmitting(false);
   };
@@ -1578,6 +1625,18 @@ function CommunityWriteView({bp,user,onSubmit,onCancel}){
                 />
                 {errors.capacity&&<p style={{fontSize:12,color:"#dc2626",margin:"5px 0 0"}}>{errors.capacity}</p>}
               </div>
+            </div>
+          )}
+          {isReview&&(
+            <div>
+              <label style={{display:"block",fontSize:13,fontWeight:700,color:"#374151",marginBottom:8}}>신청한 정책 (선택)</label>
+              <PolicyPickerField policies={policies} value={appliedPolicy} onChange={setAppliedPolicy}/>
+              {appliedPolicy&&(
+                <p style={{fontSize:12,margin:"6px 0 0",color:selfVerified?"#15803D":"#9ca3af",fontWeight:selfVerified?700:500}}>
+                  {selfVerified?"마이페이지 신청내역에 신청 기록이 있어요 · 실제 신청 인증 배지가 붙어요":"이 기기의 신청내역에는 아직 기록이 없어요 · 인증배지 없이 등록돼요"}
+                </p>
+              )}
+              <p style={{fontSize:11,margin:"4px 0 0",color:"#cbd5e1"}}>이 인증은 이 기기에 저장된 신청내역을 기준으로 표시돼요</p>
             </div>
           )}
           <div>
@@ -1759,7 +1818,12 @@ function CommunityPostDetailView({post,bp,user,onBack,onLike,onUpdate}){
             )}
           </div>
           <h1 style={{fontSize:bp.isDesktop?26:bp.isTablet?22:18,fontWeight:900,margin:"0 0 16px",lineHeight:1.35,letterSpacing:"-0.02em",color:"#111827",paddingBottom:16,borderBottom:"1px solid #f1f5f9"}}>{post.title}</h1>
-          <div style={{display:"flex",alignItems:"center",justifyContent:"flex-end",gap:12,marginBottom:20}}>
+          <div style={{display:"flex",alignItems:"center",justifyContent:"flex-end",gap:8,marginBottom:20,flexWrap:"wrap"}}>
+            {post.verified&&(
+              <span style={{display:"inline-flex",alignItems:"center",gap:4,fontSize:11,fontWeight:700,color:"#15803D",background:"#F0FDF4",border:"1px solid #BBF7D0",borderRadius:20,padding:"3px 10px"}}>
+                <Icon name="task_alt" size={12} color="#15803D"/>실제 신청 인증{post.applied_policy_title?` · ${post.applied_policy_title}`:""}
+              </span>
+            )}
             <div style={{fontSize:13,fontWeight:700,color:"#111827"}}>{maskName(post.author)}</div>
           </div>
           {isRecruit&&(
@@ -1874,7 +1938,7 @@ function CommunityPostDetailView({post,bp,user,onBack,onLike,onUpdate}){
 
 // ─── 커뮤니티 뷰 ──────────────────────────────────────────────────────────
 
-function CommunityView({bp,user,onGoProposal,initialCatFilter}){
+function CommunityView({bp,user,policies,onGoProposal,initialCatFilter}){
   const [catFilter,setCatFilter]=useState(initialCatFilter&&initialCatFilter!=="전체"?initialCatFilter:"후기");
   const [showWrite,setShowWrite]=useState(false);
   const [selectedPost,setSelectedPost]=useState(null);
@@ -1918,7 +1982,7 @@ function CommunityView({bp,user,onGoProposal,initialCatFilter}){
     if(selectedPost?.id===id)setSelectedPost(prev=>({...prev,...fields}));
   },[selectedPost]);
 
-  if(showWrite)return <CommunityWriteView bp={bp} user={user} onSubmit={handleAddPost} onCancel={()=>setShowWrite(false)}/>;
+  if(showWrite)return <CommunityWriteView bp={bp} user={user} policies={policies} onSubmit={handleAddPost} onCancel={()=>setShowWrite(false)}/>;
   if(selectedPost){
     const livePost=posts.find(p=>p.id===selectedPost.id)||selectedPost;
     return <CommunityPostDetailView post={livePost} bp={bp} user={user} onBack={()=>setSelectedPost(null)} onLike={handleLike} onUpdate={handlePostUpdate}/>;
@@ -2012,6 +2076,11 @@ function CommunityView({bp,user,onGoProposal,initialCatFilter}){
                 </div>
                 <div style={{display:"flex",alignItems:"center",gap:14,marginTop:12,paddingTop:12,borderTop:"1px solid #E2E8F0"}}>
                   <span style={{fontSize:12,color:"#9ca3af"}}>by <span style={{color:"#374151",fontWeight:600}}>{maskName(post.author)}</span></span>
+                  {post.verified&&(
+                    <span style={{display:"inline-flex",alignItems:"center",gap:4,fontSize:11,fontWeight:700,color:"#15803D",background:"#F0FDF4",border:"1px solid #BBF7D0",borderRadius:20,padding:"2px 9px"}}>
+                      <Icon name="task_alt" size={12} color="#15803D"/>실제 신청 인증
+                    </span>
+                  )}
                   <div style={{marginLeft:"auto",display:"flex",gap:12}}>
                     <span style={{fontSize:12,color:"#9ca3af",display:"flex",alignItems:"center",gap:3}}><Icon name="favorite" size={13} color="#9ca3af"/> {post.likes}</span>
                     <span style={{fontSize:12,color:"#9ca3af",display:"flex",alignItems:"center",gap:3}}><Icon name="chat_bubble" size={13} color="#9ca3af"/> {post.comments_count||0}</span>
@@ -4292,7 +4361,7 @@ export default function App(){
               :page==="search"    ?<div style={{flex:1,overflow:"hidden"}}><SearchView {...viewProps}/></div>
               :page==="chatbot"   ?<div style={{flex:1,overflow:"hidden"}}><ChatBotView bp={bp.isDesktop?'desktop':bp.isTablet?'tablet':'mobile'} favIds={favIds} onToggleFav={toggleFav} onGoDetail={goDetail} resetSignal={chatResetKey}/></div>
               :page==="mypage"    ?<div style={{flex:1,overflowY:"auto"}}><MyPageContainer supabaseUser={user} onLogout={handleLogout} initialTab={mySub||"info"} favIds={favIds} policies={policies} onToggleFav={toggleFav} onGoDetail={goDetail}/></div>
-              :page==="community" ?<div style={{flex:1,overflowY:"auto"}}><CommunityView bp={bp} user={user} onGoProposal={()=>navigateTo("proposal")} initialCatFilter={communitySub}/></div>
+              :page==="community" ?<div style={{flex:1,overflowY:"auto"}}><CommunityView bp={bp} user={user} policies={policies} onGoProposal={()=>navigateTo("proposal")} initialCatFilter={communitySub}/></div>
               :page==="proposal"  ?<div style={{flex:1,overflowY:"auto"}}><PolicyProposalPage bp={bp} user={user} onGoCommunity={()=>{setCommunitySub("Q&A");navigateTo("community");}}/></div>
               :null
             }
@@ -4345,7 +4414,7 @@ export default function App(){
           :page==="search"    ?<SearchView {...viewProps}/>
           :page==="chatbot"   ?<ChatBotView bp={bp.isDesktop?'desktop':bp.isTablet?'tablet':'mobile'} favIds={favIds} onToggleFav={toggleFav} onGoDetail={goDetail} resetSignal={chatResetKey}/>
           :page==="mypage"    ?<MyPageContainer supabaseUser={user} onLogout={handleLogout} initialTab={mySub||"info"} favIds={favIds} policies={policies} onToggleFav={toggleFav} onGoDetail={goDetail}/>
-          :page==="community" ?<CommunityView bp={bp} user={user} onGoProposal={()=>navigateTo("proposal")} initialCatFilter={communitySub}/>
+          :page==="community" ?<CommunityView bp={bp} user={user} policies={policies} onGoProposal={()=>navigateTo("proposal")} initialCatFilter={communitySub}/>
           :page==="proposal"  ?<PolicyProposalPage bp={bp} user={user} onGoCommunity={()=>{setCommunitySub("Q&A");navigateTo("community");}}/>
           :null
         }
