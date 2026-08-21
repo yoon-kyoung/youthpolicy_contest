@@ -2545,6 +2545,58 @@ function HashtagAutocompleteField({as="input",value,onChange,tagPool,placeholder
   );
 }
 
+function ProposalPreviewModal({title,category,isTeam,teamMembers,background,content,expectedEffect,attachmentName,onClose,onConfirm}){
+  return(
+    <div onClick={onClose} style={{position:"fixed",inset:0,background:"rgba(15,23,42,0.5)",zIndex:200,display:"flex",alignItems:"center",justifyContent:"center",padding:20}}>
+      <div onClick={e=>e.stopPropagation()} style={{background:"white",borderRadius:20,padding:"24px 24px 20px",width:"100%",maxWidth:680,maxHeight:"85vh",overflowY:"auto",boxShadow:"0 20px 60px rgba(0,0,0,0.25)"}}>
+        <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:16}}>
+          <div style={{fontSize:16,fontWeight:800,color:"#111827",display:"flex",alignItems:"center",gap:6}}><Icon name="visibility" size={18} color="var(--accent)"/>제안 미리보기</div>
+          <button onClick={onClose} style={{background:"#f1f5f9",border:"none",borderRadius:"50%",width:26,height:26,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center"}}><Icon name="close" size={14} color="#6b7280"/></button>
+        </div>
+
+        <div style={{display:"flex",gap:8,marginBottom:12,flexWrap:"wrap"}}>
+          <span style={{display:"inline-flex",alignItems:"center",gap:4,fontSize:12,fontWeight:700,padding:"3px 12px",borderRadius:20,background:"var(--accent-bg)",color:"var(--accent)"}}>
+            <Icon name={CAT_ICON[category]||"apps"} size={13} color="var(--accent)"/>{CAT_LABEL[category]||"기타"}
+          </span>
+          <span style={{display:"inline-flex",alignItems:"center",gap:4,fontSize:12,fontWeight:700,padding:"3px 12px",borderRadius:20,background:"#f1f5f9",color:"#374151"}}>
+            <Icon name={isTeam?"group":"person"} size={13} color="#374151"/>{isTeam?"팀":"개인"}
+          </span>
+          {isTeam&&teamMembers.map(id=>(
+            <span key={id} style={{fontSize:12,fontWeight:600,padding:"3px 10px",borderRadius:20,background:"var(--accent-bg)",color:"var(--accent)"}}>@{id}</span>
+          ))}
+        </div>
+
+        <h2 style={{fontSize:20,fontWeight:900,margin:"0 0 16px",color:"#111827",lineHeight:1.4}}>{title}</h2>
+
+        <div style={{display:"flex",flexDirection:"column",gap:14}}>
+          <div>
+            <div style={{fontSize:13,fontWeight:700,color:"#111827",marginBottom:4}}>배경</div>
+            <p style={{margin:0,fontSize:13,color:"#374151",lineHeight:1.7,whiteSpace:"pre-wrap"}}>{background}</p>
+          </div>
+          <div>
+            <div style={{fontSize:13,fontWeight:700,color:"#111827",marginBottom:4}}>제안 내용</div>
+            <p style={{margin:0,fontSize:13,color:"#374151",lineHeight:1.7,whiteSpace:"pre-wrap"}}>{content}</p>
+          </div>
+          <div>
+            <div style={{fontSize:13,fontWeight:700,color:"#111827",marginBottom:4}}>기대 효과</div>
+            <p style={{margin:0,fontSize:13,color:"#374151",lineHeight:1.7,whiteSpace:"pre-wrap"}}>{expectedEffect}</p>
+          </div>
+          {attachmentName&&(
+            <div style={{display:"flex",alignItems:"center",gap:5,fontSize:12,color:"#6b7280"}}>
+              <Icon name="attach_file" size={14} color="#9ca3af"/>{attachmentName}
+            </div>
+          )}
+        </div>
+
+        <div style={{display:"flex",justifyContent:"flex-end",gap:8,marginTop:20,paddingTop:16,borderTop:"1px solid #f1f5f9"}}>
+          <button type="button" onClick={onClose} style={{padding:"9px 16px",borderRadius:20,background:"white",border:"1.5px solid #E2E8F0",color:"#374151",fontSize:13,fontWeight:600,cursor:"pointer"}}>수정하기</button>
+          <button type="button" onClick={onConfirm} style={{padding:"9px 20px",borderRadius:20,background:"var(--accent)",border:"none",color:"white",fontSize:13,fontWeight:600,cursor:"pointer"}}>제안 등록하기</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 const PROPOSAL_MIN_LEN={background:100,content:300,expectedEffect:200};
 
 function ProposalWriteView({category,setCategory,title,setTitle,background,setBackground,content,setContent,expectedEffect,setExpectedEffect,attachmentName,setAttachmentName,isTeam,setIsTeam,teamMembers,setTeamMembers,proposals,onSubmit,onSaveDraft,onBack,bp}){
@@ -2555,6 +2607,7 @@ function ProposalWriteView({category,setCategory,title,setTitle,background,setBa
   const [checkedSignature,setCheckedSignature]=useState(null);
   const [teamInput,setTeamInput]=useState("");
   const [draftSaved,setDraftSaved]=useState(false);
+  const [showPreview,setShowPreview]=useState(false);
 
   const tagPool=useMemo(()=>{
     const fromProposals=(proposals||[]).flatMap(p=>{
@@ -2627,10 +2680,16 @@ function ProposalWriteView({category,setCategory,title,setTitle,background,setBa
       alert("제안하기 전에 'AI 검토' 버튼으로 먼저 확인해주세요.");
       return;
     }
-    onSubmit(e);
+    setShowPreview(true);
+  };
+
+  const handleConfirmSubmit=()=>{
+    setShowPreview(false);
+    onSubmit();
   };
 
   return(
+    <>
     <div style={{background:"#F5F9FC",minHeight:"100%",animation:"fadeUp 0.25s ease"}}>
       <div style={{background:"white",borderBottom:"1px solid #e5e7eb",padding:bp.isDesktop?"0 40px":"0 16px",position:"sticky",top:0,zIndex:40}}>
         <div style={{height:bp.isDesktop?56:52,display:"flex",alignItems:"center",gap:12}}>
@@ -2760,6 +2819,14 @@ function ProposalWriteView({category,setCategory,title,setTitle,background,setBa
         </div>
       </div>
     </div>
+    {showPreview&&(
+      <ProposalPreviewModal
+        title={title} category={category} isTeam={isTeam} teamMembers={teamMembers}
+        background={background} content={content} expectedEffect={expectedEffect} attachmentName={attachmentName}
+        onClose={()=>setShowPreview(false)} onConfirm={handleConfirmSubmit}
+      />
+    )}
+    </>
   );
 }
 
@@ -2915,8 +2982,7 @@ function PolicyProposalPage({bp,user,onGoCommunity}){
     setDraft({category,title,background,content,expectedEffect,attachmentName,isTeam,teamMembers,savedAt:new Date().toISOString()});
   },[setDraft,category,title,background,content,expectedEffect,attachmentName,isTeam,teamMembers]);
 
-  const handleSubmit=e=>{
-    e.preventDefault();
+  const handleSubmit=()=>{
     if(!user){alert("로그인 후 제안을 등록할 수 있어요.");return;}
     if(!title.trim()||background.trim().length<PROPOSAL_MIN_LEN.background||content.trim().length<PROPOSAL_MIN_LEN.content||expectedEffect.trim().length<PROPOSAL_MIN_LEN.expectedEffect)return;
     const proposal={
