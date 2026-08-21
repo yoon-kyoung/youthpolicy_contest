@@ -29,6 +29,11 @@ function mapCat(category=""){
   return"job";
 }
 
+const TITLE_STOPWORDS=new Set(["청년","지원","지원사업","사업","운영","신청","모집","프로그램","정책","대상자","참여자","선발","안내","공고","서비스","제도","사업비","시행"]);
+function titleKeywords(title=""){
+  return (title.match(/[가-힣a-zA-Z]+/g)||[]).filter(w=>w.length>=2&&!TITLE_STOPWORDS.has(w));
+}
+
 function extractAmount(support=""){
   const m1=support.match(/최대\s*([\d,]+(?:\.\d+)?)\s*억/);
   if(m1)return Math.round(parseFloat(m1[1].replace(/,/g,""))*10000);
@@ -639,7 +644,17 @@ function PolicyDetailView({policy,favIds,onToggle,onBack,onGoDetail,bp,policies}
     const url=`${window.location.origin}${window.location.pathname}?policy=${policy.id}`;
     navigator.clipboard.writeText(url).then(()=>{setCopied(true);setTimeout(()=>setCopied(false),2000);});
   };
-  const similar=policies.filter(p=>p.cat===policy.cat&&p.id!==policy.id).slice(0,3);
+  const similar=useMemo(()=>{
+    const words=titleKeywords(policy.title);
+    const byKeyword=policies
+      .filter(p=>p.id!==policy.id)
+      .map(p=>({p,score:words.filter(w=>titleKeywords(p.title).some(pw=>pw===w||pw.includes(w)||w.includes(pw))).length}))
+      .filter(x=>x.score>0)
+      .sort((a,b)=>b.score-a.score||(a.p.cat===policy.cat?-1:1))
+      .slice(0,3)
+      .map(x=>x.p);
+    return byKeyword.length>0?byKeyword:policies.filter(p=>p.cat===policy.cat&&p.id!==policy.id).slice(0,3);
+  },[policies,policy.id,policy.title,policy.cat]);
   const cols=bp.isDesktop?3:bp.isTablet?2:1;
 
   useEffect(()=>{window.scrollTo({top:0,behavior:"smooth"});},[policy.id]);
