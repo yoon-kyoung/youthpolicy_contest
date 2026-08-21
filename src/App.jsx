@@ -2479,13 +2479,20 @@ function ProposalFormRow({label,children}){
 
 const PROPOSAL_MIN_LEN={background:100,content:300,expectedEffect:200};
 
-function ProposalWriteView({category,setCategory,title,setTitle,background,setBackground,content,setContent,expectedEffect,setExpectedEffect,attachmentName,setAttachmentName,isTeam,setIsTeam,teamMembers,setTeamMembers,proposals,onSubmit,onBack,bp}){
+function ProposalWriteView({category,setCategory,title,setTitle,background,setBackground,content,setContent,expectedEffect,setExpectedEffect,attachmentName,setAttachmentName,isTeam,setIsTeam,teamMembers,setTeamMembers,proposals,onSubmit,onSaveDraft,onBack,bp}){
   useEffect(()=>{window.scrollTo({top:0,behavior:"smooth"});},[]);
 
   const [aiChecking,setAiChecking]=useState(false);
   const [aiResult,setAiResult]=useState(null);
   const [checkedSignature,setCheckedSignature]=useState(null);
   const [teamInput,setTeamInput]=useState("");
+  const [draftSaved,setDraftSaved]=useState(false);
+
+  const handleSaveDraft=()=>{
+    onSaveDraft();
+    setDraftSaved(true);
+    setTimeout(()=>setDraftSaved(false),2000);
+  };
 
   const addTeamMember=()=>{
     const id=teamInput.trim().replace(/^@/,"");
@@ -2660,6 +2667,12 @@ function ProposalWriteView({category,setCategory,title,setTitle,background,setBa
             )}
 
             <div style={{display:"flex",justifyContent:"flex-end",gap:8}}>
+              <div style={{position:"relative"}}>
+                <button type="button" onClick={handleSaveDraft} style={{display:"flex",alignItems:"center",gap:5,padding:"9px 16px",borderRadius:20,background:"white",border:"1.5px solid #E2E8F0",color:"#374151",fontSize:13,fontWeight:600,cursor:"pointer",transition:"opacity 0.15s"}}>
+                  <Icon name="save" size={15} color="#6b7280"/>임시저장
+                </button>
+                {draftSaved&&<div style={{position:"absolute",bottom:"calc(100% + 8px)",left:"50%",transform:"translateX(-50%)",background:"#1f2937",color:"white",borderRadius:8,padding:"6px 14px",fontSize:12,fontWeight:600,whiteSpace:"nowrap",zIndex:20,boxShadow:"0 2px 8px rgba(0,0,0,0.18)",animation:"fadeUp 0.2s ease"}}>임시저장 되었습니다</div>}
+              </div>
               <button type="button" onClick={runAiCheck} disabled={aiChecking} style={{padding:"9px 16px",borderRadius:20,background:"white",border:"1.5px solid var(--accent)",color:"var(--accent)",fontSize:13,fontWeight:600,cursor:aiChecking?"default":"pointer",opacity:aiChecking?0.6:1,transition:"opacity 0.15s"}}>
                 {aiChecking?"검토 중...":"AI 검토"}
               </button>
@@ -2788,14 +2801,15 @@ function ProposalGuidePanel({bp,onGoCommunity}){
 
 function PolicyProposalPage({bp,user,onGoCommunity}){
   const [proposals,setProposals]=useLocalStorage("yoa:proposals",PROPOSAL_SEED);
-  const [title,setTitle]=useState("");
-  const [background,setBackground]=useState("");
-  const [content,setContent]=useState("");
-  const [expectedEffect,setExpectedEffect]=useState("");
-  const [attachmentName,setAttachmentName]=useState("");
-  const [isTeam,setIsTeam]=useState(false);
-  const [teamMembers,setTeamMembers]=useState([]);
-  const [category,setCategory]=useState("job");
+  const [draft,setDraft]=useLocalStorage("yoa:proposalDraft",null);
+  const [title,setTitle]=useState(draft?.title||"");
+  const [background,setBackground]=useState(draft?.background||"");
+  const [content,setContent]=useState(draft?.content||"");
+  const [expectedEffect,setExpectedEffect]=useState(draft?.expectedEffect||"");
+  const [attachmentName,setAttachmentName]=useState(draft?.attachmentName||"");
+  const [isTeam,setIsTeam]=useState(draft?.isTeam||false);
+  const [teamMembers,setTeamMembers]=useState(draft?.teamMembers||[]);
+  const [category,setCategory]=useState(draft?.category||"job");
   const [statusTab,setStatusTab]=useState("all");
   const [catFilter,setCatFilter]=useState("all");
   const [sort,setSort]=useState("recent");
@@ -2820,6 +2834,10 @@ function PolicyProposalPage({bp,user,onGoCommunity}){
     setSelectedProposal(null);
     history.replaceState({},"",window.location.pathname);
   },[]);
+
+  const handleSaveDraft=useCallback(()=>{
+    setDraft({category,title,background,content,expectedEffect,attachmentName,isTeam,teamMembers,savedAt:new Date().toISOString()});
+  },[setDraft,category,title,background,content,expectedEffect,attachmentName,isTeam,teamMembers]);
 
   const handleSubmit=e=>{
     e.preventDefault();
@@ -2853,6 +2871,7 @@ function PolicyProposalPage({bp,user,onGoCommunity}){
     setIsTeam(false);
     setTeamMembers([]);
     setShowForm(false);
+    setDraft(null);
   };
 
   const handleVote=useCallback((id,delta=1)=>{
@@ -2903,7 +2922,7 @@ function PolicyProposalPage({bp,user,onGoCommunity}){
   }
 
   if(showForm){
-    return <ProposalWriteView category={category} setCategory={setCategory} title={title} setTitle={setTitle} background={background} setBackground={setBackground} content={content} setContent={setContent} expectedEffect={expectedEffect} setExpectedEffect={setExpectedEffect} attachmentName={attachmentName} setAttachmentName={setAttachmentName} isTeam={isTeam} setIsTeam={setIsTeam} teamMembers={teamMembers} setTeamMembers={setTeamMembers} proposals={proposals} onSubmit={handleSubmit} onBack={()=>setShowForm(false)} bp={bp}/>;
+    return <ProposalWriteView category={category} setCategory={setCategory} title={title} setTitle={setTitle} background={background} setBackground={setBackground} content={content} setContent={setContent} expectedEffect={expectedEffect} setExpectedEffect={setExpectedEffect} attachmentName={attachmentName} setAttachmentName={setAttachmentName} isTeam={isTeam} setIsTeam={setIsTeam} teamMembers={teamMembers} setTeamMembers={setTeamMembers} proposals={proposals} onSubmit={handleSubmit} onSaveDraft={handleSaveDraft} onBack={()=>setShowForm(false)} bp={bp}/>;
   }
 
   const now=new Date();
