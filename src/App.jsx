@@ -1686,7 +1686,8 @@ function maskName(name){
   return n[0]+"O".repeat(n.length-2)+n[n.length-1];
 }
 
-function CommunityPostDetailView({post,bp,user,onBack,onLike,onUpdate}){
+function CommunityPostDetailView({post,bp,user,policies,onGoDetail,onBack,onLike,onUpdate}){
+  const linkedPolicy=useMemo(()=>(policies||[]).find(p=>p.id===post.applied_policy_id),[policies,post.applied_policy_id]);
   const [comments,setComments]=useState([]);
   const [liked,setLiked]=useLocalStorage(`yoa:liked_${post.id}`,false);
   const [viewed,setViewed]=useLocalStorage(`yoa:viewed_${post.id}`,false);
@@ -1841,6 +1842,26 @@ function CommunityPostDetailView({post,bp,user,onBack,onLike,onUpdate}){
           <div style={{fontSize:bp.isDesktop?15:14,lineHeight:1.85,color:"#374151",whiteSpace:"pre-wrap",wordBreak:"break-word"}}>
             {body}
           </div>
+          {post.cat==="후기"&&post.applied_policy_title&&(
+            <div style={{marginTop:20,background:"var(--accent-bg)",border:"1px solid var(--accent-bg-active)",borderRadius:14,padding:"16px 18px",display:"flex",flexDirection:"column",gap:10}}>
+              <div style={{display:"flex",alignItems:"center",gap:6,fontSize:13,fontWeight:800,color:"var(--accent-dark)"}}>
+                <Icon name="open_in_new" size={15} color="var(--accent-dark)"/>이 후기와 관련된 정책
+              </div>
+              <div style={{fontSize:14,fontWeight:700,color:"#111827"}}>{post.applied_policy_title}</div>
+              <div style={{display:"flex",gap:8,flexWrap:"wrap"}}>
+                {linkedPolicy&&(
+                  <button type="button" onClick={()=>onGoDetail?.(linkedPolicy)} style={{padding:"8px 16px",borderRadius:20,border:"1.5px solid var(--accent)",background:"white",color:"var(--accent)",fontSize:13,fontWeight:700,cursor:"pointer",transition:"opacity 0.15s"}}
+                    onMouseEnter={e=>e.currentTarget.style.opacity="0.8"} onMouseLeave={e=>e.currentTarget.style.opacity="1"}
+                  >정책 상세보기 →</button>
+                )}
+                {linkedPolicy&&(linkedPolicy.applyUrl||linkedPolicy.refUrl)&&(
+                  <button type="button" onClick={()=>window.open(linkedPolicy.applyUrl||linkedPolicy.refUrl,"_blank")} style={{padding:"8px 16px",borderRadius:20,border:"none",background:"var(--accent)",color:"white",fontSize:13,fontWeight:700,cursor:"pointer",transition:"opacity 0.15s"}}
+                    onMouseEnter={e=>e.currentTarget.style.opacity="0.85"} onMouseLeave={e=>e.currentTarget.style.opacity="1"}
+                  >지금 신청하기 →</button>
+                )}
+              </div>
+            </div>
+          )}
           <div style={{display:"flex",justifyContent:"flex-end",gap:14,marginTop:20}}>
             <span style={{fontSize:13,color:"#6b7280",display:"flex",alignItems:"center",gap:4}}><Icon name="favorite" size={14} color="#9ca3af"/> {(post.likes||0)+(liked?1:0)}</span>
             <span style={{fontSize:13,color:"#6b7280",display:"flex",alignItems:"center",gap:4}}><Icon name="chat_bubble" size={14} color="#9ca3af"/> {totalComments}</span>
@@ -1938,7 +1959,7 @@ function CommunityPostDetailView({post,bp,user,onBack,onLike,onUpdate}){
 
 // ─── 커뮤니티 뷰 ──────────────────────────────────────────────────────────
 
-function CommunityView({bp,user,policies,onGoProposal,initialCatFilter}){
+function CommunityView({bp,user,policies,onGoProposal,onGoDetail,initialCatFilter}){
   const [catFilter,setCatFilter]=useState(initialCatFilter&&initialCatFilter!=="전체"?initialCatFilter:"후기");
   const [showWrite,setShowWrite]=useState(false);
   const [selectedPost,setSelectedPost]=useState(null);
@@ -1985,7 +2006,7 @@ function CommunityView({bp,user,policies,onGoProposal,initialCatFilter}){
   if(showWrite)return <CommunityWriteView bp={bp} user={user} policies={policies} onSubmit={handleAddPost} onCancel={()=>setShowWrite(false)}/>;
   if(selectedPost){
     const livePost=posts.find(p=>p.id===selectedPost.id)||selectedPost;
-    return <CommunityPostDetailView post={livePost} bp={bp} user={user} onBack={()=>setSelectedPost(null)} onLike={handleLike} onUpdate={handlePostUpdate}/>;
+    return <CommunityPostDetailView post={livePost} bp={bp} user={user} policies={policies} onGoDetail={onGoDetail} onBack={()=>setSelectedPost(null)} onLike={handleLike} onUpdate={handlePostUpdate}/>;
   }
 
   return(
@@ -4361,7 +4382,7 @@ export default function App(){
               :page==="search"    ?<div style={{flex:1,overflow:"hidden"}}><SearchView {...viewProps}/></div>
               :page==="chatbot"   ?<div style={{flex:1,overflow:"hidden"}}><ChatBotView bp={bp.isDesktop?'desktop':bp.isTablet?'tablet':'mobile'} favIds={favIds} onToggleFav={toggleFav} onGoDetail={goDetail} resetSignal={chatResetKey}/></div>
               :page==="mypage"    ?<div style={{flex:1,overflowY:"auto"}}><MyPageContainer supabaseUser={user} onLogout={handleLogout} initialTab={mySub||"info"} favIds={favIds} policies={policies} onToggleFav={toggleFav} onGoDetail={goDetail}/></div>
-              :page==="community" ?<div style={{flex:1,overflowY:"auto"}}><CommunityView bp={bp} user={user} policies={policies} onGoProposal={()=>navigateTo("proposal")} initialCatFilter={communitySub}/></div>
+              :page==="community" ?<div style={{flex:1,overflowY:"auto"}}><CommunityView bp={bp} user={user} policies={policies} onGoProposal={()=>navigateTo("proposal")} onGoDetail={goDetail} initialCatFilter={communitySub}/></div>
               :page==="proposal"  ?<div style={{flex:1,overflowY:"auto"}}><PolicyProposalPage bp={bp} user={user} onGoCommunity={()=>{setCommunitySub("Q&A");navigateTo("community");}}/></div>
               :null
             }
@@ -4414,7 +4435,7 @@ export default function App(){
           :page==="search"    ?<SearchView {...viewProps}/>
           :page==="chatbot"   ?<ChatBotView bp={bp.isDesktop?'desktop':bp.isTablet?'tablet':'mobile'} favIds={favIds} onToggleFav={toggleFav} onGoDetail={goDetail} resetSignal={chatResetKey}/>
           :page==="mypage"    ?<MyPageContainer supabaseUser={user} onLogout={handleLogout} initialTab={mySub||"info"} favIds={favIds} policies={policies} onToggleFav={toggleFav} onGoDetail={goDetail}/>
-          :page==="community" ?<CommunityView bp={bp} user={user} policies={policies} onGoProposal={()=>navigateTo("proposal")} initialCatFilter={communitySub}/>
+          :page==="community" ?<CommunityView bp={bp} user={user} policies={policies} onGoProposal={()=>navigateTo("proposal")} onGoDetail={goDetail} initialCatFilter={communitySub}/>
           :page==="proposal"  ?<PolicyProposalPage bp={bp} user={user} onGoCommunity={()=>{setCommunitySub("Q&A");navigateTo("community");}}/>
           :null
         }
