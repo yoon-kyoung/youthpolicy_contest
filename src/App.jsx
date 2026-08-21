@@ -4281,6 +4281,11 @@ export default function App(){
     setPage(p);
   },[]);
 
+  const navigateToTab=useCallback(p=>{
+    if(p==="community")setCommunitySub("후기");
+    navigateTo(p);
+  },[navigateTo,setCommunitySub]);
+
   // 로고 클릭: 챗봇 홈으로 이동 + 대화 중이었다면 첫 화면으로 리셋
   const [chatResetKey,setChatResetKey]=useState(0);
   const goHome=useCallback(()=>{
@@ -4340,7 +4345,7 @@ export default function App(){
       <div style={{display:"flex",height:"calc(100vh / var(--font-scale, 1))",overflow:"hidden",fontFamily:"'Pretendard Variable','Apple SD Gothic Neo','Noto Sans KR',sans-serif"}}>
         <style>{GLOBAL_CSS}</style>
         <ThemeStyle color={theme.color} colorDark={theme.colorDark} colorBg={theme.colorBg} colorBgActive={theme.colorBgActive} colorShadow={theme.colorShadow} orbColor1={theme.orbColor1} orbColor2={theme.orbColor2} headerBg={theme.headerBg} bodyBg={theme.bodyBg}/>
-        <Sidebar page={page} setPage={navigateTo} favIds={favIds} user={user} open={sidebarOpen} setOpen={setSidebarOpen} onLogoClick={goHome}/>
+        <Sidebar page={page} setPage={navigateToTab} favIds={favIds} user={user} open={sidebarOpen} setOpen={setSidebarOpen} onLogoClick={goHome}/>
         <div style={{flex:1,display:"flex",flexDirection:"column",overflow:"hidden"}}>
           {!isDetail&&(
             <div style={{background:'var(--header-bg,white)',borderBottom:"1px solid #e5e7eb",padding:"0 32px",flexShrink:0}}>
@@ -4405,7 +4410,7 @@ export default function App(){
       <ThemeStyle color={theme.color} colorDark={theme.colorDark} colorBg={theme.colorBg} colorBgActive={theme.colorBgActive} colorShadow={theme.colorShadow} orbColor1={theme.orbColor1} orbColor2={theme.orbColor2} headerBg={theme.headerBg} bodyBg={theme.bodyBg}/>
       {!isDetail&&(
         bp.isTablet
-          ?<TopNav page={page} setPage={navigateTo} favIds={favIds} user={user} onLogout={handleLogout} themeKey={themeKey} onThemeChange={setThemeKey} fontScale={fontScale} onFontInc={incFont} onFontDec={decFont} onLogoClick={goHome}/>
+          ?<TopNav page={page} setPage={navigateToTab} favIds={favIds} user={user} onLogout={handleLogout} themeKey={themeKey} onThemeChange={setThemeKey} fontScale={fontScale} onFontInc={incFont} onFontDec={decFont} onLogoClick={goHome}/>
           :(
             <header style={{background:'var(--header-bg,white)',borderBottom:"1px solid #e5e7eb",padding:"0 16px",position:"sticky",top:0,zIndex:50}}>
               <div style={{height:52,display:"flex",alignItems:"center",justifyContent:"space-between",gap:4}}>
@@ -4447,7 +4452,7 @@ export default function App(){
           :null
         }
       </main>
-      {!isDetail&&<BottomNav page={page} setPage={navigateTo} user={user}/>}
+      {!isDetail&&<BottomNav page={page} setPage={navigateToTab} user={user}/>}
     </div>
   );
 }
