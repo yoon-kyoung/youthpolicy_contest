@@ -2299,343 +2299,8 @@ function ProposalTimelineWidget({steps,states,title="진행 상태",clickFill=fa
   );
 }
 
-const PROPOSAL_SEED=[
-  {id:"prop1",category:"job",   title:"청년 인턴십 종료 후 정규직 전환 지원금 신설",
-    background:"많은 기업이 채용 연계형이 아닌 단기 인턴십 위주로 채용을 진행하면서, 인턴 프로그램이 끝나면 자연스럽게 계약이 종료되는 사례가 많습니다. 이 때문에 청년들은 몇 개월간 실무를 익히고도 정규직 전환 없이 다시 이력서를 쓰고 취업 준비를 처음부터 시작해야 하는 경우가 많아, 경력 단절과 심리적 위축으로 이어지고 있습니다.",
-    content:"인턴 기간이 끝나면 계약이 종료되는 경우가 많아요. 몇 달간 열심히 일했는데도 정규직 전환 여부를 알려주지 않다가 계약 만료 며칠 전에서야 통보받는 경우도 흔합니다. 이런 불확실성 때문에 인턴 기간 내내 다음 일자리를 알아봐야 해서 정작 인턴 업무에 집중하기 어렵다는 목소리도 많습니다. 정부가 인턴을 정규직으로 전환하는 기업에 일정 기간 인건비 일부를 지원해준다면, 기업 입장에서도 이미 검증된 인재를 정규직으로 채용할 유인이 생기고, 청년들도 인턴 기간 동안 안정감을 가지고 실무에 몰입할 수 있을 것입니다. 특히 중소기업의 경우 정규직 채용 부담이 커서 인턴을 계속 단기로만 운용하는 경우가 많은데, 지원금이 있다면 이런 관행이 줄어들 것으로 봅니다.",
-    expectedEffect:"정규직 전환률이 높아지고, 기업 입장에서도 이미 검증된 인재를 채용할 유인이 생겨 채용 안정성이 향상될 것으로 기대됩니다. 청년들도 인턴 기간 동안 다음 이직을 걱정하기보다 실무 역량을 쌓는 데 집중할 수 있게 되고, 중소기업은 채용 리스크를 줄이면서도 우수 인재를 확보할 수 있어 청년 고용의 질 자체가 개선될 것으로 기대됩니다. 나아가 인턴십이 단순한 스펙 쌓기가 아니라 실제 취업으로 이어지는 통로라는 인식이 자리 잡으면서, 청년들의 인턴십 지원 자체도 더 늘어날 것으로 기대됩니다.",
-    isTeam:false, teamMembers:[], attachment:"정규직전환_지원방안.hwp", aiVerified:true,
-    author:"김o준", createdAt:"2026-04-10T09:00:00.000Z", status:"adopted",  votes:342,
-    answer:"제안 내용을 반영해 2026년 하반기부터 정규직 전환 지원금 시범사업을 시행합니다.", answerOrg:"고용노동부", answeredAt:"2026-05-05"},
-  {id:"prop2",category:"house", title:"1인가구 청년 전세보증금 반환보증료 전액 지원",
-    background:"전세사기 피해가 늘면서 반환보증 가입이 사실상 필수가 되었지만, 1인가구 청년에게는 보증료 자체가 큰 부담입니다. 특히 사회초년생은 목돈을 마련하기 어려운 상황에서 보증금 외에 추가로 보증료까지 부담해야 해서, 안전장치인 반환보증 가입을 오히려 포기하는 역설적인 상황이 벌어지고 있습니다.",
-    content:"전세사기 걱정에 반환보증에 가입하고 싶어도 보증료가 부담됩니다. 보증금 규모가 클수록 보증료도 함께 올라가기 때문에, 정작 보증이 꼭 필요한 청년일수록 가입을 포기하게 되는 경우가 많습니다. 특히 첫 독립을 준비하는 사회초년생은 이사비, 중개수수료, 관리비 예치금 등으로 이미 목돈이 빠듯한 상태라 보증료까지 감당하기 어렵습니다. 청년 1인가구는 보증료를 전액 지원해주시면, 전세사기 불안 없이 안심하고 계약을 진행할 수 있을 것입니다. 이미 일부 지자체에서 시행 중인 부분 지원 제도를 전국 단위로 확대하고, 지원 대상도 소득 기준을 다소 완화해 더 많은 청년이 혜택을 받을 수 있도록 해주셨으면 합니다.",
-    expectedEffect:"보증 가입률이 높아져 전세사기 피해를 예방하고, 청년 1인가구의 주거 안정성이 개선될 것으로 기대됩니다. 보증료 부담이 사라지면 청년들이 계약 전 단계부터 안심하고 매물을 검토할 수 있게 되고, 장기적으로는 전세사기 피해 구제에 들어가는 사회적 비용도 줄어드는 효과가 있을 것으로 기대됩니다. 또한 보증 가입이 보편화되면 임대인 입장에서도 신뢰할 수 있는 계약 관행이 자리 잡아, 전세 시장 전반의 투명성이 높아지는 데도 기여할 것으로 기대됩니다.",
-    isTeam:true, teamMembers:["이o현","최o영"], aiVerified:true,
-    author:"이o현", createdAt:"2026-05-02T09:00:00.000Z", status:"answered", votes:256,
-    answer:"보증료 지원 예산 확대 방안을 검토 중이며, 결과는 추후 공지 예정입니다.", answerOrg:"국토교통부", answeredAt:"2026-05-20"},
-  {id:"prop3",category:"money", title:"청년도약계좌 중도해지 시 정부기여금 일부 인정",
-    background:"이직·이사 등 불가피한 사유로 중도해지를 하면 그동안 쌓아온 정부기여금을 전혀 받지 못해 오히려 저축을 포기하게 됩니다. 청년도약계좌는 5년이라는 긴 만기를 전제로 설계되어 있어, 취업 상황이 자주 바뀌는 청년들에게는 완주가 쉽지 않은 현실적인 어려움이 있습니다.",
-    content:"불가피한 사정으로 중도해지하면 정부기여금을 전혀 못 받는데, 가입 기간에 비례해서라도 일부 인정해주셨으면 합니다. 지금 구조에서는 4년 넘게 성실히 납입하다가 갑작스러운 이직이나 지방 발령으로 해지해도 그동안의 기여금을 한 푼도 받지 못해, 사실상 5년을 채우지 못하면 처음부터 손해를 보는 셈입니다. 이 때문에 오히려 만기까지 자신이 없다는 이유로 아예 가입을 꺼리는 청년들도 많습니다. 가입 기간에 비례해 기여금 일부라도 지급하는 구조로 바뀐다면, 중도해지에 대한 부담이 줄어들어 더 많은 청년이 부담 없이 저축을 시작할 수 있을 것입니다. 최소한 3년 이상 유지한 경우에는 단계적으로 기여금을 인정해주는 방안도 검토해주셨으면 합니다.",
-    expectedEffect:"중도해지 부담이 줄어들어 더 많은 청년이 안심하고 가입을 유지할 수 있을 것으로 기대됩니다. 완주에 대한 부담 때문에 가입 자체를 꺼리던 청년들의 진입 장벽이 낮아지고, 예기치 못한 이직이나 이사로 해지하더라도 그동안의 노력이 헛되지 않는다는 신뢰가 쌓여 청년 자산형성 정책 전반에 대한 만족도도 함께 올라갈 것으로 기대됩니다. 결과적으로 청년도약계좌의 실질 가입 유지율이 높아지는 효과도 기대할 수 있습니다.",
-    isTeam:false, teamMembers:[], aiVerified:true,
-    author:"박o영", createdAt:"2026-06-01T09:00:00.000Z", status:"matching", votes:128,
-    answer:"", answerOrg:"", answeredAt:""},
-  {id:"prop4",category:"edu",   title:"국가장학금 소득분위 산정 기준 최신화",
-    background:"소득분위 산정 기준이 몇 년째 그대로라 실제 가구 소득·재산 변화를 제대로 반영하지 못한다는 지적이 많습니다. 부동산 가격 상승으로 자산 기준선을 넘어버려 지원 대상에서 제외되는 가구가 늘고 있는데, 실제로는 형편이 넉넉하지 않은 경우도 많아 형평성 논란이 계속되고 있습니다.",
-    content:"재산 기준 산정에 실제 생활 여건이 잘 반영되지 않는 것 같습니다. 산정 기준을 최신 통계로 갱신해주세요. 예를 들어 부모님 명의로 된 오래된 주택 한 채가 있다는 이유만으로 소득분위가 실제보다 높게 잡혀 장학금 대상에서 탈락하는 경우가 흔합니다. 반면 실거주 목적의 대출이 많은 가구는 실질적으로 생활이 넉넉하지 않은데도 산정 방식상 불리하게 작용하지 않는 경우도 있어 형평성 문제가 제기되고 있습니다. 몇 년 전 기준으로 고정된 재산 환산율과 소득 구간을 최신 통계청 자료에 맞춰 주기적으로 갱신하고, 지역별 부동산 가격 편차도 함께 고려해주셨으면 합니다.",
-    expectedEffect:"형평성 있는 지원이 가능해지고, 실제 어려운 가구에 더 정확히 장학금이 돌아갈 것으로 기대됩니다. 산정 기준이 현실을 제대로 반영하면 억울하게 탈락하는 학생들이 줄어들고, 매년 재산 산정 방식에 대한 이의제기와 행정 비용도 함께 줄어드는 효과가 있을 것으로 기대됩니다. 나아가 학생과 학부모의 제도 신뢰도가 높아져 국가장학금 제도 전반에 대한 만족도도 함께 크게 개선될 것으로 기대됩니다.",
-    isTeam:true, teamMembers:["정o서","김o훈","오o린"], attachment:"국가장학금_기준개선안.pdf", aiVerified:true,
-    author:"정o서", createdAt:"2026-05-20T09:00:00.000Z", status:"answered", votes:97,
-    answer:"2027학년도부터 소득 산정 기준 개선을 추진할 예정입니다.", answerOrg:"교육부", answeredAt:"2026-06-02"},
-  {id:"prop5",category:"edu",   title:"비전공자 개발 부트캠프 국비지원 비율 확대",
-    background:"비전공자도 국비지원 부트캠프에 지원할 수 있지만, 본인부담금이 커서 참여를 포기하는 경우가 많습니다. 개발 직군으로의 전환을 꿈꾸는 비전공자일수록 소득이 불안정한 경우가 많은데, 정작 교육에 필요한 초기 비용 부담이 커서 도전 자체를 망설이게 되는 현실입니다.",
-    content:"비전공자도 국비지원 부트캠프에 참여할 수 있지만 본인부담금이 커서 부담됩니다. 지원 비율을 확대해주세요. 6개월 가까이 되는 교육 기간 동안 소득이 없는 상태로 버텨야 하는 데다, 교재비나 노트북 등 장비 구입 비용까지 더해지면 실질적인 부담이 훨씬 커집니다. 특히 비전공자는 전공자보다 더 많은 선행 학습이 필요해 자비로 별도 강의를 듣는 경우도 많아 이중으로 비용이 발생합니다. 국비지원 비율을 현재보다 확대하고, 교육 기간 중 최소한의 생활비를 지원하는 제도가 함께 마련된다면 경제적 이유로 도전을 포기하는 비전공자가 줄어들 것입니다. 생계 걱정 없이 교육에만 집중할 수 있는 환경이 만들어지는 것이 가장 중요하다고 생각합니다.",
-    expectedEffect:"비전공자의 개발 직군 진입 장벽이 낮아져 청년 취업 선택지가 넓어질 것으로 기대됩니다. 경제적 부담 때문에 도전을 망설이던 청년들이 실질적으로 부트캠프에 참여할 수 있게 되고, IT 업계의 인력난 해소와 비전공자 출신 개발자들의 다양한 산업 배경이 결합되며 산업 전반의 혁신에도 도움이 될 것으로 기대됩니다. 교육 중도 포기율도 함께 낮아져 국비 지원의 실질적인 효율성도 높아질 것으로 기대됩니다.",
-    isTeam:false, teamMembers:[], aiVerified:true,
-    author:"최o민", createdAt:"2026-06-20T09:00:00.000Z", status:"pending",  votes:41,
-    answer:"", answerOrg:"", answeredAt:""},
-  {id:"prop6",category:"health",title:"청년 마음건강 상담 지원 횟수 연 10회→20회 확대",
-    background:"상담 10회로는 근본적인 회복까지 이어지기 어렵다는 의견이 많습니다. 마음건강 문제는 단기간에 해결되기 어려운 경우가 많은데, 정해진 횟수가 끝나면 상담이 중단되어 회복 과정이 끊기고 다시 처음부터 새로운 상담사와 관계를 쌓아야 하는 부담이 생깁니다.",
-    content:"상담 10회로는 부족한 경우가 많습니다. 최소 20회까지는 지원 횟수를 늘려주셨으면 합니다. 상담 초반 몇 회는 신뢰 관계를 쌓는 데 쓰이는 경우가 많아, 정작 본격적으로 마음을 열고 이야기를 나누기 시작할 때쯤 지원이 끝나버리는 경우가 흔합니다. 이 때문에 회복 흐름이 끊기고 다시 대기 명단에 이름을 올려야 하는 청년들도 많습니다. 지원 횟수를 최소 20회로 늘리고, 필요한 경우 전문가 소견에 따라 추가 연장도 가능하도록 유연하게 운영해주시면 실질적인 회복까지 이어질 수 있을 것입니다. 특히 상담사가 중간에 바뀌지 않고 동일한 상담사와 계속 이어갈 수 있도록 해주시면 신뢰 관계가 끊기지 않아 훨씬 효과적일 것 같습니다.",
-    expectedEffect:"충분한 상담 기간이 확보되어 청년들의 정신건강 회복률이 높아질 것으로 기대됩니다. 상담이 중간에 끊기지 않고 이어지면서 신뢰 관계를 바탕으로 한 깊이 있는 치료가 가능해지고, 장기적으로는 정신건강 문제로 인한 학업·취업 중단 등 사회적 비용도 함께 줄어들 것으로 기대됩니다. 나아가 마음건강 지원 제도에 대한 청년들의 신뢰와 이용률도 함께 높아질 것으로 기대됩니다.",
-    isTeam:true, teamMembers:["한o아","윤o서"], aiVerified:true,
-    author:"한o아", createdAt:"2026-07-05T09:00:00.000Z", status:"pending",  votes:19,
-    answer:"", answerOrg:"", answeredAt:""},
-  {id:"prop7",category:"job",   title:"지방 중소기업 청년 채용 시 교통비 지원 신설",
-    background:"지방 중소기업은 대중교통이 불편해 통근 부담이 채용 기피로 이어지는 경우가 많습니다. 특히 산업단지 인근은 버스 배차 간격이 길고 막차 시간도 빨라, 자차가 없는 청년들은 아예 지원을 포기하거나 어렵게 입사해도 통근 부담 때문에 얼마 안 가 퇴사하는 경우가 많습니다.",
-    content:"지방 중소기업은 대중교통이 불편해 통근 부담이 큽니다. 채용 시 교통비를 별도로 지원해주세요. 산업단지가 시내에서 멀리 떨어져 있는 경우가 많아 대중교통만으로는 출퇴근이 어렵고, 결국 자차나 고가의 통근버스에 의존해야 하는데 이는 청년들에게 상당한 경제적 부담이 됩니다. 이런 이유로 조건이 맞아도 지방 중소기업 입사를 꺼리는 경우가 많고, 수도권으로만 청년들이 몰리는 현상도 심화되고 있습니다. 채용 시 일정 기간 교통비를 별도로 지원해주시거나, 통근버스 운영비를 기업에 함께 지원하는 방식으로 이 부담을 덜어주셨으면 합니다. 실제로 주변에도 급여나 업무 조건은 만족스러운데 통근 문제 하나 때문에 입사를 포기한 친구들이 여럿 있습니다.",
-    expectedEffect:"지방 중소기업의 청년 채용이 늘고, 수도권 쏠림 현상 완화에도 도움이 될 것으로 기대됩니다. 통근 부담이 줄어들면 조건이 맞는 지방 일자리를 선택지에서 배제하지 않게 되고, 지방 중소기업도 인력난을 해소하며 지역 경제 활성화에도 긍정적인 영향을 줄 것으로 기대됩니다. 장기적으로는 지방에 정착하는 청년이 늘어나 지역 소멸 문제를 완화하는 데도 보탬이 될 것으로 기대됩니다.",
-    isTeam:false, teamMembers:[], aiVerified:true,
-    author:"오o진", createdAt:"2026-07-15T09:00:00.000Z", status:"pending",  votes:7,
-    answer:"", answerOrg:"", answeredAt:""},
-  {id:"prop8",category:"house", title:"청년 매입임대주택 반려동물 동반 입주 허용",
-    background:"1인가구 중 반려동물과 함께 거주하는 청년이 늘고 있지만, 대부분의 공공임대주택이 반려동물 동반을 금지하고 있습니다. 이미 반려동물을 키우고 있는 청년들은 공공임대주택 입주 기회 자체를 포기하거나, 반대로 저렴한 주거를 위해 반려동물을 포기해야 하는 상황에 놓이게 됩니다.",
-    content:"공공임대주택 대부분이 반려동물 동반 입주를 금지하고 있어 입주를 포기하는 경우가 많습니다. 민간 임대 시장에서는 반려동물 동반 매물을 구하기가 쉽지 않은 데다 보증금도 더 높게 책정되는 경우가 많아, 반려동물과 함께 사는 청년들에게 공공임대주택은 사실상 선택지가 되지 못하고 있습니다. 소음이나 위생 관리에 대한 우려로 금지 정책이 유지되고 있지만, 사육 서약서 작성이나 반려동물 등록 의무화, 일부 동 단위의 반려동물 동반 전용 세대 지정 등의 방식으로 충분히 관리할 수 있다고 생각합니다. 이미 해외 일부 공공주택에서는 반려동물 동반 세대를 별도로 운영하며 관련 민원을 최소화하고 있는 사례도 있습니다.",
-    expectedEffect:"반려동물 동반 청년의 공공임대주택 선택권이 넓어질 것으로 기대됩니다. 반려동물 때문에 주거 안정성을 포기해야 했던 청년들이 실질적인 선택지를 얻게 되고, 반려동물 동반 세대를 별도로 운영하면 소음이나 민원 문제도 사전에 관리할 수 있어 입주민 간 갈등 없이 제도가 안착할 수 있을 것으로 기대됩니다. 나아가 1인가구 청년의 정서적 안정에도 긍정적인 영향을 줄 것으로 기대됩니다.",
-    isTeam:false, teamMembers:[], aiVerified:true,
-    author:"윤o혁", createdAt:"2026-07-22T09:00:00.000Z", status:"pending",  votes:3,
-    answer:"", answerOrg:"", answeredAt:""},
-  {id:"prop9",category:"job",   title:"청년 창업 실패 시 재도전 지원금 확대",
-    background:"창업에 실패하면 신용불량이나 부채 부담 때문에 재도전을 포기하는 청년이 많습니다. 재도전 지원사업이 있긴 하지만 지원 규모가 작고 대상 조건이 엄격해 실제로 혜택을 받는 경우는 드뭅니다.",
-    content:"첫 창업에 실패한 경험이 있어도 재도전 지원사업 대상에 폭넓게 포함시켜주시고, 지원금 규모도 늘려주셨으면 합니다. 실패 원인을 함께 짚어주는 컨설팅이 지원금과 함께 제공된다면, 같은 이유로 다시 실패하는 것을 막는 데도 큰 도움이 될 것입니다.",
-    expectedEffect:"재도전 성공률이 높아지고, 창업 실패를 단순한 낙오가 아니라 하나의 경험으로 인정하는 창업 생태계가 만들어질 것으로 기대됩니다.",
-    isTeam:false, teamMembers:[], aiVerified:true,
-    author:"서o윤", createdAt:"2026-03-18T09:00:00.000Z", status:"pending", votes:12,
-    answer:"", answerOrg:"", answeredAt:""},
-  {id:"prop10",category:"job",  title:"국민취업지원제도 취업성공수당 지급 기한 완화",
-    background:"취업 후 일정 근속 기간을 채워야 취업성공수당이 지급되는데, 계약직·단기직 취업이 흔한 요즘 현실에서는 기한을 못 채워 수당을 받지 못하는 경우가 많습니다.",
-    content:"근속 기준을 완화하거나, 근속 기간에 비례해 수당을 단계적으로 지급하는 방식으로 바꿔주셨으면 합니다. 단기 계약이라도 성실히 근무했다면 그에 맞는 보상을 받을 수 있어야 한다고 생각합니다.",
-    expectedEffect:"다양해진 취업 형태에 맞는 실질적인 지원이 가능해지고, 조기 재취업을 유인하는 효과도 커질 것으로 기대됩니다.",
-    isTeam:false, teamMembers:[], aiVerified:true,
-    author:"남o준", createdAt:"2026-03-25T09:00:00.000Z", status:"matching", votes:34,
-    answer:"", answerOrg:"", answeredAt:""},
-  {id:"prop11",category:"job",  title:"청년 인턴 채용 시 최저임금 이상 보장 의무화",
-    background:"일부 기업이 정부 지원 인턴 프로그램을 활용하면서도 최저임금에 미달하는 급여를 지급하거나 사실상 무급으로 운영하는 사례가 있습니다. 법적 사각지대가 존재하는 상황입니다.",
-    content:"정부 지원을 받는 인턴 프로그램에 참여하는 기업은 최저임금 이상 지급을 필수 조건으로 명시하고, 위반이 확인되면 지원 대상에서 제외하는 방식으로 관리해주셨으면 합니다.",
-    expectedEffect:"인턴 근로 처우가 개선되고, 청년 노동권이 실질적으로 보호될 것으로 기대됩니다.",
-    isTeam:true, teamMembers:["배o영","노o훈"], aiVerified:true,
-    author:"배o영", createdAt:"2026-04-02T09:00:00.000Z", status:"answered", votes:58,
-    answer:"정부 지원 인턴 프로그램 참여 요건에 최저임금 이상 지급 확인 절차를 추가했습니다.", answerOrg:"고용노동부", answeredAt:"2026-04-20"},
-  {id:"prop12",category:"job",  title:"지역 청년 창업 공유오피스 임대료 지원 확대",
-    background:"지방에서 창업을 준비하는 청년은 초기 사무공간 마련 비용이 큰 부담입니다. 일부 지자체에서 공유오피스를 지원하고 있지만 수요보다 공급이 턱없이 부족합니다.",
-    content:"지원 규모와 기간을 늘리고, 대기자 명단과 선정 기준을 투명하게 공개해주셨으면 합니다. 지금은 어떤 기준으로 뽑히는지조차 알기 어려워 신청을 포기하는 경우도 많습니다.",
-    expectedEffect:"초기 창업 비용 부담이 줄어들고, 지방에서의 청년 창업이 더 활성화될 것으로 기대됩니다.",
-    isTeam:false, teamMembers:[], aiVerified:true,
-    author:"노o훈", createdAt:"2026-04-10T09:00:00.000Z", status:"pending", votes:5,
-    answer:"", answerOrg:"", answeredAt:""},
-  {id:"prop13",category:"house",title:"청년 전세사기 피해자 긴급 임시거주지 지원",
-    background:"전세사기 피해로 갑작스럽게 거주지를 잃는 청년들이 늘고 있지만, 긴급 임시거주 지원은 절차가 복잡하고 대상도 제한적이라 당장 갈 곳이 없는 경우가 많습니다.",
-    content:"피해 사실이 확인되는 즉시 공공임대주택이나 숙박 바우처 등으로 임시거주지를 신속하게 지원하고, 신청 절차도 최대한 간소화해주셨으면 합니다.",
-    expectedEffect:"주거 공백이 최소화되고, 노숙 등 2차 피해를 예방하는 효과가 있을 것으로 기대됩니다.",
-    isTeam:false, teamMembers:[], attachment:"전세사기_긴급주거지원안.pdf", aiVerified:true,
-    author:"곽o민", createdAt:"2026-03-05T09:00:00.000Z", status:"answered", votes:71,
-    answer:"전세사기 피해자 긴급 주거지원 절차를 간소화하고 지원 기간을 확대했습니다.", answerOrg:"국토교통부", answeredAt:"2026-03-28"},
-  {id:"prop14",category:"house",title:"청년 매입임대주택 재계약 시 임대료 인상률 상한 적용",
-    background:"매입임대주택을 재계약할 때 임대료가 크게 오르는 경우가 있어, 장기 거주를 계획한 청년들의 주거 안정성이 흔들리고 있습니다.",
-    content:"재계약 시 임대료 인상률에 상한(예: 5%)을 두어 명문화해주셨으면 합니다. 안정적인 거주를 위해 들어온 공공임대주택인데, 재계약마다 얼마나 오를지 몰라 불안하다는 의견이 많습니다.",
-    expectedEffect:"주거비 예측 가능성이 높아지고, 장기 거주를 유도하는 효과가 있을 것으로 기대됩니다.",
-    isTeam:false, teamMembers:[], aiVerified:true,
-    author:"심o아", createdAt:"2026-04-15T09:00:00.000Z", status:"matching", votes:23,
-    answer:"", answerOrg:"", answeredAt:""},
-  {id:"prop15",category:"house",title:"지방 이전 청년 이사비 지원 대상 확대",
-    background:"취업이나 창업을 이유로 지방으로 이전하는 청년 대상 이사비 지원이 일부 지자체에만 국한되어 있어, 어느 지역에 사느냐에 따라 지원 여부가 갈리는 형평성 문제가 있습니다.",
-    content:"이사비 지원을 전국 단위 사업으로 확대하고, 지자체마다 다른 지원 기준도 통일해주셨으면 합니다.",
-    expectedEffect:"지역 이동에 대한 경제적 장벽이 낮아지고, 지방으로의 청년 인구 유입도 촉진될 것으로 기대됩니다.",
-    isTeam:false, teamMembers:[], aiVerified:true,
-    author:"구o현", createdAt:"2026-04-28T09:00:00.000Z", status:"pending", votes:9,
-    answer:"", answerOrg:"", answeredAt:""},
-  {id:"prop16",category:"house",title:"청년 공유주택 입주자 간 갈등 조정 서비스 마련",
-    background:"공유주택에 입주한 청년들 사이에 생활 습관 차이로 갈등이 생겨도 이를 중재해줄 채널이 없어, 갈등을 견디다 못해 조기 퇴거하는 경우가 있습니다.",
-    content:"운영기관 안에 갈등 조정 상담 서비스를 신설해서, 입주자들이 문제가 생겼을 때 바로 도움을 요청할 수 있게 해주셨으면 합니다.",
-    expectedEffect:"공유주택에 대한 만족도와 재계약률이 높아질 것으로 기대됩니다.",
-    isTeam:false, teamMembers:[], aiVerified:true,
-    author:"우o진", createdAt:"2026-05-12T09:00:00.000Z", status:"pending", votes:2,
-    answer:"", answerOrg:"", answeredAt:""},
-  {id:"prop17",category:"money",title:"청년내일저축계좌 근로 유지 기준 완화",
-    background:"이직 등으로 짧은 공백기간이 생기면 지원이 중단되는데, 청년 노동시장 특성상 몇 주 정도의 공백은 흔히 있는 일인데도 이 때문에 그동안의 저축 실적이 무효가 되는 경우가 있습니다.",
-    content:"일정 기간(예: 1개월) 이내의 공백은 근로 유지로 인정해주시고, 자발적 이직과 비자발적 실직도 구분해서 완화된 기준을 적용해주셨으면 합니다.",
-    expectedEffect:"중도 탈락률이 줄어들고, 제도의 실효성이 실질적으로 강화될 것으로 기대됩니다.",
-    isTeam:false, teamMembers:[], aiVerified:true,
-    author:"성o빈", createdAt:"2026-05-20T09:00:00.000Z", status:"matching", votes:27,
-    answer:"", answerOrg:"", answeredAt:""},
-  {id:"prop18",category:"money",title:"청년 신용점수 조회 무료 횟수 확대",
-    background:"신용점수 관리가 그 어느 때보다 중요해졌지만, 무료 조회 횟수가 제한적이라 자주 확인하며 관리하기가 쉽지 않습니다.",
-    content:"청년 대상으로 무료 신용점수 조회 횟수를 늘려주셨으면 합니다. 특히 사회초년생은 신용점수를 처음 관리해보는 경우가 많아 더 자주 확인할 필요가 있다고 생각합니다.",
-    expectedEffect:"청년들의 금융 이해력이 높아지고, 신용관리가 습관으로 자리 잡는 데 도움이 될 것으로 기대됩니다.",
-    isTeam:false, teamMembers:[], aiVerified:true,
-    author:"차o린", createdAt:"2026-05-30T09:00:00.000Z", status:"pending", votes:4,
-    answer:"", answerOrg:"", answeredAt:""},
-  {id:"prop19",category:"money",title:"청년 정책자금 대출 중복 신청 허용",
-    background:"목적이 다른 여러 청년 정책자금 대출이 있는데도 중복 신청이 금지되어 있어, 소액을 여러 용도에 나눠 쓰고 싶어도 하나밖에 이용할 수 없습니다.",
-    content:"목적이 서로 다른 자금은 중복 신청을 허용하고, 대신 총 대출 한도만 관리하는 방식으로 바꿔주셨으면 합니다.",
-    expectedEffect:"청년들이 자금을 상황에 맞게 더 유연하게 활용할 수 있게 될 것으로 기대됩니다.",
-    isTeam:false, teamMembers:[], aiVerified:true,
-    author:"안o혁", createdAt:"2026-06-08T09:00:00.000Z", status:"pending", votes:15,
-    answer:"", answerOrg:"", answeredAt:""},
-  {id:"prop20",category:"money",title:"지역화폐 청년 전용 캐시백 비율 상향",
-    background:"지역화폐 캐시백 비율이 전 연령 동일하게 적용되어, 상대적으로 생활비 부담이 큰 청년층을 위한 특화 혜택은 부족한 상황입니다.",
-    content:"청년 전용 캐시백 비율을 별도로 정해 일반 비율보다 높게 상향해주셨으면 합니다. 자연스럽게 지역 소비도 늘고 청년들의 생활비 부담도 줄어들 것이라고 생각합니다.",
-    expectedEffect:"지역 소비가 촉진되고, 청년들의 실질적인 생활비 부담이 완화될 것으로 기대됩니다.",
-    isTeam:true, teamMembers:["황o서","손o우","유o경"], attachment:"지역화폐_청년캐시백안.hwp", aiVerified:true,
-    author:"황o서", createdAt:"2026-02-20T09:00:00.000Z", status:"adopted", votes:205,
-    answer:"2026년 하반기부터 청년 대상 지역화폐 캐시백을 확대 적용합니다.", answerOrg:"행정안전부", answeredAt:"2026-03-15"},
-  {id:"prop21",category:"edu",  title:"국가장학금 지급 시기 학기 초로 앞당기기",
-    background:"국가장학금 지급이 학기 중반에 이뤄지는 경우가 많아, 그 전까지는 등록금을 직접 마련해야 하는 부담이 그대로 남습니다.",
-    content:"지급 시기를 학기 초로 앞당기거나, 등록금 대출과 국가장학금 지급을 연계해서 학생이 등록금을 먼저 감당하지 않아도 되도록 해주셨으면 합니다.",
-    expectedEffect:"학기 초 경제적 부담이 크게 줄어들 것으로 기대됩니다.",
-    isTeam:false, teamMembers:[], aiVerified:true,
-    author:"고o율", createdAt:"2026-02-10T09:00:00.000Z", status:"answered", votes:89,
-    answer:"등록금 대출과 국가장학금 지급 시기를 연계하는 방안을 마련했습니다.", answerOrg:"교육부", answeredAt:"2026-03-02"},
-  {id:"prop22",category:"edu",  title:"청년 자격증 응시료 지원 대상 자격증 확대",
-    background:"응시료 지원 대상 자격증 목록이 제한적이라, 최근 수요가 늘고 있는 신산업·디지털 분야 자격증은 지원 대상에서 빠져 있는 경우가 많습니다.",
-    content:"신산업·디지털 관련 자격증도 지원 대상에 폭넓게 포함시켜주셨으면 합니다.",
-    expectedEffect:"산업 변화에 맞는 역량 개발이 더 활발해질 것으로 기대됩니다.",
-    isTeam:false, teamMembers:[], aiVerified:true,
-    author:"신o담", createdAt:"2026-06-15T09:00:00.000Z", status:"pending", votes:6,
-    answer:"", answerOrg:"", answeredAt:""},
-  {id:"prop23",category:"edu",  title:"대학원생 대상 청년 지원 정책 신설",
-    background:"대부분의 청년 정책이 대학생이나 취업준비생을 기준으로 설계되어 있어, 대학원생은 나이는 청년인데도 지원 대상에서 소외되는 경우가 많습니다.",
-    content:"대학원생의 상황에 맞는 생활비나 연구비 지원 정책을 별도로 신설해주셨으면 합니다.",
-    expectedEffect:"대학원생의 경제적 부담이 완화되고, 고급 인재 양성에도 도움이 될 것으로 기대됩니다.",
-    isTeam:false, teamMembers:[], aiVerified:true,
-    author:"전o강", createdAt:"2026-06-25T09:00:00.000Z", status:"pending", votes:18,
-    answer:"", answerOrg:"", answeredAt:""},
-  {id:"prop24",category:"edu",  title:"온라인 강의 수강 국비지원 확대",
-    background:"국비지원 훈련과정이 대부분 오프라인 중심으로 운영되어, 지방에 거주하거나 직장을 다니는 청년은 참여 자체가 어려운 경우가 많습니다.",
-    content:"온라인 강의도 국비지원 대상에 폭넓게 포함시켜서, 시간과 장소에 얽매이지 않고 학습할 수 있게 해주셨으면 합니다.",
-    expectedEffect:"교육 접근성이 높아지고, 더 많은 청년이 자기계발 기회를 가질 수 있을 것으로 기대됩니다.",
-    isTeam:false, teamMembers:[], aiVerified:true,
-    author:"양o별", createdAt:"2026-07-01T09:00:00.000Z", status:"matching", votes:22,
-    answer:"", answerOrg:"", answeredAt:""},
-  {id:"prop25",category:"health",title:"청년 마음건강 지원 신청 절차 간소화",
-    background:"신청에 필요한 서류와 절차가 복잡해서, 정작 도움이 필요한 청년이 신청 단계에서부터 포기하는 경우가 있습니다.",
-    content:"온라인으로 한 번에 신청과 서류 제출이 끝나는 원스톱 시스템을 구축해주셨으면 합니다.",
-    expectedEffect:"신청률이 높아지고, 더 많은 청년이 필요한 시기에 지원을 받을 수 있을 것으로 기대됩니다.",
-    isTeam:false, teamMembers:[], aiVerified:true,
-    author:"민o결", createdAt:"2026-07-08T09:00:00.000Z", status:"pending", votes:11,
-    answer:"", answerOrg:"", answeredAt:""},
-  {id:"prop26",category:"health",title:"야간·주말 심리상담 가능 시간 확대",
-    background:"상담 가능 시간이 평일 낮 시간대에 몰려 있어, 직장에 다니거나 학교에 다니는 청년은 시간을 맞추기가 쉽지 않습니다.",
-    content:"야간이나 주말에도 상담을 받을 수 있도록 상담 슬롯을 늘려주셨으면 합니다.",
-    expectedEffect:"상담 접근성이 높아지고, 실질적인 이용률도 함께 늘어날 것으로 기대됩니다.",
-    isTeam:true, teamMembers:["양o별","전o강"], aiVerified:true,
-    author:"양o별", createdAt:"2026-07-12T09:00:00.000Z", status:"matching", votes:25,
-    answer:"", answerOrg:"", answeredAt:""},
-  {id:"prop27",category:"health",title:"청년 마음건강 지원사업 지역 간 형평성 개선",
-    background:"지자체별로 지원 회기 수나 예산 규모 차이가 커서, 어느 지역에 사느냐에 따라 받을 수 있는 지원의 수준이 크게 달라지는 문제가 있습니다.",
-    content:"전국 공통 최소 기준을 마련하고, 예산도 지역별로 더 균등하게 배분해주셨으면 합니다.",
-    expectedEffect:"지역 간 지원 격차가 줄어들고, 어디에 살든 형평성 있는 지원을 받을 수 있을 것으로 기대됩니다.",
-    isTeam:false, teamMembers:[], aiVerified:true,
-    author:"하o윤", createdAt:"2026-07-18T09:00:00.000Z", status:"pending", votes:8,
-    answer:"", answerOrg:"", answeredAt:""},
-  {id:"prop28",category:"health",title:"1인가구 청년 건강검진 항목 확대",
-    background:"일반 건강검진 항목이 기본적인 수준에 머물러 있어, 최근 늘고 있는 정신건강이나 생활습관병 관련 검진은 대부분 빠져 있습니다.",
-    content:"1인가구 청년을 대상으로 정신건강 선별검사 등을 검진 항목에 추가해주셨으면 합니다.",
-    expectedEffect:"조기 발견과 예방적 건강관리가 강화될 것으로 기대됩니다.",
-    isTeam:false, teamMembers:[], aiVerified:true,
-    author:"하o윤", createdAt:"2026-08-02T09:00:00.000Z", status:"pending", votes:3,
-    answer:"", answerOrg:"", answeredAt:""},
-];
-
-const PROPOSAL_COMMENT_SEED={
-  prop1:[
-    {id:1,author:"장o우",text:"저도 인턴 끝나고 계약 종료돼서 힘들었는데 이런 제도가 진작 있었으면 좋았을 것 같아요.",createdAt:"2026-04-12T11:20:00.000Z"},
-    {id:2,author:"신o아",text:"채택됐다는 소식 보고 왔어요! 실제로 하반기부터 시행된다니 기대됩니다.",createdAt:"2026-05-06T09:40:00.000Z"},
-    {id:3,author:"강o훈",text:"중소기업 다니는 입장에서도 이런 지원금 있으면 정규직 전환 결정하기 훨씬 수월할 것 같아요.",createdAt:"2026-04-15T14:05:00.000Z"},
-    {id:4,author:"임o영",text:"인턴만 계속 돌리는 회사들 진짜 많은데 이 제도로 좀 줄어들었으면 좋겠네요.",createdAt:"2026-04-18T20:30:00.000Z"},
-    {id:5,author:"조o현",text:"혹시 지원금 신청은 기업이 하는 건가요, 아니면 채용된 청년이 직접 신청하나요?",createdAt:"2026-04-22T13:15:00.000Z"},
-    {id:6,author:"권o빈",text:"이런 제안이 실제로 반영되는 걸 보니 정책제안 게시판이 진짜 의미가 있네요.",createdAt:"2026-05-07T10:00:00.000Z"},
-    {id:7,author:"백o서",text:"저희 회사도 인턴 3명 중 1명만 전환해주는데 이런 유인책 있으면 더 많이 뽑아줄 것 같아요.",createdAt:"2026-04-25T16:45:00.000Z"},
-    {id:8,author:"문o준",text:"채택 축하드려요! 이제 시범사업 결과도 꼭 공유해주시면 좋겠습니다.",createdAt:"2026-05-08T18:20:00.000Z"},
-    {id:9,author:"홍o린",text:"인턴 기간에 다음 회사 알아보느라 진짜 힘들었는데 공감 많이 됩니다.",createdAt:"2026-04-29T12:50:00.000Z"},
-  ],
-  prop2:[
-    {id:1,author:"서o아",text:"1인가구라 보증료 부담 진짜 크게 느껴졌는데 이 제안 보고 바로 공감 눌렀어요.",createdAt:"2026-05-04T09:30:00.000Z"},
-    {id:2,author:"류o훈",text:"국토부에서 검토 중이라니 다행이네요. 예산 확대 꼭 됐으면 좋겠습니다.",createdAt:"2026-05-21T15:10:00.000Z"},
-    {id:3,author:"남o영",text:"보증료 때문에 반환보증 가입 포기했던 친구가 있어서 너무 공감돼요.",createdAt:"2026-05-06T11:45:00.000Z"},
-    {id:4,author:"양o진",text:"지자체별로 지원이 다 달라서 헷갈렸는데 전국 단위로 통일되면 좋을 것 같아요.",createdAt:"2026-05-09T20:00:00.000Z"},
-    {id:5,author:"배o린",text:"소득 기준 완화도 같이 반영됐으면 좋겠어요. 저는 기준을 조금 넘어서 못 받았거든요.",createdAt:"2026-05-12T14:25:00.000Z"},
-    {id:6,author:"안o서",text:"전세사기 뉴스 볼 때마다 남 일 같지 않았는데 이런 제도 꼭 필요합니다.",createdAt:"2026-05-15T19:40:00.000Z"},
-    {id:7,author:"전o우",text:"결과 발표 기다리고 있어요. 좋은 소식 있길 바랍니다.",createdAt:"2026-05-19T09:05:00.000Z"},
-  ],
-  prop3:[
-    {id:1,author:"곽o빈",text:"저도 이직하면서 해지했는데 기여금 하나도 못 받아서 너무 아까웠어요.",createdAt:"2026-06-03T10:15:00.000Z"},
-    {id:2,author:"송o아",text:"5년은 진짜 너무 길어요. 3년 이상이면 일부라도 인정해줬으면 합니다.",createdAt:"2026-06-08T13:40:00.000Z"},
-    {id:3,author:"하o훈",text:"부처 매칭 시작됐다니 응원합니다. 꼭 반영됐으면 좋겠어요.",createdAt:"2026-06-15T16:20:00.000Z"},
-    {id:4,author:"신o영",text:"만기 채울 자신이 없어서 아예 가입을 안 했는데 이런 제도 있으면 다시 고민해볼 것 같아요.",createdAt:"2026-06-11T09:50:00.000Z"},
-    {id:5,author:"권o서",text:"저축 장려한다면서 중도해지 페널티가 너무 큰 것 같아요. 공감합니다.",createdAt:"2026-06-18T20:10:00.000Z"},
-  ],
-  prop4:[
-    {id:1,author:"윤o빈",text:"저희 집도 오래된 주택 하나 때문에 분위가 확 올라서 장학금 못 받았어요. 완전 공감입니다.",createdAt:"2026-05-23T11:30:00.000Z"},
-    {id:2,author:"고o아",text:"교육부에서 개선 추진한다니 다행이네요! 2027학년도부터라니 기다려집니다.",createdAt:"2026-06-03T15:00:00.000Z"},
-    {id:3,author:"문o훈",text:"재산 산정 기준 진짜 오래됐죠. 진작 바뀌었어야 했다고 생각해요.",createdAt:"2026-05-27T18:45:00.000Z"},
-  ],
-  prop5:[
-    {id:1,author:"장o서",text:"저도 비전공자로 부트캠프 알아보다가 본인부담금 보고 놀랐어요. 지원 확대 꼭 필요합니다.",createdAt:"2026-06-22T10:20:00.000Z"},
-    {id:2,author:"임o우",text:"교육 기간 생활비 지원까지 되면 진짜 부담 없이 도전할 수 있을 것 같아요.",createdAt:"2026-06-24T19:10:00.000Z"},
-  ],
-  prop6:[
-    {id:1,author:"백o빈",text:"10회로는 진짜 부족해요. 이제 좀 마음 열렸는데 끝나버려서 아쉬웠어요.",createdAt:"2026-07-06T09:40:00.000Z"},
-    {id:2,author:"조o아",text:"상담사 계속 바뀌는 것도 너무 힘들었어요. 이 부분도 같이 개선됐으면 좋겠습니다.",createdAt:"2026-07-09T14:15:00.000Z"},
-    {id:3,author:"강o훈",text:"저는 대기만 3개월 걸렸는데 횟수까지 부족하니 이중으로 힘드네요.",createdAt:"2026-07-12T11:50:00.000Z"},
-    {id:4,author:"류o영",text:"20회로 늘어나면 훨씬 안정적으로 상담받을 수 있을 것 같아요. 적극 찬성합니다.",createdAt:"2026-07-15T20:05:00.000Z"},
-    {id:5,author:"남o서",text:"마음건강 지원사업 후기 글 보고 왔는데 저도 비슷한 경험이라 이 제안에 공감돼요.",createdAt:"2026-07-17T16:30:00.000Z"},
-    {id:6,author:"양o우",text:"예산 문제도 있겠지만 청년 정신건강은 정말 투자할 가치가 있다고 생각합니다.",createdAt:"2026-07-19T12:00:00.000Z"},
-  ],
-  prop7:[
-    {id:1,author:"배o빈",text:"저도 지방 중소기업 합격했다가 통근 때문에 결국 포기했어요. 꼭 필요한 제도입니다.",createdAt:"2026-07-16T13:25:00.000Z"},
-  ],
-  prop8:[
-    {id:1,author:"이o은",text:"저도 강아지 키우고 있는데 임대주택은 아예 지원 대상에서 빠져 있어서 발만 동동 굴렀어요. 꼭 필요한 제도라고 생각해요.",createdAt:"2026-07-23T10:12:00.000Z"},
-    {id:2,author:"박o린",text:"공용 공간에서 짖는 소리나 알레르기 문제로 이웃 간 갈등이 오히려 늘어날 수도 있을 것 같아 걱정돼요.",createdAt:"2026-07-24T15:40:00.000Z"},
-    {id:3,author:"김o태",text:"반려동물 양육 인구가 이만큼 늘었는데 아직도 대부분 금지인 게 더 이상하다고 봐요. 적극 찬성합니다.",createdAt:"2026-07-26T09:05:00.000Z"},
-    {id:4,author:"최o준",text:"안 그래도 층간소음 민원이 많은데 반려동물까지 허용하면 관리 민원이 더 늘어나지 않을까 걱정됩니다.",createdAt:"2026-07-28T20:17:00.000Z"},
-  ],
-  prop9:[
-    {id:1,author:"강o빈",text:"저도 첫 창업 실패하고 재도전 지원 알아봤는데 조건이 너무 까다로워서 결국 못 받았어요.",createdAt:"2026-03-19T10:20:00.000Z"},
-    {id:2,author:"윤o아",text:"실패 원인 컨설팅까지 같이 해주면 진짜 도움 될 것 같아요. 지원금만 주는 것보다 훨씬 실질적이네요.",createdAt:"2026-03-21T14:05:00.000Z"},
-  ],
-  prop10:[
-    {id:1,author:"조o빈",text:"단기 계약직만 전전하다 보니 성공수당 받아본 적이 없어요. 꼭 개선됐으면 좋겠습니다.",createdAt:"2026-03-27T11:40:00.000Z"},
-    {id:2,author:"임o서",text:"단계적 지급 방식 좋은 아이디어네요. 근속 기간만큼 인정받을 수 있으니 훨씬 공정할 것 같아요.",createdAt:"2026-03-29T09:15:00.000Z"},
-    {id:3,author:"한o결",text:"매칭 시작됐네요! 결과 기다리고 있습니다.",createdAt:"2026-04-01T16:30:00.000Z"},
-  ],
-  prop11:[
-    {id:1,author:"문o아",text:"채택 소식 보고 왔어요. 저도 예전에 무급 인턴 하면서 힘들었던 기억이 있어서 정말 반가운 소식입니다.",createdAt:"2026-04-21T13:00:00.000Z"},
-    {id:2,author:"장o훈",text:"확인 절차 추가만으로 실제 단속이 잘 될지 모르겠지만, 일단 방향은 맞다고 생각해요.",createdAt:"2026-04-22T18:22:00.000Z"},
-    {id:3,author:"신o영",text:"진작에 있어야 했던 조건인데 이제라도 생겨서 다행이네요.",createdAt:"2026-04-24T09:50:00.000Z"},
-  ],
-  prop12:[
-    {id:1,author:"오o빈",text:"선정 기준이 불투명한 게 진짜 문제였는데 공감 많이 됩니다.",createdAt:"2026-04-11T15:10:00.000Z"},
-  ],
-  prop13:[
-    {id:1,author:"백o아",text:"전세사기 뉴스 볼 때마다 남 일 같지 않아서 무섭더라고요. 절차 간소화 꼭 필요합니다.",createdAt:"2026-03-06T12:00:00.000Z"},
-    {id:2,author:"권o서",text:"채택돼서 다행이에요. 실제로 절차가 얼마나 빨라졌는지 후기 궁금하네요.",createdAt:"2026-03-29T10:45:00.000Z"},
-    {id:3,author:"유o훈",text:"주변에 피해 당한 친구가 있었는데 임시거주지 구하는 것부터 너무 힘들어했어요. 좋은 제안입니다.",createdAt:"2026-03-10T19:30:00.000Z"},
-    {id:4,author:"정o빈",text:"바우처 방식이면 당장 갈 곳부터 마련할 수 있어서 실효성 있을 것 같아요.",createdAt:"2026-03-14T08:20:00.000Z"},
-  ],
-  prop14:[
-    {id:1,author:"이o훈",text:"재계약 때마다 얼마나 오를지 몰라 불안했는데 상한선이 생기면 훨씬 안심될 것 같아요.",createdAt:"2026-04-17T11:15:00.000Z"},
-    {id:2,author:"박o아",text:"공공임대인데도 인상률에 제한이 없다는 게 좀 이상했어요. 당연히 필요한 조치라고 생각합니다.",createdAt:"2026-04-19T20:05:00.000Z"},
-  ],
-  prop15:[
-    {id:1,author:"손o영",text:"저희 지역엔 이런 지원이 없어서 이사비 다 자비로 냈어요. 전국 확대 꼭 됐으면 좋겠어요.",createdAt:"2026-04-30T14:40:00.000Z"},
-  ],
-  prop16:[
-    {id:1,author:"고o빈",text:"공유주택 살면서 룸메이트랑 갈등 있었는데 중재해줄 곳이 없어서 그냥 참았어요. 필요한 서비스네요.",createdAt:"2026-05-14T09:25:00.000Z"},
-  ],
-  prop17:[
-    {id:1,author:"차o아",text:"이직 한 달 공백 때문에 몇 년 모은 게 다 날아갈 뻔했어요. 꼭 완화됐으면 좋겠습니다.",createdAt:"2026-05-22T13:10:00.000Z"},
-    {id:2,author:"윤o빈",text:"자발적/비자발적 구분해서 적용하는 거 좋은 방향인 것 같아요.",createdAt:"2026-05-24T17:50:00.000Z"},
-    {id:3,author:"홍o아",text:"매칭 진행 중이라니 기대됩니다. 결과 나오면 알려주세요!",createdAt:"2026-05-27T10:00:00.000Z"},
-  ],
-  prop18:[
-    {id:1,author:"김o빈",text:"사회초년생이라 신용점수 관리가 처음인데 조회할 때마다 횟수 신경 쓰여요. 공감합니다.",createdAt:"2026-06-01T12:30:00.000Z"},
-  ],
-  prop19:[
-    {id:1,author:"서o훈",text:"목적별로 소액 대출 나눠 받고 싶은데 중복이라고 막혀서 불편했어요.",createdAt:"2026-06-10T15:20:00.000Z"},
-    {id:2,author:"안o영",text:"총 한도만 관리하면 되는 거 아닌가 싶었는데 이렇게 제안해주셔서 좋네요.",createdAt:"2026-06-12T09:40:00.000Z"},
-  ],
-  prop20:[
-    {id:1,author:"남o아",text:"채택 축하드려요! 지역화폐 자주 쓰는데 캐시백 오르면 진짜 체감 클 것 같아요.",createdAt:"2026-03-16T11:00:00.000Z"},
-    {id:2,author:"배o훈",text:"청년 전용 비율 상향은 다른 지역화폐 사업에도 참고할 만한 좋은 사례가 될 것 같아요.",createdAt:"2026-03-18T14:25:00.000Z"},
-    {id:3,author:"오o아",text:"팀으로 제안하신 거 보니 자료조사 꼼꼼히 하신 게 느껴져요. 좋은 결과 얻으셨네요.",createdAt:"2026-03-20T19:10:00.000Z"},
-  ],
-  prop21:[
-    {id:1,author:"류o빈",text:"등록금 마련하려고 미리 대출받았는데 나중에 장학금 나오니 순서가 좀 아쉬웠어요. 연계되면 훨씬 낫겠네요.",createdAt:"2026-02-14T10:15:00.000Z"},
-    {id:2,author:"강o영",text:"채택됐다니 다음 학기부터는 좀 편해지겠어요.",createdAt:"2026-03-04T13:45:00.000Z"},
-    {id:3,author:"임o훈",text:"매 학기 등록금 먼저 마련하는 게 제일 큰 스트레스였는데 좋은 소식이네요.",createdAt:"2026-02-18T09:30:00.000Z"},
-  ],
-  prop22:[
-    {id:1,author:"한o아",text:"디지털 관련 자격증 준비 중인데 지원 대상이 아니어서 아쉬웠어요. 확대되면 좋겠습니다.",createdAt:"2026-06-17T16:00:00.000Z"},
-  ],
-  prop23:[
-    {id:1,author:"조o훈",text:"대학원생인데 나이는 청년인데 정책은 다 대학생 기준이라 늘 아쉬웠어요. 공감합니다.",createdAt:"2026-06-27T11:20:00.000Z"},
-    {id:2,author:"문o빈",text:"연구비까지 포함해주신 거 좋은 제안이라고 생각해요.",createdAt:"2026-06-29T15:50:00.000Z"},
-  ],
-  prop24:[
-    {id:1,author:"장o아",text:"직장 다니면서 국비지원 훈련 듣고 싶었는데 다 오프라인이라 못 들었어요. 온라인 확대 필요합니다.",createdAt:"2026-07-03T10:05:00.000Z"},
-    {id:2,author:"신o훈",text:"매칭 시작됐네요, 좋은 결과 있었으면 좋겠습니다.",createdAt:"2026-07-05T18:40:00.000Z"},
-  ],
-  prop25:[
-    {id:1,author:"오o빈",text:"서류 준비하다가 지쳐서 신청 포기한 적 있어요. 원스톱 시스템 꼭 필요합니다.",createdAt:"2026-07-09T12:15:00.000Z"},
-  ],
-  prop26:[
-    {id:1,author:"백o훈",text:"평일 낮에 시간 못 내서 상담을 못 받았는데 주말 슬롯 있으면 정말 좋겠어요.",createdAt:"2026-07-13T14:30:00.000Z"},
-    {id:2,author:"권o아",text:"팀으로 제안하신 거 응원합니다. 야간 상담 꼭 생겼으면 좋겠어요.",createdAt:"2026-07-15T09:00:00.000Z"},
-  ],
-  prop27:[
-    {id:1,author:"유o빈",text:"사는 지역 바뀌었는데 지원 회기 수가 확 줄어서 놀랐어요. 형평성 문제 맞아요.",createdAt:"2026-07-19T13:20:00.000Z"},
-  ],
-  prop28:[
-    {id:1,author:"이o서",text:"1인가구라 아플 때 더 챙겨야 하는데 검진 항목이 너무 기본적이에요. 정신건강 검사 추가되면 좋겠습니다.",createdAt:"2026-08-04T11:10:00.000Z"},
-  ],
-};
-
 function ProposalCard({proposal,user,onVote,onOpen,bp}){
   const [voted,setVoted]=useLocalStorage(`yoa:proposalVoted_${proposal.id}`,false);
-  const [comments]=useLocalStorage(`yoa:proposalComments_${proposal.id}`,PROPOSAL_COMMENT_SEED[proposal.id]||[]);
   const s=proposalStatusMeta(proposal.status);
   const c=CAT_COLORS[proposal.category]||{};
   const votes=proposal.votes||0;
@@ -2691,7 +2356,7 @@ function ProposalCard({proposal,user,onVote,onOpen,bp}){
           <Icon name="favorite" filled={voted} size={14} color={voted?"#dc2626":"#9ca3af"}/>공감 {votes}
         </button>
         <span style={{display:"flex",alignItems:"center",gap:5,lineHeight:1,padding:"6px 14px",fontSize:12,fontWeight:700,color:"#6b7280"}}>
-          <Icon name="chat_bubble" size={14} color="#9ca3af"/>댓글 {comments.length}
+          <Icon name="chat_bubble" size={14} color="#9ca3af"/>댓글 {proposal.comments_count||0}
         </span>
       </div>
     </div>
@@ -2700,7 +2365,7 @@ function ProposalCard({proposal,user,onVote,onOpen,bp}){
 
 function ProposalDetailView({proposal,user,onVote,onBack,bp}){
   const [voted,setVoted]=useLocalStorage(`yoa:proposalVoted_${proposal.id}`,false);
-  const [comments,setComments]=useLocalStorage(`yoa:proposalComments_${proposal.id}`,PROPOSAL_COMMENT_SEED[proposal.id]||[]);
+  const [comments,setComments]=useState([]);
   const [commentText,setCommentText]=useState("");
   const [copied,setCopied]=useState(false);
   const s=proposalStatusMeta(proposal.status);
@@ -2710,6 +2375,10 @@ function ProposalDetailView({proposal,user,onVote,onBack,bp}){
   const timeline=proposalTimelineStates(proposal.status);
 
   useEffect(()=>{window.scrollTo({top:0,behavior:"smooth"});},[proposal.id]);
+
+  useEffect(()=>{
+    supabase.from("proposal_comments").select("*").eq("proposal_id",proposal.id).order("created_at",{ascending:true}).then(({data})=>setComments(data||[]));
+  },[proposal.id]);
 
   const handleVote=()=>{
     if(!user){alert("로그인 후 공감할 수 있어요.");return;}
@@ -2725,12 +2394,20 @@ function ProposalDetailView({proposal,user,onVote,onBack,bp}){
     const url=`${window.location.origin}${window.location.pathname}?proposal=${proposal.id}`;
     navigator.clipboard.writeText(url).then(()=>{setCopied(true);setTimeout(()=>setCopied(false),2000);});
   };
-  const handleAddComment=e=>{
+  const handleAddComment=async e=>{
     e.preventDefault();
     if(!user){alert("로그인 후 의견을 남길 수 있어요.");return;}
     if(!commentText.trim())return;
-    setComments(prev=>[...prev,{id:Date.now(),author:user.user_metadata?.name||user.email||"익명",text:commentText.trim(),createdAt:new Date().toISOString()}]);
+    const{data,error}=await supabase.from("proposal_comments").insert({
+      proposal_id:proposal.id,
+      user_id:user.id,
+      author:user.user_metadata?.name||user.email||"익명",
+      content:commentText.trim(),
+    }).select().single();
+    if(error)return;
+    setComments(prev=>[...prev,data]);
     setCommentText("");
+    await supabase.from("proposals").update({comments_count:(proposal.comments_count||0)+1}).eq("id",proposal.id);
   };
 
   return(
@@ -2860,7 +2537,7 @@ function ProposalDetailView({proposal,user,onVote,onBack,bp}){
                       <span style={{fontSize:13,fontWeight:700,color:"#374151"}}>{maskName(cm.author)}</span>
                       <span style={{fontSize:11,color:"#9ca3af"}}>{(cm.createdAt||"").slice(0,10)}</span>
                     </div>
-                    <p style={{margin:0,fontSize:13,color:"#6b7280",lineHeight:1.6,whiteSpace:"pre-wrap"}}>{cm.text}</p>
+                    <p style={{margin:0,fontSize:13,color:"#6b7280",lineHeight:1.6,whiteSpace:"pre-wrap"}}>{cm.content}</p>
                   </div>
                 ))}
               </div>
@@ -3353,8 +3030,13 @@ function ProposalGuidePanel({bp,onGoCommunity}){
   );
 }
 
+function mapProposalRow(r){
+  return{...r,expectedEffect:r.expected_effect,isTeam:r.is_team,teamMembers:r.team_members||[],answerOrg:r.answer_org,answeredAt:r.answered_at};
+}
+
 function PolicyProposalPage({bp,user,onGoCommunity}){
-  const [proposals,setProposals]=useLocalStorage("yoa:proposals",PROPOSAL_SEED);
+  const [proposals,setProposals]=useState([]);
+  const [loadingProposals,setLoadingProposals]=useState(true);
   const [draft,setDraft]=useLocalStorage("yoa:proposalDraft",null);
   const [title,setTitle]=useState(draft?.title||"");
   const [background,setBackground]=useState(draft?.background||"");
@@ -3371,13 +3053,23 @@ function PolicyProposalPage({bp,user,onGoCommunity}){
   const [showForm,setShowForm]=useState(false);
   const [pageNum,setPageNum]=useState(1);
 
+  const fetchProposals=useCallback(async()=>{
+    setLoadingProposals(true);
+    const{data}=await supabase.from("proposals").select("*").order("created_at",{ascending:false});
+    setProposals((data||[]).map(mapProposalRow));
+    setLoadingProposals(false);
+  },[]);
+
+  useEffect(()=>{
+    fetchProposals();
+  },[fetchProposals]);
+
   useEffect(()=>{
     const id=new URLSearchParams(window.location.search).get("proposal");
-    if(!id)return;
+    if(!id||selectedProposal)return;
     const found=proposals.find(p=>String(p.id)===id);
     if(found)setSelectedProposal(found);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  },[]);
+  },[proposals,selectedProposal]);
 
   const openProposal=useCallback(p=>{
     setSelectedProposal(p);
@@ -3393,29 +3085,30 @@ function PolicyProposalPage({bp,user,onGoCommunity}){
     setDraft({category,title,background,content,expectedEffect,attachmentName,isTeam,teamMembers,savedAt:new Date().toISOString()});
   },[setDraft,category,title,background,content,expectedEffect,attachmentName,isTeam,teamMembers]);
 
-  const handleSubmit=()=>{
+  const handleSubmit=async()=>{
     if(!user){alert("로그인 후 제안을 등록할 수 있어요.");return;}
     if(!title.trim()||background.trim().length<PROPOSAL_MIN_LEN.background||content.trim().length<PROPOSAL_MIN_LEN.content||expectedEffect.trim().length<PROPOSAL_MIN_LEN.expectedEffect)return;
-    const proposal={
-      id:Date.now(),
+    const{data,error}=await supabase.from("proposals").insert({
       title:title.trim(),
       background:background.trim(),
       content:content.trim(),
-      expectedEffect:expectedEffect.trim(),
+      expected_effect:expectedEffect.trim(),
       attachment:attachmentName,
-      isTeam,
-      teamMembers:isTeam?teamMembers:[],
-      aiVerified:true,
+      is_team:isTeam,
+      team_members:isTeam?teamMembers:[],
+      ai_verified:true,
       category,
       author:user.user_metadata?.name||user.email||"익명",
-      createdAt:new Date().toISOString(),
+      user_id:user.id,
       status:"pending",
       votes:0,
       answer:"",
-      answerOrg:"",
-      answeredAt:"",
-    };
-    setProposals(prev=>[proposal,...prev]);
+      answer_org:"",
+      answered_at:"",
+      comments_count:0,
+    }).select().single();
+    if(error){alert("제안 등록에 실패했어요. 잠시 후 다시 시도해주세요.");return;}
+    setProposals(prev=>[mapProposalRow(data),...prev]);
     setTitle("");
     setBackground("");
     setContent("");
@@ -3427,14 +3120,15 @@ function PolicyProposalPage({bp,user,onGoCommunity}){
     setDraft(null);
   };
 
-  const handleVote=useCallback((id,delta=1)=>{
-    setProposals(prev=>prev.map(p=>{
-      if(p.id!==id)return p;
-      const votes=Math.max(0,(p.votes||0)+delta);
-      const status=p.status==="pending"&&votes>=VOTE_THRESHOLD?"matching":p.status;
-      return{...p,votes,status};
-    }));
-  },[setProposals]);
+  const handleVote=useCallback(async(id,delta=1)=>{
+    const target=proposals.find(p=>p.id===id);
+    if(!target)return;
+    const votes=Math.max(0,(target.votes||0)+delta);
+    const status=target.status==="pending"&&votes>=VOTE_THRESHOLD?"matching":target.status;
+    await supabase.from("proposals").update({votes,status}).eq("id",id);
+    setProposals(prev=>prev.map(p=>p.id===id?{...p,votes,status}:p));
+    setSelectedProposal(prev=>prev&&prev.id===id?{...prev,votes,status}:prev);
+  },[proposals]);
 
   const statusCounts=useMemo(()=>{
     const m={all:proposals.length,pending:0,answered:0,adopted:0};
@@ -3534,14 +3228,21 @@ function PolicyProposalPage({bp,user,onGoCommunity}){
             </div>
 
             <div style={{display:"flex",flexDirection:"column",gap:10,marginTop:12}}>
-              {filtered.length===0&&(
+              {loadingProposals&&(
+                <div style={{display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",padding:"72px 20px",gap:14,background:"white",borderRadius:16,border:"1.5px solid #E2E8F0"}}>
+                  {[0,1,2].map(i=>(
+                    <div key={i} style={{width:"100%",height:88,borderRadius:12,background:"linear-gradient(90deg,#f1f5f9 25%,#e2e8f0 50%,#f1f5f9 75%)",backgroundSize:"200% 100%",animation:"shimmer 1.4s infinite"}}/>
+                  ))}
+                </div>
+              )}
+              {!loadingProposals&&filtered.length===0&&(
                 <div style={{display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",padding:"64px 20px",gap:10,background:"white",borderRadius:16,border:"1.5px solid #E2E8F0"}}>
                   <Icon name="campaign" size={44} color="#d1d5db"/>
                   <div style={{fontSize:16,fontWeight:700,color:"#1E293B",marginTop:4}}>해당하는 제안이 없어요</div>
                   <div style={{fontSize:13,color:"#9ca3af"}}>다른 상태 탭을 확인해보세요</div>
                 </div>
               )}
-              {pageItems.map(p=><ProposalCard key={p.id} proposal={p} user={user} onVote={handleVote} onOpen={openProposal} bp={bp}/>)}
+              {!loadingProposals&&pageItems.map(p=><ProposalCard key={p.id} proposal={p} user={user} onVote={handleVote} onOpen={openProposal} bp={bp}/>)}
             </div>
             <Pagination page={pageNum} pageCount={pageCount} onChange={setPageNum}/>
           </div>
