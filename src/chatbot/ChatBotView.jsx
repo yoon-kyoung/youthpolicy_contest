@@ -681,7 +681,8 @@ export default function ChatBotView({ bp, favIds, onToggleFav, onGoDetail, reset
       if (activeReqRef.current !== reqSession) return
       const cleanText = full.replace(/^\[POLICY_IDS:[^\]]*\]\n?/, '')
       const { body, followups } = parseFollowups(cleanText)
-      const policies = ids.length ? policiesByIds(ids).map((p, i) => mapRawPolicy(p, i)) : null
+      const mentioned = ids.length ? policiesByIds(ids).map((p, i) => mapRawPolicy(p, i)).filter((p) => body.includes(p.title)) : []
+      const policies = mentioned.length ? mentioned : null
       patchLast({ text: body || '결과를 가져오지 못했어요.', policies, followups, streaming: false })
       failStreakRef.current = 0
       if (!rateLimited) {
