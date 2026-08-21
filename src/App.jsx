@@ -584,12 +584,12 @@ function PolicyCard({policy,favIds,onToggle,onGoDetail,compact,delay=0,compareCh
     navigator.clipboard.writeText(url).then(()=>{setCopied(true);setTimeout(()=>setCopied(false),2000);});
   };
   return(
-    <div ref={ref} onClick={()=>onGoDetail(policy)} style={{
-      background:"white",borderRadius:16,border:"1.5px solid #E2E8F0",
+    <div ref={ref} onClick={()=>onToggleCompare?onToggleCompare(policy.id):onGoDetail(policy)} style={{
+      background:compareChecked?"var(--accent-bg)":"white",borderRadius:16,border:compareChecked?"1.5px solid var(--accent)":"1.5px solid #E2E8F0",
       padding:compact?"12px 14px":"18px 20px",
       cursor:"pointer",position:"relative",
       display:"flex",flexDirection:"column",
-      transition:"transform 0.2s,box-shadow 0.2s,opacity 0.4s",
+      transition:"transform 0.2s,box-shadow 0.2s,opacity 0.4s,background 0.15s,border-color 0.15s",
       opacity:visible?1:0,transform:visible?"translateY(0)":"translateY(20px)",
       transitionDelay:`${delay}ms`,
     }}
