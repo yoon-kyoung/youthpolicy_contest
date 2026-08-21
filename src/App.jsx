@@ -1821,8 +1821,8 @@ function CommunityPostDetailView({post,bp,user,policies,onGoDetail,onBack,onLike
           <h1 style={{fontSize:bp.isDesktop?26:bp.isTablet?22:18,fontWeight:900,margin:"0 0 16px",lineHeight:1.35,letterSpacing:"-0.02em",color:"#111827",paddingBottom:16,borderBottom:"1px solid #f1f5f9"}}>{post.title}</h1>
           <div style={{display:"flex",alignItems:"center",justifyContent:"flex-end",gap:8,marginBottom:20,flexWrap:"wrap"}}>
             {post.verified&&(
-              <span style={{display:"inline-flex",alignItems:"center",gap:4,fontSize:11,fontWeight:700,color:"#15803D",background:"#F0FDF4",border:"1px solid #BBF7D0",borderRadius:20,padding:"3px 10px"}}>
-                <Icon name="task_alt" size={12} color="#15803D"/>실제 신청 인증{post.applied_policy_title?` · ${post.applied_policy_title}`:""}
+              <span style={{display:"inline-flex",alignItems:"center",gap:4,fontSize:11,fontWeight:700,color:"var(--accent-dark)",background:"var(--accent-bg)",border:"1px solid var(--accent)",borderRadius:20,padding:"3px 10px"}}>
+                <Icon name="task_alt" size={12} color="var(--accent-dark)"/>실제 신청 인증{post.applied_policy_title?` · ${post.applied_policy_title}`:""}
               </span>
             )}
             <div style={{fontSize:13,fontWeight:700,color:"#111827"}}>{maskName(post.author)}</div>
@@ -2098,8 +2098,8 @@ function CommunityView({bp,user,policies,onGoProposal,onGoDetail,initialCatFilte
                 <div style={{display:"flex",alignItems:"center",gap:14,marginTop:12,paddingTop:12,borderTop:"1px solid #E2E8F0"}}>
                   <span style={{fontSize:12,color:"#9ca3af"}}>by <span style={{color:"#374151",fontWeight:600}}>{maskName(post.author)}</span></span>
                   {post.verified&&(
-                    <span style={{display:"inline-flex",alignItems:"center",gap:4,fontSize:11,fontWeight:700,color:"#15803D",background:"#F0FDF4",border:"1px solid #BBF7D0",borderRadius:20,padding:"2px 9px"}}>
-                      <Icon name="task_alt" size={12} color="#15803D"/>실제 신청 인증
+                    <span style={{display:"inline-flex",alignItems:"center",gap:4,fontSize:11,fontWeight:700,color:"var(--accent-dark)",background:"var(--accent-bg)",border:"1px solid var(--accent)",borderRadius:20,padding:"2px 9px"}}>
+                      <Icon name="task_alt" size={12} color="var(--accent-dark)"/>실제 신청 인증
                     </span>
                   )}
                   <div style={{marginLeft:"auto",display:"flex",gap:12}}>
