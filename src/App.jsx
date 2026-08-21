@@ -245,6 +245,10 @@ function RegionMapModal({region,onSelect,onClose}){
         </div>
         <button onClick={()=>onSelect("전체")} style={{width:"100%",padding:"8px 0",borderRadius:10,border:"1.5px solid",borderColor:region==="전체"?"var(--accent)":"#E2E8F0",background:region==="전체"?"var(--accent)":"#FFFFFF",color:region==="전체"?"#FFFFFF":"#475569",fontSize:13,fontWeight:region==="전체"?700:500,cursor:"pointer",marginBottom:14}}>전체 지역 보기</button>
         <div style={{position:"relative",width:"100%",aspectRatio:"3/4",background:"linear-gradient(180deg,#EFF6FF,#F8FAFC)",borderRadius:16,border:"1px solid #E2E8F0",overflow:"hidden"}}>
+          <svg viewBox="0 0 300 400" preserveAspectRatio="none" style={{position:"absolute",inset:0,width:"100%",height:"100%"}}>
+            <path d="M100,15 L160,12 L205,30 L225,75 L218,130 L235,175 L222,225 L200,265 L165,290 L130,300 L95,285 L70,250 L60,200 L68,150 L55,100 L80,50 Z" fill="#DCEAFE" stroke="#93B8E8" strokeWidth="2" strokeLinejoin="round"/>
+            <ellipse cx="84" cy="388" rx="17" ry="9" fill="#DCEAFE" stroke="#93B8E8" strokeWidth="2"/>
+          </svg>
           {REGIONS.slice(1).map(r=>{
             const pos=REGION_MAP_POS[r];
             const active=region===r;
