@@ -38,7 +38,7 @@ const TICKER_INTERVAL_MS = 3000
 
 function PopularSearchRow({ item, onPick, compact }) {
   return (
-    <button key={item.id} onClick={() => onPick(item.name)} style={{
+    <button key={item.id} onClick={() => onPick(item)} style={{
       display: 'flex', alignItems: 'center', gap: 8, width: '100%',
       border: 'none', background: 'transparent', cursor: 'pointer',
       padding: compact ? '2px 0' : '6px 2px', borderRadius: 8, textAlign: 'left',
@@ -788,7 +788,11 @@ export default function ChatBotView({ bp, favIds, onToggleFav, onGoDetail, reset
         {/* Privacy Notice — 오른쪽 하단 고정 (모바일은 본문 텍스트를 가려서 숨김) */}
         {bp!=='mobile'&&<PrivacyNoticePanel bp={bp}/>}
         {/* 실시간 인기 검색어 — 오른쪽 상단 고정 (모바일은 본문 텍스트를 가려서 숨김) */}
-        {bp!=='mobile'&&<PopularSearchTicker items={popular} onPick={(name) => sendMessage(name)} isMobile={bp==='mobile'} />}
+        {bp!=='mobile'&&<PopularSearchTicker items={popular} onPick={(item) => {
+          const raw = policiesByIds([item.id])[0]
+          if (raw) onGoDetail(mapRawPolicy(raw, 0))
+          else sendMessage(item.name)
+        }} isMobile={bp==='mobile'} />}
         <div style={{
           position:'relative', zIndex:1,
           display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center',
