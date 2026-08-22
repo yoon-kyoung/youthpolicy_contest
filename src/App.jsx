@@ -3910,7 +3910,7 @@ function AboutCarousel({isDesktop}){
       <HScrollFade style={{gap:4,padding:6,background:"#EEF2F7",borderRadius:12,marginBottom:16}} fadeColor="#EEF2F7">
         {ABOUT_CARDS.map((c,i)=>(
           <button key={i} onClick={()=>setIdx(i)} style={{
-            flexShrink:0,display:"flex",alignItems:"center",justifyContent:"center",gap:6,
+            flex:"1 0 auto",display:"flex",alignItems:"center",justifyContent:"center",gap:6,
             padding:isDesktop?"10px 18px":"9px 14px",fontSize:isDesktop?14:13,lineHeight:1,
             cursor:"pointer",border:"none",borderRadius:9,whiteSpace:"nowrap",transition:"all 0.15s",
             color:idx===i?c.accent:"#6b7280",fontWeight:idx===i?700:500,
