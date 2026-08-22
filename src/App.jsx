@@ -2133,6 +2133,7 @@ function ProposalDetailView({proposal,user,onVote,onBack,bp}){
   const [voted,setVoted]=useLocalStorage(`yoa:proposalVoted_${proposal.id}`,false);
   const [comments,setComments]=useState([]);
   const [commentText,setCommentText]=useState("");
+  const [viewerOpen,setViewerOpen]=useState(false);
   const commentRef=useRef(null);
   useEffect(()=>{
     const el=commentRef.current;
@@ -2191,6 +2192,7 @@ function ProposalDetailView({proposal,user,onVote,onBack,bp}){
   };
 
   return(
+    <>
     <div style={{background:"#F5F9FC",minHeight:"100%",animation:"fadeUp 0.25s ease"}}>
       {/* 뒤로가기 헤더 */}
       <div style={{background:"white",borderBottom:"1px solid #e5e7eb",padding:bp.isDesktop?"0 40px":"0 16px",position:"sticky",top:0,zIndex:40}}>
@@ -2268,8 +2270,15 @@ function ProposalDetailView({proposal,user,onVote,onBack,bp}){
               </div>
             )}
             {proposal.attachment&&(
-              <div style={{display:"flex",alignItems:"center",gap:5,fontSize:13,color:"#6b7280"}}>
-                <Icon name="attach_file" size={15} color="#9ca3af"/>{proposal.attachment}
+              <div onClick={()=>{
+                if(!proposal.attachment_url)return;
+                if(proposal.attachment_type==="hwp")window.open(proposal.attachment_url,"_blank","noopener,noreferrer");
+                else setViewerOpen(true);
+              }} style={{display:"inline-flex",alignItems:"center",gap:5,fontSize:13,color:proposal.attachment_url?"var(--accent)":"#6b7280",cursor:proposal.attachment_url?"pointer":"default"}}>
+                <Icon name="attach_file" size={15} color={proposal.attachment_url?"var(--accent)":"#9ca3af"}/>
+                <span style={{textDecoration:proposal.attachment_url?"underline":"none",textUnderlineOffset:2}}>{proposal.attachment}</span>
+                {!!proposal.attachment_size&&<span style={{color:"#9ca3af"}}>({formatFileSize(proposal.attachment_size)})</span>}
+                {proposal.attachment_url&&<Icon name={proposal.attachment_type==="hwp"?"download":"visibility"} size={13} color="var(--accent)"/>}
               </div>
             )}
           </section>
@@ -2326,6 +2335,22 @@ function ProposalDetailView({proposal,user,onVote,onBack,bp}){
         </div>
       </div>
     </div>
+    {viewerOpen&&proposal.attachment_url&&(
+      <div onClick={()=>setViewerOpen(false)} style={{position:"fixed",inset:0,background:"rgba(15,23,42,0.6)",zIndex:200,display:"flex",alignItems:"center",justifyContent:"center",padding:20}}>
+        <div onClick={e=>e.stopPropagation()} style={{background:"white",borderRadius:16,padding:14,maxWidth:"90vw",maxHeight:"90vh",display:"flex",flexDirection:"column",gap:10}}>
+          <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",gap:12}}>
+            <span style={{fontSize:13,fontWeight:700,color:"#111827",wordBreak:"break-word"}}>{proposal.attachment}</span>
+            <button onClick={()=>setViewerOpen(false)} style={{flexShrink:0,background:"#f1f5f9",border:"none",borderRadius:"50%",width:26,height:26,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center"}}><Icon name="close" size={14} color="#6b7280"/></button>
+          </div>
+          {proposal.attachment_type==="image"?(
+            <img src={proposal.attachment_url} alt={proposal.attachment} style={{maxWidth:"85vw",maxHeight:"75vh",objectFit:"contain",borderRadius:8}}/>
+          ):(
+            <iframe src={proposal.attachment_url} title={proposal.attachment} style={{width:"85vw",height:"75vh",border:"none",borderRadius:8}}/>
+          )}
+        </div>
+      </div>
+    )}
+    </>
   );
 }
 
@@ -2400,7 +2425,7 @@ function HashtagAutocompleteField({as="input",value,onChange,tagPool,placeholder
   );
 }
 
-function ProposalPreviewModal({title,category,isTeam,teamMembers,background,content,expectedEffect,attachmentName,onClose,onConfirm}){
+function ProposalPreviewModal({title,category,isTeam,teamMembers,background,content,expectedEffect,attachmentName,onClose,onConfirm,submitting}){
   return(
     <div onClick={onClose} style={{position:"fixed",inset:0,background:"rgba(15,23,42,0.5)",zIndex:200,display:"flex",alignItems:"center",justifyContent:"center",padding:20}}>
       <div onClick={e=>e.stopPropagation()} style={{background:"white",borderRadius:20,padding:"24px 24px 20px",width:"100%",maxWidth:680,maxHeight:"85vh",overflowY:"auto",boxShadow:"0 20px 60px rgba(0,0,0,0.25)"}}>
@@ -2445,7 +2470,7 @@ function ProposalPreviewModal({title,category,isTeam,teamMembers,background,cont
 
         <div style={{display:"flex",justifyContent:"flex-end",gap:8,marginTop:20,paddingTop:16,borderTop:"1px solid #f1f5f9"}}>
           <button type="button" onClick={onClose} style={{padding:"9px 16px",borderRadius:20,background:"white",border:"1.5px solid #E2E8F0",color:"#374151",fontSize:13,fontWeight:600,cursor:"pointer"}}>수정하기</button>
-          <button type="button" onClick={onConfirm} style={{padding:"9px 20px",borderRadius:20,background:"var(--accent)",border:"none",color:"white",fontSize:13,fontWeight:600,cursor:"pointer"}}>제안 등록하기</button>
+          <button type="button" onClick={onConfirm} disabled={submitting} style={{padding:"9px 20px",borderRadius:20,background:"var(--accent)",border:"none",color:"white",fontSize:13,fontWeight:600,cursor:submitting?"default":"pointer",opacity:submitting?0.7:1}}>{submitting?"등록 중...":"제안 등록하기"}</button>
         </div>
       </div>
     </div>
@@ -2454,7 +2479,20 @@ function ProposalPreviewModal({title,category,isTeam,teamMembers,background,cont
 
 const PROPOSAL_MIN_LEN={background:50,content:150,expectedEffect:100};
 
-function ProposalWriteView({category,setCategory,title,setTitle,background,setBackground,content,setContent,expectedEffect,setExpectedEffect,attachmentName,setAttachmentName,isTeam,setIsTeam,teamMembers,setTeamMembers,proposals,onSubmit,onSaveDraft,onBack,bp}){
+function getAttachmentType(fileName){
+  const lower=(fileName||"").toLowerCase();
+  if(lower.endsWith(".hwp"))return"hwp";
+  if(/\.(png|jpe?g|gif|webp|bmp|svg)$/.test(lower))return"image";
+  if(lower.endsWith(".pdf"))return"pdf";
+  return"";
+}
+function formatFileSize(bytes){
+  if(!bytes&&bytes!==0)return"";
+  if(bytes<1024*1024)return`${Math.max(1,Math.round(bytes/1024))}KB`;
+  return`${(bytes/(1024*1024)).toFixed(1)}MB`;
+}
+
+function ProposalWriteView({category,setCategory,title,setTitle,background,setBackground,content,setContent,expectedEffect,setExpectedEffect,attachmentName,setAttachmentName,attachmentFile,setAttachmentFile,isTeam,setIsTeam,teamMembers,setTeamMembers,proposals,onSubmit,onSaveDraft,onBack,bp,submitting}){
   useEffect(()=>{window.scrollTo({top:0,behavior:"smooth"});},[]);
 
   const [aiChecking,setAiChecking]=useState(false);
@@ -2640,12 +2678,12 @@ function ProposalWriteView({category,setCategory,title,setTitle,background,setBa
             <ProposalFormRow label="첨부자료">
               <label style={{display:"flex",alignItems:"center",gap:8,padding:"9px 14px",borderRadius:10,border:"1.5px dashed #E2E8F0",fontSize:13,color:"#6b7280",cursor:"pointer",width:"fit-content"}}>
                 <Icon name="attach_file" size={16} color="#9ca3af"/>
-                {attachmentName||"파일 선택"}
-                <input type="file" accept="application/pdf,image/*" onChange={e=>{
+                {attachmentName?`${attachmentName}${attachmentFile?` (${formatFileSize(attachmentFile.size)})`:""}`:"파일 선택"}
+                <input type="file" accept="application/pdf,image/*,.hwp" onChange={e=>{
                   const file=e.target.files?.[0];
-                  if(!file){setAttachmentName("");return;}
-                  if(!/^application\/pdf$|^image\//.test(file.type)){
-                    alert("PDF 또는 이미지 파일만 첨부할 수 있어요.");
+                  if(!file){setAttachmentName("");setAttachmentFile(null);return;}
+                  if(!getAttachmentType(file.name)){
+                    alert("PDF, 이미지, HWP 파일만 첨부할 수 있어요.");
                     e.target.value="";
                     return;
                   }
@@ -2655,9 +2693,10 @@ function ProposalWriteView({category,setCategory,title,setTitle,background,setBa
                     return;
                   }
                   setAttachmentName(file.name);
+                  setAttachmentFile(file);
                 }} style={{display:"none"}}/>
               </label>
-              <div style={{fontSize:11,color:"#9ca3af",marginTop:4}}>PDF, 이미지 첨부 가능 (최대 10MB)</div>
+              <div style={{fontSize:11,color:"#9ca3af",marginTop:4}}>PDF, 이미지, HWP 첨부 가능 (최대 10MB) · HWP는 미리보기 없이 다운로드만 제공돼요</div>
             </ProposalFormRow>
 
             {aiResult&&checkedSignature===signature&&(
@@ -2717,7 +2756,7 @@ function ProposalWriteView({category,setCategory,title,setTitle,background,setBa
       <ProposalPreviewModal
         title={title} category={category} isTeam={isTeam} teamMembers={teamMembers}
         background={background} content={content} expectedEffect={expectedEffect} attachmentName={attachmentName}
-        onClose={()=>setShowPreview(false)} onConfirm={handleConfirmSubmit}
+        onClose={()=>setShowPreview(false)} onConfirm={handleConfirmSubmit} submitting={submitting}
       />
     )}
     </>
@@ -2849,6 +2888,8 @@ function PolicyProposalPage({bp,user,onGoCommunity}){
   const [content,setContent]=useState(draft?.content||"");
   const [expectedEffect,setExpectedEffect]=useState(draft?.expectedEffect||"");
   const [attachmentName,setAttachmentName]=useState(draft?.attachmentName||"");
+  const [attachmentFile,setAttachmentFile]=useState(null);
+  const [submitting,setSubmitting]=useState(false);
   const [isTeam,setIsTeam]=useState(draft?.isTeam||false);
   const [teamMembers,setTeamMembers]=useState(draft?.teamMembers||[]);
   const [category,setCategory]=useState(draft?.category||"job");
@@ -2894,12 +2935,29 @@ function PolicyProposalPage({bp,user,onGoCommunity}){
   const handleSubmit=async()=>{
     if(!user){alert("로그인 후 제안을 등록할 수 있어요.");return;}
     if(!title.trim()||background.trim().length<PROPOSAL_MIN_LEN.background||content.trim().length<PROPOSAL_MIN_LEN.content||expectedEffect.trim().length<PROPOSAL_MIN_LEN.expectedEffect)return;
+    setSubmitting(true);
+    let attachmentUrl="",attachmentSize=null,attachmentType="";
+    if(attachmentFile){
+      const path=`${user.id}/${Date.now()}-${attachmentFile.name}`;
+      const{error:uploadError}=await supabase.storage.from("proposal-attachments").upload(path,attachmentFile);
+      if(uploadError){
+        alert("첨부파일 업로드에 실패했어요. 잠시 후 다시 시도해주세요.");
+        setSubmitting(false);
+        return;
+      }
+      attachmentUrl=supabase.storage.from("proposal-attachments").getPublicUrl(path).data?.publicUrl||"";
+      attachmentSize=attachmentFile.size;
+      attachmentType=getAttachmentType(attachmentFile.name);
+    }
     const{data,error}=await supabase.from("proposals").insert({
       title:title.trim(),
       background:background.trim(),
       content:content.trim(),
       expected_effect:expectedEffect.trim(),
       attachment:attachmentName,
+      attachment_url:attachmentUrl,
+      attachment_size:attachmentSize,
+      attachment_type:attachmentType,
       is_team:isTeam,
       team_members:isTeam?teamMembers:[],
       ai_verified:true,
@@ -2913,6 +2971,7 @@ function PolicyProposalPage({bp,user,onGoCommunity}){
       answered_at:"",
       comments_count:0,
     }).select().single();
+    setSubmitting(false);
     if(error){alert("제안 등록에 실패했어요. 잠시 후 다시 시도해주세요.");return;}
     setProposals(prev=>[mapProposalRow(data),...prev]);
     setTitle("");
@@ -2920,6 +2979,7 @@ function PolicyProposalPage({bp,user,onGoCommunity}){
     setContent("");
     setExpectedEffect("");
     setAttachmentName("");
+    setAttachmentFile(null);
     setIsTeam(false);
     setTeamMembers([]);
     setShowForm(false);
@@ -2982,7 +3042,7 @@ function PolicyProposalPage({bp,user,onGoCommunity}){
   }
 
   if(showForm){
-    return <ProposalWriteView category={category} setCategory={setCategory} title={title} setTitle={setTitle} background={background} setBackground={setBackground} content={content} setContent={setContent} expectedEffect={expectedEffect} setExpectedEffect={setExpectedEffect} attachmentName={attachmentName} setAttachmentName={setAttachmentName} isTeam={isTeam} setIsTeam={setIsTeam} teamMembers={teamMembers} setTeamMembers={setTeamMembers} proposals={proposals} onSubmit={handleSubmit} onSaveDraft={handleSaveDraft} onBack={()=>setShowForm(false)} bp={bp}/>;
+    return <ProposalWriteView category={category} setCategory={setCategory} title={title} setTitle={setTitle} background={background} setBackground={setBackground} content={content} setContent={setContent} expectedEffect={expectedEffect} setExpectedEffect={setExpectedEffect} attachmentName={attachmentName} setAttachmentName={setAttachmentName} attachmentFile={attachmentFile} setAttachmentFile={setAttachmentFile} isTeam={isTeam} setIsTeam={setIsTeam} teamMembers={teamMembers} setTeamMembers={setTeamMembers} proposals={proposals} onSubmit={handleSubmit} onSaveDraft={handleSaveDraft} onBack={()=>setShowForm(false)} bp={bp} submitting={submitting}/>;
   }
 
   const now=new Date();
