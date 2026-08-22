@@ -1744,6 +1744,10 @@ function CommunityView({bp,user,policies,favIds,onToggleFav,onGoProposal,onGoDet
       :sortBy==="comments"?(b.comments_count||0)-(a.comments_count||0)
       :new Date(b.created_at)-new Date(a.created_at)
     );
+  const bestReviews=useMemo(()=>
+    posts.filter(p=>p.cat==="후기").sort((a,b)=>(b.likes||0)-(a.likes||0)).slice(0,3)
+  ,[posts]);
+  const bestReviewIds=useMemo(()=>new Set(bestReviews.map(p=>p.id)),[bestReviews]);
   const [pageNum,setPageNum]=useState(1);
   useEffect(()=>{setPageNum(1);},[catFilter,search,sortBy]);
   const pageCount=Math.max(1,Math.ceil(filtered.length/4));
@@ -1858,6 +1862,47 @@ function CommunityView({bp,user,policies,favIds,onToggleFav,onGoProposal,onGoDet
               </div>
             </div>
           )}
+          {!loadingPosts&&catFilter==="후기"&&!search.trim()&&bestReviews.length>0&&(
+            <div style={{display:"flex",flexDirection:"column",gap:8,marginBottom:2}}>
+              <div style={{display:"flex",alignItems:"center",gap:6,fontSize:13,fontWeight:800,color:"#111827",padding:"0 2px"}}>
+                <Icon name="star" fill={1} size={16} color="#F59E0B"/>베스트 후기
+              </div>
+              {bestReviews.map((post,i)=>(
+                <div key={post.id} onClick={()=>setSelectedPost(post)} style={{background:"linear-gradient(135deg,#FFFBEB,#ffffff)",borderRadius:16,padding:bp.isDesktop?"20px 24px":"14px 16px",cursor:"pointer",border:"1.5px solid #FDE68A",transition:"transform 0.15s,box-shadow 0.15s"}}
+                  onMouseEnter={e=>{e.currentTarget.style.transform="translateY(-2px)";e.currentTarget.style.boxShadow="0 6px 24px rgba(245,158,11,0.15)";}}
+                  onMouseLeave={e=>{e.currentTarget.style.transform="";e.currentTarget.style.boxShadow="";}}
+                >
+                  <div style={{display:"flex",alignItems:"flex-start",gap:12}}>
+                    <div style={{flex:1,minWidth:0}}>
+                      <div style={{display:"flex",gap:7,alignItems:"center",marginBottom:8,flexWrap:"wrap"}}>
+                        <span style={{display:"inline-flex",alignItems:"center",gap:3,fontSize:11,fontWeight:800,padding:"2px 9px",borderRadius:20,background:"#F59E0B",color:"white"}}>
+                          <Icon name="star" fill={1} size={11} color="white"/>BEST {i+1}
+                        </span>
+                        {post.region&&(
+                          <span style={{fontSize:11,fontWeight:600,padding:"2px 9px",borderRadius:20,background:"#F8FAFC",border:"1px solid #E2E8F0",color:"#64748B"}}>{post.region}</span>
+                        )}
+                        <span style={{fontSize:11,color:"#9ca3af"}}>{(post.created_at||post.date||"").slice(0,10)}</span>
+                      </div>
+                      <div style={{fontWeight:700,fontSize:bp.isDesktop?15:14,color:"#111827",lineHeight:1.4}}>{post.title}</div>
+                    </div>
+                  </div>
+                  <div style={{display:"flex",alignItems:"center",gap:14,marginTop:12,paddingTop:12,borderTop:"1px solid #FDE68A"}}>
+                    <span style={{fontSize:12,color:"#9ca3af"}}>by <span style={{color:"#374151",fontWeight:600}}>{maskName(post.author)}</span></span>
+                    {post.verified&&(
+                      <span style={{display:"inline-flex",alignItems:"center",gap:4,fontSize:11,fontWeight:700,color:"var(--accent-dark)",background:"var(--accent-bg)",border:"1px solid var(--accent)",borderRadius:20,padding:"2px 9px"}}>
+                        <Icon name="task_alt" size={12} color="var(--accent-dark)"/>실제 신청 인증
+                      </span>
+                    )}
+                    <div style={{marginLeft:"auto",display:"flex",gap:12}}>
+                      <span style={{fontSize:12,color:"#9ca3af",display:"flex",alignItems:"center",gap:3}}><Icon name="favorite" size={13} color="#9ca3af"/> {post.likes}</span>
+                      <span style={{fontSize:12,color:"#9ca3af",display:"flex",alignItems:"center",gap:3}}><Icon name="chat_bubble" size={13} color="#9ca3af"/> {post.comments_count||0}</span>
+                    </div>
+                  </div>
+                </div>
+              ))}
+              <div style={{fontSize:11,fontWeight:800,color:"#94a3b8",padding:"6px 2px 0",letterSpacing:"0.02em"}}>전체 후기</div>
+            </div>
+          )}
           {loadingPosts&&(
             <div style={{display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",padding:"72px 20px",gap:14,background:"white",borderRadius:16,border:"1.5px solid #E2E8F0"}}>
               {[0,1,2].map(i=>(
@@ -1886,6 +1931,11 @@ function CommunityView({bp,user,policies,favIds,onToggleFav,onGoProposal,onGoDet
                   <div style={{flex:1,minWidth:0}}>
                     <div style={{display:"flex",gap:7,alignItems:"center",marginBottom:8,flexWrap:"wrap"}}>
                       <span style={{fontSize:11,fontWeight:700,padding:"2px 9px",borderRadius:20,background:catColor.bg,border:`1px solid ${catColor.border}`,color:catColor.text}}>{post.cat}</span>
+                      {post.cat==="후기"&&bestReviewIds.has(post.id)&&(
+                        <span style={{display:"inline-flex",alignItems:"center",gap:3,fontSize:11,fontWeight:800,padding:"2px 9px",borderRadius:20,background:"#F59E0B",color:"white"}}>
+                          <Icon name="star" fill={1} size={11} color="white"/>BEST
+                        </span>
+                      )}
                       {post.policy_cat&&(
                         <span style={{fontSize:11,fontWeight:600,padding:"2px 9px",borderRadius:20,background:"#F8FAFC",border:"1px solid #E2E8F0",color:"#64748B"}}>{CAT_LABEL[post.policy_cat]}</span>
                       )}
