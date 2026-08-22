@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import Icon from '../../styles/Icon'
 
 const CAT = {
@@ -53,7 +53,7 @@ function loadLS(key, init) {
   try { return JSON.parse(localStorage.getItem(key)) ?? init } catch { return init }
 }
 
-export default function JoinHistoryCard({ policies, favIds, onGoDetail }) {
+export default function JoinHistoryCard({ policies, favIds, onGoDetail, onToggleFav }) {
   const saved = (policies || []).filter(p => favIds?.has(p.id))
 
   const todayStr = new Date().toISOString().slice(0, 10)
@@ -66,6 +66,25 @@ export default function JoinHistoryCard({ policies, favIds, onGoDetail }) {
   const [drafts,    setDrafts]    = useState({})   // 아직 저장 안 된 메모 초안
   const [memoOpen,  setMemoOpen]  = useState({})   // 메모 섹션 열림 여부
   const [savedFlag, setSavedFlag] = useState({})   // "저장됨" 피드백
+  const [pendingIds, setPendingIds] = useState(new Set())  // 즐찾 해제 대기(3초 실행취소) 중인 id
+  const timerRefs = useRef({})
+
+  const handleUnfavClick = (id) => {
+    if (pendingIds.has(id)) {
+      // 실행취소: 타이머 취소하고 복원
+      clearTimeout(timerRefs.current[id])
+      delete timerRefs.current[id]
+      setPendingIds(prev => { const n = new Set(prev); n.delete(id); return n })
+    } else {
+      // 3초 후 실제 즐찾 해제
+      setPendingIds(prev => new Set([...prev, id]))
+      timerRefs.current[id] = setTimeout(() => {
+        onToggleFav?.(id)
+        setPendingIds(prev => { const n = new Set(prev); n.delete(id); return n })
+        delete timerRefs.current[id]
+      }, 3000)
+    }
+  }
 
   const handleStatus = (policyId, statusId) => {
     const next = { ...statuses, [policyId]: statusId }
@@ -99,9 +118,10 @@ export default function JoinHistoryCard({ policies, favIds, onGoDetail }) {
             const draft       = drafts[p.id] ?? savedMemo
             const isSaved     = !!savedFlag[p.id]
             const hasMemo     = !!savedMemo
+            const isPending   = pendingIds.has(p.id)
 
             return (
-              <div key={p.id} style={styles.item}>
+              <div key={p.id} style={{ ...styles.item, opacity: isPending ? 0.55 : 1, transition: 'opacity 0.2s' }}>
                 {/* 제목 행 */}
                 <div style={styles.itemTop}>
                   <span style={{ ...styles.catBadge, backgroundColor: c.bg, color: c.text }}>
@@ -110,18 +130,35 @@ export default function JoinHistoryCard({ policies, favIds, onGoDetail }) {
                   <span
                     style={{
                       ...styles.itemTitle,
-                      cursor: onGoDetail ? 'pointer' : 'default',
+                      cursor: onGoDetail && !isPending ? 'pointer' : 'default',
                       textDecoration: onGoDetail ? 'underline' : 'none',
                       textDecorationColor: '#cbd5e1',
                       textUnderlineOffset: '2px',
+                      textDecorationStyle: isPending ? 'line-through' : 'solid',
+                      color: isPending ? '#9ca3af' : styles.itemTitle.color,
                     }}
-                    onClick={() => onGoDetail?.(p)}
+                    onClick={() => !isPending && onGoDetail?.(p)}
                   >
                     {p.title}
                   </span>
                   <span style={styles.deadline}>
                     {p.deadline === '상시' ? '상시 접수' : `마감 ${p.deadline}`}
                   </span>
+                  {isPending && (
+                    <button type="button" onClick={() => handleUnfavClick(p.id)} style={styles.undoBtn}>
+                      실행취소
+                    </button>
+                  )}
+                  <button
+                    type="button"
+                    onClick={() => handleUnfavClick(p.id)}
+                    title={isPending ? '즐겨찾기 해제 중 (클릭해서 되돌리기)' : '즐겨찾기 해제'}
+                    style={styles.removeBtn}
+                    onMouseEnter={e => !isPending && (e.currentTarget.style.color = '#ef4444')}
+                    onMouseLeave={e => !isPending && (e.currentTarget.style.color = '#f59e0b')}
+                  >
+                    <Icon name="bookmark" size={16} color={isPending ? '#d1d5db' : '#f59e0b'} />
+                  </button>
                 </div>
 
                 {/* 상태 스텝 */}
@@ -334,6 +371,28 @@ const styles = {
     color: '#9ca3af',
     whiteSpace: 'nowrap',
     flexShrink: 0,
+  },
+  undoBtn: {
+    background: 'none',
+    border: '1px solid #fca5a5',
+    borderRadius: 6,
+    color: '#ef4444',
+    fontSize: 11,
+    fontWeight: 600,
+    padding: '3px 8px',
+    cursor: 'pointer',
+    whiteSpace: 'nowrap',
+    flexShrink: 0,
+  },
+  removeBtn: {
+    background: 'none',
+    border: 'none',
+    cursor: 'pointer',
+    padding: 4,
+    flexShrink: 0,
+    display: 'flex',
+    alignItems: 'center',
+    transition: 'color 0.15s',
   },
   stepRow: {
     display: 'flex',

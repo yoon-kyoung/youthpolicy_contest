@@ -2,9 +2,10 @@ import { useState } from 'react'
 import Icon from '../../styles/Icon'
 
 const TABS = [
-  { id: 'info',  icon: 'receipt_long', label: '신청 내역' },
-  { id: 'saved', icon: 'bookmark',     label: '저장한 정책' },
-  { id: 'prefs', icon: 'tune',         label: '맞춤 조건' },
+  { id: 'info',    icon: 'receipt_long', label: '신청 내역' },
+  { id: 'saved',   icon: 'bookmark',     label: '저장한 정책' },
+  { id: 'myposts', icon: 'article',      label: '내가 쓴 글' },
+  { id: 'prefs',   icon: 'tune',         label: '맞춤 조건' },
 ]
 
 export default function TabBar({ active, onChange }) {

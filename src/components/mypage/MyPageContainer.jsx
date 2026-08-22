@@ -8,6 +8,7 @@ import ApplicationCalendar from './ApplicationCalendar'
 import PreferenceTab from './PreferenceTab'
 import SettingsTab from './SettingsTab'
 import SavedPoliciesTab from './SavedPoliciesTab'
+import MyPostsTab from './MyPostsTab'
 import OnboardingTour from './OnboardingTour'
 
 const MOCK_USER = {
@@ -47,7 +48,7 @@ function isPrefsEmpty(p) {
     p.specialFields.length === 0 && p.keywords.length === 0
 }
 
-export default function MyPageContainer({ supabaseUser, onLogout, initialTab, favIds, policies, onToggleFav, onGoDetail }) {
+export default function MyPageContainer({ supabaseUser, onLogout, initialTab, favIds, policies, onToggleFav, onGoDetail, onNavigate }) {
   const [activeTab, setActiveTab] = useState(initialTab || 'info')
 
   const initialUser = supabaseUser ? {
@@ -229,7 +230,7 @@ export default function MyPageContainer({ supabaseUser, onLogout, initialTab, fa
           <TabBar active={activeTab} onChange={setActiveTab} />
           <div style={styles.tabContent}>
             {activeTab === 'info' && (
-              <UserInfoTab user={user} onUpdateUser={setUser} favIds={favIds} policies={policies} onGoDetail={onGoDetail} />
+              <UserInfoTab user={user} onUpdateUser={setUser} favIds={favIds} policies={policies} onGoDetail={onGoDetail} onToggleFav={onToggleFav} />
             )}
             {activeTab === 'prefs' && (
               <PreferenceTab
@@ -245,6 +246,9 @@ export default function MyPageContainer({ supabaseUser, onLogout, initialTab, fa
             )}
             {activeTab === 'saved' && (
               <SavedPoliciesTab policies={policies} favIds={favIds} onToggleFav={onToggleFav} onGoDetail={onGoDetail} />
+            )}
+            {activeTab === 'myposts' && (
+              <MyPostsTab userId={supabaseUser?.id} onNavigate={onNavigate} />
             )}
           </div>
         </div>
