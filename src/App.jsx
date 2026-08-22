@@ -3672,6 +3672,7 @@ const aboutStyles={
 
 const ABOUT_CARDS=[
   {icon:"smart_toy",accent:"#7C3AED",iconBg:"#EDE9FE",bg:"#F5F3FF",border:"#EDE0FF",
+    label:"AI 챗봇",
     title:"AI 챗봇이 내 상황에 맞는 정책을 찾아드려요",
     desc:"나이·지역·고민을 자유롭게 말하면 AI가 수백 개 정책 중 나에게 맞는 것만 골라 카드로 보여줘요. 마음에 들면 별표 한 번으로 저장할 수 있어요.",
     mockup:(
@@ -3688,6 +3689,7 @@ const ABOUT_CARDS=[
       </div>
     )},
   {icon:"search",accent:"#2563EB",iconBg:"#DBEAFE",bg:"#EFF6FF",border:"#DCEAFF",
+    label:"정책 검색",
     title:"지역·부처·학력까지, 촘촘한 정책 검색",
     desc:"1500개가 넘는 정책을 지역·중앙부처·학력·취업 상태로 세밀하게 좁혀보고, 인기순·마감임박순·지원금 큰 순으로 정렬해서 확인할 수 있어요.",
     mockup:(
@@ -3707,6 +3709,7 @@ const ABOUT_CARDS=[
       </div>
     )},
   {icon:"checklist",accent:"#E11D48",iconBg:"#FFE4E6",bg:"#FFF1F2",border:"#FFE1E6",
+    label:"신청 관리",
     title:"저장하고, 신청 단계까지 체크리스트로 관리",
     desc:"관심 정책은 별표로 저장해두고, 준비중 → 지원완료 → 심사중 → 결과대기 → 완료 단계를 체크하며 신청 진행 상황을 놓치지 않고 관리해요.",
     mockup:(
@@ -3723,6 +3726,7 @@ const ABOUT_CARDS=[
       </div>
     )},
   {icon:"tune",accent:"#16A34A",iconBg:"#DCFCE7",bg:"#F0FDF4",border:"#DBFCE7",
+    label:"맞춤 추천",
     title:"맞춤 조건만 설정하면 나만을 위한 추천",
     desc:"지역·나이·학력·취업 상태·전공·특화 분야를 설정하면 마이페이지에 '내 이름이 관심 있을법한 정책'이 실시간으로 채워져요.",
     mockup:(
@@ -3738,6 +3742,7 @@ const ABOUT_CARDS=[
       </div>
     )},
   {icon:"forum",accent:"#B45309",iconBg:"#FEF3C7",bg:"#FFFBEB",border:"#FDECC8",
+    label:"커뮤니티",
     title:"후기·정보·Q&A를 나누는 청년 커뮤니티",
     desc:"실제 신청 후기와 꿀팁을 나누고, 공감과 댓글로 소통해요. 궁금한 건 Q&A에 남기면 다른 청년들의 답을 받을 수 있어요.",
     mockup:(
@@ -3755,6 +3760,7 @@ const ABOUT_CARDS=[
       </div>
     )},
   {icon:"group",accent:"#A21CAF",iconBg:"#FAE8FF",bg:"#FDF4FF",border:"#F8DFFB",
+    label:"팀모집",
     title:"정책 제안 팀모집, 참가하기 한 번으로 신청",
     desc:"같이 정책 제안을 준비할 팀원을 지역·인원과 함께 모집해요. 참가하기를 누르면 담당자가 개별로 연락드릴 예정이라는 안내를 바로 받아볼 수 있어요.",
     mockup:(
@@ -3771,6 +3777,7 @@ const ABOUT_CARDS=[
       </div>
     )},
   {icon:"campaign",accent:"#0D9488",iconBg:"#CCFBF1",bg:"#F0FDFA",border:"#D5F7EE",
+    label:"정책 제안",
     title:"커뮤니티 이야기를 정책으로, 청년정책 역제안",
     desc:"커뮤니티에서 나눈 이야기를 정책으로 제안해보세요. 공감이 모이면 답변대기 → 부처매칭중 → 답변완료 단계를 거쳐 담당 부처에 자동으로 전달돼요.",
     mockup:(
@@ -3839,7 +3846,22 @@ function AboutCarousel({isDesktop}){
   };
 
   return(
-    <div style={{position:"relative"}}>
+    <div>
+      <HScrollFade style={{gap:4,padding:6,background:"#EEF2F7",borderRadius:12,marginBottom:16}} fadeColor="#EEF2F7">
+        {ABOUT_CARDS.map((c,i)=>(
+          <button key={i} onClick={()=>setIdx(i)} style={{
+            flexShrink:0,display:"flex",alignItems:"center",justifyContent:"center",gap:6,
+            padding:isDesktop?"10px 18px":"9px 14px",fontSize:isDesktop?14:13,lineHeight:1,
+            cursor:"pointer",border:"none",borderRadius:9,whiteSpace:"nowrap",transition:"all 0.15s",
+            color:idx===i?c.accent:"#6b7280",fontWeight:idx===i?700:500,
+            background:idx===i?"#ffffff":"transparent",
+            boxShadow:idx===i?"0 1px 4px rgba(0,0,0,0.10)":"none",
+          }}>
+            <Icon name={c.icon} size={17} color={idx===i?c.accent:"#9ca3af"}/>{c.label}
+          </button>
+        ))}
+      </HScrollFade>
+      <div style={{position:"relative"}}>
       <button onClick={goPrev} aria-label="이전" style={{...navBtn,left:isDesktop?-22:-8}}
         onMouseEnter={e=>{e.currentTarget.style.borderColor="var(--accent)";e.currentTarget.style.color="var(--accent)";}}
         onMouseLeave={e=>{e.currentTarget.style.borderColor="#e5e7eb";e.currentTarget.style.color="#374151";}}
@@ -3868,6 +3890,7 @@ function AboutCarousel({isDesktop}){
         ))}
       </div>
       <div style={{textAlign:"center",marginTop:8,fontSize:12,color:"#9ca3af",fontWeight:700}}>{idx+1} / {total}</div>
+      </div>
     </div>
   );
 }
