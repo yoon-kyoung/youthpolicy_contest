@@ -2452,7 +2452,7 @@ function ProposalPreviewModal({title,category,isTeam,teamMembers,background,cont
   );
 }
 
-const PROPOSAL_MIN_LEN={background:100,content:300,expectedEffect:200};
+const PROPOSAL_MIN_LEN={background:50,content:150,expectedEffect:100};
 
 function ProposalWriteView({category,setCategory,title,setTitle,background,setBackground,content,setContent,expectedEffect,setExpectedEffect,attachmentName,setAttachmentName,isTeam,setIsTeam,teamMembers,setTeamMembers,proposals,onSubmit,onSaveDraft,onBack,bp}){
   useEffect(()=>{window.scrollTo({top:0,behavior:"smooth"});},[]);
