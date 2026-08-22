@@ -2324,7 +2324,7 @@ function ProposalCard({proposal,user,onVote,onOpen,bp}){
         <span style={{...TAG_BASE,background:c.bg,border:`1px solid ${c.border}`,color:c.text,gap:4}}><Icon name={CAT_ICON[proposal.category]||"apps"} size={13} color={c.text}/>{CAT_LABEL[proposal.category]||proposal.category}</span>
         <span style={{...TAG_BASE,background:s.bg,border:`1px solid ${s.border}`,color:s.text,gap:4}}><Icon name={s.icon} size={13} color={s.text}/>{s.label}</span>
       </div>
-      <div style={{fontWeight:700,fontSize:bp.isDesktop?15:14,color:"#111827",marginBottom:6}}>{proposal.title}</div>
+      <div style={{fontWeight:700,fontSize:bp.isDesktop?15:14,color:"#111827",marginBottom:6,wordBreak:"break-word"}}>{proposal.title}</div>
 
       {proposal.status==="pending"&&(
         <div style={{marginTop:12}}>
@@ -2427,7 +2427,7 @@ function ProposalDetailView({proposal,user,onVote,onBack,bp}){
             onMouseLeave={e=>e.currentTarget.style.color="#374151"}
           ><Icon name="arrow_back" size={16}/> 뒤로가기</button>
           <span style={{color:"#e5e7eb"}}>|</span>
-          <span style={{fontSize:13,color:"#9ca3af",overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{proposal.title}</span>
+          <span style={{flex:"1 1 0%",minWidth:0,fontSize:13,color:"#9ca3af",overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{proposal.title}</span>
         </div>
       </div>
 
@@ -2438,7 +2438,7 @@ function ProposalDetailView({proposal,user,onVote,onBack,bp}){
             <span style={{background:"rgba(255,255,255,0.2)",border:"1px solid rgba(255,255,255,0.3)",borderRadius:20,padding:"3px 12px",fontSize:12,fontWeight:700,display:"inline-flex",alignItems:"center",gap:4}}><Icon name={CAT_ICON[proposal.category]||"apps"} size={13} color="white"/>{CAT_LABEL[proposal.category]}</span>
             <span style={{background:"rgba(255,255,255,0.2)",border:"1px solid rgba(255,255,255,0.3)",borderRadius:20,padding:"3px 12px",fontSize:12,fontWeight:700,display:"inline-flex",alignItems:"center",gap:4}}><Icon name={s.icon} size={13} color="white"/>{s.label}</span>
           </div>
-          <h1 style={{fontSize:bp.isDesktop?30:bp.isTablet?24:20,fontWeight:900,margin:"0 0 10px",lineHeight:1.3,letterSpacing:"-0.02em"}}>{proposal.title}</h1>
+          <h1 style={{fontSize:bp.isDesktop?30:bp.isTablet?24:20,fontWeight:900,margin:"0 0 10px",lineHeight:1.3,letterSpacing:"-0.02em",wordBreak:"break-word"}}>{proposal.title}</h1>
           <p style={{fontSize:13,opacity:0.8,margin:0}}>by {maskName(proposal.author)} · {(proposal.createdAt||"").slice(0,10)} · 공감 {votes}</p>
         </div>
       </div>
@@ -2481,17 +2481,17 @@ function ProposalDetailView({proposal,user,onVote,onBack,bp}){
             {proposal.background&&(
               <div style={{marginBottom:14}}>
                 <div style={{fontSize:15,fontWeight:700,color:"#111827",marginBottom:4}}>배경</div>
-                <p style={{margin:0,fontSize:14,color:"#374151",lineHeight:1.8,whiteSpace:"pre-wrap"}}>{proposal.background}</p>
+                <p style={{margin:0,fontSize:14,color:"#374151",lineHeight:1.8,whiteSpace:"pre-wrap",wordBreak:"break-word"}}>{proposal.background}</p>
               </div>
             )}
             <div style={{marginBottom:proposal.expectedEffect||proposal.attachment?14:0}}>
               <div style={{fontSize:15,fontWeight:700,color:"#111827",marginBottom:4}}>제안 내용</div>
-              <p style={{margin:0,fontSize:14,color:"#374151",lineHeight:1.8,whiteSpace:"pre-wrap"}}>{proposal.content}</p>
+              <p style={{margin:0,fontSize:14,color:"#374151",lineHeight:1.8,whiteSpace:"pre-wrap",wordBreak:"break-word"}}>{proposal.content}</p>
             </div>
             {proposal.expectedEffect&&(
               <div style={{marginBottom:proposal.attachment?14:0}}>
                 <div style={{fontSize:15,fontWeight:700,color:"#111827",marginBottom:4}}>기대 효과</div>
-                <p style={{margin:0,fontSize:14,color:"#374151",lineHeight:1.8,whiteSpace:"pre-wrap"}}>{proposal.expectedEffect}</p>
+                <p style={{margin:0,fontSize:14,color:"#374151",lineHeight:1.8,whiteSpace:"pre-wrap",wordBreak:"break-word"}}>{proposal.expectedEffect}</p>
               </div>
             )}
             {proposal.attachment&&(
@@ -2544,7 +2544,7 @@ function ProposalDetailView({proposal,user,onVote,onBack,bp}){
                       <span style={{fontSize:13,fontWeight:700,color:"#374151"}}>{maskName(cm.author)}</span>
                       <span style={{fontSize:11,color:"#9ca3af"}}>{(cm.createdAt||"").slice(0,10)}</span>
                     </div>
-                    <p style={{margin:0,fontSize:13,color:"#6b7280",lineHeight:1.6,whiteSpace:"pre-wrap"}}>{cm.content}</p>
+                    <p style={{margin:0,fontSize:13,color:"#6b7280",lineHeight:1.6,whiteSpace:"pre-wrap",wordBreak:"break-word"}}>{cm.content}</p>
                   </div>
                 ))}
               </div>
@@ -2648,20 +2648,20 @@ function ProposalPreviewModal({title,category,isTeam,teamMembers,background,cont
           ))}
         </div>
 
-        <h2 style={{fontSize:20,fontWeight:900,margin:"0 0 16px",color:"#111827",lineHeight:1.4}}>{title}</h2>
+        <h2 style={{fontSize:20,fontWeight:900,margin:"0 0 16px",color:"#111827",lineHeight:1.4,wordBreak:"break-word"}}>{title}</h2>
 
         <div style={{display:"flex",flexDirection:"column",gap:14}}>
           <div>
             <div style={{fontSize:13,fontWeight:700,color:"#111827",marginBottom:4}}>배경</div>
-            <p style={{margin:0,fontSize:13,color:"#374151",lineHeight:1.7,whiteSpace:"pre-wrap"}}>{background}</p>
+            <p style={{margin:0,fontSize:13,color:"#374151",lineHeight:1.7,whiteSpace:"pre-wrap",wordBreak:"break-word"}}>{background}</p>
           </div>
           <div>
             <div style={{fontSize:13,fontWeight:700,color:"#111827",marginBottom:4}}>제안 내용</div>
-            <p style={{margin:0,fontSize:13,color:"#374151",lineHeight:1.7,whiteSpace:"pre-wrap"}}>{content}</p>
+            <p style={{margin:0,fontSize:13,color:"#374151",lineHeight:1.7,whiteSpace:"pre-wrap",wordBreak:"break-word"}}>{content}</p>
           </div>
           <div>
             <div style={{fontSize:13,fontWeight:700,color:"#111827",marginBottom:4}}>기대 효과</div>
-            <p style={{margin:0,fontSize:13,color:"#374151",lineHeight:1.7,whiteSpace:"pre-wrap"}}>{expectedEffect}</p>
+            <p style={{margin:0,fontSize:13,color:"#374151",lineHeight:1.7,whiteSpace:"pre-wrap",wordBreak:"break-word"}}>{expectedEffect}</p>
           </div>
           {attachmentName&&(
             <div style={{display:"flex",alignItems:"center",gap:5,fontSize:12,color:"#6b7280"}}>
