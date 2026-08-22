@@ -3774,23 +3774,6 @@ const ABOUT_CARDS=[
         </div>
       </div>
     )},
-  {icon:"group",accent:"#A21CAF",iconBg:"#FAE8FF",bg:"#FDF4FF",border:"#F8DFFB",
-    label:"팀모집",
-    title:"정책 제안 팀모집, 참가하기 한 번으로 신청",
-    desc:"같이 정책 제안을 준비할 팀원을 지역·인원과 함께 모집해요. 참가하기를 누르면 담당자가 개별로 연락드릴 예정이라는 안내를 바로 받아볼 수 있어요.",
-    mockup:(
-      <div style={aboutStyles.mockCard}>
-        <div style={{display:"flex",gap:6,alignItems:"center",marginBottom:10}}>
-          <span style={{fontSize:11,fontWeight:700,padding:"2px 9px",borderRadius:20,background:"#FDF4FF",color:"#A21CAF",border:"1px solid #F5D0FE"}}>정책제안 팀모집</span>
-          <span style={{fontSize:11,fontWeight:700,padding:"2px 9px",borderRadius:20,background:"#F0FDF4",color:"#15803D",border:"1px solid #BBF7D0"}}>모집중</span>
-        </div>
-        <div style={{fontWeight:800,color:"#111827",marginBottom:12}}>지방 청년 주거지원 제안 팀모집</div>
-        <div style={{display:"flex",gap:8}}>
-          <span style={{flex:1,textAlign:"center",padding:"8px 0",borderRadius:20,border:"2px solid #e5e7eb",color:"#6b7280",fontSize:12,fontWeight:700}}>공감해요 4</span>
-          <span style={{flex:1,textAlign:"center",padding:"8px 0",borderRadius:20,border:"2px solid #A21CAF",background:"#FDF4FF",color:"#A21CAF",fontSize:12,fontWeight:700}}>참가하기 2</span>
-        </div>
-      </div>
-    )},
   {icon:"campaign",accent:"#0D9488",iconBg:"#CCFBF1",bg:"#F0FDFA",border:"#D5F7EE",
     label:"정책 제안",
     title:"커뮤니티 이야기를 정책으로, 청년정책 역제안",
@@ -3804,6 +3787,40 @@ const ABOUT_CARDS=[
               <span style={{fontSize:11,fontWeight:i===1?800:600,color:i<=1?"#0D9488":"#94a3b8"}}>{s}</span>
             </div>
           ))}
+        </div>
+      </div>
+    )},
+  {icon:"fact_check",accent:"#4F46E5",iconBg:"#E0E7FF",bg:"#EEF2FF",border:"#E0E0FF",
+    label:"AI 검토",
+    title:"제출 전, AI가 부적절한 표현과 중복 제안을 먼저 걸러줘요",
+    desc:"작성한 제안을 'AI 검토' 버튼으로 확인하면 욕설·비속어·도배성 텍스트를 감지율(%)로 알려주고, 이미 올라온 비슷한 제안이 있으면 미리 알려줘요. AI 서버가 응답하지 않을 땐 통과시키지 않고 다시 검토하도록 안내해서, 검토 없이 제안이 올라가는 일이 없도록 해요.",
+    mockup:(
+      <div style={aboutStyles.mockCard}>
+        <div style={{display:"flex",alignItems:"center",gap:5,fontSize:12,fontWeight:800,color:"#111827",marginBottom:8}}>
+          <Icon name="smart_toy" size={15} color="#4F46E5"/>AI 검토 결과
+        </div>
+        <div style={{background:"#EEF2FF",border:"1px solid #E0E0FF",borderRadius:10,padding:"10px 12px",fontSize:12,lineHeight:1.6,color:"#15803D",display:"flex",gap:6,alignItems:"flex-start",marginBottom:10}}>
+          <Icon name="check_circle" size={14} color="#16A34A"/>
+          <span>욕설·부적절한 표현 감지율 <b>3%</b> — 제안하기를 눌러주세요.</span>
+        </div>
+        <div style={{fontSize:11,fontWeight:700,color:"#374151",marginBottom:4}}>유사 정책 확인</div>
+        <div style={{fontSize:11,color:"#6b7280"}}>· 청년 월세 지원 확대 제안 — 주거비 지원이라는 주제가 겹쳐요</div>
+      </div>
+    )},
+  {icon:"group",accent:"#A21CAF",iconBg:"#FAE8FF",bg:"#FDF4FF",border:"#F8DFFB",
+    label:"팀모집",noTab:true,
+    title:"정책 제안 팀모집, 참가하기 한 번으로 신청",
+    desc:"같이 정책 제안을 준비할 팀원을 지역·인원과 함께 모집해요. 참가하기를 누르면 담당자가 개별로 연락드릴 예정이라는 안내를 바로 받아볼 수 있어요.",
+    mockup:(
+      <div style={aboutStyles.mockCard}>
+        <div style={{display:"flex",gap:6,alignItems:"center",marginBottom:10}}>
+          <span style={{fontSize:11,fontWeight:700,padding:"2px 9px",borderRadius:20,background:"#FDF4FF",color:"#A21CAF",border:"1px solid #F5D0FE"}}>정책제안 팀모집</span>
+          <span style={{fontSize:11,fontWeight:700,padding:"2px 9px",borderRadius:20,background:"#F0FDF4",color:"#15803D",border:"1px solid #BBF7D0"}}>모집중</span>
+        </div>
+        <div style={{fontWeight:800,color:"#111827",marginBottom:12}}>지방 청년 주거지원 제안 팀모집</div>
+        <div style={{display:"flex",gap:8}}>
+          <span style={{flex:1,textAlign:"center",padding:"8px 0",borderRadius:20,border:"2px solid #e5e7eb",color:"#6b7280",fontSize:12,fontWeight:700}}>공감해요 4</span>
+          <span style={{flex:1,textAlign:"center",padding:"8px 0",borderRadius:20,border:"2px solid #A21CAF",background:"#FDF4FF",color:"#A21CAF",fontSize:12,fontWeight:700}}>참가하기 2</span>
         </div>
       </div>
     )},
@@ -3863,7 +3880,9 @@ function AboutCarousel({isDesktop}){
   return(
     <div>
       <HScrollFade style={{gap:4,padding:6,background:"#EEF2F7",borderRadius:12,marginBottom:16}} fadeColor="#EEF2F7">
-        {ABOUT_CARDS.map((c,i)=>(
+        {ABOUT_CARDS.map((c,i)=>({...c,i})).filter(c=>!c.noTab).map(c=>{
+          const i=c.i;
+          return(
           <button key={i} onClick={()=>setIdx(i)} style={{
             flexShrink:0,display:"flex",alignItems:"center",justifyContent:"center",gap:6,
             padding:isDesktop?"10px 18px":"9px 14px",fontSize:isDesktop?14:13,lineHeight:1,
@@ -3874,7 +3893,8 @@ function AboutCarousel({isDesktop}){
           }}>
             {c.label}
           </button>
-        ))}
+          );
+        })}
       </HScrollFade>
       <div style={{position:"relative"}}>
       <button onClick={goPrev} aria-label="이전" style={{...navBtn,left:isDesktop?-22:-8}}
