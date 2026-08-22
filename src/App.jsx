@@ -3872,7 +3872,7 @@ function AboutCarousel({isDesktop}){
             background:idx===i?"#ffffff":"transparent",
             boxShadow:idx===i?"0 1px 4px rgba(0,0,0,0.10)":"none",
           }}>
-            <Icon name={c.icon} size={17} color={idx===i?c.accent:"#9ca3af"}/>{c.label}
+            {c.label}
           </button>
         ))}
       </HScrollFade>
