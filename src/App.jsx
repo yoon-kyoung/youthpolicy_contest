@@ -302,23 +302,64 @@ function CompareModal({policies,onRemove,onClose}){
     {label:"대상",render:p=>p.target},
     {label:"지원금",render:p=>p.amount>0?`${p.amount.toLocaleString()}만원`:"-"},
     {label:"마감",render:p=>p.deadline==="상시"?"상시 접수":p.deadline},
-    {label:"지원 내용",render:p=><div style={{whiteSpace:"pre-wrap",fontSize:12,lineHeight:1.6,maxHeight:160,overflowY:"auto"}}>{p.supportFull||"-"}</div>},
+    {label:"지원 내용",render:p=><div style={{whiteSpace:"pre-wrap",fontSize:12,lineHeight:1.6,minHeight:160,maxHeight:160,overflowY:"auto"}}>{p.supportFull||"-"}</div>},
   ];
+  const colWidth=`${85/Math.max(policies.length,1)}%`;
+
+  const [aiState,setAiState]=useState({loading:false,result:null,failedSignature:null});
+  const signature=policies.map(p=>p.id).join(",");
+  const runCompare=useCallback(async()=>{
+    setAiState({loading:true,result:null,failedSignature:null});
+    try{
+      const controller=new AbortController();
+      const timer=setTimeout(()=>controller.abort(),25000);
+      const res=await fetch(`${API_BASE}/api/compare`,{
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({policies:policies.map(p=>({
+          title:p.title,category:CATEGORIES.find(c=>c.value===p.cat)?.label||"기타",
+          region:p.region,org:p.org,target:p.target,amount:p.amount,
+          deadline:p.deadline==="상시"?"상시 접수":p.deadline,support:p.supportFull,
+        }))}),
+        signal:controller.signal,
+      });
+      clearTimeout(timer);
+      if(!res.ok)throw new Error(`HTTP ${res.status}`);
+      const data=await res.json();
+      if(data.aiAvailable===false){
+        setAiState({loading:false,result:null,failedSignature:signature});
+      }else{
+        setAiState({loading:false,result:data,failedSignature:null});
+      }
+    }catch{
+      setAiState({loading:false,result:null,failedSignature:signature});
+    }
+  },[policies,signature]);
+
+  useEffect(()=>{
+    if(policies.length>=2)runCompare();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  },[signature]);
+
   return(
     <div style={{width:"100%",maxWidth:820,pointerEvents:"auto"}}>
-      <div style={{background:"white",borderRadius:20,padding:"20px 20px 24px",maxHeight:"55vh",overflowY:"auto",boxShadow:"0 -10px 40px rgba(0,0,0,0.18)",border:"1.5px solid #E2E8F0",animation:"fadeUp 0.25s ease"}}>
+      <div style={{background:"white",borderRadius:20,padding:"20px 20px 24px",maxHeight:"70vh",overflowY:"auto",boxShadow:"0 -10px 40px rgba(0,0,0,0.18)",border:"1.5px solid #E2E8F0",animation:"fadeUp 0.25s ease"}}>
         <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:16}}>
           <div style={{fontSize:16,fontWeight:800,color:"#111827",display:"flex",alignItems:"center",gap:6}}><Icon name="bar_chart" size={18} color="var(--accent)"/>정책 비교</div>
           <button onClick={onClose} style={{background:"#f1f5f9",border:"none",borderRadius:"50%",width:26,height:26,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center"}}><Icon name="close" size={14} color="#6b7280"/></button>
         </div>
         <div style={{overflowX:"auto"}}>
-          <table style={{width:"100%",borderCollapse:"collapse",minWidth:policies.length*180+100}}>
+          <table style={{width:"100%",borderCollapse:"collapse",tableLayout:"fixed",minWidth:policies.length*180+100}}>
+            <colgroup>
+              <col style={{width:90}}/>
+              {policies.map(p=><col key={p.id} style={{width:colWidth}}/>)}
+            </colgroup>
             <thead>
               <tr>
                 <th style={{width:90}}></th>
                 {policies.map(p=>(
-                  <th key={p.id} style={{textAlign:"left",padding:"0 10px 12px",verticalAlign:"top",minWidth:180}}>
-                    <div style={{display:"flex",alignItems:"flex-start",justifyContent:"space-between",gap:6}}>
+                  <th key={p.id} style={{textAlign:"left",padding:"0 10px 12px",verticalAlign:"top"}}>
+                    <div style={{display:"flex",alignItems:"flex-start",justifyContent:"space-between",gap:6,minHeight:36}}>
                       <div style={{fontSize:13,fontWeight:700,color:"#111827",lineHeight:1.4}}>{p.title}</div>
                       <button onClick={()=>onRemove(p.id)} title="비교함에서 빼기" style={{flexShrink:0,background:"none",border:"none",cursor:"pointer",color:"#cbd5e1",padding:2,display:"flex"}}><Icon name="close" size={14} color="#cbd5e1"/></button>
                     </div>
@@ -331,13 +372,66 @@ function CompareModal({policies,onRemove,onClose}){
                 <tr key={r.label} style={{borderTop:"1px solid #F1F5F9"}}>
                   <td style={{padding:"10px 10px 10px 0",fontSize:12,fontWeight:700,color:"#64748B",whiteSpace:"nowrap",verticalAlign:"top"}}>{r.label}</td>
                   {policies.map(p=>(
-                    <td key={p.id} style={{padding:"10px",fontSize:13,color:"#334155",verticalAlign:"top"}}>{r.render(p)}</td>
+                    <td key={p.id} style={{padding:"10px",fontSize:13,color:"#334155",verticalAlign:"top",wordBreak:"break-word"}}>{r.render(p)}</td>
                   ))}
                 </tr>
               ))}
             </tbody>
           </table>
         </div>
+
+        {policies.length>=2&&(
+          <div style={{marginTop:18,paddingTop:16,borderTop:"1px solid #F1F5F9"}}>
+            <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:10}}>
+              <div style={{fontSize:13,fontWeight:800,color:"#111827",display:"flex",alignItems:"center",gap:6}}>
+                <Icon name="smart_toy" size={15} color="var(--accent)"/>AI 차이점 분석
+              </div>
+              {!aiState.loading&&(
+                <button onClick={runCompare} style={{display:"flex",alignItems:"center",gap:4,background:"none",border:"none",cursor:"pointer",color:"#94a3b8",fontSize:11,fontWeight:600,padding:2}}>
+                  <Icon name="sync" size={13} color="#94a3b8"/>다시 분석
+                </button>
+              )}
+            </div>
+
+            {aiState.loading&&(
+              <div style={{fontSize:12,color:"#6b7280",padding:"10px 2px"}}>AI가 정책 간 차이를 분석하고 있어요...</div>
+            )}
+
+            {!aiState.loading&&aiState.failedSignature===signature&&(
+              <div style={{borderRadius:10,padding:"12px 14px",fontSize:12,lineHeight:1.6,background:"#FFFBEB",border:"1.5px solid #FDE68A",display:"flex",alignItems:"flex-start",gap:6,color:"#B45309"}}>
+                <Icon name="error" size={15} color="#D97706"/>
+                <span>AI 분석 서버가 응답하지 않았어요. '다시 분석'을 눌러주세요.</span>
+              </div>
+            )}
+
+            {!aiState.loading&&aiState.result&&(
+              <div style={{borderRadius:10,padding:"14px 16px",fontSize:12,lineHeight:1.7,background:"#EFF6FF",border:"1.5px solid var(--accent-bg)",color:"#1e3a5f"}}>
+                {aiState.result.labels?.length>0&&(
+                  <div style={{marginBottom:10,paddingBottom:10,borderBottom:"1px solid rgba(0,0,0,0.08)",display:"flex",flexDirection:"column",gap:2}}>
+                    {aiState.result.labels.map(l=>(
+                      <div key={l.label}><b>{l.label}</b> = {l.title}</div>
+                    ))}
+                  </div>
+                )}
+                {aiState.result.points?.length>0?(
+                  <ul style={{margin:0,paddingLeft:18}}>
+                    {aiState.result.points.map((pt,i)=>(
+                      <li key={i} style={{marginBottom:6}}><b>{pt.aspect}</b> — {pt.detail}</li>
+                    ))}
+                  </ul>
+                ):(
+                  <div style={{color:"#6b7280"}}>뚜렷한 차이점을 찾지 못했어요.</div>
+                )}
+                {aiState.result.recommendation&&(
+                  <div style={{marginTop:10,paddingTop:10,borderTop:"1px solid rgba(0,0,0,0.08)",display:"flex",gap:6,alignItems:"flex-start"}}>
+                    <Icon name="task_alt" size={14} color="#007FFF"/>
+                    <span>{aiState.result.recommendation}</span>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );
