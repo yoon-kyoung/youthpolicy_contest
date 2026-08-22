@@ -2641,8 +2641,23 @@ function ProposalWriteView({category,setCategory,title,setTitle,background,setBa
               <label style={{display:"flex",alignItems:"center",gap:8,padding:"9px 14px",borderRadius:10,border:"1.5px dashed #E2E8F0",fontSize:13,color:"#6b7280",cursor:"pointer",width:"fit-content"}}>
                 <Icon name="attach_file" size={16} color="#9ca3af"/>
                 {attachmentName||"파일 선택"}
-                <input type="file" onChange={e=>setAttachmentName(e.target.files?.[0]?.name||"")} style={{display:"none"}}/>
+                <input type="file" accept="application/pdf,image/*" onChange={e=>{
+                  const file=e.target.files?.[0];
+                  if(!file){setAttachmentName("");return;}
+                  if(!/^application\/pdf$|^image\//.test(file.type)){
+                    alert("PDF 또는 이미지 파일만 첨부할 수 있어요.");
+                    e.target.value="";
+                    return;
+                  }
+                  if(file.size>10*1024*1024){
+                    alert("파일 용량은 최대 10MB까지 첨부할 수 있어요.");
+                    e.target.value="";
+                    return;
+                  }
+                  setAttachmentName(file.name);
+                }} style={{display:"none"}}/>
               </label>
+              <div style={{fontSize:11,color:"#9ca3af",marginTop:4}}>PDF, 이미지 첨부 가능 (최대 10MB)</div>
             </ProposalFormRow>
 
             {aiResult&&checkedSignature===signature&&(
