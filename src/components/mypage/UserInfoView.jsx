@@ -7,7 +7,7 @@ function formatDate(str) {
   return str.replace(/-/g, '.')
 }
 
-const PUSH_GRANTED_AT_KEY = 'yoa:push-granted-at'
+export const PUSH_GRANTED_AT_KEY = 'yoa:push-granted-at'
 
 function usePushStatus() {
   const [permission, setPermission] = useState('denied')

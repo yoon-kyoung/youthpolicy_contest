@@ -10,7 +10,7 @@ export default function UserInfoCard({ user, onUpdateUser, headerActions }) {
   const handleSave = async (updated) => {
     setSaveError('')
     const { error } = await supabase.auth.updateUser({
-      data: { full_name: updated.name, phone: updated.phone, push_enabled: updated.pushEnabled },
+      data: { full_name: updated.name, phone: updated.phone },
     })
     if (error) {
       setSaveError('저장에 실패했습니다. 다시 시도해주세요.')

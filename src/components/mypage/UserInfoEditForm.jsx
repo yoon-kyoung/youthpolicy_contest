@@ -1,17 +1,41 @@
 ﻿import { useState } from 'react'
 import Icon from '../../styles/Icon'
+import { PUSH_GRANTED_AT_KEY } from './UserInfoView'
+
+const isPushGranted = () => typeof Notification !== 'undefined' && Notification.permission === 'granted'
 
 export default function UserInfoEditForm({ user, onSave, onCancel, saveError }) {
   const [form, setForm] = useState({
     name: user.name,
     phone: user.phone,
-    pushEnabled: user.pushEnabled ?? true,
     currentPw: '',
     newPw: '',
     confirmPw: '',
   })
   const [errors, setErrors] = useState({})
   const [showPwChange, setShowPwChange] = useState(false)
+  const [pushGranted, setPushGranted] = useState(isPushGranted)
+  const [pushError, setPushError] = useState('')
+
+  const handlePushToggle = async () => {
+    if (pushGranted) return
+    setPushError('')
+    if (typeof Notification === 'undefined') {
+      setPushError('이 브라우저는 알림 기능을 지원하지 않아요.')
+      return
+    }
+    if (Notification.permission === 'denied') {
+      setPushError('브라우저에서 알림이 차단되어 있어요. 브라우저 설정에서 이 사이트의 알림 권한을 허용해주세요.')
+      return
+    }
+    const result = await Notification.requestPermission()
+    if (result === 'granted') {
+      localStorage.setItem(PUSH_GRANTED_AT_KEY, new Date().toISOString().slice(0, 10))
+      setPushGranted(true)
+    } else {
+      setPushError('알림 권한이 거부됐어요.')
+    }
+  }
 
   const set = (field) => (e) => {
     setForm(prev => ({ ...prev, [field]: e.target.value }))
@@ -37,7 +61,7 @@ export default function UserInfoEditForm({ user, onSave, onCancel, saveError }) 
       setErrors(errs)
       return
     }
-    onSave({ name: form.name, phone: form.phone, pushEnabled: form.pushEnabled })
+    onSave({ name: form.name, phone: form.phone })
   }
 
   return (
@@ -59,13 +83,13 @@ export default function UserInfoEditForm({ user, onSave, onCancel, saveError }) 
       <div style={styles.pushRow}>
         <div>
           <div style={styles.pushLabel}>푸시 알림</div>
-          <div style={styles.pushDesc}>정책 마감일, 신청 결과 등을 알려드려요</div>
+          <div style={styles.pushDesc}>
+            {pushGranted ? '정책 마감일, 신청 결과 등을 알려드려요' : '브라우저 알림을 허용하면 켤 수 있어요'}
+          </div>
         </div>
-        <Switch
-          checked={form.pushEnabled}
-          onChange={() => setForm(prev => ({ ...prev, pushEnabled: !prev.pushEnabled }))}
-        />
+        <Switch checked={pushGranted} onChange={handlePushToggle} />
       </div>
+      {pushError && <div style={{ ...styles.pushDesc, color: '#ef4444', marginTop: -8, marginBottom: 14 }}>{pushError}</div>}
 
       <button
         type="button"

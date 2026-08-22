@@ -15,7 +15,6 @@ const MOCK_USER = {
   displayName: '김청년',
   email: 'youth@example.com',
   phone: '010-1234-5678',
-  pushEnabled: true,
   joinDate: '2025-03-15',
   lastLogin: '2026-06-15',
   joinedPolicies: [
@@ -56,7 +55,6 @@ export default function MyPageContainer({ supabaseUser, onLogout, initialTab, fa
     displayName: getDisplayName(supabaseUser) || '청년',
     email: supabaseUser.email || '',
     phone: supabaseUser.user_metadata?.phone || '-',
-    pushEnabled: supabaseUser.user_metadata?.push_enabled ?? true,
     joinDate: supabaseUser.created_at?.slice(0, 10) || '',
     lastLogin: supabaseUser.last_sign_in_at?.slice(0, 10) || '',
     joinedPolicies: MOCK_USER.joinedPolicies,
