@@ -1846,6 +1846,13 @@ function CommunityPostDetailView({post,bp,user,policies,onGoDetail,favIds,onTogg
     setComments(prev=>[...prev,data]);
     setCommentText("");
     await supabase.from("posts").update({comments_count:(post.comments_count||0)+1}).eq("id",post.id);
+    if(post.user_id&&post.user_id!==user.id){
+      supabase.from("notifications").insert({
+        user_id:post.user_id,type:"comment_post",
+        title:"내 게시물에 새 댓글이 달렸어요",body:post.title,
+        link_type:"post",link_id:String(post.id),
+      });
+    }
   };
 
   const handleEditSave=async id=>{
@@ -2053,6 +2060,16 @@ function CommunityView({bp,user,policies,favIds,onToggleFav,onGoProposal,onGoDet
   useEffect(()=>{
     fetchPosts();
   },[fetchPosts]);
+
+  useEffect(()=>{
+    const id=new URLSearchParams(window.location.search).get("post");
+    if(!id||selectedPost)return;
+    const found=posts.find(p=>String(p.id)===id);
+    if(found){
+      setSelectedPost(found);
+      if(found.cat)setCatFilter(found.cat);
+    }
+  },[posts,selectedPost]);
 
   const handleAddPost=useCallback(async newPost=>{
     await supabase.from("posts").insert(newPost);
@@ -2415,6 +2432,13 @@ function ProposalDetailView({proposal,user,onVote,onBack,bp}){
     setComments(prev=>[...prev,data]);
     setCommentText("");
     await supabase.from("proposals").update({comments_count:(proposal.comments_count||0)+1}).eq("id",proposal.id);
+    if(proposal.user_id&&proposal.user_id!==user.id){
+      supabase.from("notifications").insert({
+        user_id:proposal.user_id,type:"comment_proposal",
+        title:"내 정책제안에 새 의견이 달렸어요",body:proposal.title,
+        link_type:"proposal",link_id:String(proposal.id),
+      });
+    }
   };
 
   return(
@@ -3135,6 +3159,13 @@ function PolicyProposalPage({bp,user,onGoCommunity}){
     await supabase.from("proposals").update({votes,status}).eq("id",id);
     setProposals(prev=>prev.map(p=>p.id===id?{...p,votes,status}:p));
     setSelectedProposal(prev=>prev&&prev.id===id?{...prev,votes,status}:prev);
+    if(status!==target.status&&target.user_id){
+      supabase.from("notifications").insert({
+        user_id:target.user_id,type:"proposal_status",
+        title:"내 정책제안이 다음 단계로 진입했어요",body:`"${target.title}" · 부처 매칭중`,
+        link_type:"proposal",link_id:String(id),
+      });
+    }
   },[proposals]);
 
   const statusCounts=useMemo(()=>{
@@ -3588,6 +3619,116 @@ function SignupPage({setPage,bp}){
 }
 
 // ─── 네비게이션 ────────────────────────────────────────────────────────────
+
+function notifTimeAgo(iso){
+  const diff=Math.max(0,Date.now()-new Date(iso).getTime());
+  const min=Math.floor(diff/60000);
+  if(min<1)return"방금";
+  if(min<60)return`${min}분 전`;
+  const hr=Math.floor(min/60);
+  if(hr<24)return`${hr}시간 전`;
+  const day=Math.floor(hr/24);
+  if(day<7)return`${day}일 전`;
+  return iso.slice(0,10);
+}
+
+const NOTIF_TYPE_ICON={comment_post:"chat_bubble",comment_proposal:"chat_bubble",proposal_status:"campaign",policy_deadline:"alarm"};
+
+function NotificationBell({user,favIds,policies,onNavigate}){
+  const [items,setItems]=useState([]);
+  const [open,setOpen]=useState(false);
+  const ref=useRef(null);
+
+  const fetchNotifs=useCallback(async()=>{
+    const{data}=await supabase.from("notifications").select("*").eq("user_id",user.id).order("created_at",{ascending:false}).limit(30);
+    setItems(data||[]);
+  },[user.id]);
+
+  useEffect(()=>{
+    fetchNotifs();
+    const t=setInterval(fetchNotifs,60000);
+    return()=>clearInterval(t);
+  },[fetchNotifs]);
+
+  useEffect(()=>{
+    if(!open)return;
+    const handle=e=>{if(ref.current&&!ref.current.contains(e.target))setOpen(false);};
+    document.addEventListener("mousedown",handle);
+    return()=>document.removeEventListener("mousedown",handle);
+  },[open]);
+
+  const deadlineReminders=useMemo(()=>{
+    if(!favIds?.size||!policies?.length)return[];
+    return policies
+      .filter(p=>favIds.has(p.id))
+      .map(p=>({p,d:daysLeft(p.deadline)}))
+      .filter(({d})=>d!==null&&d>=0&&d<=3)
+      .sort((a,b)=>a.d-b.d)
+      .slice(0,5)
+      .map(({p,d})=>({
+        id:`policy-${p.id}`,type:"policy_deadline",
+        title:"관심 정책 마감이 얼마 안 남았어요",body:`${p.title} · D-${d}`,
+        link_type:"policy",link_id:p.id,read:true,created_at:null,
+      }));
+  },[favIds,policies]);
+
+  const merged=[...deadlineReminders,...items];
+  const unreadCount=items.filter(n=>!n.read).length;
+
+  const handleClickItem=n=>{
+    if(n.created_at&&!n.read){
+      setItems(prev=>prev.map(x=>x.id===n.id?{...x,read:true}:x));
+      supabase.from("notifications").update({read:true}).eq("id",n.id);
+    }
+    setOpen(false);
+    if(n.link_type&&n.link_id)onNavigate(n.link_type,n.link_id);
+  };
+
+  const handleMarkAllRead=()=>{
+    const unreadIds=items.filter(n=>!n.read).map(n=>n.id);
+    if(!unreadIds.length)return;
+    setItems(prev=>prev.map(x=>({...x,read:true})));
+    supabase.from("notifications").update({read:true}).in("id",unreadIds);
+  };
+
+  return(
+    <div ref={ref} style={{position:"relative"}}>
+      <button onClick={()=>setOpen(o=>!o)} title="알림" style={{position:"relative",display:"flex",alignItems:"center",justifyContent:"center",width:34,height:34,background:"none",border:"none",cursor:"pointer",borderRadius:"50%",transition:"background 0.15s"}}
+        onMouseEnter={e=>e.currentTarget.style.background="#f1f5f9"}
+        onMouseLeave={e=>e.currentTarget.style.background="none"}
+      >
+        <Icon name="notifications" size={20} color="#6b7280"/>
+        {unreadCount>0&&<span style={{position:"absolute",top:5,right:6,width:8,height:8,borderRadius:"50%",background:"#ef4444",border:"1.5px solid white"}}/>}
+      </button>
+      {open&&(
+        <div style={{position:"absolute",top:"calc(100% + 8px)",right:0,background:"white",borderRadius:14,border:"1.5px solid #e5e7eb",boxShadow:"0 8px 32px rgba(0,0,0,0.12)",width:320,maxHeight:420,overflowY:"auto",zIndex:200,animation:"fadeUp 0.15s ease"}}>
+          <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",padding:"12px 14px 10px",borderBottom:"1px solid #f1f5f9",position:"sticky",top:0,background:"white"}}>
+            <span style={{fontSize:13,fontWeight:800,color:"#111827"}}>알림</span>
+            {unreadCount>0&&<button onClick={handleMarkAllRead} style={{background:"none",border:"none",cursor:"pointer",fontSize:11,color:"var(--accent)",fontWeight:700}}>모두 읽음 처리</button>}
+          </div>
+          {merged.length===0?(
+            <div style={{padding:"32px 16px",textAlign:"center",color:"#9ca3af",fontSize:12}}>아직 알림이 없어요</div>
+          ):merged.map(n=>(
+            <button key={n.id} onClick={()=>handleClickItem(n)} style={{width:"100%",display:"flex",gap:10,alignItems:"flex-start",padding:"12px 14px",background:n.read?"white":"#F5F9FF",border:"none",borderBottom:"1px solid #f8fafc",cursor:"pointer",textAlign:"left",transition:"background 0.12s"}}
+              onMouseEnter={e=>e.currentTarget.style.background="#f8fafc"}
+              onMouseLeave={e=>e.currentTarget.style.background=n.read?"white":"#F5F9FF"}
+            >
+              <div style={{width:28,height:28,borderRadius:"50%",background:"var(--accent-bg)",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>
+                <Icon name={NOTIF_TYPE_ICON[n.type]||"notifications"} size={14} color="var(--accent)"/>
+              </div>
+              <div style={{flex:1,minWidth:0}}>
+                <div style={{fontSize:12,fontWeight:700,color:"#111827",wordBreak:"break-word"}}>{n.title}</div>
+                <div style={{fontSize:11,color:"#6b7280",marginTop:2,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{n.body}</div>
+                {n.created_at&&<div style={{fontSize:10,color:"#9ca3af",marginTop:3}}>{notifTimeAgo(n.created_at)}</div>}
+              </div>
+              {!n.read&&n.created_at&&<span style={{width:7,height:7,borderRadius:"50%",background:"var(--accent)",flexShrink:0,marginTop:4}}/>}
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
 
 function NavUserDropdown({user,onLogout,onGoMyPage,compact=false,favCount=0,fontScale,onFontInc,onFontDec,themeKey,onThemeChange}){
   const [open,setOpen]=useState(false);
@@ -4295,6 +4436,19 @@ export default function App(){
     navigateTo(p);
   },[navigateTo,setCommunitySub]);
 
+  const onNotifNavigate=useCallback((linkType,linkId)=>{
+    if(linkType==="post"){
+      history.replaceState({},"",window.location.pathname+"?post="+linkId);
+      navigateTo("community");
+    }else if(linkType==="proposal"){
+      history.replaceState({},"",window.location.pathname+"?proposal="+linkId);
+      navigateTo("proposal");
+    }else if(linkType==="policy"){
+      const found=policies.find(p=>String(p.id)===String(linkId));
+      if(found)goDetail(found);
+    }
+  },[navigateTo,policies,goDetail]);
+
   // 로고 클릭: 챗봇 홈으로 이동 + 대화 중이었다면 첫 화면으로 리셋
   const [chatResetKey,setChatResetKey]=useState(0);
   const goHome=useCallback(()=>{
@@ -4380,7 +4534,10 @@ export default function App(){
                     onMouseLeave={e=>{e.currentTarget.style.borderColor="#e2e8f0";e.currentTarget.style.color="#6b7280";}}
                   >청년ON 알아보기</button>
                   {user?(
-                    <NavUserDropdown user={user} onLogout={handleLogout} onGoMyPage={()=>navigateTo("mypage")} favCount={favIds.size} fontScale={fontScale} onFontInc={incFont} onFontDec={decFont} themeKey={themeKey} onThemeChange={setThemeKey}/>
+                    <>
+                      <NotificationBell user={user} favIds={favIds} policies={policies} onNavigate={onNotifNavigate}/>
+                      <NavUserDropdown user={user} onLogout={handleLogout} onGoMyPage={()=>navigateTo("mypage")} favCount={favIds.size} fontScale={fontScale} onFontInc={incFont} onFontDec={decFont} themeKey={themeKey} onThemeChange={setThemeKey}/>
+                    </>
                   ):(
                     <>
                       <button onClick={()=>navigateTo("signup")} style={{padding:"7px 16px",borderRadius:8,border:"1.5px solid #e2e8f0",background:"white",color:"#374151",fontSize:13,fontWeight:600,cursor:"pointer",transition:"all 0.15s"}}
