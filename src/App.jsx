@@ -3706,7 +3706,7 @@ const ABOUT_CARDS=[
   {icon:"search",accent:"#2563EB",iconBg:"#DBEAFE",bg:"#EFF6FF",border:"#DCEAFF",
     label:"정책 검색",
     title:"지역·부처·학력까지, 촘촘한 정책 검색",
-    desc:"1500개가 넘는 정책을 지역·중앙부처·학력·취업 상태로 세밀하게 좁혀보고, 인기순·마감임박순·지원금 큰 순으로 정렬해서 확인할 수 있어요.",
+    desc:"1500개가 넘는 정책을 지역·중앙부처·학력·취업 상태로 세밀하게 좁혀보고, 인기순·마감임박순·지원금 큰 순으로 정렬해서 확인해요. 최대 3개까지 골라 나란히 비교하면 AI가 실질적인 차이점까지 짚어줘요.",
     mockup:(
       <div style={aboutStyles.mockCard}>
         <div style={{display:"flex",flexWrap:"wrap",gap:8,marginBottom:14}}>
@@ -3723,63 +3723,19 @@ const ABOUT_CARDS=[
         ))}
       </div>
     )},
-  {icon:"checklist",accent:"#E11D48",iconBg:"#FFE4E6",bg:"#FFF1F2",border:"#FFE1E6",
-    label:"신청 관리",
-    title:"저장하고, 신청 단계까지 체크리스트로 관리",
-    desc:"관심 정책은 별표로 저장해두고, 준비중 → 지원완료 → 심사중 → 결과대기 → 완료 단계를 체크하며 신청 진행 상황을 놓치지 않고 관리해요.",
-    mockup:(
-      <div style={aboutStyles.mockCard}>
-        <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:14}}>
-          <Icon name="bookmark" size={16} color="#E11D48"/>
-          <span style={{fontSize:13,fontWeight:800,color:"#111827"}}>청년 월세 한시 특별지원</span>
-        </div>
-        <div style={{display:"flex",gap:6,flexWrap:"wrap"}}>
-          {["준비중","지원완료","심사중","결과대기","완료"].map((s,i)=>(
-            <span key={s} style={{borderRadius:20,padding:"5px 11px",fontSize:11,fontWeight:700,background:i===1?"#FFE4E6":"#f3f4f6",color:i===1?"#E11D48":"#9ca3af"}}>{s}</span>
-          ))}
-        </div>
-      </div>
-    )},
-  {icon:"tune",accent:"#16A34A",iconBg:"#DCFCE7",bg:"#F0FDF4",border:"#DBFCE7",
-    label:"맞춤 추천",
-    title:"맞춤 조건만 설정하면 나만을 위한 추천",
-    desc:"지역·나이·학력·취업 상태·전공·특화 분야를 설정하면 마이페이지에 '내 이름이 관심 있을법한 정책'이 실시간으로 채워져요.",
-    mockup:(
-      <div style={aboutStyles.mockCard}>
-        <div style={{display:"flex",alignItems:"center",gap:6,fontSize:13,fontWeight:800,color:"#111827",marginBottom:12}}>
-          <Icon name="auto_awesome" size={16} color="#16A34A"/>OO님이 관심 있을법한 정책
-        </div>
-        <div style={{border:"1px solid #DBFCE7",borderRadius:12,padding:"12px 14px"}}>
-          <span style={{fontSize:11,fontWeight:700,padding:"3px 9px",borderRadius:20,background:"#FFFBEB",color:"#B45309",border:"1px solid #FDE68A"}}>금융</span>
-          <div style={{fontWeight:800,color:"#111827",margin:"8px 0 4px"}}>청년도약계좌</div>
-          <div style={{fontSize:12,color:"#6b7280",lineHeight:1.6}}>월 최대 70만원 납입 시 정부 기여금 포함 5년 만기 최대 5,000만원</div>
-        </div>
-      </div>
-    )},
-  {icon:"forum",accent:"#B45309",iconBg:"#FEF3C7",bg:"#FFFBEB",border:"#FDECC8",
-    label:"커뮤니티",
-    title:"후기·정보·Q&A를 나누는 청년 커뮤니티",
-    desc:"실제 신청 후기와 꿀팁을 나누고, 공감과 댓글로 소통해요. 궁금한 건 Q&A에 남기면 다른 청년들의 답을 받을 수 있어요.",
-    mockup:(
-      <div style={aboutStyles.mockCard}>
-        <div style={{display:"flex",gap:6,alignItems:"center",marginBottom:8}}>
-          <span style={{fontSize:11,fontWeight:700,padding:"2px 9px",borderRadius:20,background:"#F0FDF4",color:"#15803D",border:"1px solid #BBF7D0"}}>후기</span>
-          <span style={{fontSize:11,color:"#9ca3af"}}>2026-07-30</span>
-        </div>
-        <div style={{fontWeight:800,color:"#111827",marginBottom:10}}>청년도약계좌 드디어 개설! 생각보다 간단했어요</div>
-        <div style={{fontSize:12,color:"#9ca3af",display:"flex",alignItems:"center",gap:10}}>
-          <span>by 서O영</span>
-          <span style={{display:"flex",alignItems:"center",gap:3}}><Icon name="favorite" size={13} color="#9ca3af"/>5</span>
-          <span style={{display:"flex",alignItems:"center",gap:3}}><Icon name="chat_bubble" size={13} color="#9ca3af"/>3</span>
-        </div>
-      </div>
-    )},
   {icon:"campaign",accent:"#0D9488",iconBg:"#CCFBF1",bg:"#F0FDFA",border:"#D5F7EE",
     label:"정책 제안",
-    title:"커뮤니티 이야기를 정책으로, 청년정책 역제안",
-    desc:"커뮤니티에서 나눈 이야기를 정책으로 제안해보세요. 공감이 모이면 답변대기 → 부처매칭중 → 답변완료 단계를 거쳐 담당 부처에 자동으로 전달돼요.",
+    title:"제안부터 진행 상황까지, 청년정책 제안",
+    desc:"청년에게 필요한 정책을 자유롭게 제안해보세요. 제출 전 'AI 검토'가 욕설·비속어·도배성 텍스트와 비슷한 기존 제안을 미리 걸러주고, 공감이 모이면 답변대기 → 부처매칭중 → 답변완료 단계를 거쳐 담당 부처에 자동으로 전달돼요.",
     mockup:(
       <div style={aboutStyles.mockCard}>
+        <div style={{display:"flex",alignItems:"center",gap:5,fontSize:12,fontWeight:800,color:"#111827",marginBottom:8}}>
+          <Icon name="smart_toy" size={15} color="#0D9488"/>AI 검토 결과
+        </div>
+        <div style={{background:"#F0FDFA",border:"1px solid #D5F7EE",borderRadius:10,padding:"9px 12px",fontSize:12,lineHeight:1.6,color:"#0D9488",display:"flex",gap:6,alignItems:"flex-start",marginBottom:16}}>
+          <Icon name="check_circle" size={14} color="#0D9488"/>
+          <span>욕설·부적절한 표현 감지율 <b>3%</b> — 제안하기를 눌러주세요.</span>
+        </div>
         <div style={{display:"flex",alignItems:"center",justifyContent:"space-between"}}>
           {["답변대기","부처매칭중","답변완료"].map((s,i)=>(
             <div key={s} style={{display:"flex",flexDirection:"column",alignItems:"center",gap:6,flex:1}}>
@@ -3790,37 +3746,49 @@ const ABOUT_CARDS=[
         </div>
       </div>
     )},
-  {icon:"fact_check",accent:"#4F46E5",iconBg:"#E0E7FF",bg:"#EEF2FF",border:"#E0E0FF",
-    label:"AI 검토",
-    title:"제출 전, AI가 부적절한 표현과 중복 제안을 먼저 걸러줘요",
-    desc:"작성한 제안을 'AI 검토' 버튼으로 확인하면 욕설·비속어·도배성 텍스트를 감지율(%)로 알려주고, 이미 올라온 비슷한 제안이 있으면 미리 알려줘요. AI 서버가 응답하지 않을 땐 통과시키지 않고 다시 검토하도록 안내해서, 검토 없이 제안이 올라가는 일이 없도록 해요.",
+  {icon:"forum",accent:"#B45309",iconBg:"#FEF3C7",bg:"#FFFBEB",border:"#FDECC8",
+    label:"커뮤니티",
+    title:"후기·정보·Q&A를 나누는 청년 커뮤니티",
+    desc:"실제 신청 후기와 꿀팁을 나누고, 공감과 댓글로 소통해요. 공감순 베스트 후기는 상단에 따로 모아 보여주고, 팀원과 함께 정책 제안을 준비하는 팀모집 글은 참가하기 한 번으로 신청할 수 있어요.",
     mockup:(
       <div style={aboutStyles.mockCard}>
-        <div style={{display:"flex",alignItems:"center",gap:5,fontSize:12,fontWeight:800,color:"#111827",marginBottom:8}}>
-          <Icon name="smart_toy" size={15} color="#4F46E5"/>AI 검토 결과
+        <div style={{display:"flex",gap:6,alignItems:"center",marginBottom:8}}>
+          <span style={{display:"inline-flex",alignItems:"center",gap:3,fontSize:10,fontWeight:800,padding:"2px 8px",borderRadius:20,background:"#F59E0B",color:"white"}}>
+            <Icon name="star" fill={1} size={10} color="white"/>BEST 1
+          </span>
+          <span style={{fontSize:11,fontWeight:700,padding:"2px 9px",borderRadius:20,background:"#F0FDF4",color:"#15803D",border:"1px solid #BBF7D0"}}>후기</span>
         </div>
-        <div style={{background:"#EEF2FF",border:"1px solid #E0E0FF",borderRadius:10,padding:"10px 12px",fontSize:12,lineHeight:1.6,color:"#15803D",display:"flex",gap:6,alignItems:"flex-start",marginBottom:10}}>
-          <Icon name="check_circle" size={14} color="#16A34A"/>
-          <span>욕설·부적절한 표현 감지율 <b>3%</b> — 제안하기를 눌러주세요.</span>
+        <div style={{fontWeight:800,color:"#111827",marginBottom:10}}>청년도약계좌 드디어 개설! 생각보다 간단했어요</div>
+        <div style={{fontSize:12,color:"#9ca3af",display:"flex",alignItems:"center",gap:10}}>
+          <span>by 서O영</span>
+          <span style={{display:"flex",alignItems:"center",gap:3}}><Icon name="favorite" size={13} color="#9ca3af"/>91</span>
+          <span style={{display:"flex",alignItems:"center",gap:3}}><Icon name="chat_bubble" size={13} color="#9ca3af"/>38</span>
         </div>
-        <div style={{fontSize:11,fontWeight:700,color:"#374151",marginBottom:4}}>유사 정책 확인</div>
-        <div style={{fontSize:11,color:"#6b7280"}}>· 청년 월세 지원 확대 제안 — 주거비 지원이라는 주제가 겹쳐요</div>
+        <div style={{marginTop:12,paddingTop:12,borderTop:"1px solid #FDECC8",display:"flex",gap:6,alignItems:"center",flexWrap:"wrap"}}>
+          <span style={{fontSize:11,fontWeight:700,padding:"2px 9px",borderRadius:20,background:"#FDF4FF",color:"#A21CAF",border:"1px solid #F5D0FE"}}>정책제안 팀모집</span>
+          <span style={{fontSize:12,color:"#374151",fontWeight:600}}>지방 청년 주거지원 제안 팀모집</span>
+        </div>
       </div>
     )},
-  {icon:"group",accent:"#A21CAF",iconBg:"#FAE8FF",bg:"#FDF4FF",border:"#F8DFFB",
-    label:"팀모집",noTab:true,
-    title:"정책 제안 팀모집, 참가하기 한 번으로 신청",
-    desc:"같이 정책 제안을 준비할 팀원을 지역·인원과 함께 모집해요. 참가하기를 누르면 담당자가 개별로 연락드릴 예정이라는 안내를 바로 받아볼 수 있어요.",
+  {icon:"person",accent:"#E11D48",iconBg:"#FFE4E6",bg:"#FFF1F2",border:"#FFE1E6",
+    label:"마이페이지",
+    title:"마이페이지 하나로 신청 현황부터 맞춤 추천까지",
+    desc:"관심 정책은 별표로 저장해두고 준비중 → 지원완료 → 심사중 → 결과대기 → 완료 단계를 체크하며 관리해요. 지역·나이·소득·학력 등 맞춤 조건을 설정하면 나를 위한 정책이 실시간으로 채워지고, 내가 쓴 커뮤니티 글과 정책제안도 한곳에서 모아볼 수 있어요.",
     mockup:(
       <div style={aboutStyles.mockCard}>
-        <div style={{display:"flex",gap:6,alignItems:"center",marginBottom:10}}>
-          <span style={{fontSize:11,fontWeight:700,padding:"2px 9px",borderRadius:20,background:"#FDF4FF",color:"#A21CAF",border:"1px solid #F5D0FE"}}>정책제안 팀모집</span>
-          <span style={{fontSize:11,fontWeight:700,padding:"2px 9px",borderRadius:20,background:"#F0FDF4",color:"#15803D",border:"1px solid #BBF7D0"}}>모집중</span>
+        <div style={{display:"flex",gap:4,padding:5,background:"#F1F5F9",borderRadius:10,marginBottom:14}}>
+          {[{l:"맞춤 조건",a:false},{l:"신청 내역",a:true},{l:"저장한 정책",a:false},{l:"내가 쓴 글",a:false}].map(t=>(
+            <span key={t.l} style={{flex:1,textAlign:"center",padding:"6px 4px",borderRadius:7,fontSize:10,fontWeight:t.a?800:500,color:t.a?"#E11D48":"#94a3b8",background:t.a?"white":"transparent",boxShadow:t.a?"0 1px 3px rgba(0,0,0,0.08)":"none"}}>{t.l}</span>
+          ))}
         </div>
-        <div style={{fontWeight:800,color:"#111827",marginBottom:12}}>지방 청년 주거지원 제안 팀모집</div>
-        <div style={{display:"flex",gap:8}}>
-          <span style={{flex:1,textAlign:"center",padding:"8px 0",borderRadius:20,border:"2px solid #e5e7eb",color:"#6b7280",fontSize:12,fontWeight:700}}>공감해요 4</span>
-          <span style={{flex:1,textAlign:"center",padding:"8px 0",borderRadius:20,border:"2px solid #A21CAF",background:"#FDF4FF",color:"#A21CAF",fontSize:12,fontWeight:700}}>참가하기 2</span>
+        <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:12}}>
+          <Icon name="bookmark" size={16} color="#E11D48"/>
+          <span style={{fontSize:13,fontWeight:800,color:"#111827"}}>청년 월세 한시 특별지원</span>
+        </div>
+        <div style={{display:"flex",gap:6,flexWrap:"wrap"}}>
+          {["준비중","지원완료","심사중","결과대기","완료"].map((s,i)=>(
+            <span key={s} style={{borderRadius:20,padding:"5px 11px",fontSize:11,fontWeight:700,background:i===1?"#FFE4E6":"#f3f4f6",color:i===1?"#E11D48":"#9ca3af"}}>{s}</span>
+          ))}
         </div>
       </div>
     )},
@@ -3880,9 +3848,7 @@ function AboutCarousel({isDesktop}){
   return(
     <div>
       <HScrollFade style={{gap:4,padding:6,background:"#EEF2F7",borderRadius:12,marginBottom:16}} fadeColor="#EEF2F7">
-        {ABOUT_CARDS.map((c,i)=>({...c,i})).filter(c=>!c.noTab).map(c=>{
-          const i=c.i;
-          return(
+        {ABOUT_CARDS.map((c,i)=>(
           <button key={i} onClick={()=>setIdx(i)} style={{
             flexShrink:0,display:"flex",alignItems:"center",justifyContent:"center",gap:6,
             padding:isDesktop?"10px 18px":"9px 14px",fontSize:isDesktop?14:13,lineHeight:1,
@@ -3893,8 +3859,7 @@ function AboutCarousel({isDesktop}){
           }}>
             {c.label}
           </button>
-          );
-        })}
+        ))}
       </HScrollFade>
       <div style={{position:"relative"}}>
       <button onClick={goPrev} aria-label="이전" style={{...navBtn,left:isDesktop?-22:-8}}
