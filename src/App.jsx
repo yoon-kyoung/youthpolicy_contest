@@ -4216,6 +4216,7 @@ const GLOBAL_CSS=`
   @keyframes micRing{0%{box-shadow:0 0 0 0 rgba(220,38,38,0.35)}100%{box-shadow:0 0 0 10px rgba(220,38,38,0)}}
   @keyframes tickerFade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
   @keyframes guideWiggle{0%,92%,100%{transform:rotate(0deg)}93%{transform:rotate(-6deg)}94.5%{transform:rotate(5deg)}96%{transform:rotate(-4deg)}97.5%{transform:rotate(3deg)}99%{transform:rotate(0deg)}}
+  @keyframes pingRing{0%{transform:scale(1);opacity:0.6}75%,100%{transform:scale(1.9);opacity:0}}
 `;
 
 export default function App(){

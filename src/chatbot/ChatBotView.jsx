@@ -419,8 +419,12 @@ function PrivacyNoticePanel({ bp }) {
 
           <div
             onClick={() => setCollapsed(false)}
-            style={{ display: 'flex', cursor: 'pointer', transformOrigin: 'top center', animation: 'guideWiggle 5s ease-in-out infinite' }}
+            style={{ position: 'relative', display: 'flex', cursor: 'pointer', transformOrigin: 'top center', animation: 'guideWiggle 5s ease-in-out infinite' }}
           >
+            <span style={{
+              position: 'absolute', inset: 0, borderRadius: '50%', zIndex: -1,
+              background: 'var(--accent)', animation: 'pingRing 1.8s cubic-bezier(0,0,0.2,1) infinite',
+            }}/>
             <div style={{
               width: 60, height: 60, borderRadius: '50%',
               background: 'linear-gradient(135deg,var(--accent-dark),var(--accent))',
