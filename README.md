@@ -111,15 +111,22 @@ AI가 2,600개 정책 중에서 맞는 거 골라줌
 - 화면(프론트엔드)은 GitHub Pages로 배포되고, AI 챗봇은 서버가 필요해서 **AI 백엔드만 Vercel**에서 돌립니다
 - GitHub에 코드를 올리면 자동으로 인터넷에 반영됨
 
-#### OpenRouter가 뭔가요?
+#### Upstage Solar가 뭔가요? (챗봇 답변 생성)
 
-**OpenRouter** = 여러 AI 모델을 한 곳에서 쓸 수 있는 서비스
+**Upstage Solar** = 국내(업스테이지)에서 만든 AI 모델 — 지금 챗봇 답변은 이 모델(`solar-pro3`)이 직접 생성합니다
 
 - 원래 강사님이 주신 **OpenAI API 키**를 쓰려고 했는데, 그게 **유료**이고 **충전량을 다 써버렸습니다**
-- 그래서 **무료 대안**을 찾았는데, 그게 OpenRouter입니다 — 무료 모델만 쓰기 때문에 **비용이 0원**입니다
-- 처음엔 "무료 모델 자동 선택" 기능을 썼는데, 어떤 날은 좋은 모델 / 어떤 날은 나쁜 모델이 걸려서 **답변 품질이 들쑥날쑥**했어요
-- 그래서 지금은 테스트 결과 한국어를 가장 잘하는 **구글의 무료 모델(Gemma)로 고정**했고, 이 모델이 일시적으로 안 되면 다른 무료 모델로 자동 교체됩니다
-- 단점: 무료라서 답변까지 보통 20~40초 정도 걸려요
+- 처음엔 무료 대안으로 OpenRouter의 무료 모델(구글 Gemma 등)을 자동 선택해서 썼는데, 어떤 날은 좋은 모델 / 어떤 날은 나쁜 모델이 걸려서 **답변 품질이 들쑥날쑥**했어요
+- 이후 Upstage에서 **Solar API 키를 직접 발급**받아 챗봇 답변 생성을 여기로 전환했습니다 — 한국어 응답 품질이 더 안정적입니다
+- 단점: 무료 티어라 답변까지 보통 20~40초 정도 걸려요
+
+#### OpenRouter는 이제 뭐에 쓰나요? (검수 · 비교 전용)
+
+**OpenRouter** = 여러 AI 모델을 한 곳에서 쓸 수 있는 서비스 — 챗봇 답변 생성에는 더 이상 안 쓰고, 아래 두 기능에만 남아 있습니다
+
+- **정책제안 AI 검수** (`/api/moderate`) — 글 등록 전 욕설·부적절한 표현이 있는지 검사
+- **정책 비교 AI 분석** (`/api/compare`) — 선택한 정책 2~3개의 차이점을 요약
+- 두 기능 모두 무료 모델(Nemotron 3 Nano)을 사용해 **비용이 0원**입니다
 
 #### 온통청년 API가 뭔가요?
 
@@ -170,16 +177,17 @@ AI가 2,600개 정책 중에서 맞는 거 골라줌
    │     ├─ DB: posts, comments, post_participants, proposals, proposal_comments, notifications
    │     └─ Storage: proposal-attachments 버킷
    │
-   └─ AI 챗봇 요청 (POST /api/chat)  ← Vercel (AI 백엔드)
-         https://youth-policy-chatbot-kappa.vercel.app
+   └─ AI 챗봇 요청 (POST /api/chat 등)  ← Vercel (AI 백엔드)
+         https://youthpolicy-chatbot-api.vercel.app
                 │
-                ├─ OpenRouter (무료 AI 모델)
+                ├─ Upstage Solar API (solar-pro3) — 챗봇 답변 생성
+                ├─ OpenRouter + Nemotron 3 Nano — 정책제안 검수(/api/moderate), 정책 비교(/api/compare)
                 ├─ 온통청년 정책·센터 데이터
                 └─ Google Sheets (사용량 기록)
 ```
 
 - **프론트엔드**: main 브랜치에 push → GitHub Pages 자동 반영
-- **AI 백엔드**: 별도 레포(`Geabong/youth-chatbot-api`)에서 관리, Vercel에 배포 — 프론트엔드는 위 주소를 호출
+- **AI 백엔드**: 별도 레포(`yoon-kyoung/youthpolicy-chatbot-api`)에서 관리, Vercel에 배포 — 프론트엔드는 위 주소를 호출 (GitHub push만으로는 배포 안 되고 `vercel --prod`로 수동 배포)
 - AI 백엔드 상세 문서는 해당 레포 README 참고
 
 > 💡 추천 테스트 질문: "27살 서울 사는데 월세 지원 있을까?" / "성남 사는 24살 취준생인데 일자리 지원 뭐 있어?" / "27살인데 시흥 살아요. 받을 수 있는 지원 있어요?" (시흥 전용 정책이 없어서 경기도 정책 + 센터 안내로 폴백됨)
@@ -203,6 +211,7 @@ AI가 2,600개 정책 중에서 맞는 거 골라줌
 | GitHub Pages | 화면(프론트엔드) 배포 (무료) |
 | Vercel | AI 챗봇 백엔드 서버 배포 (무료) |
 | Supabase | 회원 인증(이메일·카카오 OAuth) + DB(정책제안 `proposals`/`proposal_comments`, 커뮤니티 `posts`/`comments`/`post_participants`, 알림 `notifications`) + 첨부파일 저장(Storage `proposal-attachments` 버킷) |
-| OpenRouter API | 무료 AI 모델 서비스 |
+| Upstage Solar API | 챗봇 답변 생성 (모델 `solar-pro3`) |
+| OpenRouter API | 정책제안 검수·정책 비교 전용 무료 AI 모델(Nemotron 3 Nano) |
 | 온통청년 API | 정부 청년정책·청년센터 데이터 (2,600건+ / 센터 246곳) |
 | [Google Sheets](https://docs.google.com/spreadsheets/d/1vKSirUpGTuvFy40Hf5y9l_vOp5aNtRFuuC8jTfFpKfs/edit) | 사용량 기록 + 설정 저장 (무료 DB 대용) |
