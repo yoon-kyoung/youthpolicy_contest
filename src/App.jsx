@@ -844,20 +844,25 @@ function PolicyDetailView({policy,favIds,onToggle,onBack,onGoDetail,bp,policies}
                     const CIRCLES=['①','②','③','④','⑤','⑥','⑦','⑧','⑨'];
                     const chips=[],notes=[];
                     let lastCircleIdx=-1;
-                    // "A 또는 B 중 택 1부" 처럼 여러 서류 중 하나를 고르는 문구는 각 서류만 칩으로, "또는"·"중 택 n부"는 일반 텍스트로 분리
+                    // "A 또는 B 중 택 1부" 처럼 여러 서류 중 하나를 고르는 문구는 각 서류만 칩으로, "또는"·"중 택 n부"·문장 중간의 "※ 비고"는 일반 텍스트로 분리
                     const finalizeDoc=raw=>{
-                      const doc=raw.replace(/\s*등\s*$/,"").trim();
+                      let doc=raw.replace(/\s*등\s*$/,"").trim();
+                      const noteIdx=doc.indexOf("※");
+                      const noteSuffix=noteIdx>-1?doc.slice(noteIdx).trim():null;
+                      if(noteIdx>-1)doc=doc.slice(0,noteIdx).trim();
+                      doc=doc.replace(/\.\s*$/,"");
                       const trailingMatch=doc.match(/\s*중\s*택\s*\d+\s*부\s*(\(필수\)|\(선택\))?\s*$/);
                       const trailing=trailingMatch?trailingMatch[0].trim():null;
                       const body=(trailingMatch?doc.slice(0,trailingMatch.index):doc).trim();
                       const parts=body.split(/\s*또는\s*/).map(s=>s.trim()).filter(Boolean);
-                      if(parts.length<=1&&!trailing)return doc;
+                      if(parts.length<=1&&!trailing&&!noteSuffix)return doc;
                       const tokens=[];
                       parts.forEach((part,i)=>{
                         if(i>0)tokens.push({type:"text",text:"또는"});
                         tokens.push({type:"chip",text:part});
                       });
                       if(trailing)tokens.push({type:"text",text:trailing});
+                      if(noteSuffix)tokens.push({type:"text",text:noteSuffix});
                       return tokens;
                     };
                     // 줄바꿈이 있으면 줄 단위로, 없으면 콤마로 항목을 구분 (줄바꿈 형식에서 콤마까지 나누면 문장 중간이 잘림)
