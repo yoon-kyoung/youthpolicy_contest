@@ -143,12 +143,30 @@ function cleanSupportFull(text){
   return result.length>0?result.join("\n"):"";
 }
 
+const SIDO_PREFIX_RE=/^(서울특별시|부산광역시|대구광역시|인천광역시|광주광역시|대전광역시|울산광역시|세종특별자치시|경기도|강원특별자치도|강원도|충청북도|충북특별자치도|충청남도|전라북도|전북특별자치도|전라남도|전남특별자치도|경상북도|경상남도|제주특별자치도|제주도)\s*/;
+const METRO_DISTRICT_NAMES=["서울시","부산시","대구시","인천시","광주시","대전시","울산시","세종시"];
+function extractDistrict(org,region){
+  if(!org)return null;
+  const stripped=org.replace(SIDO_PREFIX_RE,"").trim();
+  const m=stripped.match(/^([가-힣0-9]+(시|군|구))청?$/);
+  if(!m)return null;
+  const district=m[1];
+  if(METRO_DISTRICT_NAMES.includes(district))return null;
+  if(district===`${region}시`||district===region)return null;
+  return district;
+}
+
 export function mapRawPolicy(raw,idx){
   const deadline=parsePeriodEnd(raw.period);
   const d=deadline==="상시"?null:Math.ceil((new Date(deadline)-Date.now())/86400000);
   const hot=d!==null&&d>0&&d<=30;
   const applyUrl=raw.applyUrl||"";
   const refUrl=raw.refUrl||"";
+  const region=(()=>{
+    if(raw.regions&&raw.regions.length>0)return raw.regions[0];
+    const m=(raw.org||"").match(/^(서울|부산|대구|인천|광주|대전|울산|세종|경기|강원|충북|충남|전북|전남|경북|경남|제주)/);
+    return m?m[1]:"전국";
+  })();
   return{
     id:raw.id||String(idx),
     cat:mapCat(raw.category||""),
@@ -166,11 +184,8 @@ export function mapRawPolicy(raw,idx){
     docs:raw.submitDocs||"",
     applyUrl,
     refUrl,
-    region:(()=>{
-      if(raw.regions&&raw.regions.length>0)return raw.regions[0];
-      const m=(raw.org||"").match(/^(서울|부산|대구|인천|광주|대전|울산|세종|경기|강원|충북|충남|전북|전남|경북|경남|제주)/);
-      return m?m[1]:"전국";
-    })(),
+    region,
+    district:extractDistrict(raw.org||"",region),
   };
 }
 
@@ -935,6 +950,7 @@ function SearchView({favIds,onToggleFav,onGoDetail,bp,policies}){
   const [excludeExpired,setExcludeExpired]=useLocalStorage("yoa:excludeExpired",false);
   const [ministry,setMinistry]=useLocalStorage("yoa:search:ministry","전체");
   const [region,setRegion]=useLocalStorage("yoa:search:region","전체");
+  const [district,setDistrict]=useLocalStorage("yoa:search:district","전체");
   const [education,setEducation]=useLocalStorage("yoa:search:education","전체");
   const [employmentStatus,setEmploymentStatus]=useLocalStorage("yoa:search:employmentStatus","제한없음");
   const [showRegionMap,setShowRegionMap]=useState(false);
@@ -946,23 +962,32 @@ function SearchView({favIds,onToggleFav,onGoDetail,bp,policies}){
 
   const presetLabel=(p)=>[
     p.cat!=="all"?CATEGORIES.find(c=>c.value===p.cat)?.label:null,
-    p.region!=="전체"?p.region:null,
+    p.region!=="전체"?[p.region,p.district&&p.district!=="전체"?p.district:null].filter(Boolean).join(" "):null,
     p.ministry!=="전체"?p.ministry:null,
     p.education!=="전체"?p.education:null,
     p.employmentStatus!=="제한없음"?p.employmentStatus:null,
   ].filter(Boolean).join(" · ")||"전체 조건";
 
   const applyPreset=(p)=>{
-    setCat(p.cat);setRegion(p.region);setMinistry(p.ministry);setEducation(p.education);setEmploymentStatus(p.employmentStatus);
+    setCat(p.cat);setRegion(p.region);setDistrict(p.district||"전체");setMinistry(p.ministry);setEducation(p.education);setEmploymentStatus(p.employmentStatus);
   };
   const deletePreset=(id)=>setPresets(presets.filter(p=>p.id!==id));
-  const openSavePreset=()=>{setPresetName(presetLabel({cat,region,ministry,education,employmentStatus}));setSavingPreset(true);};
+  const openSavePreset=()=>{setPresetName(presetLabel({cat,region,district,ministry,education,employmentStatus}));setSavingPreset(true);};
   const confirmSavePreset=()=>{
     const name=presetName.trim();
     if(!name)return;
-    setPresets([...presets,{id:`${Date.now()}-${Math.random().toString(36).slice(2,7)}`,name,cat,region,ministry,education,employmentStatus}]);
+    setPresets([...presets,{id:`${Date.now()}-${Math.random().toString(36).slice(2,7)}`,name,cat,region,district,ministry,education,employmentStatus}]);
     setSavingPreset(false);
   };
+
+  const districtOptions=useMemo(()=>{
+    if(region==="전체")return [];
+    const set=new Set();
+    policies.forEach(p=>{if(p.region===region&&p.district)set.add(p.district);});
+    return [...set].sort((a,b)=>a.localeCompare(b,"ko"));
+  },[policies,region]);
+
+  const selectRegion=r=>{setRegion(r);setDistrict("전체");};
 
   const [compareMode,setCompareMode]=useState(false);
   const [compareIds,setCompareIds]=useState([]);
@@ -1029,18 +1054,19 @@ function SearchView({favIds,onToggleFav,onGoDetail,bp,policies}){
       }
       if(ministry!=="전체"&&p.org!==ministry)return false;
       if(region!=="전체"&&p.region!==region)return false;
+      if(district!=="전체"&&p.district!==district)return false;
       return true;
     });
     if(sort==="deadline")list=[...list].sort((a,b)=>{if(a.deadline==="상시")return 1;if(b.deadline==="상시")return -1;return a.deadline.localeCompare(b.deadline);});
     else if(sort==="amount")list=[...list].sort((a,b)=>b.amount-a.amount);
     else if(sort==="popular")list=[...list].sort((a,b)=>b.views-a.views);
     return list;
-  },[query,cat,sort,excludeExpired,ministry,region,policies]);
+  },[query,cat,sort,excludeExpired,ministry,region,district,policies]);
 
   const cols=bp.isDesktop?3:bp.isTablet?2:1;
   const pageSize=cols*4;
   const [pageNum,setPageNum]=useState(1);
-  useEffect(()=>{setPageNum(1);},[query,cat,sort,excludeExpired,ministry,region]);
+  useEffect(()=>{setPageNum(1);},[query,cat,sort,excludeExpired,ministry,region,district]);
   const pageCount=Math.max(1,Math.ceil(filtered.length/pageSize));
   const pageItems=filtered.slice((pageNum-1)*pageSize,pageNum*pageSize);
 
@@ -1092,12 +1118,20 @@ function SearchView({favIds,onToggleFav,onGoDetail,bp,policies}){
                 <div style={{fontSize:11,fontWeight:700,color:"#374151",lineHeight:1,marginBottom:6,display:"flex",alignItems:"center",gap:4}}>지역</div>
                 <div style={{display:"flex",gap:5,flexWrap:"wrap",alignItems:"center"}}>
                   {REGIONS.map(r=>(
-                    <button key={r} onClick={()=>setRegion(r)} style={{padding:"4px 10px",borderRadius:20,border:"1.5px solid",borderColor:region===r?"var(--accent)":"#E2E8F0",background:region===r?"var(--accent)":"#FFFFFF",color:region===r?"#FFFFFF":"#475569",fontSize:12,fontWeight:region===r?700:400,cursor:"pointer",transition:"all 0.12s",whiteSpace:"nowrap"}}>{r}</button>
+                    <button key={r} onClick={()=>selectRegion(r)} style={{padding:"4px 10px",borderRadius:20,border:"1.5px solid",borderColor:region===r?"var(--accent)":"#E2E8F0",background:region===r?"var(--accent)":"#FFFFFF",color:region===r?"#FFFFFF":"#475569",fontSize:12,fontWeight:region===r?700:400,cursor:"pointer",transition:"all 0.12s",whiteSpace:"nowrap"}}>{r}</button>
                   ))}
                   <button onClick={()=>setShowRegionMap(true)} style={{display:"flex",alignItems:"center",gap:4,padding:"4px 10px",borderRadius:20,border:"1.5px solid #E2E8F0",background:"#FFFFFF",color:"#475569",fontSize:12,fontWeight:400,cursor:"pointer",whiteSpace:"nowrap",flexShrink:0,marginLeft:2}}>
                     <Icon name="map" size={13} color="#475569"/>지도로 보기
                   </button>
                 </div>
+                {districtOptions.length>0&&(
+                  <div style={{display:"flex",gap:5,flexWrap:"wrap",alignItems:"center",marginTop:6,paddingLeft:12}}>
+                    <span style={{fontSize:11,color:"#cbd5e1",marginRight:1}}>ㄴ</span>
+                    {["전체",...districtOptions].map(d=>(
+                      <button key={d} onClick={()=>setDistrict(d)} style={{padding:"3px 9px",borderRadius:20,border:"1.5px solid",borderColor:district===d?"var(--accent)":"#E2E8F0",background:district===d?"var(--accent-bg)":"#FFFFFF",color:district===d?"var(--accent)":"#94A3B8",fontSize:11,fontWeight:district===d?700:400,cursor:"pointer",transition:"all 0.12s",whiteSpace:"nowrap"}}>{d}</button>
+                    ))}
+                  </div>
+                )}
               </div>
               <div style={{borderTop:"1px solid #E2E8F0",paddingTop:10}}>
                 <div style={{fontSize:11,fontWeight:700,color:"#374151",lineHeight:1,marginBottom:6,display:"flex",alignItems:"center",gap:4}}>중앙부처</div>
@@ -1162,7 +1196,7 @@ function SearchView({favIds,onToggleFav,onGoDetail,bp,policies}){
             </div>
           </div>
         }
-        {showRegionMap&&<RegionMapModal region={region} onSelect={r=>{setRegion(r);setShowRegionMap(false);}} onClose={()=>setShowRegionMap(false)}/>}
+        {showRegionMap&&<RegionMapModal region={region} onSelect={r=>{selectRegion(r);setShowRegionMap(false);}} onClose={()=>setShowRegionMap(false)}/>}
       </div>
     );
   }
@@ -1192,12 +1226,20 @@ function SearchView({favIds,onToggleFav,onGoDetail,bp,policies}){
             <div style={{fontSize:11,fontWeight:700,color:"#374151",marginBottom:6,display:"flex",alignItems:"center",gap:4}}>지역</div>
             <div style={{display:"flex",flexWrap:"wrap",gap:5}}>
               {REGIONS.map(r=>(
-                <button key={r} onClick={()=>setRegion(r)} style={{padding:"3px 9px",borderRadius:20,border:"1.5px solid",borderColor:region===r?"var(--accent)":"#E2E8F0",background:region===r?"var(--accent)":"#FFFFFF",color:region===r?"#FFFFFF":"#475569",fontSize:11,fontWeight:region===r?700:400,cursor:"pointer",whiteSpace:"nowrap"}}>{r}</button>
+                <button key={r} onClick={()=>selectRegion(r)} style={{padding:"3px 9px",borderRadius:20,border:"1.5px solid",borderColor:region===r?"var(--accent)":"#E2E8F0",background:region===r?"var(--accent)":"#FFFFFF",color:region===r?"#FFFFFF":"#475569",fontSize:11,fontWeight:region===r?700:400,cursor:"pointer",whiteSpace:"nowrap"}}>{r}</button>
               ))}
               <button onClick={()=>setShowRegionMap(true)} style={{display:"flex",alignItems:"center",gap:3,padding:"3px 9px",borderRadius:20,border:"1.5px solid #E2E8F0",background:"#FFFFFF",color:"#475569",fontSize:11,fontWeight:400,cursor:"pointer",whiteSpace:"nowrap"}}>
                 <Icon name="map" size={12} color="#475569"/>지도로 보기
               </button>
             </div>
+            {districtOptions.length>0&&(
+              <div style={{display:"flex",flexWrap:"wrap",gap:5,marginTop:6,paddingLeft:10}}>
+                <span style={{fontSize:11,color:"#cbd5e1",marginRight:1}}>ㄴ</span>
+                {["전체",...districtOptions].map(d=>(
+                  <button key={d} onClick={()=>setDistrict(d)} style={{padding:"3px 9px",borderRadius:20,border:"1.5px solid",borderColor:district===d?"var(--accent)":"#E2E8F0",background:district===d?"var(--accent-bg)":"#FFFFFF",color:district===d?"var(--accent)":"#94A3B8",fontSize:11,fontWeight:district===d?700:400,cursor:"pointer",whiteSpace:"nowrap"}}>{d}</button>
+                ))}
+              </div>
+            )}
           </div>
           <div style={{borderTop:"1px solid #E2E8F0",paddingTop:8}}>
             <div style={{fontSize:11,fontWeight:700,color:"#374151",marginBottom:6,display:"flex",alignItems:"center",gap:4}}>중앙부처</div>
@@ -1227,7 +1269,7 @@ function SearchView({favIds,onToggleFav,onGoDetail,bp,policies}){
         }
       </div>
       {filtered.length>0&&<div style={{paddingBottom:80}}><Pagination page={pageNum} pageCount={pageCount} onChange={setPageNum}/></div>}
-      {showRegionMap&&<RegionMapModal region={region} onSelect={r=>{setRegion(r);setShowRegionMap(false);}} onClose={()=>setShowRegionMap(false)}/>}
+      {showRegionMap&&<RegionMapModal region={region} onSelect={r=>{selectRegion(r);setShowRegionMap(false);}} onClose={()=>setShowRegionMap(false)}/>}
     </div>
   );
 }
