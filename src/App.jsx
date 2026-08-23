@@ -104,7 +104,7 @@ function extractBulletLabel(inner){
 }
 const KEEP_LABELS=['주요내용','지원내용','주요혜택','주요사업내용'];
 function stripSectionLabel(s){
-  if(/^\([^)]+\)/.test(s)) return s.replace(/^\([^)]+\)\s*/,"");
+  if(/^\([^)]+\)/.test(s)) return s.replace(/^\([^)]+\)\s*/,"").replace(/^[-:：]\s*/,"");
   const sep=findLabelSeparator(s.slice(0,18));
   if(sep) return s.slice(sep.index+sep.skip).trimStart();
   return s;
@@ -153,6 +153,11 @@ function cleanSupportFull(text){
   return result.length>0?result.join("\n"):"";
 }
 
+function stripBulletMarkers(text){
+  if(!text)return"";
+  return text.replace(/(^|\s)[ㅇ○❍◦□]\s+/g,"$1").trim();
+}
+
 export function mapRawPolicy(raw,idx){
   const deadline=parsePeriodEnd(raw.period);
   const d=deadline==="상시"?null:Math.ceil((new Date(deadline)-Date.now())/86400000);
@@ -171,7 +176,7 @@ export function mapRawPolicy(raw,idx){
     deadline,
     views:idx%500+100,
     hot,
-    description:raw.summary||"",
+    description:stripBulletMarkers(raw.summary||""),
     howto:raw.applyMethod||buildHowto(applyUrl,refUrl,raw.org||""),
     docs:raw.submitDocs||"",
     applyUrl,
@@ -834,8 +839,9 @@ function PolicyDetailView({policy,favIds,onToggle,onBack,onGoDetail,bp,policies}
                     const CIRCLES=['①','②','③','④','⑤','⑥','⑦','⑧','⑨'];
                     const chips=[],notes=[];
                     let lastCircleIdx=-1;
-                    policy.docs.split(",").forEach(raw=>{
-                      const doc=raw.trim();
+                    // 줄바꿈이 있으면 줄 단위로, 없으면 콤마로 항목을 구분 (줄바꿈 형식에서 콤마까지 나누면 문장 중간이 잘림)
+                    (policy.docs.includes("\n")?policy.docs.split(/\r?\n/):policy.docs.split(",")).forEach(raw=>{
+                      const doc=raw.trim().replace(/^[○ㅇ❍◦□·]\s*/,"").replace(/^-\s+/,"");
                       if(!doc)return;
                       // 섹션 라벨 제거 (추가서류 요청, ~의 경우 등)
                       if(/추가서류\s*요청|의\s*경우/.test(doc))return;
@@ -850,16 +856,12 @@ function PolicyDetailView({policy,favIds,onToggle,onBack,onGoDetail,bp,policies}
                         return;
                       }
                       // ※ 주석은 칩 밖으로 분리
-                      const lines=doc.split("\n");
-                      const main=lines.filter(l=>!l.trimStart().startsWith("※")).join("\n").trim();
-                      lines.filter(l=>l.trimStart().startsWith("※")).forEach(l=>notes.push(l.trim()));
-                      if(main){
-                        // 앞 항목이 ①② 시리즈였다면 다음 번호 자동 부여
-                        if(lastCircleIdx>=0&&lastCircleIdx+1<CIRCLES.length){
-                          chips.push(CIRCLES[lastCircleIdx+1]+" "+main);
-                          lastCircleIdx++;
-                        }else chips.push(main);
-                      }
+                      if(doc.startsWith("※")){notes.push(doc);return;}
+                      // 앞 항목이 ①② 시리즈였다면 다음 번호 자동 부여
+                      if(lastCircleIdx>=0&&lastCircleIdx+1<CIRCLES.length){
+                        chips.push(CIRCLES[lastCircleIdx+1]+" "+doc);
+                        lastCircleIdx++;
+                      }else chips.push(doc);
                     });
                     return(
                       <div>
