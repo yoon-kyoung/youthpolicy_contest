@@ -1957,7 +1957,7 @@ function CommunityView({bp,user,policies,favIds,onToggleFav,onGoProposal,onGoDet
                   </div>
                 </div>
               ))}
-              <div style={{fontSize:11,fontWeight:800,color:"#374151",padding:"6px 2px 0",letterSpacing:"0.02em"}}>전체 후기</div>
+              <div style={{fontSize:13,fontWeight:800,color:"#374151",padding:"6px 2px 0",letterSpacing:"0.02em"}}>전체 후기</div>
             </div>
           )}
           {loadingPosts&&(
