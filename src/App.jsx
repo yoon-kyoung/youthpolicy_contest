@@ -1957,7 +1957,7 @@ function CommunityView({bp,user,policies,favIds,onToggleFav,onGoProposal,onGoDet
                   </div>
                 </div>
               ))}
-              <div style={{fontSize:11,fontWeight:800,color:"#94a3b8",padding:"6px 2px 0",letterSpacing:"0.02em"}}>전체 후기</div>
+              <div style={{fontSize:11,fontWeight:800,color:"#374151",padding:"6px 2px 0",letterSpacing:"0.02em"}}>전체 후기</div>
             </div>
           )}
           {loadingPosts&&(
@@ -2918,13 +2918,20 @@ function ProposalGuidePanel({bp,onGoCommunity}){
       )}
 
       {collapsed&&(
-        <div onClick={()=>setCollapsed(false)} style={{display:"flex",flexDirection:"column",alignItems:"center",gap:7,cursor:"pointer",transformOrigin:"top center",animation:"guideWiggle 5s ease-in-out infinite"}}>
-          <div style={{width:60,height:60,borderRadius:"50%",background:"linear-gradient(135deg,var(--accent-dark),var(--accent))",display:"flex",alignItems:"center",justifyContent:"center",boxShadow:"0 4px 16px var(--accent-shadow)"}}>
-            <span style={{color:"white",fontSize:15,fontWeight:800,letterSpacing:"-0.02em"}}>FAQ</span>
+        <div style={{position:"relative"}}>
+          {/* 말풍선 안내 */}
+          <div style={{position:"absolute",bottom:"100%",right:-8,marginBottom:14,width:180,padding:"12px 14px",borderRadius:16,background:"#ffffff",border:"2px solid var(--accent-bg)",boxShadow:"0 8px 28px var(--accent-shadow)"}}>
+            <div style={{fontSize:13,fontWeight:800,color:"#111827",lineHeight:1.3}}>정책제안 안내</div>
+            <div style={{fontSize:11.5,color:"#6b7280",marginTop:2}}>자주하는 질문</div>
+            <div style={{position:"absolute",top:"100%",right:26,width:0,height:0,borderLeft:"9px solid transparent",borderRight:"9px solid transparent",borderTop:"9px solid var(--accent-bg)"}}/>
+            <div style={{position:"absolute",top:"calc(100% - 3px)",right:26,width:0,height:0,borderLeft:"7px solid transparent",borderRight:"7px solid transparent",borderTop:"7px solid #ffffff"}}/>
           </div>
-          <div style={{textAlign:"center",background:"white",borderRadius:12,padding:"5px 11px",boxShadow:"0 1px 6px rgba(0,0,0,0.08)"}}>
-            <div style={{fontSize:12,fontWeight:800,color:"#111827",lineHeight:1.3}}>정책제안 안내</div>
-            <div style={{fontSize:11,color:"#6b7280",marginTop:1}}>자주하는 질문</div>
+
+          <div onClick={()=>setCollapsed(false)} style={{position:"relative",display:"flex",cursor:"pointer",transformOrigin:"top center",animation:"guideWiggle 5s ease-in-out infinite"}}>
+            <span style={{position:"absolute",inset:0,borderRadius:"50%",zIndex:-1,background:"var(--accent)",animation:"pingRing 1.8s cubic-bezier(0,0,0.2,1) infinite"}}/>
+            <div style={{width:60,height:60,borderRadius:"50%",background:"linear-gradient(135deg,var(--accent-dark),var(--accent))",display:"flex",alignItems:"center",justifyContent:"center",boxShadow:"0 4px 16px var(--accent-shadow)"}}>
+              <span style={{color:"white",fontSize:15,fontWeight:800,letterSpacing:"-0.02em"}}>FAQ</span>
+            </div>
           </div>
         </div>
       )}

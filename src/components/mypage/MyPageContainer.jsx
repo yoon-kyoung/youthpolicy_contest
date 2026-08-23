@@ -49,7 +49,7 @@ function isPrefsEmpty(p) {
 }
 
 export default function MyPageContainer({ supabaseUser, onLogout, initialTab, favIds, policies, onToggleFav, onGoDetail, onNavigate }) {
-  const [activeTab, setActiveTab] = useState(initialTab || 'info')
+  const [activeTab, setActiveTab] = useState(initialTab || 'prefs')
 
   const initialUser = supabaseUser ? {
     name: supabaseUser.user_metadata?.name || supabaseUser.email?.split('@')[0] || '청년',
