@@ -1332,112 +1332,116 @@ function CommunityWriteView({bp,user,policies,onSubmit,onCancel}){
     setSubmitting(false);
   };
 
-  const inp={width:"100%",padding:"12px 14px",borderRadius:10,fontSize:14,outline:"none",transition:"border-color 0.15s",boxSizing:"border-box",fontFamily:"inherit"};
+  const inp={width:"100%",padding:"11px 14px",borderRadius:10,fontSize:14,outline:"none",transition:"border-color 0.15s",boxSizing:"border-box",fontFamily:"inherit"};
 
   return(
-    <div style={{background:"#f8fafc",minHeight:"100%"}}>
-      <div style={{background:"linear-gradient(160deg,#0f172a 0%,var(--accent-dark) 60%,var(--accent) 100%)",padding:bp.isDesktop?"36px 40px 28px":bp.isTablet?"28px 24px 20px":"22px 16px 16px",color:"white",display:"flex",alignItems:"center",gap:14}}>
-        <button onClick={onCancel} style={{background:"rgba(255,255,255,0.12)",border:"none",borderRadius:10,color:"white",width:36,height:36,display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer",fontSize:18,flexShrink:0,transition:"background 0.15s"}}
-          onMouseEnter={e=>e.currentTarget.style.background="rgba(255,255,255,0.22)"} onMouseLeave={e=>e.currentTarget.style.background="rgba(255,255,255,0.12)"}
-        ><Icon name="arrow_back" size={18} color="currentColor"/></button>
-        <div>
-          <div style={{fontSize:12,opacity:0.6,marginBottom:4}}>청년 ON 커뮤니티</div>
-          <h1 style={{fontSize:bp.isDesktop?24:bp.isTablet?20:17,fontWeight:900,margin:0,letterSpacing:"-0.02em",display:"flex",alignItems:"center",gap:8}}><Icon name="edit" size={bp.isDesktop?22:18} color="white"/>새 글 작성</h1>
+    <div style={{background:"#F5F9FC",minHeight:"100%",animation:"fadeUp 0.25s ease"}}>
+      <div style={{background:"white",borderBottom:"1px solid #e5e7eb",padding:bp.isDesktop?"0 40px":"0 16px",position:"sticky",top:0,zIndex:40}}>
+        <div style={{height:bp.isDesktop?56:52,display:"flex",alignItems:"center",gap:12}}>
+          <button onClick={onCancel} style={{display:"flex",alignItems:"center",gap:6,background:"none",border:"none",cursor:"pointer",color:"#374151",fontSize:14,fontWeight:600,padding:"8px 0",transition:"color 0.15s"}}
+            onMouseEnter={e=>e.currentTarget.style.color="var(--accent)"}
+            onMouseLeave={e=>e.currentTarget.style.color="#374151"}
+          ><Icon name="arrow_back" size={16}/> 뒤로가기</button>
+          <span style={{color:"#e5e7eb"}}>|</span>
+          <span style={{fontSize:13,color:"#9ca3af"}}>새 글 작성</span>
         </div>
       </div>
-      <div style={{padding:bp.isDesktop?"32px 40px 60px":bp.isTablet?"24px 24px 60px":"18px 14px 80px"}}>
-        <form onSubmit={handleSubmit} style={{maxWidth:bp.isDesktop?700:"100%",display:"flex",flexDirection:"column",gap:20}}>
-          <div>
-            <label style={{display:"block",fontSize:13,fontWeight:700,color:"#374151",marginBottom:8}}>카테고리</label>
-            <div style={{display:"flex",gap:8,flexWrap:"wrap"}}>
-              {cats.map(c=>{const cc=CAT_COLOR_MAP[c];const sel=cat===c;return(
-                <button key={c} type="button" onClick={()=>setCat(c)} style={{padding:"8px 18px",borderRadius:20,fontSize:13,fontWeight:sel?700:500,cursor:"pointer",transition:"all 0.15s",background:sel?cc.bg:"white",border:`1.5px solid ${sel?cc.border:"#e5e7eb"}`,color:sel?cc.text:"#9ca3af"}}>{c}</button>
-              );})}
-            </div>
-          </div>
-          <div>
-            <label style={{display:"block",fontSize:13,fontWeight:700,color:"#374151",marginBottom:8}}>정책 분야 (선택)</label>
-            <div style={{display:"flex",gap:8,flexWrap:"wrap"}}>
-              {CATEGORIES.slice(1).map(c=>(
-                <button key={c.value} type="button" onClick={()=>setPolicyCat(policyCat===c.value?null:c.value)} style={{display:"flex",alignItems:"center",gap:4,padding:"6px 12px",borderRadius:20,border:"1.5px solid",cursor:"pointer",borderColor:policyCat===c.value?"var(--accent)":"#E2E8F0",background:policyCat===c.value?"var(--accent-bg)":"white",color:policyCat===c.value?"var(--accent)":"#718096",fontSize:12,fontWeight:policyCat===c.value?700:500}}>
-                  <Icon name={c.icon} size={13} color={policyCat===c.value?"var(--accent)":"#718096"}/>{c.label}
-                </button>
-              ))}
-            </div>
-          </div>
-          {!isRecruit&&(
-            <div>
-              <label style={{display:"block",fontSize:13,fontWeight:700,color:"#374151",marginBottom:8}}>지역 (선택)</label>
+
+      <div style={{padding:bp.isDesktop?"32px 40px 60px":bp.isTablet?"24px 24px 60px":"16px 16px 80px"}}>
+        <div style={{maxWidth:820,margin:"0 auto"}}>
+          <h1 style={{fontSize:bp.isDesktop?26:20,fontWeight:900,margin:"0 0 6px",letterSpacing:"-0.02em",color:"#111827"}}>새 글 작성</h1>
+          <p style={{fontSize:13,color:"#6b7280",margin:"0 0 20px"}}>후기·정보·Q&A·팀모집까지, 청년들과 자유롭게 이야기를 나눠보세요</p>
+
+          <form onSubmit={handleSubmit} style={{background:"white",borderRadius:16,border:"1.5px solid #E2E8F0",padding:bp.isDesktop?24:16,display:"flex",flexDirection:"column",gap:16}}>
+            <ProposalFormRow label="카테고리">
               <div style={{display:"flex",gap:8,flexWrap:"wrap"}}>
-                {REGIONS.slice(1).map(r=>(
-                  <button key={r} type="button" onClick={()=>setPostRegion(postRegion===r?null:r)} style={{padding:"6px 12px",borderRadius:20,border:"1.5px solid",cursor:"pointer",borderColor:postRegion===r?"var(--accent)":"#E2E8F0",background:postRegion===r?"var(--accent-bg)":"white",color:postRegion===r?"var(--accent)":"#718096",fontSize:12,fontWeight:postRegion===r?700:500}}>{r}</button>
+                {cats.map(c=>{const cc=CAT_COLOR_MAP[c];const sel=cat===c;return(
+                  <button key={c} type="button" onClick={()=>setCat(c)} style={{padding:"8px 18px",borderRadius:20,fontSize:13,fontWeight:sel?700:500,cursor:"pointer",transition:"all 0.15s",background:sel?cc.bg:"white",border:`1.5px solid ${sel?cc.border:"#e5e7eb"}`,color:sel?cc.text:"#9ca3af"}}>{c}</button>
+                );})}
+              </div>
+            </ProposalFormRow>
+
+            <ProposalFormRow label="정책 분야 (선택)">
+              <div style={{display:"flex",gap:8,flexWrap:"wrap"}}>
+                {CATEGORIES.slice(1).map(c=>(
+                  <button key={c.value} type="button" onClick={()=>setPolicyCat(policyCat===c.value?null:c.value)} style={{display:"flex",alignItems:"center",gap:4,padding:"6px 12px",borderRadius:20,border:"1.5px solid",cursor:"pointer",borderColor:policyCat===c.value?"var(--accent)":"#E2E8F0",background:policyCat===c.value?"var(--accent-bg)":"white",color:policyCat===c.value?"var(--accent)":"#718096",fontSize:12,fontWeight:policyCat===c.value?700:500}}>
+                    <Icon name={c.icon} size={13} color={policyCat===c.value?"var(--accent)":"#718096"}/>{c.label}
+                  </button>
                 ))}
               </div>
-            </div>
-          )}
-          {isRecruit&&(
-            <div style={{display:"flex",gap:14,flexWrap:"wrap"}}>
-              <div style={{flex:"1 1 160px"}}>
-                <label style={{display:"block",fontSize:13,fontWeight:700,color:"#374151",marginBottom:8}}>지역</label>
-                <input type="text" value={region} onChange={e=>setRegion(e.target.value)} placeholder="예: 서울, 전국(온라인)" maxLength={20}
-                  style={{...inp,border:`1.5px solid ${errors.region?"#fca5a5":"#e5e7eb"}`,background:errors.region?"#fff8f8":"white"}}
-                  onFocus={e=>e.target.style.borderColor=errors.region?"#f87171":"#6b7280"} onBlur={e=>e.target.style.borderColor=errors.region?"#fca5a5":"#e5e7eb"}
-                />
-                {errors.region&&<p style={{fontSize:12,color:"#dc2626",margin:"5px 0 0"}}>{errors.region}</p>}
+            </ProposalFormRow>
+
+            {!isRecruit&&(
+              <ProposalFormRow label="지역 (선택)">
+                <div style={{display:"flex",gap:8,flexWrap:"wrap"}}>
+                  {REGIONS.slice(1).map(r=>(
+                    <button key={r} type="button" onClick={()=>setPostRegion(postRegion===r?null:r)} style={{padding:"6px 12px",borderRadius:20,border:"1.5px solid",cursor:"pointer",borderColor:postRegion===r?"var(--accent)":"#E2E8F0",background:postRegion===r?"var(--accent-bg)":"white",color:postRegion===r?"var(--accent)":"#718096",fontSize:12,fontWeight:postRegion===r?700:500}}>{r}</button>
+                  ))}
+                </div>
+              </ProposalFormRow>
+            )}
+            {isRecruit&&(
+              <>
+                <ProposalFormRow label="지역">
+                  <input type="text" value={region} onChange={e=>setRegion(e.target.value)} placeholder="예: 서울, 전국(온라인)" maxLength={20}
+                    style={{...inp,border:`1.5px solid ${errors.region?"#fca5a5":"#E2E8F0"}`,background:errors.region?"#fff8f8":"white"}}
+                    onFocus={e=>e.target.style.borderColor=errors.region?"#f87171":"#6b7280"} onBlur={e=>e.target.style.borderColor=errors.region?"#fca5a5":"#E2E8F0"}
+                  />
+                  {errors.region&&<p style={{fontSize:12,color:"#dc2626",margin:"5px 0 0"}}>{errors.region}</p>}
+                </ProposalFormRow>
+                <ProposalFormRow label="모집 인원">
+                  <input type="text" value={capacity} onChange={e=>setCapacity(e.target.value)} placeholder="예: 2~3명" maxLength={20}
+                    style={{...inp,border:`1.5px solid ${errors.capacity?"#fca5a5":"#E2E8F0"}`,background:errors.capacity?"#fff8f8":"white"}}
+                    onFocus={e=>e.target.style.borderColor=errors.capacity?"#f87171":"#6b7280"} onBlur={e=>e.target.style.borderColor=errors.capacity?"#fca5a5":"#E2E8F0"}
+                  />
+                  {errors.capacity&&<p style={{fontSize:12,color:"#dc2626",margin:"5px 0 0"}}>{errors.capacity}</p>}
+                </ProposalFormRow>
+              </>
+            )}
+            {isReview&&(
+              <ProposalFormRow label="신청한 정책 (선택)">
+                <PolicyPickerField policies={policies} value={appliedPolicy} onChange={setAppliedPolicy}/>
+                {appliedPolicy&&(
+                  <p style={{fontSize:12,margin:"6px 0 0",color:selfVerified?"#15803D":"#9ca3af",fontWeight:selfVerified?700:500}}>
+                    {selfVerified?"마이페이지 신청내역에 신청 기록이 있어요 · 실제 신청 인증 배지가 붙어요":"이 기기의 신청내역에는 아직 기록이 없어요 · 인증배지 없이 등록돼요"}
+                  </p>
+                )}
+                <p style={{fontSize:11,margin:"4px 0 0",color:"#cbd5e1"}}>이 인증은 이 기기에 저장된 신청내역을 기준으로 표시돼요</p>
+              </ProposalFormRow>
+            )}
+
+            <ProposalFormRow label="제목">
+              <input type="text" value={title} onChange={e=>setTitle(e.target.value)} placeholder="제목을 입력하세요 (최대 50자)" maxLength={50}
+                style={{...inp,border:`1.5px solid ${errors.title?"#fca5a5":"#E2E8F0"}`,background:errors.title?"#fff8f8":"white"}}
+                onFocus={e=>e.target.style.borderColor=errors.title?"#f87171":"#6b7280"} onBlur={e=>e.target.style.borderColor=errors.title?"#fca5a5":"#E2E8F0"}
+              />
+              <div style={{display:"flex",justifyContent:"space-between",marginTop:4}}>
+                {errors.title?<p style={{fontSize:12,color:"#dc2626",margin:0}}>{errors.title}</p>:<span/>}
+                <span style={{fontSize:11,color:"#9ca3af"}}>{title.length}/50</span>
               </div>
-              <div style={{flex:"1 1 160px"}}>
-                <label style={{display:"block",fontSize:13,fontWeight:700,color:"#374151",marginBottom:8}}>인원</label>
-                <input type="text" value={capacity} onChange={e=>setCapacity(e.target.value)} placeholder="예: 2~3명" maxLength={20}
-                  style={{...inp,border:`1.5px solid ${errors.capacity?"#fca5a5":"#e5e7eb"}`,background:errors.capacity?"#fff8f8":"white"}}
-                  onFocus={e=>e.target.style.borderColor=errors.capacity?"#f87171":"#6b7280"} onBlur={e=>e.target.style.borderColor=errors.capacity?"#fca5a5":"#e5e7eb"}
-                />
-                {errors.capacity&&<p style={{fontSize:12,color:"#dc2626",margin:"5px 0 0"}}>{errors.capacity}</p>}
+            </ProposalFormRow>
+
+            <ProposalFormRow label="내용">
+              <textarea value={content} onChange={e=>setContent(e.target.value)} placeholder="정책 신청 후기, 꿀팁, 질문 등을 자유롭게 작성해보세요 (최소 10자)" maxLength={2000} rows={bp.isDesktop?10:7}
+                style={{...inp,resize:"vertical",lineHeight:1.7,border:`1.5px solid ${errors.content?"#fca5a5":"#E2E8F0"}`,background:errors.content?"#fff8f8":"white"}}
+                onFocus={e=>e.target.style.borderColor=errors.content?"#f87171":"#6b7280"} onBlur={e=>e.target.style.borderColor=errors.content?"#fca5a5":"#E2E8F0"}
+              />
+              <div style={{display:"flex",justifyContent:"space-between",marginTop:4}}>
+                {errors.content?<p style={{fontSize:12,color:"#dc2626",margin:0}}>{errors.content}</p>:<span/>}
+                <span style={{fontSize:11,color:"#9ca3af"}}>{content.length}/2000</span>
               </div>
+            </ProposalFormRow>
+
+            <div style={{display:"flex",gap:8,justifyContent:"flex-end"}}>
+              <button type="button" onClick={onCancel} style={{padding:"9px 16px",borderRadius:20,background:"white",border:"1.5px solid #E2E8F0",color:"#374151",fontSize:13,fontWeight:600,cursor:"pointer",transition:"all 0.15s"}}
+                onMouseEnter={e=>{e.currentTarget.style.borderColor="var(--accent)";e.currentTarget.style.color="var(--accent)";}} onMouseLeave={e=>{e.currentTarget.style.borderColor="#E2E8F0";e.currentTarget.style.color="#374151";}}
+              >취소</button>
+              <button type="submit" disabled={submitting} style={{padding:"9px 20px",borderRadius:20,background:"var(--accent)",border:"none",color:"white",fontSize:13,fontWeight:700,cursor:submitting?"default":"pointer",transition:"opacity 0.15s",opacity:submitting?0.7:1}}
+                onMouseEnter={e=>e.currentTarget.style.opacity="0.85"} onMouseLeave={e=>e.currentTarget.style.opacity="1"}
+              >{submitting?"게시 중...":"게시하기"}</button>
             </div>
-          )}
-          {isReview&&(
-            <div>
-              <label style={{display:"block",fontSize:13,fontWeight:700,color:"#374151",marginBottom:8}}>신청한 정책 (선택)</label>
-              <PolicyPickerField policies={policies} value={appliedPolicy} onChange={setAppliedPolicy}/>
-              {appliedPolicy&&(
-                <p style={{fontSize:12,margin:"6px 0 0",color:selfVerified?"#15803D":"#9ca3af",fontWeight:selfVerified?700:500}}>
-                  {selfVerified?"마이페이지 신청내역에 신청 기록이 있어요 · 실제 신청 인증 배지가 붙어요":"이 기기의 신청내역에는 아직 기록이 없어요 · 인증배지 없이 등록돼요"}
-                </p>
-              )}
-              <p style={{fontSize:11,margin:"4px 0 0",color:"#cbd5e1"}}>이 인증은 이 기기에 저장된 신청내역을 기준으로 표시돼요</p>
-            </div>
-          )}
-          <div>
-            <label style={{display:"block",fontSize:13,fontWeight:700,color:"#374151",marginBottom:8}}>제목</label>
-            <input type="text" value={title} onChange={e=>setTitle(e.target.value)} placeholder="제목을 입력하세요 (최대 50자)" maxLength={50}
-              style={{...inp,border:`1.5px solid ${errors.title?"#fca5a5":"#e5e7eb"}`,background:errors.title?"#fff8f8":"white"}}
-              onFocus={e=>e.target.style.borderColor=errors.title?"#f87171":"#6b7280"} onBlur={e=>e.target.style.borderColor=errors.title?"#fca5a5":"#e5e7eb"}
-            />
-            <div style={{display:"flex",justifyContent:"space-between",marginTop:4}}>
-              {errors.title?<p style={{fontSize:12,color:"#dc2626",margin:0}}>{errors.title}</p>:<span/>}
-              <span style={{fontSize:11,color:"#9ca3af"}}>{title.length}/50</span>
-            </div>
-          </div>
-          <div>
-            <label style={{display:"block",fontSize:13,fontWeight:700,color:"#374151",marginBottom:8}}>내용</label>
-            <textarea value={content} onChange={e=>setContent(e.target.value)} placeholder="정책 신청 후기, 꿀팁, 질문 등을 자유롭게 작성해보세요 (최소 10자)" maxLength={2000} rows={bp.isDesktop?10:7}
-              style={{...inp,resize:"vertical",lineHeight:1.7,border:`1.5px solid ${errors.content?"#fca5a5":"#e5e7eb"}`,background:errors.content?"#fff8f8":"white"}}
-              onFocus={e=>e.target.style.borderColor=errors.content?"#f87171":"#6b7280"} onBlur={e=>e.target.style.borderColor=errors.content?"#fca5a5":"#e5e7eb"}
-            />
-            <div style={{display:"flex",justifyContent:"space-between",marginTop:4}}>
-              {errors.content?<p style={{fontSize:12,color:"#dc2626",margin:0}}>{errors.content}</p>:<span/>}
-              <span style={{fontSize:11,color:"#9ca3af"}}>{content.length}/2000</span>
-            </div>
-          </div>
-          <div style={{display:"flex",gap:10,justifyContent:"flex-end",paddingTop:4}}>
-            <button type="button" onClick={onCancel} style={{padding:"11px 24px",borderRadius:10,border:"1.5px solid #e5e7eb",background:"white",color:"#374151",fontSize:14,fontWeight:600,cursor:"pointer",transition:"all 0.15s"}}
-              onMouseEnter={e=>{e.currentTarget.style.borderColor="var(--accent)";e.currentTarget.style.color="var(--accent)";}} onMouseLeave={e=>{e.currentTarget.style.borderColor="#e5e7eb";e.currentTarget.style.color="#374151";}}
-            >취소</button>
-            <button type="submit" disabled={submitting} style={{padding:"11px 28px",borderRadius:10,border:"none",background:"var(--accent)",color:"white",fontSize:14,fontWeight:700,cursor:submitting?"default":"pointer",transition:"opacity 0.15s",opacity:submitting?0.7:1}}
-              onMouseEnter={e=>e.currentTarget.style.opacity="0.85"} onMouseLeave={e=>e.currentTarget.style.opacity="1"}
-            >{submitting?"게시 중...":"게시하기"}</button>
-          </div>
-        </form>
+          </form>
+        </div>
       </div>
     </div>
   );
