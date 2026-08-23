@@ -142,6 +142,16 @@ AI가 2,600개 정책 중에서 맞는 거 골라줌
 
 > [구글시트 바로가기](https://docs.google.com/spreadsheets/d/1vKSirUpGTuvFy40Hf5y9l_vOp5aNtRFuuC8jTfFpKfs/edit)
 
+#### Supabase가 뭔가요?
+
+**Supabase** = 회원가입/로그인, 게시글·댓글 등을 저장하는 무료 백엔드 서비스 (오픈소스 Firebase 대안)
+
+- 이메일+비밀번호 회원가입/로그인과 **카카오 소셜 로그인**을 여기서 처리합니다
+- 커뮤니티 게시판(`posts`), 댓글(`comments`), 팀모집 참가 인원(`post_participants`)이 여기 저장됩니다
+- 청년정책 제안(`proposals`)과 제안 댓글(`proposal_comments`), 댓글·상태변경 알림(`notifications`)도 여기서 관리합니다
+- 정책제안 글의 첨부파일은 Supabase Storage(`proposal-attachments` 버킷)에 업로드됩니다
+- 프로젝트 ID: `pkxwglkzqmxuezgszztl` — Supabase 대시보드에서 테이블/데이터를 직접 확인할 수 있습니다
+
 ---
 
 ## 배포 구조 (어디서 돌아가나요?)
@@ -153,6 +163,12 @@ AI가 2,600개 정책 중에서 맞는 거 골라줌
    │
    ├─ 화면(프론트엔드)  ← GitHub Pages
    │     https://yoon-kyoung.github.io/youthpolicy_contest/
+   │
+   ├─ 회원가입·로그인·커뮤니티·정책제안·알림  ← Supabase (프론트에서 직접 호출)
+   │     프로젝트 pkxwglkzqmxuezgszztl
+   │     ├─ Auth (이메일/카카오 OAuth)
+   │     ├─ DB: posts, comments, post_participants, proposals, proposal_comments, notifications
+   │     └─ Storage: proposal-attachments 버킷
    │
    └─ AI 챗봇 요청 (POST /api/chat)  ← Vercel (AI 백엔드)
          https://youth-policy-chatbot-kappa.vercel.app
@@ -186,7 +202,7 @@ AI가 2,600개 정책 중에서 맞는 거 골라줌
 | React + Vite | 웹사이트 만드는 도구 |
 | GitHub Pages | 화면(프론트엔드) 배포 (무료) |
 | Vercel | AI 챗봇 백엔드 서버 배포 (무료) |
-| Supabase | 회원 인증(이메일·카카오 OAuth) + 커뮤니티 DB (posts, comments 테이블) |
+| Supabase | 회원 인증(이메일·카카오 OAuth) + DB(정책제안 `proposals`/`proposal_comments`, 커뮤니티 `posts`/`comments`/`post_participants`, 알림 `notifications`) + 첨부파일 저장(Storage `proposal-attachments` 버킷) |
 | OpenRouter API | 무료 AI 모델 서비스 |
 | 온통청년 API | 정부 청년정책·청년센터 데이터 (2,600건+ / 센터 246곳) |
 | [Google Sheets](https://docs.google.com/spreadsheets/d/1vKSirUpGTuvFy40Hf5y9l_vOp5aNtRFuuC8jTfFpKfs/edit) | 사용량 기록 + 설정 저장 (무료 DB 대용) |
