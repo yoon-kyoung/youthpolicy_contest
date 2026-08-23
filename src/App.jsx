@@ -862,10 +862,13 @@ function PolicyDetailView({policy,favIds,onToggle,onBack,onGoDetail,bp,policies}
                     };
                     // 줄바꿈이 있으면 줄 단위로, 없으면 콤마로 항목을 구분 (줄바꿈 형식에서 콤마까지 나누면 문장 중간이 잘림)
                     (policy.docs.includes("\n")?policy.docs.split(/\r?\n/):policy.docs.split(",")).forEach(raw=>{
-                      const doc=raw.trim().replace(/^[○ㅇ❍◦□·]\s*/,"").replace(/^-\s+/,"");
+                      const doc=raw.trim().replace(/^[○ㅇ❍◦□·]\s*/,"").replace(/^-\s+/,"").replace(/^\d+\.\s*/,"");
                       if(!doc)return;
                       // 섹션 라벨 제거 (추가서류 요청, ~의 경우 등)
                       if(/추가서류\s*요청|의\s*경우/.test(doc))return;
+                      // "[필수서류]"처럼 대괄호로만 된 줄은 칩이 아니라 구분용 소제목 텍스트로 표시
+                      const bracketOnly=doc.match(/^\[([^\]]+)\]$/);
+                      if(bracketOnly){chips.push({type:"section",text:bracketOnly[1]});return;}
                       // ①②③ 포함 시 각 항목을 개별 칩으로 분리
                       if(/[①②③④⑤⑥⑦⑧⑨]/.test(doc)){
                         doc.split(/(?=[①②③④⑤⑥⑦⑧⑨])/).forEach(p=>{
@@ -889,7 +892,9 @@ function PolicyDetailView({policy,favIds,onToggle,onBack,onGoDetail,bp,policies}
                       <div>
                         <div style={{display:"flex",flexDirection:"column",gap:8,alignItems:"flex-start"}}>
                           {chips.map((doc,i)=>
-                            Array.isArray(doc)?(
+                            !Array.isArray(doc)&&doc?.type==="section"?(
+                              <div key={i} style={{fontSize:13,fontWeight:800,color:"#374151",marginTop:i>0?4:0}}>{doc.text}</div>
+                            ):Array.isArray(doc)?(
                               <div key={i} style={{display:"flex",flexWrap:"wrap",gap:6,alignItems:"center"}}>
                                 {doc.map((tok,j)=>tok.type==="chip"
                                   ?<span key={j} style={chipStyle}>{tok.text}</span>
