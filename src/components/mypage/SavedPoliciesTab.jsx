@@ -140,7 +140,7 @@ export default function SavedPoliciesTab({ policies, favIds, onToggleFav, onGoDe
 
   if (saved.length === 0) {
     return (
-      <div style={styles.empty}>
+      <div style={styles.empty} data-tour="saved-content">
         <Icon name="bookmark" size={40} color="#d1d5db" />
         <div style={styles.emptyTitle}>저장한 정책이 없어요</div>
         <div style={styles.emptyDesc}>
@@ -173,7 +173,7 @@ export default function SavedPoliciesTab({ policies, favIds, onToggleFav, onGoDe
   }
 
   return (
-    <div style={styles.wrap} data-tour="saved-content">
+    <div style={styles.wrap}>
       <div style={styles.header}>
         <span style={styles.title}>
           <Icon name="bookmark" size={16} color="#111827" style={{ marginRight: 6 }} />
