@@ -1548,7 +1548,7 @@ function CommunityPostDetailView({post,bp,user,policies,onGoDetail,favIds,onTogg
     setCommentError("");
     setComments(prev=>[...prev,data]);
     setCommentText("");
-    await supabase.from("posts").update({comments_count:(post.comments_count||0)+1}).eq("id",post.id);
+    await onUpdate?.(post.id,{comments_count:(post.comments_count||0)+1});
     if(post.user_id&&post.user_id!==user.id){
       supabase.from("notifications").insert({
         user_id:post.user_id,type:"comment_post",
@@ -1572,7 +1572,7 @@ function CommunityPostDetailView({post,bp,user,policies,onGoDetail,favIds,onTogg
     const{error}=await supabase.from("comments").delete().eq("id",id);
     if(!error){
       setComments(prev=>prev.filter(c=>c.id!==id));
-      await supabase.from("posts").update({comments_count:Math.max(0,(post.comments_count||1)-1)}).eq("id",post.id);
+      await onUpdate?.(post.id,{comments_count:Math.max(0,(post.comments_count||1)-1)});
     }
   };
 
@@ -2133,7 +2133,7 @@ function ProposalCard({proposal,user,onVote,onOpen,bp}){
   );
 }
 
-function ProposalDetailView({proposal,user,onVote,onBack,bp}){
+function ProposalDetailView({proposal,user,onVote,onUpdate,onBack,bp}){
   const [voted,setVoted]=useLocalStorage(`yoa:proposalVoted_${proposal.id}`,false);
   const [comments,setComments]=useState([]);
   const [commentText,setCommentText]=useState("");
@@ -2185,7 +2185,7 @@ function ProposalDetailView({proposal,user,onVote,onBack,bp}){
     if(error)return;
     setComments(prev=>[...prev,data]);
     setCommentText("");
-    await supabase.from("proposals").update({comments_count:(proposal.comments_count||0)+1}).eq("id",proposal.id);
+    await onUpdate?.(proposal.id,{comments_count:(proposal.comments_count||0)+1});
     if(proposal.user_id&&proposal.user_id!==user.id){
       supabase.from("notifications").insert({
         user_id:proposal.user_id,type:"comment_proposal",
@@ -3007,6 +3007,12 @@ function PolicyProposalPage({bp,user,onGoCommunity}){
     }
   },[proposals]);
 
+  const handleProposalUpdate=useCallback(async(id,fields)=>{
+    await supabase.from("proposals").update(fields).eq("id",id);
+    setProposals(prev=>prev.map(p=>p.id===id?{...p,...fields}:p));
+    setSelectedProposal(prev=>prev&&prev.id===id?{...prev,...fields}:prev);
+  },[]);
+
   const statusCounts=useMemo(()=>{
     const m={all:proposals.length,pending:0,answered:0,adopted:0};
     proposals.forEach(p=>{
@@ -3042,7 +3048,7 @@ function PolicyProposalPage({bp,user,onGoCommunity}){
 
   if(selectedProposal){
     const live=proposals.find(p=>p.id===selectedProposal.id)||selectedProposal;
-    return <ProposalDetailView proposal={live} user={user} onVote={handleVote} onBack={closeProposal} bp={bp}/>;
+    return <ProposalDetailView proposal={live} user={user} onVote={handleVote} onUpdate={handleProposalUpdate} onBack={closeProposal} bp={bp}/>;
   }
 
   if(showForm){
