@@ -82,21 +82,31 @@ const SUPPORT_REMOVE=[
   '임기','문의처','문의','지원근거','법적근거',
   '구성','위치','장소','기간/장소',
   '대상','지원대상','참여대상','신청대상','신청자격','참여자격',
+  '근거','경과',
 ];
+// "label - 내용" 처럼 콜론 없이 대시로 라벨을 구분하는 경우를 위한 위치 탐색 (앞 18자 이내에서만)
+function findLabelSeparator(head){
+  const colon=head.indexOf(":");
+  const dashMatch=head.match(/\s-\s/);
+  const dash=dashMatch?dashMatch.index:-1;
+  if(colon>-1&&(dash===-1||colon<dash))return{index:colon,skip:1};
+  if(dash>-1)return{index:dash,skip:3};
+  return null;
+}
 function extractBulletLabel(inner){
   // (label) 형식
   const pm=inner.match(/^\(([^)]{1,12})\)/);
   if(pm)return pm[1].replace(/\s/g,"");
-  // label: 형식 — 콜론은 앞 18자 이내에서만 탐색 (이후 텍스트에 섞인 콜론 오탐 방지)
-  const colon=inner.slice(0,18).indexOf(":");
-  if(colon>-1)return inner.slice(0,colon).replace(/\s/g,"");
+  // label: 또는 label - 형식 — 구분자는 앞 18자 이내에서만 탐색 (이후 텍스트에 섞인 구분자 오탐 방지)
+  const sep=findLabelSeparator(inner.slice(0,18));
+  if(sep)return inner.slice(0,sep.index).replace(/\s/g,"");
   return inner.slice(0,12).replace(/\s/g,"");
 }
 const KEEP_LABELS=['주요내용','지원내용','주요혜택','주요사업내용'];
 function stripSectionLabel(s){
   if(/^\([^)]+\)/.test(s)) return s.replace(/^\([^)]+\)\s*/,"");
-  const colon=s.slice(0,18).indexOf(":");
-  if(colon>-1) return s.slice(colon+1).trimStart();
+  const sep=findLabelSeparator(s.slice(0,18));
+  if(sep) return s.slice(sep.index+sep.skip).trimStart();
   return s;
 }
 function cleanSupportFull(text){
