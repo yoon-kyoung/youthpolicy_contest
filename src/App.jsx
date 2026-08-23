@@ -2611,11 +2611,11 @@ function ProposalExampleModal({onClose}){
           </div>
           <div style={{display:"flex",flexDirection:"column",gap:8}}>
             <div style={{display:"flex",gap:6,alignItems:"flex-start"}}>
-              <span style={{fontSize:12,fontWeight:800,color:"var(--accent)",flexShrink:0}}>글자 수 제한</span>
+              <span style={{fontSize:12,fontWeight:800,color:"var(--accent)",lineHeight:1.6,flexShrink:0}}>글자 수 제한</span>
               <span style={{fontSize:12,color:"#374151",lineHeight:1.6}}>배경 50자, 제안 내용 150자, 기대 효과 100자 이상을 채워야 제출할 수 있어요. 미달 시 등록 버튼이 눌리지 않아요.</span>
             </div>
             <div style={{display:"flex",gap:6,alignItems:"flex-start"}}>
-              <span style={{fontSize:12,fontWeight:800,color:"var(--accent)",flexShrink:0}}>AI 검토</span>
+              <span style={{fontSize:12,fontWeight:800,color:"var(--accent)",lineHeight:1.6,flexShrink:0}}>AI 검토</span>
               <span style={{fontSize:12,color:"#374151",lineHeight:1.6}}>제출 전 'AI 검토' 버튼을 누르면 ①욕설·비속어 등 부적절한 표현이 있는지, ②이미 등록된 비슷한 제안이 있는지를 자동으로 확인해줘요. 부적절한 표현이 감지되면 제출이 제한돼요.</span>
             </div>
           </div>
@@ -2654,6 +2654,7 @@ function ProposalWriteView({category,setCategory,title,setTitle,background,setBa
   const [draftSaved,setDraftSaved]=useState(false);
   const [showPreview,setShowPreview]=useState(false);
   const [showExample,setShowExample]=useState(false);
+  const [exampleSeen,setExampleSeen]=useState(false);
 
   const tagPool=useMemo(()=>{
     const fromProposals=(proposals||[]).flatMap(p=>{
@@ -2761,10 +2762,18 @@ function ProposalWriteView({category,setCategory,title,setTitle,background,setBa
           <h1 style={{fontSize:bp.isDesktop?26:20,fontWeight:900,margin:"0 0 6px",letterSpacing:"-0.02em",color:"#111827"}}>청년 정책제안서</h1>
           <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",gap:12,marginBottom:20,flexWrap:"wrap"}}>
             <p style={{fontSize:13,color:"#6b7280",margin:0}}>여러분의 목소리가 공감투표를 통해 새로운 청년정책으로 이어질 수 있어요</p>
-            <button type="button" onClick={()=>setShowExample(true)} style={{display:"flex",alignItems:"center",gap:5,padding:"7px 14px",borderRadius:20,border:"1.5px solid var(--accent-bg)",background:"white",color:"var(--accent)",fontSize:12.5,fontWeight:700,cursor:"pointer",whiteSpace:"nowrap",transition:"background 0.15s"}}
-              onMouseEnter={e=>e.currentTarget.style.background="var(--accent-bg)"}
-              onMouseLeave={e=>e.currentTarget.style.background="white"}
-            >정책제안서 예시</button>
+            <div style={{position:"relative"}}>
+              {!exampleSeen&&(
+                <div style={{position:"absolute",bottom:"100%",right:0,marginBottom:10,background:"#1f2937",color:"white",borderRadius:8,padding:"6px 10px",fontSize:11,fontWeight:600,width:"max-content",maxWidth:150,textAlign:"center",lineHeight:1.4,boxShadow:"0 2px 8px rgba(0,0,0,0.18)",animation:"fadeUp 0.3s ease",zIndex:2}}>
+                  처음이라면 예시부터 확인해보세요!
+                  <div style={{position:"absolute",top:"100%",right:16,width:0,height:0,borderLeft:"5px solid transparent",borderRight:"5px solid transparent",borderTop:"5px solid #1f2937"}}/>
+                </div>
+              )}
+              <button type="button" onClick={()=>{setShowExample(true);setExampleSeen(true);}} style={{display:"flex",alignItems:"center",gap:5,padding:"7px 14px",borderRadius:20,border:"1.5px solid var(--accent-bg)",background:"white",color:"var(--accent)",fontSize:12.5,fontWeight:700,cursor:"pointer",whiteSpace:"nowrap",transition:"background 0.15s"}}
+                onMouseEnter={e=>e.currentTarget.style.background="var(--accent-bg)"}
+                onMouseLeave={e=>e.currentTarget.style.background="white"}
+              >정책제안서 예시</button>
+            </div>
           </div>
           {showExample&&<ProposalExampleModal onClose={()=>setShowExample(false)}/>}
 
