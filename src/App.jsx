@@ -1525,6 +1525,11 @@ function CommunityPostDetailView({post,bp,user,policies,onGoDetail,favIds,onTogg
   const totalComments=comments.length;
   const body=(post.content||post.preview||"").replace(/\\n/g,"\n");
   const fmtDate=iso=>iso?(iso.slice(0,10)):"";
+  const isQnA=post.cat==="Q&A";
+  const isAuthor=Boolean(user&&post.user_id&&user.id===post.user_id);
+  const sortedComments=isQnA&&post.best_comment_id
+    ?[...comments].sort((a,b)=>(b.id===post.best_comment_id)-(a.id===post.best_comment_id))
+    :comments;
   const isRecruit=post.cat==="정책제안 팀모집";
   const isOwner=Boolean(isRecruit&&user&&post.user_id&&user.id===post.user_id);
   const recruitDone=post.status==="모집완료";
@@ -1626,6 +1631,18 @@ function CommunityPostDetailView({post,bp,user,policies,onGoDetail,favIds,onTogg
     if(!error){
       setComments(prev=>prev.filter(c=>c.id!==id));
       await onUpdate?.(post.id,{comments_count:Math.max(0,(post.comments_count||1)-1)});
+    }
+  };
+
+  const handleSelectBest=async c=>{
+    const next=post.best_comment_id===c.id?null:c.id;
+    await onUpdate?.(post.id,{best_comment_id:next});
+    if(next&&c.user_id&&c.user_id!==user.id){
+      supabase.from("notifications").insert({
+        user_id:c.user_id,type:"best_answer",
+        title:"내 답변이 베스트 답변으로 채택됐어요",body:post.title,
+        link_type:"post",link_id:String(post.id),
+      });
     }
   };
 
@@ -1731,12 +1748,26 @@ function CommunityPostDetailView({post,bp,user,policies,onGoDetail,favIds,onTogg
             </div>
           )}
           <div style={{display:"flex",flexDirection:"column",gap:8,paddingBottom:bp.isMobile?80:40}}>
-            {comments.map(c=>(
-              <div key={c.id} style={{background:"white",borderRadius:12,padding:bp.isDesktop?"16px 20px":"13px 16px",border:"1.5px solid #f1f5f9"}}>
+            {sortedComments.map(c=>{
+              const isBest=isQnA&&post.best_comment_id===c.id;
+              return(
+              <div key={c.id} style={{background:isBest?"#FFFBEB":"white",borderRadius:12,padding:bp.isDesktop?"16px 20px":"13px 16px",border:isBest?"1.5px solid #FDE68A":"1.5px solid #f1f5f9"}}>
+                {isBest&&(
+                  <div style={{display:"flex",alignItems:"center",gap:4,fontSize:11,fontWeight:800,color:"#B45309",marginBottom:8}}>
+                    <Icon name="star" fill={1} size={13} color="#F59E0B"/>베스트 답변
+                  </div>
+                )}
                 <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:8}}>
                   <div style={{width:26,height:26,borderRadius:"50%",background:"#f1f5f9",display:"flex",alignItems:"center",justifyContent:"center",fontSize:12,fontWeight:700,color:"#374151",flexShrink:0}}>{c.author?.[0]||"?"}</div>
                   <span style={{fontSize:13,fontWeight:700,color:"#111827"}}>{c.author}</span>
                   <span style={{fontSize:11,color:"#9ca3af",marginLeft:"auto"}}>{fmtDate(c.created_at)}</span>
+                  {isQnA&&isAuthor&&(
+                    <button onClick={()=>handleSelectBest(c)}
+                      style={{padding:"3px 9px",borderRadius:6,border:isBest?"1px solid #FDE68A":"1px solid #e5e7eb",background:isBest?"#FEF3C7":"white",fontSize:11,color:isBest?"#B45309":"#6b7280",cursor:"pointer",transition:"all 0.12s",fontFamily:"inherit",display:"flex",alignItems:"center",gap:3,marginLeft:8}}
+                      onMouseEnter={e=>{if(!isBest){e.currentTarget.style.borderColor="#F59E0B";e.currentTarget.style.color="#B45309";}}}
+                      onMouseLeave={e=>{if(!isBest){e.currentTarget.style.borderColor="#e5e7eb";e.currentTarget.style.color="#6b7280";}}}
+                    ><Icon name="star" filled={isBest} size={12} color={isBest?"#B45309":"#9ca3af"}/>{isBest?"채택 취소":"베스트 답변으로 채택"}</button>
+                  )}
                   {user&&c.user_id===user.id&&editingId!==c.id&&(
                     <div style={{display:"flex",gap:4,marginLeft:8}}>
                       <button onClick={()=>{setEditingId(c.id);setEditText(c.content);}}
@@ -1773,7 +1804,8 @@ function CommunityPostDetailView({post,bp,user,policies,onGoDetail,favIds,onTogg
                   <div style={{fontSize:13,color:"#374151",lineHeight:1.65,paddingLeft:34}}>{c.content}</div>
                 )}
               </div>
-            ))}
+              )
+            })}
           </div>
         </div>
       </div>
@@ -3537,7 +3569,7 @@ function notifTimeAgo(iso){
   return iso.slice(0,10);
 }
 
-const NOTIF_TYPE_ICON={comment_post:"chat_bubble",comment_proposal:"chat_bubble",proposal_status:"campaign",policy_deadline:"alarm"};
+const NOTIF_TYPE_ICON={comment_post:"chat_bubble",comment_proposal:"chat_bubble",proposal_status:"campaign",policy_deadline:"alarm",best_answer:"star"};
 
 function NotificationBell({user,favIds,policies,onNavigate}){
   const [items,setItems]=useState([]);
