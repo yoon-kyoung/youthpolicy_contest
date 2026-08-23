@@ -844,6 +844,22 @@ function PolicyDetailView({policy,favIds,onToggle,onBack,onGoDetail,bp,policies}
                     const CIRCLES=['①','②','③','④','⑤','⑥','⑦','⑧','⑨'];
                     const chips=[],notes=[];
                     let lastCircleIdx=-1;
+                    // "A 또는 B 중 택 1부" 처럼 여러 서류 중 하나를 고르는 문구는 각 서류만 칩으로, "또는"·"중 택 n부"는 일반 텍스트로 분리
+                    const finalizeDoc=raw=>{
+                      const doc=raw.replace(/\s*등\s*$/,"").trim();
+                      const trailingMatch=doc.match(/\s*중\s*택\s*\d+\s*부\s*(\(필수\)|\(선택\))?\s*$/);
+                      const trailing=trailingMatch?trailingMatch[0].trim():null;
+                      const body=(trailingMatch?doc.slice(0,trailingMatch.index):doc).trim();
+                      const parts=body.split(/\s*또는\s*/).map(s=>s.trim()).filter(Boolean);
+                      if(parts.length<=1&&!trailing)return doc;
+                      const tokens=[];
+                      parts.forEach((part,i)=>{
+                        if(i>0)tokens.push({type:"text",text:"또는"});
+                        tokens.push({type:"chip",text:part});
+                      });
+                      if(trailing)tokens.push({type:"text",text:trailing});
+                      return tokens;
+                    };
                     // 줄바꿈이 있으면 줄 단위로, 없으면 콤마로 항목을 구분 (줄바꿈 형식에서 콤마까지 나누면 문장 중간이 잘림)
                     (policy.docs.includes("\n")?policy.docs.split(/\r?\n/):policy.docs.split(",")).forEach(raw=>{
                       const doc=raw.trim().replace(/^[○ㅇ❍◦□·]\s*/,"").replace(/^-\s+/,"");
@@ -856,7 +872,7 @@ function PolicyDetailView({policy,favIds,onToggle,onBack,onGoDetail,bp,policies}
                           const t=p.trim();if(!t)return;
                           const ci=CIRCLES.findIndex(c=>t.startsWith(c));
                           if(ci>=0)lastCircleIdx=ci;
-                          chips.push(t);
+                          chips.push(finalizeDoc(t));
                         });
                         return;
                       }
@@ -864,16 +880,26 @@ function PolicyDetailView({policy,favIds,onToggle,onBack,onGoDetail,bp,policies}
                       if(doc.startsWith("※")){notes.push(doc);return;}
                       // 앞 항목이 ①② 시리즈였다면 다음 번호 자동 부여
                       if(lastCircleIdx>=0&&lastCircleIdx+1<CIRCLES.length){
-                        chips.push(CIRCLES[lastCircleIdx+1]+" "+doc);
+                        chips.push(finalizeDoc(CIRCLES[lastCircleIdx+1]+" "+doc));
                         lastCircleIdx++;
-                      }else chips.push(doc);
+                      }else chips.push(finalizeDoc(doc));
                     });
+                    const chipStyle={background:c.bg,border:`1px solid ${c.border}`,color:c.text,borderRadius:20,padding:"5px 14px",fontSize:13,fontWeight:600,whiteSpace:"pre-line"};
                     return(
                       <div>
                         <div style={{display:"flex",flexDirection:"column",gap:8,alignItems:"flex-start"}}>
-                          {chips.map((doc,i)=>(
-                            <span key={i} style={{background:c.bg,border:`1px solid ${c.border}`,color:c.text,borderRadius:20,padding:"5px 14px",fontSize:13,fontWeight:600,whiteSpace:"pre-line"}}>{doc}</span>
-                          ))}
+                          {chips.map((doc,i)=>
+                            Array.isArray(doc)?(
+                              <div key={i} style={{display:"flex",flexWrap:"wrap",gap:6,alignItems:"center"}}>
+                                {doc.map((tok,j)=>tok.type==="chip"
+                                  ?<span key={j} style={chipStyle}>{tok.text}</span>
+                                  :<span key={j} style={{fontSize:13,color:"#6b7280",fontWeight:500}}>{tok.text}</span>
+                                )}
+                              </div>
+                            ):(
+                              <span key={i} style={chipStyle}>{doc}</span>
+                            )
+                          )}
                         </div>
                         {notes.length>0&&<div style={{marginTop:10,display:"flex",flexDirection:"column",gap:4}}>
                           {notes.map((n,i)=><p key={i} style={{margin:0,fontSize:12,color:"#6b7280",lineHeight:1.6}}>{n}</p>)}
