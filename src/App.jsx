@@ -2605,7 +2605,23 @@ function ProposalExampleModal({onClose}){
           ))}
         </div>
 
-        <div style={{display:"flex",justifyContent:"flex-end",marginTop:20,paddingTop:16,borderTop:"1px solid #f1f5f9"}}>
+        <div style={{marginTop:18,background:"#EFF6FF",border:"1px solid var(--accent-bg)",borderRadius:12,padding:"14px 16px"}}>
+          <div style={{display:"flex",alignItems:"center",gap:6,fontSize:13,fontWeight:800,color:"#111827",marginBottom:8}}>
+            <Icon name="info" size={15} color="var(--accent)"/>제출 전 주의사항
+          </div>
+          <div style={{display:"flex",flexDirection:"column",gap:8}}>
+            <div style={{display:"flex",gap:6,alignItems:"flex-start"}}>
+              <span style={{fontSize:12,fontWeight:800,color:"var(--accent)",flexShrink:0}}>글자 수 제한</span>
+              <span style={{fontSize:12,color:"#374151",lineHeight:1.6}}>배경 50자, 제안 내용 150자, 기대 효과 100자 이상을 채워야 제출할 수 있어요. 미달 시 등록 버튼이 눌리지 않아요.</span>
+            </div>
+            <div style={{display:"flex",gap:6,alignItems:"flex-start"}}>
+              <span style={{fontSize:12,fontWeight:800,color:"var(--accent)",flexShrink:0}}>AI 검토</span>
+              <span style={{fontSize:12,color:"#374151",lineHeight:1.6}}>제출 전 'AI 검토' 버튼을 누르면 ①욕설·비속어 등 부적절한 표현이 있는지, ②이미 등록된 비슷한 제안이 있는지를 자동으로 확인해줘요. 부적절한 표현이 감지되면 제출이 제한돼요.</span>
+            </div>
+          </div>
+        </div>
+
+        <div style={{display:"flex",justifyContent:"flex-end",marginTop:16,paddingTop:16,borderTop:"1px solid #f1f5f9"}}>
           <button type="button" onClick={onClose} style={{padding:"9px 20px",borderRadius:20,background:"var(--accent)",border:"none",color:"white",fontSize:13,fontWeight:600,cursor:"pointer"}}>확인했어요</button>
         </div>
       </div>
@@ -2742,14 +2758,14 @@ function ProposalWriteView({category,setCategory,title,setTitle,background,setBa
 
       <div style={{padding:bp.isDesktop?"32px 40px 60px":bp.isTablet?"24px 24px 60px":"16px 16px 80px"}}>
         <div style={{maxWidth:820,margin:"0 auto"}}>
-          <div style={{display:"flex",alignItems:"flex-start",justifyContent:"space-between",gap:12,marginBottom:6,flexWrap:"wrap"}}>
-            <h1 style={{fontSize:bp.isDesktop?26:20,fontWeight:900,margin:0,letterSpacing:"-0.02em",color:"#111827"}}>청년 정책제안서</h1>
+          <h1 style={{fontSize:bp.isDesktop?26:20,fontWeight:900,margin:"0 0 6px",letterSpacing:"-0.02em",color:"#111827"}}>청년 정책제안서</h1>
+          <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",gap:12,marginBottom:20,flexWrap:"wrap"}}>
+            <p style={{fontSize:13,color:"#6b7280",margin:0}}>여러분의 목소리가 공감투표를 통해 새로운 청년정책으로 이어질 수 있어요</p>
             <button type="button" onClick={()=>setShowExample(true)} style={{display:"flex",alignItems:"center",gap:5,padding:"7px 14px",borderRadius:20,border:"1.5px solid var(--accent-bg)",background:"white",color:"var(--accent)",fontSize:12.5,fontWeight:700,cursor:"pointer",whiteSpace:"nowrap",transition:"background 0.15s"}}
               onMouseEnter={e=>e.currentTarget.style.background="var(--accent-bg)"}
               onMouseLeave={e=>e.currentTarget.style.background="white"}
-            ><Icon name="menu_book" size={14} color="var(--accent)"/>정책제안서 예시</button>
+            >정책제안서 예시</button>
           </div>
-          <p style={{fontSize:13,color:"#6b7280",margin:"0 0 20px"}}>여러분의 목소리가 공감투표를 통해 새로운 청년정책으로 이어질 수 있어요</p>
           {showExample&&<ProposalExampleModal onClose={()=>setShowExample(false)}/>}
 
           <form onSubmit={handleFormSubmit} style={{background:"white",borderRadius:16,border:"1.5px solid #E2E8F0",padding:bp.isDesktop?24:16,display:"flex",flexDirection:"column",gap:16}}>
