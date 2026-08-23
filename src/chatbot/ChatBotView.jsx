@@ -392,24 +392,41 @@ function PrivacyNoticePanel({ bp }) {
         </>
       )}
 
-      {/* 접힌 상태: 원형 아이콘 + 하단 문구 */}
+      {/* 접힌 상태: 말풍선 카드 */}
       {collapsed && (
         <div
           onClick={() => setCollapsed(false)}
-          style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 7, cursor: 'pointer', transformOrigin: 'top center', animation: 'guideWiggle 5s ease-in-out infinite' }}
+          style={{
+            position: 'relative', display: 'flex', alignItems: 'flex-start', gap: 10,
+            maxWidth: 210, padding: '14px 16px', borderRadius: 18,
+            background: '#ffffff', border: '2px solid var(--accent-bg)',
+            boxShadow: '0 8px 28px var(--accent-shadow)',
+            cursor: 'pointer', transformOrigin: 'bottom right', animation: 'guideWiggle 5s ease-in-out infinite',
+          }}
         >
           <div style={{
-            width: 60, height: 60, borderRadius: '50%',
+            width: 44, height: 44, borderRadius: '50%', flexShrink: 0,
             background: 'linear-gradient(135deg,var(--accent-dark),var(--accent))',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
-            boxShadow: '0 4px 16px var(--accent-shadow)',
+            boxShadow: '0 2px 8px var(--accent-shadow)',
           }}>
-            <Icon name="lock" size={28} color="white"/>
+            <Icon name="lock" size={20} color="white"/>
           </div>
-          <div style={{ textAlign: 'center' }}>
-            <div style={{ fontSize: 12, fontWeight: 800, color: '#111827', lineHeight: 1.3 }}>개인정보 안내</div>
-            <div style={{ fontSize: 11, color: '#6b7280', marginTop: 2 }}>챗봇 이용 전 확인해주세요</div>
+          <div>
+            <div style={{ fontSize: 13, fontWeight: 800, color: '#111827', lineHeight: 1.3 }}>개인정보 안내</div>
+            <div style={{ fontSize: 11.5, color: '#6b7280', marginTop: 2, lineHeight: 1.4 }}>챗봇 이용 전<br/>확인해주세요</div>
           </div>
+          {/* 말풍선 꼬리 */}
+          <div style={{
+            position: 'absolute', bottom: -9, right: 24, width: 0, height: 0,
+            borderLeft: '9px solid transparent', borderRight: '9px solid transparent',
+            borderTop: '9px solid var(--accent-bg)',
+          }}/>
+          <div style={{
+            position: 'absolute', bottom: -6, right: 24, width: 0, height: 0,
+            borderLeft: '7px solid transparent', borderRight: '7px solid transparent',
+            borderTop: '7px solid #ffffff',
+          }}/>
         </div>
       )}
     </div>
