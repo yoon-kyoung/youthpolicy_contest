@@ -4473,7 +4473,7 @@ export default function App(){
               ?<div style={{flex:1,overflowY:"auto"}}><PolicyDetailView policy={detailPolicy} favIds={favIds} onToggle={toggleFav} onBack={goBack} onGoDetail={goDetailFromDetail} bp={bp} policies={policies}/></div>
               :page==="search"    ?<div style={{flex:1,overflow:"hidden"}}><SearchView {...viewProps}/></div>
               :page==="chatbot"   ?<div style={{flex:1,overflow:"hidden"}}><ChatBotView bp={bp.isDesktop?'desktop':bp.isTablet?'tablet':'mobile'} favIds={favIds} onToggleFav={toggleFav} onGoDetail={goDetail} resetSignal={chatResetKey}/></div>
-              :page==="mypage"    ?<div style={{flex:1,overflowY:"auto"}}><MyPageContainer supabaseUser={user} onLogout={handleLogout} initialTab={mySub||"info"} favIds={favIds} policies={policies} onToggleFav={toggleFav} onGoDetail={goDetail} onNavigate={onNotifNavigate}/></div>
+              :page==="mypage"    ?<div style={{flex:1,overflowY:"auto"}}><MyPageContainer supabaseUser={user} onLogout={handleLogout} initialTab={mySub||"prefs"} favIds={favIds} policies={policies} onToggleFav={toggleFav} onGoDetail={goDetail} onNavigate={onNotifNavigate}/></div>
               :page==="community" ?<div style={{flex:1,overflowY:"auto"}}><CommunityView bp={bp} user={user} policies={policies} favIds={favIds} onToggleFav={toggleFav} onGoProposal={()=>navigateTo("proposal")} onGoDetail={goDetail} initialCatFilter={communitySub}/></div>
               :page==="proposal"  ?<div style={{flex:1,overflowY:"auto"}}><PolicyProposalPage bp={bp} user={user} onGoCommunity={()=>{setCommunitySub("Q&A");navigateTo("community");}}/></div>
               :null
@@ -4526,7 +4526,7 @@ export default function App(){
           ?<PolicyDetailView policy={detailPolicy} favIds={favIds} onToggle={toggleFav} onBack={goBack} onGoDetail={goDetailFromDetail} bp={bp} policies={policies}/>
           :page==="search"    ?<SearchView {...viewProps}/>
           :page==="chatbot"   ?<ChatBotView bp={bp.isDesktop?'desktop':bp.isTablet?'tablet':'mobile'} favIds={favIds} onToggleFav={toggleFav} onGoDetail={goDetail} resetSignal={chatResetKey}/>
-          :page==="mypage"    ?<MyPageContainer supabaseUser={user} onLogout={handleLogout} initialTab={mySub||"info"} favIds={favIds} policies={policies} onToggleFav={toggleFav} onGoDetail={goDetail} onNavigate={onNotifNavigate}/>
+          :page==="mypage"    ?<MyPageContainer supabaseUser={user} onLogout={handleLogout} initialTab={mySub||"prefs"} favIds={favIds} policies={policies} onToggleFav={toggleFav} onGoDetail={goDetail} onNavigate={onNotifNavigate}/>
           :page==="community" ?<CommunityView bp={bp} user={user} policies={policies} favIds={favIds} onToggleFav={toggleFav} onGoProposal={()=>navigateTo("proposal")} onGoDetail={goDetail} initialCatFilter={communitySub}/>
           :page==="proposal"  ?<PolicyProposalPage bp={bp} user={user} onGoCommunity={()=>{setCommunitySub("Q&A");navigateTo("community");}}/>
           :null
