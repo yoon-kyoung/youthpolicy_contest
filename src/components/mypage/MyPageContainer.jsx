@@ -98,14 +98,24 @@ export default function MyPageContainer({ supabaseUser, onLogout, initialTab, fa
 
   const handleTourStart = () => setTourState('tour')
 
-  const handleTourDismiss = () => {
-    localStorage.setItem('yoa:onboarding-dismissed', 'true')
-    setTourState('hidden')
-    // 투어 종료 후 맞춤조건이 비어있으면 프롬프트 표시
+  const maybeShowPrefPrompt = () => {
     const dismissed = localStorage.getItem('yoa:pref-prompt-dismissed') === 'true'
     if (!dismissed && isPrefsEmpty(prefs)) {
       setTimeout(() => setShowPrefPrompt(true), 400)
     }
+  }
+
+  // 프롬프트만 닫기 — 다음에 마이페이지 들어오면 다시 뜸
+  const handlePromptSkip = () => {
+    setTourState('hidden')
+    maybeShowPrefPrompt()
+  }
+
+  // 다시 보지 않기 — 영구히 숨김
+  const handleTourDismiss = () => {
+    localStorage.setItem('yoa:onboarding-dismissed', 'true')
+    setTourState('hidden')
+    maybeShowPrefPrompt()
   }
 
   const handleTourStep = (stepIdx) => {
@@ -169,13 +179,16 @@ export default function MyPageContainer({ supabaseUser, onLogout, initialTab, fa
                 30초 안에 핵심 기능을 알려드릴게요.
               </div>
               <div style={tourPrompt.btnRow}>
-                <button type="button" style={tourPrompt.btnNo} onClick={handleTourDismiss}>
+                <button type="button" style={tourPrompt.btnNo} onClick={handlePromptSkip}>
                   아니요, 괜찮아요
                 </button>
                 <button type="button" style={tourPrompt.btnYes} onClick={handleTourStart}>
                   보고싶어요
                 </button>
               </div>
+              <button type="button" style={tourPrompt.neverShow} onClick={handleTourDismiss}>
+                다시 보지 않기
+              </button>
             </div>
           </div>
         )}
@@ -497,5 +510,16 @@ const tourPrompt = {
     fontSize: 13,
     fontWeight: 700,
     cursor: 'pointer',
+  },
+  neverShow: {
+    background: 'none',
+    border: 'none',
+    color: '#9ca3af',
+    fontSize: 12,
+    cursor: 'pointer',
+    padding: '4px 0',
+    marginTop: 2,
+    textDecoration: 'underline',
+    textDecorationColor: '#d1d5db',
   },
 }
