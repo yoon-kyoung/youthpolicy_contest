@@ -1,4 +1,5 @@
 ﻿import { useState, useMemo, useEffect, useRef, useCallback } from "react";
+import { createPortal } from "react-dom";
 import MyPageContainer from "./components/mypage/MyPageContainer";
 import {
   Search, Bot, User, MessageCircle,
@@ -2566,6 +2567,52 @@ function ProposalPreviewModal({title,category,isTeam,teamMembers,background,cont
   );
 }
 
+function ProposalExampleModal({onClose}){
+  const FIELDS=[
+    {label:"진행 방식",content:"개인",tip:"개인/팀 여부를 선택하세요. 팀으로 준비했다면 함께한 팀원을 태그하면 좋아요."},
+    {label:"배경",content:"편의점, 카페 등에서 야간 아르바이트를 하는 청년들 중 상당수가 산재보험 가입 여부조차 모른 채 일하고 있습니다. 실제로 한 설문에서는 야간 아르바이트생의 약 60%가 산재보험 적용 대상인지 몰랐다고 답했습니다.",tip:"막연한 느낌보다 구체적인 숫자나 사례를 넣으면 설득력이 훨씬 올라가요. (예: '약 60%가 몰랐다')"},
+    {label:"제안 내용",content:"아르바이트 채용 공고와 근로계약서 작성 시 산재보험 가입 여부와 신청 방법을 의무적으로 안내하도록 하고, 온통청년 앱 등에서도 관련 정보를 쉽게 찾아볼 수 있도록 안내 페이지를 신설해주시기 바랍니다. 또한 사업주 대상 교육 자료도 함께 배포해 실질적인 안내가 이루어지도록 해주세요.",tip:"누가, 무엇을, 어떻게 해야 하는지 실행 가능한 형태로 구체적으로 적어주세요. '~해주세요'로만 끝내지 말고 방법까지 제시하면 더 설득력 있어요."},
+    {label:"기대 효과",content:"산재 발생 시 청년들이 정당한 보상을 받을 수 있는 기반이 마련되고, 안전 사각지대에 놓인 야간·단기 근로 청년들의 권익 보호에도 크게 기여할 것으로 기대됩니다.",tip:"제안이 실현되면 어떤 변화가 생기는지, 청년 입장에서 체감할 수 있는 효과를 구체적으로 적어주세요."},
+  ];
+  return(
+    <div onClick={onClose} style={{position:"fixed",inset:0,background:"rgba(15,23,42,0.5)",zIndex:200,display:"flex",alignItems:"center",justifyContent:"center",padding:20}}>
+      <div onClick={e=>e.stopPropagation()} style={{background:"white",borderRadius:20,padding:"24px 24px 20px",width:"100%",maxWidth:640,maxHeight:"85vh",overflowY:"auto",boxShadow:"0 20px 60px rgba(0,0,0,0.25)"}}>
+        <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:4}}>
+          <div style={{fontSize:16,fontWeight:800,color:"#111827",display:"flex",alignItems:"center",gap:6}}><Icon name="menu_book" size={18} color="var(--accent)"/>정책제안서 예시</div>
+          <button onClick={onClose} style={{background:"#f1f5f9",border:"none",borderRadius:"50%",width:26,height:26,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center"}}><Icon name="close" size={14} color="#6b7280"/></button>
+        </div>
+        <p style={{fontSize:12,color:"#9ca3af",margin:"0 0 16px"}}>채택 가능성이 높은 제안서는 이렇게 씁니다. 각 항목 아래 말풍선 팁을 참고해서 작성해보세요.</p>
+
+        <div style={{display:"flex",gap:8,marginBottom:12,flexWrap:"wrap"}}>
+          <span style={{display:"inline-flex",alignItems:"center",gap:4,fontSize:12,fontWeight:700,padding:"3px 12px",borderRadius:20,background:"var(--accent-bg)",color:"var(--accent)"}}>
+            <Icon name="work" size={13} color="var(--accent)"/>취업·창업
+          </span>
+        </div>
+        <h2 style={{fontSize:19,fontWeight:900,margin:"0 0 16px",color:"#111827",lineHeight:1.4}}>심야 시간대 아르바이트 청년을 위한 산재보험 안내 강화</h2>
+
+        <div style={{display:"flex",flexDirection:"column",gap:14}}>
+          {FIELDS.map(f=>(
+            <div key={f.label}>
+              <div style={{fontSize:13,fontWeight:700,color:"#111827",marginBottom:4}}>{f.label}</div>
+              <p style={{margin:0,fontSize:13,color:"#374151",lineHeight:1.7}}>{f.content}</p>
+              <div style={{position:"relative",marginTop:9,background:"#FFFBEB",border:"1px solid #FDE68A",borderRadius:10,padding:"9px 12px",display:"flex",gap:6,alignItems:"flex-start"}}>
+                <div style={{position:"absolute",top:-7,left:16,width:0,height:0,borderLeft:"6px solid transparent",borderRight:"6px solid transparent",borderBottom:"7px solid #FDE68A"}}/>
+                <div style={{position:"absolute",top:-5,left:16,width:0,height:0,borderLeft:"6px solid transparent",borderRight:"6px solid transparent",borderBottom:"6px solid #FFFBEB"}}/>
+                <Icon name="lightbulb" size={14} color="#B45309"/>
+                <span style={{fontSize:12,color:"#92400E",lineHeight:1.6}}>{f.tip}</span>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <div style={{display:"flex",justifyContent:"flex-end",marginTop:20,paddingTop:16,borderTop:"1px solid #f1f5f9"}}>
+          <button type="button" onClick={onClose} style={{padding:"9px 20px",borderRadius:20,background:"var(--accent)",border:"none",color:"white",fontSize:13,fontWeight:600,cursor:"pointer"}}>확인했어요</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 const PROPOSAL_MIN_LEN={background:50,content:150,expectedEffect:100};
 
 function getAttachmentType(fileName){
@@ -2590,6 +2637,7 @@ function ProposalWriteView({category,setCategory,title,setTitle,background,setBa
   const [teamInput,setTeamInput]=useState("");
   const [draftSaved,setDraftSaved]=useState(false);
   const [showPreview,setShowPreview]=useState(false);
+  const [showExample,setShowExample]=useState(false);
 
   const tagPool=useMemo(()=>{
     const fromProposals=(proposals||[]).flatMap(p=>{
@@ -2694,8 +2742,15 @@ function ProposalWriteView({category,setCategory,title,setTitle,background,setBa
 
       <div style={{padding:bp.isDesktop?"32px 40px 60px":bp.isTablet?"24px 24px 60px":"16px 16px 80px"}}>
         <div style={{maxWidth:820,margin:"0 auto"}}>
-          <h1 style={{fontSize:bp.isDesktop?26:20,fontWeight:900,margin:"0 0 6px",letterSpacing:"-0.02em",color:"#111827"}}>청년 정책제안서</h1>
+          <div style={{display:"flex",alignItems:"flex-start",justifyContent:"space-between",gap:12,marginBottom:6,flexWrap:"wrap"}}>
+            <h1 style={{fontSize:bp.isDesktop?26:20,fontWeight:900,margin:0,letterSpacing:"-0.02em",color:"#111827"}}>청년 정책제안서</h1>
+            <button type="button" onClick={()=>setShowExample(true)} style={{display:"flex",alignItems:"center",gap:5,padding:"7px 14px",borderRadius:20,border:"1.5px solid var(--accent-bg)",background:"white",color:"var(--accent)",fontSize:12.5,fontWeight:700,cursor:"pointer",whiteSpace:"nowrap",transition:"background 0.15s"}}
+              onMouseEnter={e=>e.currentTarget.style.background="var(--accent-bg)"}
+              onMouseLeave={e=>e.currentTarget.style.background="white"}
+            ><Icon name="menu_book" size={14} color="var(--accent)"/>정책제안서 예시</button>
+          </div>
           <p style={{fontSize:13,color:"#6b7280",margin:"0 0 20px"}}>여러분의 목소리가 공감투표를 통해 새로운 청년정책으로 이어질 수 있어요</p>
+          {showExample&&<ProposalExampleModal onClose={()=>setShowExample(false)}/>}
 
           <form onSubmit={handleFormSubmit} style={{background:"white",borderRadius:16,border:"1.5px solid #E2E8F0",padding:bp.isDesktop?24:16,display:"flex",flexDirection:"column",gap:16}}>
             <ProposalFormRow label="제목">
@@ -3735,6 +3790,7 @@ function NavUserDropdown({user,onLogout,onGoMyPage,compact=false,favCount=0,font
 function Sidebar({page,setPage,favIds,user,open,setOpen,onLogoClick}){
   const [mySub,setMySub]=useLocalStorage("yoa:mysub","custom");
   const mainPage=page==="detail"?"":page.split("-")[0];
+  const [navTooltip,setNavTooltip]=useState(null);
 
   const NAV=[
     {id:"chatbot", icon:"auto_awesome", label:"AI 챗봇"},
@@ -3745,6 +3801,7 @@ function Sidebar({page,setPage,favIds,user,open,setOpen,onLogoClick}){
   ];
 
   return(
+    <>
     <aside style={{
       width:open?240:64, flexShrink:0, height:"100vh", position:"sticky", top:0,
       background:"#FFFFFF", borderRight:"1px solid #E2E8F0",
@@ -3788,7 +3845,6 @@ function Sidebar({page,setPage,favIds,user,open,setOpen,onLogoClick}){
           return(
             <button
               key={n.id}
-              title={open?"":n.label}
               onClick={()=>setPage(n.id)}
               style={{
                 display:"flex",alignItems:"center",
@@ -3804,8 +3860,14 @@ function Sidebar({page,setPage,favIds,user,open,setOpen,onLogoClick}){
                 width:"100%",
                 position:"relative",
               }}
-              onMouseEnter={e=>{if(!active){e.currentTarget.style.background="#F8FAFC";e.currentTarget.style.color="#475569"}}}
-              onMouseLeave={e=>{if(!active){e.currentTarget.style.background="transparent";e.currentTarget.style.color="#475569"}}}
+              onMouseEnter={e=>{
+                if(!active){e.currentTarget.style.background="#F8FAFC";e.currentTarget.style.color="#475569"}
+                if(!open){const r=e.currentTarget.getBoundingClientRect();setNavTooltip({label:n.label,top:r.top+r.height/2,left:r.right+10});}
+              }}
+              onMouseLeave={e=>{
+                if(!active){e.currentTarget.style.background="transparent";e.currentTarget.style.color="#475569"}
+                setNavTooltip(null);
+              }}
             >
               <Icon name={n.icon} size={18} color={active?"var(--accent)":"#475569"}/>
               {open&&<span style={{whiteSpace:"nowrap",overflow:"hidden"}}>{n.label}</span>}
@@ -3828,6 +3890,19 @@ function Sidebar({page,setPage,favIds,user,open,setOpen,onLogoClick}){
 
       {/* 축소 시 즐겨찾기 수 뱃지 */}
     </aside>
+    {!open&&navTooltip&&createPortal(
+      <div style={{
+        position:"fixed",top:navTooltip.top,left:navTooltip.left,transform:"translateY(-50%)",
+        background:"#1E293B",color:"#fff",fontSize:12,fontWeight:600,
+        padding:"6px 10px",borderRadius:6,whiteSpace:"nowrap",
+        zIndex:9999,pointerEvents:"none",boxShadow:"0 4px 12px rgba(0,0,0,0.18)",
+      }}>
+        {navTooltip.label}
+        <div style={{position:"absolute",left:-4,top:"50%",transform:"translateY(-50%)",width:0,height:0,borderTop:"5px solid transparent",borderBottom:"5px solid transparent",borderRight:"5px solid #1E293B"}}/>
+      </div>,
+      document.body
+    )}
+    </>
   );
 }
 
@@ -4267,7 +4342,16 @@ export default function App(){
   const [themeKey,setThemeKey]=useLocalStorage("yoa:theme","blue");
   const [fontScale,setFontScale]=useLocalStorage("yoa:fontscale",1);
   const [user,setUser]=useState(null);
-  const [sidebarOpen,setSidebarOpen]=useState(false);
+  const [sidebarOpen,setSidebarOpenRaw]=useState(true);
+  const autoCollapseRef=useRef(null);
+  useEffect(()=>{
+    autoCollapseRef.current=setTimeout(()=>setSidebarOpenRaw(false),1400);
+    return()=>clearTimeout(autoCollapseRef.current);
+  },[]);
+  const setSidebarOpen=useCallback(updater=>{
+    if(autoCollapseRef.current){clearTimeout(autoCollapseRef.current);autoCollapseRef.current=null;}
+    setSidebarOpenRaw(updater);
+  },[]);
   const bp=useBreakpoint();
   const theme=THEMES.find(t=>t.key===themeKey)||THEMES[0];
 
