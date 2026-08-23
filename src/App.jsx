@@ -104,28 +104,33 @@ function extractBulletLabel(inner){
 }
 const KEEP_LABELS=['주요내용','지원내용','주요혜택','주요사업내용'];
 function stripSectionLabel(s){
-  if(/^\([^)]+\)/.test(s)) return s.replace(/^\([^)]+\)\s*/,"").replace(/^[-:：]\s*/,"");
+  if(/^\([^)]+\)/.test(s)) return s.replace(/^\([^)]+\)\s*/,"").replace(/^[\s\-:：]+/,"");
   const sep=findLabelSeparator(s.slice(0,18));
   if(sep) return s.slice(sep.index+sep.skip).trimStart();
+  // 라벨을 못 찾았지만 맨 앞이 그냥 "- " 불릿인 경우 (뒤쪽에 다른 항목이 있어 ○ 분기로 온 첫 조각 등)
+  if(/^-\s/.test(s)) return s.replace(/^-\s+/,"");
   return s;
 }
 function cleanSupportFull(text){
   if(!text)return"";
   let t=text;
-  // ㅇ·❍·◦·□·"- label:" → ○ 로 정규화
-  if(t.startsWith("ㅇ "))t="○ "+t.slice(2);
-  t=t.replace(/[ \n]ㅇ /g,"\n○ ");
+  // ㅇ·❍·◦·□·"- label:" → ○ 로 정규화 (뒤에 공백 없이 바로 라벨/괄호가 붙는 경우도 포함)
+  if(/^ㅇ/.test(t))t="○"+t.slice(1);
+  t=t.replace(/([ \n])ㅇ/g,"$1\n○");
   t=t.replace(/❍/g,"○");
   t=t.replace(/◦/g,"○");
   t=t.replace(/□/g,"○");
-  t=t.replace(/ - (?=[가-힣]{1,12}[：:])/g,"\n○ ");
-  if(/^- [가-힣]{1,12}[：:]/.test(t))t="○ "+t.slice(2);
+  // 라벨에 공백이 섞여도 인식하되, 콜론 바로 앞은 공백 없이 한글이어야 함 (label : 처럼 공백 있는 건 상위 항목의 하위 서술로 보고 건드리지 않음)
+  t=t.replace(/ - (?=[가-힣](?:[가-힣\s]{0,12}[가-힣])?[：:])/g,"\n○ ");
+  if(/^- [가-힣](?:[가-힣\s]{0,12}[가-힣])?[：:]/.test(t))t="○ "+t.slice(2);
   if(!t.includes("○")){
     // 불릿 없는 텍스트: 섹션 라벨만 있는 줄 제거 + 맨앞 "라벨:" 패턴 제거
     t=t.split("\n").filter(line=>!KEEP_LABELS.includes(line.trim())&&!SUPPORT_REMOVE.some(kw=>line.trim()===kw)).join("\n");
     t=t.replace(new RegExp(`^(${KEEP_LABELS.join("|")})\\s*[:：]\\s*`),"");
     // 숫자 목록 "2. " "3. " 등 앞에 줄바꿈 추가
     t=t.replace(/ (\d+)\. (?=[가-힣])/g,"\n$1. ");
+    // 라벨 없이 그냥 "- "로 시작하는 목록이면 맨 앞 대시만 제거 (항목 사이 대시는 구분자로 유지)
+    t=t.replace(/^-\s+/,"");
     return t.trim();
   }
   const parts=t.split(/(?=○)/).filter(s=>s.trim());
@@ -155,7 +160,7 @@ function cleanSupportFull(text){
 
 function stripBulletMarkers(text){
   if(!text)return"";
-  return text.replace(/(^|\s)[ㅇ○❍◦□]\s+/g,"$1").trim();
+  return text.replace(/(^|\s)[ㅇ○❍◦□]\s*/g,"$1").replace(/^-\s+/,"").trim();
 }
 
 export function mapRawPolicy(raw,idx){
