@@ -419,7 +419,7 @@ function PrivacyNoticePanel({ bp }) {
 
           <div
             onClick={() => setCollapsed(false)}
-            style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 7, cursor: 'pointer', transformOrigin: 'top center', animation: 'guideWiggle 5s ease-in-out infinite' }}
+            style={{ display: 'flex', cursor: 'pointer', transformOrigin: 'top center', animation: 'guideWiggle 5s ease-in-out infinite' }}
           >
             <div style={{
               width: 60, height: 60, borderRadius: '50%',
@@ -428,10 +428,6 @@ function PrivacyNoticePanel({ bp }) {
               boxShadow: '0 4px 16px var(--accent-shadow)',
             }}>
               <Icon name="lock" size={28} color="white"/>
-            </div>
-            <div style={{ textAlign: 'center' }}>
-              <div style={{ fontSize: 12, fontWeight: 800, color: '#111827', lineHeight: 1.3 }}>개인정보 안내</div>
-              <div style={{ fontSize: 11, color: '#6b7280', marginTop: 2 }}>챗봇 이용 전 확인해주세요</div>
             </div>
           </div>
         </div>
