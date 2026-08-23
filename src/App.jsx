@@ -3205,7 +3205,7 @@ function LoginPage({setPage,bp}){
   const handleKakao=async()=>{
     const {error:err}=await supabase.auth.signInWithOAuth({
       provider:"kakao",
-      options:{redirectTo:"https://yoon-kyoung.github.io/youthpolicy_contest/",scopes:"profile_nickname"}
+      options:{redirectTo:"https://on.policylab.co.kr/",scopes:"profile_nickname"}
     });
     if(err) setError("카카오 로그인 중 오류가 발생했습니다.");
   };
@@ -3372,7 +3372,7 @@ function SignupPage({setPage,bp}){
   const handleKakao=async()=>{
     const {error:err}=await supabase.auth.signInWithOAuth({
       provider:"kakao",
-      options:{redirectTo:"https://yoon-kyoung.github.io/youthpolicy_contest/",scopes:"profile_nickname"}
+      options:{redirectTo:"https://on.policylab.co.kr/",scopes:"profile_nickname"}
     });
     if(err) setErrors({form:"카카오 로그인 중 오류가 발생했습니다."});
   };
