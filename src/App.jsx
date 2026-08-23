@@ -1529,7 +1529,7 @@ function CommunityPostDetailView({post,bp,user,policies,onGoDetail,favIds,onTogg
   const handleLike=()=>{
     const next=!liked;
     setLiked(next);
-    onLike(post.id,(post.likes||0)+(next?0:-1),next);
+    onLike(post.id,post.likes||0,next);
   };
 
   const handleComment=async e=>{
