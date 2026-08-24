@@ -375,6 +375,7 @@ function CompareModal({policies,onRemove,onClose}){
             <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:10}}>
               <div style={{fontSize:13,fontWeight:800,color:"#111827",display:"flex",alignItems:"center",gap:6}}>
                 <Icon name="smart_toy" size={15} color="var(--accent)"/>AI 차이점 분석
+                <span style={{fontSize:10,fontWeight:800,color:"var(--accent-dark)",background:"var(--accent-bg)",border:"1px solid var(--accent)",borderRadius:20,padding:"2px 8px",letterSpacing:"0.02em"}}>Solar</span>
               </div>
               {!aiState.loading&&(
                 <button onClick={runCompare} style={{display:"flex",alignItems:"center",gap:4,background:"none",border:"none",cursor:"pointer",color:"#94a3b8",fontSize:11,fontWeight:600,padding:2}}>
