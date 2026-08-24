@@ -403,7 +403,10 @@ function PrivacyNoticePanel({ bp }) {
             boxShadow: '0 8px 28px var(--accent-shadow)',
           }}>
             <div style={{ fontSize: 13, fontWeight: 800, color: '#111827', lineHeight: 1.3 }}>개인정보 안내</div>
-            <div style={{ fontSize: 11.5, color: '#6b7280', marginTop: 2, lineHeight: 1.4 }}>챗봇 이용 전 확인해주세요</div>
+            <div style={{ fontSize: 11.5, color: '#6b7280', marginTop: 2, lineHeight: 1.4, display: 'flex', alignItems: 'center', gap: 4 }}>
+              챗봇 이용 전 확인해주세요
+              <Icon name="arrow_downward" size={13} color="var(--accent)"/>
+            </div>
             {/* 꼬리 */}
             <div style={{
               position: 'absolute', top: '100%', right: 26, width: 0, height: 0,

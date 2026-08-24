@@ -4281,7 +4281,7 @@ function AboutPage({onBack,bp}){
           <p style={{fontSize:isDesktop?15:13,opacity:0.85,maxWidth:520,margin:"0 auto",lineHeight:1.7}}>양옆으로 넘기면서 청년ON의 기능을 하나씩 살펴보세요.</p>
         </div>
 
-        <div style={{maxWidth:920,margin:"0 auto",padding:isDesktop?"48px 64px":"28px 26px"}}>
+        <div style={{maxWidth:1100,margin:"0 auto",padding:isDesktop?"48px 64px":"28px 26px"}}>
           <AboutCarousel isDesktop={isDesktop}/>
         </div>
 
