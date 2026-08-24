@@ -2,16 +2,32 @@ import { useRef } from 'react'
 import Icon from '../styles/Icon'
 import chatbotHome from '../assets/howto/chatbot-home.jpg'
 import chatbotConversation from '../assets/howto/chatbot-conversation.jpg'
+import chatbotTrending from '../assets/howto/chatbot-trending.jpg'
+import chatbotMic from '../assets/howto/chatbot-mic.jpg'
+import chatbotHistory from '../assets/howto/chatbot-history.jpg'
+import chatbotDownload from '../assets/howto/chatbot-download.jpg'
 import searchList from '../assets/howto/search-list.jpg'
+import searchFilters from '../assets/howto/search-filters.jpg'
+import searchMap from '../assets/howto/search-map.jpg'
+import searchMyFilterSave from '../assets/howto/search-myfilter-save.jpg'
 import searchCompare from '../assets/howto/search-compare.jpg'
-import proposalHome from '../assets/howto/proposal-home.jpg'
-import communityHome from '../assets/howto/community-home.jpg'
 import policyDetail from '../assets/howto/policy-detail.jpg'
 import policyDetailDocs from '../assets/howto/policy-detail-docs.jpg'
+import proposalHome from '../assets/howto/proposal-home.jpg'
+import proposalTimelineStep from '../assets/howto/proposal-timeline-step.jpg'
+import proposalWrite from '../assets/howto/proposal-write.jpg'
+import proposalDetail from '../assets/howto/proposal-detail.jpg'
+import proposalAnswer from '../assets/howto/proposal-answer.jpg'
+import communityHome from '../assets/howto/community-home.jpg'
+import communityWrite from '../assets/howto/community-write.jpg'
+import communityDetail from '../assets/howto/community-detail.jpg'
+import communityRecruit from '../assets/howto/community-recruit.jpg'
+import mypageOnboarding from '../assets/howto/mypage-onboarding.jpg'
 import mypageHome from '../assets/howto/mypage-home.jpg'
+import mypagePrefs from '../assets/howto/mypage-prefs.jpg'
 import mypageApplications from '../assets/howto/mypage-applications.jpg'
 import mypageSaved from '../assets/howto/mypage-saved.jpg'
-import mypageOnboarding from '../assets/howto/mypage-onboarding.jpg'
+import mypageMyPosts from '../assets/howto/mypage-myposts.jpg'
 
 const SECTIONS = [
   {
@@ -19,18 +35,13 @@ const SECTIONS = [
     icon: 'smart_toy',
     title: 'AI 챗봇',
     lead: '나이·지역·관심사를 말하면 AI가 맞는 청년정책을 찾아드려요.',
-    tips: [
-      '입력창에 자유롭게 물어보거나, 하단 추천 질문 칩을 눌러 바로 시작할 수 있어요.',
-      '답변에 실제로 언급된 정책만 카드로 정리돼요. 카드를 누르면 정책 상세로 바로 이동해요.',
-      '답변 아래 후속 질문 칩을 누르면 대화를 이어서 더 구체적으로 물어볼 수 있어요.',
-      '스피커 아이콘으로 답변을 읽어주고(TTS), 마이크 아이콘으로 음성으로 질문할 수도 있어요.',
-      '우상단 "실시간 인기 정책 검색어"를 누르면 지금 많이 찾는 정책으로 바로 이동해요.',
-      '"대화목록"에서 이전 대화를 다시 열거나, 대화 내용을 txt·Word·PDF로 내려받을 수 있어요.',
-      '한 대화당 질문 횟수가 정해져 있어요(입력창 아래 "내 남은 질문" 확인). 다 쓰면 "새 대화"를 눌러주세요.',
-    ],
-    images: [
-      { src: chatbotHome, caption: '챗봇 첫 화면 — 추천 질문과 실시간 인기 검색어' },
-      { src: chatbotConversation, caption: '답변에 언급된 정책이 카드로, 후속 질문이 칩으로 정리돼요' },
+    shots: [
+      { img: chatbotHome, caption: '자유롭게 물어보거나, 하단 추천 질문 칩을 눌러 바로 시작할 수 있어요.' },
+      { img: chatbotConversation, caption: '답변에 실제로 언급된 정책만 카드로 정리되고, 후속 질문 칩으로 대화를 이어갈 수 있어요.' },
+      { img: chatbotTrending, caption: '우상단 실시간 인기 정책 검색어를 누르면 해당 정책 상세로 바로 이동해요.' },
+      { img: chatbotMic, caption: '마이크로 음성 질문을 하고, 답변은 스피커 아이콘으로 들을 수 있어요.' },
+      { img: chatbotHistory, caption: '대화목록에서 이전 대화를 다시 열거나 삭제할 수 있어요.' },
+      { img: chatbotDownload, caption: '대화 내용을 txt·Word·PDF 파일로 내려받을 수 있어요.' },
     ],
   },
   {
@@ -38,22 +49,14 @@ const SECTIONS = [
     icon: 'search',
     title: '검색',
     lead: '카테고리·지역·부처까지 촘촘하게 걸러 원하는 정책만 찾아볼 수 있어요.',
-    tips: [
-      '카테고리, 지역, 중앙부처 칩을 눌러 조건을 좁히고, "지도로 보기"로 지역을 직접 골라도 돼요.',
-      '학력·취업상태 등 추가 필터는 필터 영역 오른쪽 화살표를 눌러 펼칠 수 있어요.',
-      '자주 쓰는 조건은 "현재 조건 저장"으로 이름 붙여두면 "내 필터"에서 바로 불러올 수 있어요.',
-      '인기순·마감임박순·지원금 큰 순·최신순으로 정렬하고, "마감 제외"로 끝난 정책은 숨길 수 있어요.',
-      '"정책 비교하기"를 누르고 카드를 최대 3개 선택하면 나란히 비교할 수 있어요.',
-      '비교 화면에서 "AI 차이점 분석"을 누르면 정책 간 실질적인 차이와 상황별 추천을 자동으로 정리해줘요.',
-      '카드를 누르면 정책 상세 화면으로 이동해요. 사업 개요, 신청 방법, 필요 서류, 핵심 정보(대상·기관·기한·금액)를 한 화면에서 확인할 수 있어요.',
-      '정책 상세에서 별 아이콘으로 저장하고, 공유 아이콘으로 링크를 복사해 다른 사람에게 보낼 수 있어요. 온라인 신청·공식 홈페이지 버튼도 있어요.',
-      '정책 상세 화면 하단에는 제목 키워드를 기반으로 비슷한 정책도 함께 추천해줘요.',
-    ],
-    images: [
-      { src: searchList, caption: '카테고리·지역·부처 필터와 정책 카드 목록' },
-      { src: searchCompare, caption: '정책 3개 비교 + AI 차이점 분석 결과' },
-      { src: policyDetail, caption: '정책 상세 — 핵심 정보와 저장·공유' },
-      { src: policyDetailDocs, caption: '정책 상세 — 신청 방법과 필요 서류' },
+    shots: [
+      { img: searchList, caption: '카테고리·지역·중앙부처 칩으로 조건을 좁혀 원하는 정책만 찾아볼 수 있어요.' },
+      { img: searchFilters, caption: '학력·취업상태 등 추가 필터를 펼쳐서 더 세밀하게 좁힐 수 있어요.' },
+      { img: searchMap, caption: '지도에서 지역을 직접 선택할 수도 있어요.' },
+      { img: searchMyFilterSave, caption: '자주 쓰는 조건은 이름 붙여 저장해두고 "내 필터"에서 바로 불러올 수 있어요.' },
+      { img: searchCompare, caption: '정책을 최대 3개까지 비교하고, AI가 차이점과 상황별 추천을 정리해줘요.' },
+      { img: policyDetail, caption: '카드를 누르면 정책 상세로 이동해 사업 개요와 핵심 정보를 확인할 수 있어요.' },
+      { img: policyDetailDocs, caption: '신청 방법과 필요 서류까지 한 화면에서 확인할 수 있어요.' },
     ],
   },
   {
@@ -61,16 +64,12 @@ const SECTIONS = [
     icon: 'campaign',
     title: '청년정책 제안',
     lead: '필요한 정책을 직접 제안하고, 공감을 모아 실제 정책으로 이어갈 수 있어요.',
-    tips: [
-      '우측 상단 "정책 제안하기"를 눌러 카테고리·개인/팀 여부·배경·내용을 작성하면 제안이 등록돼요.',
-      '작성 중 AI가 부적절한 표현을 미리 검토해주고, 제출 전 미리보기로 최종 확인할 수 있어요.',
-      '진행 상태 바(등록 → 공감투표 → 부처매칭중 → 답변)의 아이콘을 누르면 각 단계 설명을 볼 수 있어요.',
-      '공감투표가 일정 수를 넘으면 자동으로 "부처매칭중"으로 바뀌고, 소관 부처의 답변을 받을 수 있어요.',
-      '상세 화면 댓글에서 다른 청년들과 의견을 나누고, 공유 링크로 제안을 알릴 수 있어요.',
-      '내 제안에 댓글이 달리거나 상태가 바뀌면 알림(벨 아이콘)으로 알려드려요.',
-    ],
-    images: [
-      { src: proposalHome, caption: '정책제안 진행 상태와 전체 목록' },
+    shots: [
+      { img: proposalHome, caption: '진행 상태(등록→공감투표→부처매칭중→답변)와 전체 제안 목록을 볼 수 있어요.' },
+      { img: proposalTimelineStep, caption: '진행 상태의 아이콘을 누르면 각 단계에 대한 설명이 펼쳐져요.' },
+      { img: proposalWrite, caption: '카테고리·배경·제안내용·기대효과를 적어 등록하고, AI 검토로 부적절한 표현을 미리 확인할 수 있어요.' },
+      { img: proposalDetail, caption: '상세 화면에서 작성→검토→공개→답변→반영까지 진행 단계를 한눈에 볼 수 있어요.' },
+      { img: proposalAnswer, caption: '제안 내용과 소관 부처의 공식 답변을 함께 확인하고, 의견을 댓글로 남길 수 있어요.' },
     ],
   },
   {
@@ -78,16 +77,11 @@ const SECTIONS = [
     icon: 'forum',
     title: '커뮤니티',
     lead: '실제 신청 후기, 정보, 궁금한 점을 자유롭게 나누는 공간이에요.',
-    tips: [
-      '후기·정보·Q&A·정책제안 팀모집 4개 카테고리 탭으로 나눠 글을 올리고 찾아볼 수 있어요.',
-      '후기 글을 쓸 때 관련 정책을 연결하면, 마이페이지 신청내역과 비교해 "실제 신청 인증" 배지가 자동으로 붙어요.',
-      '공감이 많은 후기는 상단 "베스트 후기"에 노출돼요.',
-      '팀모집 글에는 "참가하기" 버튼이 있고, 정원이 차면 자동으로 비활성화돼요.',
-      '"청년정책 역제안" 배너로 커뮤니티에서 나온 이야기를 바로 정책제안으로 이어갈 수 있어요.',
-      '내 글에 새 댓글이 달리면 알림으로 알려드려요.',
-    ],
-    images: [
-      { src: communityHome, caption: '커뮤니티 카테고리 탭과 베스트 후기' },
+    shots: [
+      { img: communityHome, caption: '후기·정보·Q&A·정책제안 팀모집 4개 카테고리로 나눠 글을 올리고 찾아볼 수 있어요.' },
+      { img: communityWrite, caption: '글쓰기에서 관련 정책을 연결하면 실제 신청 여부가 자동으로 인증돼요.' },
+      { img: communityDetail, caption: '공감·관련 정책 카드와 함께 "실제 신청 인증" 배지를 확인할 수 있어요.' },
+      { img: communityRecruit, caption: '팀모집 글에는 참가하기 버튼이 있고, 정원이 차면 자동으로 마감돼요.' },
     ],
   },
   {
@@ -95,45 +89,25 @@ const SECTIONS = [
     icon: 'person',
     title: '마이페이지',
     lead: '로그인하면 나타나는 개인 맞춤 공간이에요. 저장·신청·조건을 한곳에서 관리해요.',
-    tips: [
-      '처음 들어가면 핵심 기능을 30초 안에 안내하는 온보딩 팝업이 한 번 나와요. "다시 보지 않기"로 끌 수 있어요.',
-      '상단 캘린더에서 저장한 정책의 마감일과 예상 신청 시작일을 월별로 확인할 수 있어요.',
-      '"맞춤 조건" 탭에서 지역·나이·소득·학력 등을 설정하면 나에게 맞는 정책이 실시간으로 추려져요.',
-      '"신청 내역" 탭에서 지원준비중 → 지원완료 → 심사중 → 결과대기 → 완료 단계를 직접 체크하고 메모를 남길 수 있어요.',
-      '"저장한 정책" 탭은 마감임박순으로 정렬되고, 드래그로 순서를 바꿀 수 있어요. 북마크를 취소해도 3초 안에 되돌릴 수 있어요.',
-      '"내가 쓴 글" 탭에서 커뮤니티 글과 정책제안을 모아 다시 볼 수 있어요.',
-      '프로필 옆 "계정 관리"에서 정보 수정, 알림 권한, 비밀번호 변경, 로그아웃, 회원탈퇴를 할 수 있어요.',
-    ],
-    images: [
-      { src: mypageOnboarding, caption: '최초 진입 시 나오는 온보딩 안내' },
-      { src: mypageHome, caption: '프로필 · 신청 캘린더' },
-      { src: mypageApplications, caption: '신청 내역 — 단계별 상태 체크' },
-      { src: mypageSaved, caption: '저장한 정책 — 드래그로 순서 변경' },
+    shots: [
+      { img: mypageOnboarding, caption: '처음 들어가면 핵심 기능을 안내하는 온보딩 팝업이 한 번 나와요.' },
+      { img: mypageHome, caption: '상단 캘린더에서 저장한 정책의 마감일과 예상 신청 시작일을 확인할 수 있어요.' },
+      { img: mypagePrefs, caption: '맞춤 조건 탭에서 지역·나이·소득·학력 등을 설정하면 나에게 맞는 정책이 추려져요.' },
+      { img: mypageApplications, caption: '신청 내역 탭에서 지원준비중→지원완료→심사중→결과대기→완료 단계를 체크할 수 있어요.' },
+      { img: mypageSaved, caption: '저장한 정책 탭은 마감임박순으로 정렬되고, 드래그로 순서를 바꿀 수 있어요.' },
+      { img: mypageMyPosts, caption: '내가 쓴 글 탭에서 커뮤니티 글과 정책제안을 모아 다시 볼 수 있어요.' },
     ],
   },
 ]
 
-function TipList({ tips }) {
+function ShotGrid({ shots, isDesktop }) {
   return (
-    <ul style={{ margin: 0, padding: 0, listStyle: 'none', display: 'flex', flexDirection: 'column', gap: 10 }}>
-      {tips.map((t, i) => (
-        <li key={i} style={{ display: 'flex', gap: 8, fontSize: 14, color: '#374151', lineHeight: 1.6 }}>
-          <Icon name="check_circle" size={16} color="var(--accent)" style={{ flexShrink: 0, marginTop: 2 }} />
-          <span>{t}</span>
-        </li>
-      ))}
-    </ul>
-  )
-}
-
-function Gallery({ images, isDesktop }) {
-  return (
-    <div style={{ display: 'flex', flexDirection: isDesktop ? 'row' : 'column', gap: 14, flexWrap: 'wrap' }}>
-      {images.map((img, i) => (
-        <figure key={i} style={{ margin: 0, flex: isDesktop && images.length > 1 ? '1 1 260px' : '1 1 auto', minWidth: 0 }}>
-          <img src={img.src} alt={img.caption} style={{ width: '100%', display: 'block', borderRadius: 12, border: '1px solid #e5e7eb', boxShadow: '0 2px 10px rgba(0,0,0,0.06)' }} />
-          <figcaption style={{ fontSize: 12, color: '#9ca3af', marginTop: 8, textAlign: 'center' }}>{img.caption}</figcaption>
-        </figure>
+    <div style={{ display: 'grid', gridTemplateColumns: isDesktop ? 'repeat(auto-fit, minmax(260px, 1fr))' : '1fr', gap: 24 }}>
+      {shots.map((s, i) => (
+        <div key={i} style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+          <img src={s.img} alt={s.caption} style={{ width: '100%', display: 'block', borderRadius: 12, border: '1px solid #e5e7eb', boxShadow: '0 2px 10px rgba(0,0,0,0.06)' }} />
+          <p style={{ margin: 0, fontSize: 13.5, color: '#374151', lineHeight: 1.5 }}>{s.caption}</p>
+        </div>
       ))}
     </div>
   )
@@ -149,10 +123,7 @@ function Section({ section, isDesktop, sectionRef }) {
         <h3 style={{ fontSize: isDesktop ? 22 : 18, fontWeight: 800, color: '#111827', margin: 0 }}>{section.title}</h3>
       </div>
       <p style={{ fontSize: 14, color: '#6b7280', margin: '0 0 20px', lineHeight: 1.6 }}>{section.lead}</p>
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
-        <Gallery images={section.images} isDesktop={isDesktop} />
-        <TipList tips={section.tips} />
-      </div>
+      <ShotGrid shots={section.shots} isDesktop={isDesktop} />
     </section>
   )
 }
