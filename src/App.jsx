@@ -4162,7 +4162,7 @@ function AboutCard({data,index,isDesktop}){
     <div style={{
       display:"flex",flexDirection:isDesktop?(reverse?"row-reverse":"row"):"column",
       alignItems:"center",gap:isDesktop?44:20,
-      minHeight:isDesktop?700:"auto",
+      minHeight:isDesktop?500:"auto",
       borderRadius:28,border:`1px solid ${data.border}`,background:data.bg,
       padding:isDesktop?"40px 44px":"26px 22px",
       boxShadow:"0 1px 3px rgba(0,0,0,0.05)",
