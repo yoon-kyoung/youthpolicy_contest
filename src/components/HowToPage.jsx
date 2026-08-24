@@ -158,13 +158,9 @@ function Section({ section, isDesktop, sectionRef }) {
         <h3 style={{ fontSize: isDesktop ? 22 : 18, fontWeight: 800, color: '#111827', margin: 0 }}>{section.title}</h3>
       </div>
       <p style={{ fontSize: 14, color: '#6b7280', margin: '0 0 20px', lineHeight: 1.6 }}>{section.lead}</p>
-      <div style={{ display: 'flex', flexDirection: isDesktop ? 'row' : 'column', gap: 28 }}>
-        <div style={{ flex: isDesktop ? '0 0 320px' : '1 1 auto' }}>
-          <TipList tips={section.tips} />
-        </div>
-        <div style={{ flex: 1, minWidth: 0 }}>
-          <Gallery images={section.images} isDesktop={isDesktop} />
-        </div>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+        <Gallery images={section.images} isDesktop={isDesktop} />
+        <TipList tips={section.tips} />
       </div>
     </section>
   )
