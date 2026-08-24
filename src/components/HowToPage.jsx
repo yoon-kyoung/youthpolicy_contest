@@ -7,6 +7,7 @@ import searchCompare from '../assets/howto/search-compare.jpg'
 import proposalHome from '../assets/howto/proposal-home.jpg'
 import communityHome from '../assets/howto/community-home.jpg'
 import policyDetail from '../assets/howto/policy-detail.jpg'
+import policyDetailDocs from '../assets/howto/policy-detail-docs.jpg'
 import mypageHome from '../assets/howto/mypage-home.jpg'
 import mypageApplications from '../assets/howto/mypage-applications.jpg'
 import mypageSaved from '../assets/howto/mypage-saved.jpg'
@@ -44,10 +45,15 @@ const SECTIONS = [
       '인기순·마감임박순·지원금 큰 순·최신순으로 정렬하고, "마감 제외"로 끝난 정책은 숨길 수 있어요.',
       '"정책 비교하기"를 누르고 카드를 최대 3개 선택하면 나란히 비교할 수 있어요.',
       '비교 화면에서 "AI 차이점 분석"을 누르면 정책 간 실질적인 차이와 상황별 추천을 자동으로 정리해줘요.',
+      '카드를 누르면 정책 상세 화면으로 이동해요. 사업 개요, 신청 방법, 필요 서류, 핵심 정보(대상·기관·기한·금액)를 한 화면에서 확인할 수 있어요.',
+      '정책 상세에서 별 아이콘으로 저장하고, 공유 아이콘으로 링크를 복사해 다른 사람에게 보낼 수 있어요. 온라인 신청·공식 홈페이지 버튼도 있어요.',
+      '정책 상세 화면 하단에는 제목 키워드를 기반으로 비슷한 정책도 함께 추천해줘요.',
     ],
     images: [
       { src: searchList, caption: '카테고리·지역·부처 필터와 정책 카드 목록' },
       { src: searchCompare, caption: '정책 3개 비교 + AI 차이점 분석 결과' },
+      { src: policyDetail, caption: '정책 상세 — 핵심 정보와 저장·공유' },
+      { src: policyDetailDocs, caption: '정책 상세 — 신청 방법과 필요 서류' },
     ],
   },
   {
@@ -103,21 +109,6 @@ const SECTIONS = [
       { src: mypageHome, caption: '프로필 · 신청 캘린더' },
       { src: mypageApplications, caption: '신청 내역 — 단계별 상태 체크' },
       { src: mypageSaved, caption: '저장한 정책 — 드래그로 순서 변경' },
-    ],
-  },
-  {
-    id: 'detail',
-    icon: 'description',
-    title: '정책 상세',
-    lead: '검색·챗봇·마이페이지 어디서든 카드를 누르면 이 화면으로 이동해요.',
-    tips: [
-      '사업 개요, 신청 방법, 필요 서류, 핵심 정보(대상·기관·기한·금액)를 한 화면에서 확인할 수 있어요.',
-      '별 아이콘으로 저장하고, 공유 아이콘으로 링크를 복사해 다른 사람에게 보낼 수 있어요.',
-      '온라인 신청이나 공식 홈페이지로 바로 이동하는 버튼이 있어요.',
-      '화면 하단에는 제목 키워드를 기반으로 비슷한 정책도 함께 추천해줘요.',
-    ],
-    images: [
-      { src: policyDetail, caption: '정책 상세 — 핵심 정보와 저장·공유' },
     ],
   },
 ]
