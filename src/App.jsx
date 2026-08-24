@@ -4070,7 +4070,7 @@ const TESTIMONIALS=[
 
 function AdoptedProposalCard({t,isDesktop}){
   return(
-    <div style={{background:"white",border:"1.5px solid #DCFCE7",borderRadius:24,padding:isDesktop?"32px 36px":"22px 20px",boxShadow:"0 1px 3px rgba(0,0,0,0.05)",width:"100%",boxSizing:"border-box"}}>
+    <div style={{background:"white",border:"1.5px solid #DCFCE7",borderRadius:24,padding:isDesktop?"32px 36px":"22px 20px",boxShadow:"0 1px 3px rgba(0,0,0,0.05)",width:"100%",boxSizing:"border-box",minHeight:isDesktop?400:"auto",display:"flex",flexDirection:"column",justifyContent:"center"}}>
       <div style={{display:"flex",alignItems:"center",gap:12,marginBottom:18}}>
         <span style={{width:48,height:48,borderRadius:"50%",background:"#F1F5F9",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>
           <Icon name="person" size={26} color="#94a3b8"/>
@@ -4285,7 +4285,7 @@ function AboutPage({onBack,bp}){
           <AboutCarousel isDesktop={isDesktop}/>
         </div>
 
-        <div style={{maxWidth:760,margin:"0 auto",padding:isDesktop?"16px 40px 40px":"12px 18px 28px"}}>
+        <div style={{maxWidth:1100,margin:"0 auto",padding:isDesktop?"16px 64px 40px":"12px 18px 28px"}}>
           <h3 style={{fontSize:isDesktop?22:18,fontWeight:800,color:"#111827",textAlign:"center",margin:"0 0 8px"}}>실제 정책제안 후기</h3>
           <p style={{fontSize:13,color:"#6b7280",textAlign:"center",margin:"0 0 24px"}}>청년ON에 올라온 제안이 실제 정책으로 이어진 이야기예요.</p>
           <TestimonialCarousel isDesktop={isDesktop}/>
