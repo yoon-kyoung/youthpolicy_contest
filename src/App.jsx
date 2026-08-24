@@ -4070,7 +4070,7 @@ const TESTIMONIALS=[
 
 function AdoptedProposalCard({t,isDesktop}){
   return(
-    <div style={{background:"white",border:"1.5px solid #DCFCE7",borderRadius:24,padding:isDesktop?"32px 36px":"22px 20px",boxShadow:"0 1px 3px rgba(0,0,0,0.05)",width:"100%",boxSizing:"border-box",minHeight:isDesktop?400:"auto",display:"flex",flexDirection:"column",justifyContent:"center"}}>
+    <div style={{background:"white",border:"1.5px solid #DCFCE7",borderRadius:24,padding:isDesktop?"32px 36px":"22px 20px",boxShadow:"0 1px 3px rgba(0,0,0,0.05)",width:"100%",boxSizing:"border-box",minHeight:isDesktop?340:"auto",display:"flex",flexDirection:"column",justifyContent:"center"}}>
       <div style={{display:"flex",alignItems:"center",gap:12,marginBottom:18}}>
         <span style={{width:48,height:48,borderRadius:"50%",background:"#F1F5F9",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>
           <Icon name="person" size={26} color="#94a3b8"/>
