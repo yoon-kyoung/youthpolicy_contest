@@ -1,6 +1,7 @@
 ﻿import { useState, useMemo, useEffect, useRef, useCallback } from "react";
 import { createPortal } from "react-dom";
 import MyPageContainer from "./components/mypage/MyPageContainer";
+import HowToPage from "./components/HowToPage";
 import {
   Search, Bot, User, MessageCircle,
   Sparkles, ClipboardList, Calendar,
@@ -3905,6 +3906,32 @@ function Sidebar({page,setPage,favIds,user,open,setOpen,onLogoClick}){
         })}
       </nav>
 
+      <button
+        onClick={()=>setPage("howto")}
+        style={{
+          display:"flex",alignItems:"center",
+          gap:open?12:0,
+          padding:open?"11px 14px":"11px 0",
+          justifyContent:open?"flex-start":"center",
+          borderRadius:12,border:"none",cursor:"pointer",
+          background:"transparent",color:"#475569",
+          fontSize:14,fontWeight:400,
+          transition:"all 0.15s",textAlign:"left",
+          width:"100%",marginTop:4,borderTop:"1px solid #F1F5F9",paddingTop:15,
+        }}
+        onMouseEnter={e=>{
+          e.currentTarget.style.background="#F8FAFC";
+          if(!open){const r=e.currentTarget.getBoundingClientRect();setNavTooltip({label:"사용 방법",top:r.top+r.height/2,left:r.right+10});}
+        }}
+        onMouseLeave={e=>{
+          e.currentTarget.style.background="transparent";
+          setNavTooltip(null);
+        }}
+      >
+        <Icon name="help" size={18} color="#475569"/>
+        {open&&<span style={{whiteSpace:"nowrap",overflow:"hidden"}}>사용 방법</span>}
+      </button>
+
       {open&&(
         <>
           {user?.user_metadata?.role==="admin"&&(
@@ -4412,6 +4439,10 @@ function TopNav({page,setPage,favIds,user,onLogout,themeKey,onThemeChange,fontSc
               {n.page==="mypage"&&favIds.size>0&&<span style={{marginLeft:2,fontSize:11,background:'var(--accent)',color:"#fff",borderRadius:99,padding:"1px 6px"}}>{favIds.size}</span>}
             </button>
           ))}
+          <button onClick={()=>setPage("howto")} title="사용 방법" style={{display:"flex",alignItems:"center",justifyContent:"center",width:32,height:32,marginLeft:4,borderRadius:"50%",border:"none",cursor:"pointer",background:"transparent",color:"#6b7280",transition:"all 0.15s"}}
+            onMouseEnter={e=>{e.currentTarget.style.background="#f8fafc";e.currentTarget.style.color="#111827";}}
+            onMouseLeave={e=>{e.currentTarget.style.background="transparent";e.currentTarget.style.color="#6b7280";}}
+          ><Icon name="help" size={17} color="currentColor"/></button>
         </nav>
         <div style={{display:"flex",gap:8,alignItems:"center",marginLeft:8}}>
           {!user&&onFontInc&&<FontSizeControl scale={fontScale} onInc={onFontInc} onDec={onFontDec}/>}
@@ -4672,6 +4703,18 @@ export default function App(){
     );
   }
 
+  if(page==="howto"){
+    return(
+      <div style={{height:"calc(100vh / var(--font-scale,1))",overflow:"hidden",display:"flex",flexDirection:"column",fontFamily:"'Pretendard Variable','Apple SD Gothic Neo','Noto Sans KR',sans-serif"}}>
+        <style>{GLOBAL_CSS}</style>
+        <ThemeStyle color={theme.color} colorDark={theme.colorDark} colorBg={theme.colorBg} colorBgActive={theme.colorBgActive} colorShadow={theme.colorShadow} orbColor1={theme.orbColor1} orbColor2={theme.orbColor2} headerBg={theme.headerBg} bodyBg={theme.bodyBg}/>
+        <div style={{flex:1,overflow:"hidden",display:"flex",flexDirection:"column"}}>
+          <HowToPage onBack={()=>navigateTo("chatbot")} bp={bp}/>
+        </div>
+      </div>
+    );
+  }
+
   if(bp.isDesktop){
     return(
       <div style={{display:"flex",height:"calc(100vh / var(--font-scale, 1))",overflow:"hidden",fontFamily:"'Pretendard Variable','Apple SD Gothic Neo','Noto Sans KR',sans-serif"}}>
@@ -4760,6 +4803,8 @@ export default function App(){
                   >알아보기</button>
                 </div>
                 <div style={{display:"flex",gap:6,alignItems:"center",flexShrink:0}}>
+                  <button onClick={()=>navigateTo("howto")} title="사용 방법" style={{width:28,height:28,borderRadius:"50%",background:"none",border:"none",cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",padding:0,flexShrink:0,color:"#6b7280"}}
+                  ><Icon name="help" size={17} color="currentColor"/></button>
                   {!user&&<MobileSettingsMenu fontScale={fontScale} onFontInc={incFont} onFontDec={decFont} themeKey={themeKey} onThemeChange={setThemeKey}/>}
                   <div style={{fontSize:12,color:favIds.size>0?"#b45309":"#9ca3af",fontWeight:600,display:"flex",alignItems:"center",gap:3,whiteSpace:"nowrap",flexShrink:0}}><Icon name="star" size={13} color={favIds.size>0?"#FFD200":"#9ca3af"}/>{favIds.size}건</div>
                   {user?.user_metadata?.role==="admin"&&(
