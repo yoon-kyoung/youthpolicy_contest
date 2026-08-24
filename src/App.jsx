@@ -364,7 +364,8 @@ function CompareModal({policies,onRemove,onClose}){
 
   return(
     <div style={{width:"100%",maxWidth:820,pointerEvents:"auto"}}>
-      <div style={{background:"white",borderRadius:20,padding:"20px 20px 24px",maxHeight:"70vh",overflowY:"auto",boxShadow:"0 -10px 40px rgba(0,0,0,0.18)",border:"1.5px solid #E2E8F0",animation:"fadeUp 0.25s ease"}}>
+      <div style={{background:"white",borderRadius:20,boxShadow:"0 -10px 40px rgba(0,0,0,0.18)",border:"1.5px solid #E2E8F0",animation:"fadeUp 0.25s ease",overflow:"hidden"}}>
+        <div style={{padding:"20px 20px 24px",maxHeight:"70vh",overflowY:"auto"}}>
         <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:16}}>
           <div style={{fontSize:16,fontWeight:800,color:"#111827",display:"flex",alignItems:"center",gap:6}}><Icon name="bar_chart" size={18} color="var(--accent)"/>정책 비교</div>
           <button onClick={onClose} style={{background:"#f1f5f9",border:"none",borderRadius:"50%",width:26,height:26,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center"}}><Icon name="close" size={14} color="#6b7280"/></button>
@@ -454,6 +455,7 @@ function CompareModal({policies,onRemove,onClose}){
               ))}
             </tbody>
           </table>
+        </div>
         </div>
       </div>
     </div>
