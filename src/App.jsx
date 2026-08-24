@@ -4479,6 +4479,10 @@ function BottomNav({page,setPage,user}){
           {mainPage===n.page&&<div style={{width:18,height:2.5,background:'var(--accent)',borderRadius:2,marginTop:1}}/>}
         </button>
       ))}
+      <button onClick={()=>setPage("howto")} style={{flex:"0 0 44px",padding:"10px 0 8px",background:"none",border:"none",cursor:"pointer",display:"flex",flexDirection:"column",alignItems:"center",gap:2,color:'#718096',transition:"color 0.15s"}}>
+        <Icon name="help" size={22} color="#718096"/>
+        <span style={{fontSize:10,fontWeight:500}}>?</span>
+      </button>
     </nav>
   );
 }
