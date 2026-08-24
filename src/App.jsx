@@ -4308,7 +4308,7 @@ function AboutPage({onBack,bp}){
           </div>
         </div>
 
-        <div style={{textAlign:"center",padding:"24px 18px 32px",borderTop:"1px solid #eef2f7",color:"#9ca3af",fontSize:12}}>
+        <div style={{textAlign:"center",padding:"24px 18px 32px",background:"#111827",color:"#ffffff",fontSize:12}}>
           © 2026 청년ON. All rights reserved.
         </div>
       </div>
