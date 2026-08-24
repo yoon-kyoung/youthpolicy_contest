@@ -1892,14 +1892,14 @@ function CommunityView({bp,user,policies,favIds,onToggleFav,onGoProposal,onGoDet
   return(
     <div style={{background:"#f8fafc",minHeight:"100%"}}>
       <div style={{background:"linear-gradient(160deg,#0f172a 0%,var(--accent-dark) 60%,var(--accent) 100%)",padding:bp.isDesktop?"36px 40px 28px":bp.isTablet?"28px 24px 20px":"22px 16px 16px",color:"white"}}>
-        <div style={{maxWidth:860,margin:"0 auto"}}>
+        <div style={{maxWidth:1100,margin:"0 auto"}}>
           <div style={{fontSize:12,opacity:0.6,marginBottom:8}}>청년 ON 커뮤니티</div>
           <h1 style={{fontSize:bp.isDesktop?32:bp.isTablet?24:20,fontWeight:900,margin:"0 0 8px",letterSpacing:"-0.02em",display:"flex",alignItems:"center",gap:10}}>함께 나누는 정책 이야기 <Icon name="forum" size={bp.isDesktop?28:bp.isTablet?22:18} color="rgba(255,255,255,0.75)"/></h1>
           <p style={{fontSize:bp.isDesktop?15:13,opacity:0.7,margin:0}}>실제 신청 후기, 꿀팁, 궁금한 점을 자유롭게 나눠보세요</p>
         </div>
       </div>
       <div style={{background:"white",borderBottom:"1px solid #e5e7eb",padding:bp.isDesktop?"0 40px":"0 14px"}}>
-        <div style={{maxWidth:860,margin:"0 auto",display:"flex",alignItems:"center",justifyContent:"space-between"}}>
+        <div style={{maxWidth:1100,margin:"0 auto",display:"flex",alignItems:"center",justifyContent:"space-between"}}>
           <HScrollFade style={{gap:0,minWidth:0}} fadeColor="#ffffff">
             {cats.map(c=>(
               <button key={c} onClick={()=>setCatFilter(c)} style={{padding:bp.isDesktop?"13px 18px":"11px 14px",border:"none",background:"none",cursor:"pointer",whiteSpace:"nowrap",flexShrink:0,fontSize:bp.isDesktop?14:13,fontWeight:catFilter===c?700:500,color:catFilter===c?"#111827":"#9ca3af",borderBottom:`2.5px solid ${catFilter===c?"#111827":"transparent"}`,transition:"all 0.15s"}}>{c}</button>
@@ -1911,7 +1911,7 @@ function CommunityView({bp,user,policies,favIds,onToggleFav,onGoProposal,onGoDet
         </div>
       </div>
       <div style={{background:"white",borderBottom:"1px solid #f1f5f9",padding:bp.isDesktop?"14px 40px":"12px 14px"}}>
-        <div style={{maxWidth:860,margin:"0 auto",display:"flex",gap:8,alignItems:"center"}}>
+        <div style={{maxWidth:1100,margin:"0 auto",display:"flex",gap:8,alignItems:"center"}}>
           <div style={{position:"relative",flex:1}}>
             <Icon name="search" size={15} color="#9ca3af" style={{position:"absolute",left:12,top:"50%",transform:"translateY(-50%)"}}/>
             <input value={search} onChange={e=>setSearch(e.target.value)} placeholder="제목·내용 검색" style={{width:"100%",padding:"8px 12px 8px 34px",borderRadius:10,border:"1.5px solid #E2E8F0",fontSize:13,fontFamily:"inherit",boxSizing:"border-box",outline:"none"}}/>
@@ -1924,7 +1924,7 @@ function CommunityView({bp,user,policies,favIds,onToggleFav,onGoProposal,onGoDet
         </div>
       </div>
       <div style={{padding:bp.isDesktop?"28px 40px 60px":bp.isTablet?"20px 24px 60px":"14px 14px 80px"}}>
-        <div style={{display:"flex",flexDirection:"column",gap:10,maxWidth:860,margin:"0 auto"}}>
+        <div style={{display:"flex",flexDirection:"column",gap:10,maxWidth:1100,margin:"0 auto"}}>
           {!loadingPosts&&(catFilter==="정책제안 팀모집"||!proposalBannerDismissed)&&(
             <div onClick={()=>onGoProposal?.()} style={{position:"relative",background:"linear-gradient(135deg,var(--accent-dark),var(--accent))",borderRadius:16,padding:bp.isDesktop?"22px 26px":"16px 16px",cursor:"pointer",color:"white",display:"flex",alignItems:"center",gap:16,transition:"transform 0.15s,box-shadow 0.15s"}}
               onMouseEnter={e=>{e.currentTarget.style.transform="translateY(-2px)";e.currentTarget.style.boxShadow="0 10px 28px rgba(0,0,0,0.18)";}}
