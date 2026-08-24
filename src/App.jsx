@@ -363,7 +363,7 @@ function CompareModal({policies,onRemove,onClose}){
   },[signature]);
 
   return(
-    <div style={{width:"100%",maxWidth:820,pointerEvents:"auto"}}>
+    <div style={{width:"100%",maxWidth:policies.length>=3?1100:820,pointerEvents:"auto"}}>
       <div style={{background:"white",borderRadius:20,boxShadow:"0 -10px 40px rgba(0,0,0,0.18)",border:"1.5px solid #E2E8F0",animation:"fadeUp 0.25s ease",overflow:"hidden"}}>
         <div style={{padding:"20px 20px 24px",maxHeight:"70vh",overflowY:"auto"}}>
         <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:16}}>
