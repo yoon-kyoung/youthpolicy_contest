@@ -3036,7 +3036,7 @@ function ProposalGuidePanel({bp,onGoCommunity}){
       {collapsed&&(
         <div style={{position:"relative"}}>
           {/* 말풍선 안내 */}
-          <div style={{position:"absolute",bottom:"100%",right:-8,marginBottom:14,width:180,padding:"12px 14px",borderRadius:16,background:"#ffffff",border:"2px solid var(--accent-bg)",boxShadow:"0 8px 28px var(--accent-shadow)"}}>
+          <div style={{position:"absolute",bottom:"100%",right:-8,marginBottom:14,width:"max-content",whiteSpace:"nowrap",padding:"12px 14px",borderRadius:16,background:"#ffffff",border:"2px solid var(--accent-bg)",boxShadow:"0 8px 28px var(--accent-shadow)"}}>
             <div style={{fontSize:13,fontWeight:800,color:"#111827",lineHeight:1.3}}>정책제안 안내</div>
             <div style={{fontSize:11.5,color:"#6b7280",marginTop:2}}>자주하는 질문</div>
             <div style={{position:"absolute",top:"100%",right:26,width:0,height:0,borderLeft:"9px solid transparent",borderRight:"9px solid transparent",borderTop:"9px solid var(--accent-bg)"}}/>
