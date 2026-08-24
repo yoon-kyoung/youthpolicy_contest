@@ -3726,9 +3726,9 @@ function NotificationBell({user,favIds,policies,onNavigate}){
           {merged.length===0?(
             <div style={{padding:"32px 16px",textAlign:"center",color:"#9ca3af",fontSize:12}}>아직 알림이 없어요</div>
           ):merged.map(n=>(
-            <button key={n.id} onClick={()=>handleClickItem(n)} style={{width:"100%",display:"flex",gap:10,alignItems:"flex-start",padding:"12px 14px",background:n.read?"white":"#F5F9FF",border:"none",borderBottom:"1px solid #f8fafc",cursor:"pointer",textAlign:"left",transition:"background 0.12s"}}
+            <button key={n.id} onClick={()=>handleClickItem(n)} style={{width:"100%",display:"flex",gap:10,alignItems:"flex-start",padding:"12px 14px",background:n.read?"white":"#D6EAFF",border:"none",borderBottom:"1px solid #f8fafc",cursor:"pointer",textAlign:"left",transition:"background 0.12s"}}
               onMouseEnter={e=>e.currentTarget.style.background="#f8fafc"}
-              onMouseLeave={e=>e.currentTarget.style.background=n.read?"white":"#F5F9FF"}
+              onMouseLeave={e=>e.currentTarget.style.background=n.read?"white":"#D6EAFF"}
             >
               <div style={{width:28,height:28,borderRadius:"50%",background:"var(--accent-bg)",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>
                 <Icon name={NOTIF_TYPE_ICON[n.type]||"notifications"} size={14} color="var(--accent)"/>
