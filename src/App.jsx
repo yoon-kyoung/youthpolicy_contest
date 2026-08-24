@@ -3234,7 +3234,7 @@ function PolicyProposalPage({bp,user,onGoCommunity}){
   return(
     <div style={{background:"#f8fafc",minHeight:"100%"}}>
       <div style={{background:"linear-gradient(160deg,#0f172a 0%,var(--accent-dark) 60%,var(--accent) 100%)",padding:bp.isDesktop?"36px 40px 28px":bp.isTablet?"28px 24px 20px":"22px 16px 16px",color:"white"}}>
-        <div style={{maxWidth:860,margin:"0 auto"}}>
+        <div style={{maxWidth:1100,margin:"0 auto"}}>
           <div style={{fontSize:12,opacity:0.6,marginBottom:8}}>청년 정책 제안</div>
           <h1 style={{fontSize:bp.isDesktop?32:bp.isTablet?24:20,fontWeight:900,margin:"0 0 8px",letterSpacing:"-0.02em",display:"flex",alignItems:"center",gap:10}}>필요한 정책을 직접 제안해보세요 <Icon name="campaign" size={bp.isDesktop?28:bp.isTablet?22:18} color="rgba(255,255,255,0.75)"/></h1>
           <p style={{fontSize:bp.isDesktop?15:13,opacity:0.7,margin:0}}>여러분의 목소리가 공감투표를 통해 새로운 청년정책으로 이어질 수 있어요</p>
@@ -3242,7 +3242,7 @@ function PolicyProposalPage({bp,user,onGoCommunity}){
       </div>
 
       <div style={{padding:bp.isDesktop?"28px 40px 60px":bp.isTablet?"20px 24px 60px":"14px 14px 80px"}}>
-        <div style={{maxWidth:860,margin:"0 auto",display:"flex",flexDirection:"column",gap:20}}>
+        <div style={{maxWidth:1100,margin:"0 auto",display:"flex",flexDirection:"column",gap:20}}>
           <ProposalOnboardingCarousel bp={bp}/>
 
           <div style={{background:"var(--accent-bg)",borderRadius:16,border:"1.5px solid #E2E8F0",padding:bp.isDesktop?"14px 24px 10px":"10px 12px 8px"}}>
