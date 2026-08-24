@@ -4285,13 +4285,13 @@ function AboutPage({onBack,bp}){
           <AboutCarousel isDesktop={isDesktop}/>
         </div>
 
-        <div style={{maxWidth:760,margin:"0 auto",padding:isDesktop?"0 40px 8px":"0 18px 8px"}}>
+        <div style={{maxWidth:760,margin:"0 auto",padding:isDesktop?"16px 40px 40px":"12px 18px 28px"}}>
           <h3 style={{fontSize:isDesktop?22:18,fontWeight:800,color:"#111827",textAlign:"center",margin:"0 0 8px"}}>실제 정책제안 후기</h3>
           <p style={{fontSize:13,color:"#6b7280",textAlign:"center",margin:"0 0 24px"}}>청년ON에 올라온 제안이 실제 정책으로 이어진 이야기예요.</p>
           <TestimonialCarousel isDesktop={isDesktop}/>
         </div>
 
-        <div style={{maxWidth:760,margin:"0 auto",padding:isDesktop?"8px 40px 64px":"8px 18px 48px"}}>
+        <div style={{maxWidth:760,margin:"0 auto",padding:isDesktop?"24px 40px 64px":"20px 18px 48px",borderTop:"1px solid #eef2f7"}}>
           <h3 style={{fontSize:isDesktop?22:18,fontWeight:800,color:"#111827",textAlign:"center",margin:"0 0 20px"}}>자주 묻는 질문</h3>
           <div style={{display:"flex",flexDirection:"column",gap:8}}>
             {[{q:"로그인 없이 이용할 수 있나요?",a:"정책 검색과 AI 챗봇은 로그인 없이 이용 가능합니다. 정책 저장, 체크리스트, 맞춤 추천, 커뮤니티 글쓰기·참가하기 기능은 로그인 후 이용하실 수 있어요."},
