@@ -1040,7 +1040,7 @@ function SearchView({favIds,onToggleFav,onGoDetail,bp,policies}){
 
   const myFiltersRow=(
     <div style={{display:"flex",alignItems:"center",gap:6,flexWrap:"wrap"}}>
-      <span style={{fontSize:12,fontWeight:700,color:"#64748B",display:"flex",alignItems:"center",gap:4,flexShrink:0}}><Icon name="bookmark" size={13} color="#64748B"/>내 필터</span>
+      <span style={{fontSize:12,fontWeight:700,color:"var(--accent-dark)",display:"flex",alignItems:"center",gap:4,flexShrink:0}}><Icon name="bookmark" size={13} color="var(--accent-dark)"/>내 필터</span>
       {presets.map(p=>(
         <div key={p.id} style={{display:"flex",alignItems:"center",gap:2,background:"#F8FAFC",border:"1.5px solid #E2E8F0",borderRadius:20,paddingRight:4}}>
           <button onClick={()=>applyPreset(p)} style={{padding:"4px 4px 4px 10px",borderRadius:20,border:"none",background:"none",color:"#334155",fontSize:12,fontWeight:500,cursor:"pointer",whiteSpace:"nowrap"}}>{p.name}</button>
