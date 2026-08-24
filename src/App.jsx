@@ -369,40 +369,9 @@ function CompareModal({policies,onRemove,onClose}){
           <div style={{fontSize:16,fontWeight:800,color:"#111827",display:"flex",alignItems:"center",gap:6}}><Icon name="bar_chart" size={18} color="var(--accent)"/>정책 비교</div>
           <button onClick={onClose} style={{background:"#f1f5f9",border:"none",borderRadius:"50%",width:26,height:26,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center"}}><Icon name="close" size={14} color="#6b7280"/></button>
         </div>
-        <div style={{overflowX:"auto"}}>
-          <table style={{width:"100%",borderCollapse:"collapse",tableLayout:"fixed",minWidth:policies.length*180+100}}>
-            <colgroup>
-              <col style={{width:90}}/>
-              {policies.map(p=><col key={p.id} style={{width:colWidth}}/>)}
-            </colgroup>
-            <thead>
-              <tr>
-                <th style={{width:90}}></th>
-                {policies.map(p=>(
-                  <th key={p.id} style={{textAlign:"left",padding:"0 10px 12px",verticalAlign:"top"}}>
-                    <div style={{display:"flex",alignItems:"flex-start",justifyContent:"space-between",gap:6,minHeight:36}}>
-                      <div style={{fontSize:13,fontWeight:700,color:"#111827",lineHeight:1.4}}>{p.title}</div>
-                      <button onClick={()=>onRemove(p.id)} title="비교함에서 빼기" style={{flexShrink:0,background:"none",border:"none",cursor:"pointer",color:"#cbd5e1",padding:2,display:"flex"}}><Icon name="close" size={14} color="#cbd5e1"/></button>
-                    </div>
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {rows.map(r=>(
-                <tr key={r.label} style={{borderTop:"1px solid #F1F5F9"}}>
-                  <td style={{padding:"10px 10px 10px 0",fontSize:12,fontWeight:700,color:"#64748B",whiteSpace:"nowrap",verticalAlign:"top"}}>{r.label}</td>
-                  {policies.map(p=>(
-                    <td key={p.id} style={{padding:"10px",fontSize:13,color:"#334155",verticalAlign:"top",wordBreak:"break-word"}}>{r.render(p)}</td>
-                  ))}
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
 
         {policies.length>=2&&(
-          <div style={{marginTop:18,paddingTop:16,borderTop:"1px solid #F1F5F9"}}>
+          <div style={{marginBottom:18,paddingBottom:16,borderBottom:"1px solid #F1F5F9"}}>
             <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:10}}>
               <div style={{fontSize:13,fontWeight:800,color:"#111827",display:"flex",alignItems:"center",gap:6}}>
                 <Icon name="smart_toy" size={15} color="var(--accent)"/>AI 차이점 분석
@@ -453,6 +422,38 @@ function CompareModal({policies,onRemove,onClose}){
             )}
           </div>
         )}
+
+        <div style={{overflowX:"auto"}}>
+          <table style={{width:"100%",borderCollapse:"collapse",tableLayout:"fixed",minWidth:policies.length*180+100}}>
+            <colgroup>
+              <col style={{width:90}}/>
+              {policies.map(p=><col key={p.id} style={{width:colWidth}}/>)}
+            </colgroup>
+            <thead>
+              <tr>
+                <th style={{width:90}}></th>
+                {policies.map(p=>(
+                  <th key={p.id} style={{textAlign:"left",padding:"0 10px 12px",verticalAlign:"top"}}>
+                    <div style={{display:"flex",alignItems:"flex-start",justifyContent:"space-between",gap:6,minHeight:36}}>
+                      <div style={{fontSize:13,fontWeight:700,color:"#111827",lineHeight:1.4}}>{p.title}</div>
+                      <button onClick={()=>onRemove(p.id)} title="비교함에서 빼기" style={{flexShrink:0,background:"none",border:"none",cursor:"pointer",color:"#cbd5e1",padding:2,display:"flex"}}><Icon name="close" size={14} color="#cbd5e1"/></button>
+                    </div>
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {rows.map(r=>(
+                <tr key={r.label} style={{borderTop:"1px solid #F1F5F9"}}>
+                  <td style={{padding:"10px 10px 10px 0",fontSize:12,fontWeight:700,color:"#64748B",whiteSpace:"nowrap",verticalAlign:"top"}}>{r.label}</td>
+                  {policies.map(p=>(
+                    <td key={p.id} style={{padding:"10px",fontSize:13,color:"#334155",verticalAlign:"top",wordBreak:"break-word"}}>{r.render(p)}</td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   );
