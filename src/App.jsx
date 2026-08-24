@@ -1760,7 +1760,7 @@ function CommunityPostDetailView({post,bp,user,policies,onGoDetail,favIds,onTogg
                 )}
                 <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:8}}>
                   <div style={{width:26,height:26,borderRadius:"50%",background:"#f1f5f9",display:"flex",alignItems:"center",justifyContent:"center",fontSize:12,fontWeight:700,color:"#374151",flexShrink:0}}>{c.author?.[0]||"?"}</div>
-                  <span style={{fontSize:13,fontWeight:700,color:"#111827"}}>{c.author}</span>
+                  <span style={{fontSize:13,fontWeight:700,color:"#111827"}}>{maskName(c.author)}</span>
                   <span style={{fontSize:11,color:"#9ca3af",marginLeft:"auto"}}>{fmtDate(c.created_at)}</span>
                   {isQnA&&isAuthor&&(
                     <button onClick={()=>handleSelectBest(c)}
@@ -2064,7 +2064,7 @@ function CommunityView({bp,user,policies,favIds,onToggleFav,onGoProposal,onGoDet
 
 // ─── 청년정책 제안 페이지 (역제안 · 공감투표) ──────────────────────────────
 
-const VOTE_THRESHOLD=20;
+const VOTE_THRESHOLD=500;
 
 const PROPOSAL_STATUS_TABS=[
   {value:"all",     label:"전체"},
@@ -4056,6 +4056,106 @@ const ABOUT_CARDS=[
     )},
 ];
 
+const TESTIMONIALS=[
+  {name:"김OO",age:24,location:"서울시 OO구 거주",
+    quote:"자취방 월세가 부담됐는데 지원 조건이 복잡해서 포기하려던 참이었어요. 청년ON 정책제안 게시판에 글을 올렸더니 비슷한 처지의 청년들이 모여 함께 다듬었고, 결국 지자체 조례에 실제로 반영됐어요. 제 목소리가 정책이 될 수 있다는 걸 처음 경험했습니다.",
+    policy:"청년 월세 한시 특별지원 확대"},
+  {name:"이OO",age:27,location:"경기 OO시 거주",
+    quote:"창업 초기엔 자금보다 정보가 더 부족했어요. 제안 글에 달린 댓글들 덕분에 놓치고 있던 지원 조건을 알게 됐고, 그 내용을 반영해 다시 제안했더니 실제로 바우처 지원 대상 범위가 넓어졌습니다.",
+    policy:"청년 창업 지원 바우처 확대"},
+  {name:"박OO",age:29,location:"부산 OO구 거주",
+    quote:"전세임대 조건이 지역 사정을 잘 반영하지 못한다고 느껴서 올린 글이었는데, 담당 부처까지 전달돼서 실제로 요건이 완화됐어요. 청년ON이 아니었으면 어디에 말해야 할지도 몰랐을 거예요.",
+    policy:"청년 전세임대주택 입주요건 완화"},
+];
+
+function AdoptedProposalCard({t,isDesktop}){
+  return(
+    <div style={{background:"white",border:"1.5px solid #DCFCE7",borderRadius:24,padding:isDesktop?"32px 36px":"22px 20px",boxShadow:"0 1px 3px rgba(0,0,0,0.05)",width:"100%",boxSizing:"border-box"}}>
+      <div style={{display:"flex",alignItems:"center",gap:12,marginBottom:18}}>
+        <span style={{width:48,height:48,borderRadius:"50%",background:"#F1F5F9",display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0}}>
+          <Icon name="person" size={26} color="#94a3b8"/>
+        </span>
+        <div style={{flex:1,minWidth:0}}>
+          <div style={{fontSize:15,fontWeight:800,color:"#111827"}}>{t.name}, {t.age}세</div>
+          <div style={{fontSize:12,color:"#9ca3af",marginTop:2}}>{t.location}</div>
+        </div>
+        <span style={{display:"inline-flex",alignItems:"center",gap:4,fontSize:11,fontWeight:700,padding:"4px 11px",borderRadius:20,background:"#F0FDF4",color:"#15803D",border:"1px solid #BBF7D0",flexShrink:0}}>
+          <Icon name="task_alt" size={13} color="#15803D"/>채택됨
+        </span>
+      </div>
+      <p style={{fontSize:14,lineHeight:1.85,color:"#374151",margin:"0 0 20px",fontStyle:"italic"}}>“{t.quote}”</p>
+      <div style={{display:"flex",alignItems:"center",gap:8,paddingTop:16,borderTop:"1px solid #f1f5f9",flexWrap:"wrap"}}>
+        <span style={{fontSize:11,fontWeight:700,color:"#9ca3af"}}>채택 정책</span>
+        <span style={{fontSize:13,fontWeight:700,color:"#15803D"}}>{t.policy}</span>
+      </div>
+    </div>
+  );
+}
+
+function TestimonialCarousel({isDesktop}){
+  const total=TESTIMONIALS.length;
+  const [idx,setIdx]=useState(0);
+  const touchStartX=useRef(null);
+
+  const goPrev=()=>setIdx(i=>(i-1+total)%total);
+  const goNext=()=>setIdx(i=>(i+1)%total);
+
+  const onTouchStart=e=>{touchStartX.current=e.touches[0].clientX;};
+  const onTouchEnd=e=>{
+    if(touchStartX.current==null)return;
+    const dx=e.changedTouches[0].clientX-touchStartX.current;
+    if(dx>50)goPrev();
+    else if(dx<-50)goNext();
+    touchStartX.current=null;
+  };
+
+  const navBtn={
+    position:"absolute",top:"50%",transform:"translateY(-50%)",zIndex:2,
+    width:isDesktop?40:34,height:isDesktop?40:34,borderRadius:"50%",
+    border:"1.5px solid #e5e7eb",background:"white",color:"#374151",cursor:"pointer",
+    display:"flex",alignItems:"center",justifyContent:"center",boxShadow:"0 4px 14px rgba(0,0,0,0.08)",
+    transition:"all 0.12s",
+  };
+
+  if(total===0)return null;
+
+  return(
+    <div style={{position:"relative"}}>
+      {total>1&&(
+        <>
+          <button onClick={goPrev} aria-label="이전 후기" style={{...navBtn,left:isDesktop?-20:-6}}
+            onMouseEnter={e=>{e.currentTarget.style.borderColor="#15803D";e.currentTarget.style.color="#15803D";}}
+            onMouseLeave={e=>{e.currentTarget.style.borderColor="#e5e7eb";e.currentTarget.style.color="#374151";}}
+          ><Icon name="chevron_left" size={isDesktop?20:16} color="currentColor"/></button>
+          <button onClick={goNext} aria-label="다음 후기" style={{...navBtn,right:isDesktop?-20:-6}}
+            onMouseEnter={e=>{e.currentTarget.style.borderColor="#15803D";e.currentTarget.style.color="#15803D";}}
+            onMouseLeave={e=>{e.currentTarget.style.borderColor="#e5e7eb";e.currentTarget.style.color="#374151";}}
+          ><Icon name="chevron_right" size={isDesktop?20:16} color="currentColor"/></button>
+        </>
+      )}
+      <div style={{overflow:"hidden",borderRadius:24}} onTouchStart={onTouchStart} onTouchEnd={onTouchEnd}>
+        <div style={{display:"flex",transform:`translateX(-${idx*100}%)`,transition:"transform 0.4s ease"}}>
+          {TESTIMONIALS.map((t,i)=>(
+            <div key={i} style={{flex:"0 0 100%",boxSizing:"border-box",padding:2}}>
+              <AdoptedProposalCard t={t} isDesktop={isDesktop}/>
+            </div>
+          ))}
+        </div>
+      </div>
+      {total>1&&(
+        <div style={{display:"flex",justifyContent:"center",gap:7,marginTop:18}}>
+          {TESTIMONIALS.map((_,i)=>(
+            <button key={i} onClick={()=>setIdx(i)} aria-label={`${i+1}번째 후기로 이동`} style={{
+              width:idx===i?22:8,height:8,borderRadius:4,border:"none",padding:0,cursor:"pointer",
+              background:idx===i?"#15803D":"#e2e8f0",transition:"all 0.2s",
+            }}/>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
 function AboutCard({data,index,isDesktop}){
   const reverse=isDesktop&&index%2===1;
   return(
@@ -4183,6 +4283,12 @@ function AboutPage({onBack,bp}){
 
         <div style={{maxWidth:920,margin:"0 auto",padding:isDesktop?"48px 64px":"28px 26px"}}>
           <AboutCarousel isDesktop={isDesktop}/>
+        </div>
+
+        <div style={{maxWidth:760,margin:"0 auto",padding:isDesktop?"0 40px 8px":"0 18px 8px"}}>
+          <h3 style={{fontSize:isDesktop?22:18,fontWeight:800,color:"#111827",textAlign:"center",margin:"0 0 8px"}}>실제 정책제안 후기</h3>
+          <p style={{fontSize:13,color:"#6b7280",textAlign:"center",margin:"0 0 24px"}}>청년ON에 올라온 제안이 실제 정책으로 이어진 이야기예요.</p>
+          <TestimonialCarousel isDesktop={isDesktop}/>
         </div>
 
         <div style={{maxWidth:760,margin:"0 auto",padding:isDesktop?"8px 40px 64px":"8px 18px 48px"}}>
