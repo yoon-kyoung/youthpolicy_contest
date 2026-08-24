@@ -4309,7 +4309,8 @@ function AboutPage({onBack,bp}){
         </div>
 
         <div style={{textAlign:"center",padding:"24px 18px 32px",background:"#111827",color:"#ffffff",fontSize:12}}>
-          © 2026 청년ON. All rights reserved.
+          <div>© 2026 청년ON. All rights reserved.</div>
+          <div style={{marginTop:6,color:"#9ca3af"}}>개발자: 최윤경(Choi Yoon Kyoung) · ykchoi1020@gmail.com</div>
         </div>
       </div>
     </div>
