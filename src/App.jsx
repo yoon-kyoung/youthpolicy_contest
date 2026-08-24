@@ -4291,7 +4291,7 @@ function AboutPage({onBack,bp}){
           <TestimonialCarousel isDesktop={isDesktop}/>
         </div>
 
-        <div style={{maxWidth:760,margin:"0 auto",padding:isDesktop?"24px 40px 64px":"20px 18px 48px",borderTop:"1px solid #eef2f7"}}>
+        <div style={{maxWidth:1100,margin:"0 auto",padding:isDesktop?"24px 64px 64px":"20px 18px 48px",borderTop:"1px solid #eef2f7"}}>
           <h3 style={{fontSize:isDesktop?22:18,fontWeight:800,color:"#111827",textAlign:"center",margin:"0 0 20px"}}>자주 묻는 질문</h3>
           <div style={{display:"flex",flexDirection:"column",gap:8}}>
             {[{q:"로그인 없이 이용할 수 있나요?",a:"정책 검색과 AI 챗봇은 로그인 없이 이용 가능합니다. 정책 저장, 체크리스트, 맞춤 추천, 커뮤니티 글쓰기·참가하기 기능은 로그인 후 이용하실 수 있어요."},
