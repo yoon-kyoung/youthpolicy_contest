@@ -407,17 +407,6 @@ function PrivacyNoticePanel({ bp }) {
               챗봇 이용 전 확인해주세요
               <Icon name="arrow_downward" size={13} color="var(--accent)"/>
             </div>
-            {/* 꼬리 */}
-            <div style={{
-              position: 'absolute', top: '100%', right: 26, width: 0, height: 0,
-              borderLeft: '9px solid transparent', borderRight: '9px solid transparent',
-              borderTop: '9px solid var(--accent)',
-            }}/>
-            <div style={{
-              position: 'absolute', top: 'calc(100% - 3px)', right: 26, width: 0, height: 0,
-              borderLeft: '7px solid transparent', borderRight: '7px solid transparent',
-              borderTop: '7px solid #ffffff',
-            }}/>
           </div>
 
           <div
@@ -426,7 +415,7 @@ function PrivacyNoticePanel({ bp }) {
           >
             <span style={{
               position: 'absolute', inset: 0, borderRadius: '50%', zIndex: -1,
-              background: 'var(--accent)', animation: 'pingRing 1.8s cubic-bezier(0,0,0.2,1) infinite',
+              background: 'var(--accent)', animation: 'pulse 1.8s ease-in-out infinite',
             }}/>
             <div style={{
               width: 60, height: 60, borderRadius: '50%',

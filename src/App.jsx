@@ -208,6 +208,8 @@ const CATEGORIES = [
 ];
 export const CAT_LABEL = Object.fromEntries(CATEGORIES.map(c=>[c.value,c.label]));
 export const CAT_ICON  = Object.fromEntries(CATEGORIES.map(c=>[c.value,c.icon]));
+CAT_LABEL.etc = "기타";
+CAT_ICON.etc = "more_horiz";
 
 const MINISTRIES = [
   "전체","고용노동부","중소벤처기업부","교육부","국토교통부","보건복지부",
@@ -468,6 +470,7 @@ export const CAT_COLORS = {
   money:  { bg:"#FEF3C7", border:"#FDE68A", text:"#B45309", dot:"#B45309", grad:"linear-gradient(135deg,#78350F,#B45309)" },
   edu:    { bg:"#EDE9FE", border:"#DDD6FE", text:"#6D28D9", dot:"#6D28D9", grad:"linear-gradient(135deg,#4C1D95,#6D28D9)" },
   health: { bg:"#FCE7F3", border:"#FBCFE8", text:"#BE185D", dot:"#BE185D", grad:"linear-gradient(135deg,#831843,#BE185D)" },
+  etc:    { bg:"#F1F5F9", border:"#E2E8F0", text:"#64748B", dot:"#64748B", grad:"linear-gradient(135deg,#334155,#64748B)" },
 };
 
 const POLICIES = [
