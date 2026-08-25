@@ -1148,7 +1148,7 @@ function SearchView({favIds,onToggleFav,onGoDetail,bp,policies}){
                 <span style={{fontSize:13,color:"#374151",fontWeight:500}}>마감 제외</span>
               </label>
               {query&&<div style={{fontSize:13,color:"#6b7280",whiteSpace:"nowrap"}}>"{query}" 검색 결과</div>}
-              <button onClick={toggleCompareMode} style={{display:"flex",alignItems:"center",gap:6,padding:"8px 14px",borderRadius:20,border:compareMode?"none":"1.5px solid transparent",backgroundImage:compareMode?"none":"linear-gradient(white,white),linear-gradient(90deg,var(--accent),#a855f7,#ec4899,var(--accent))",backgroundOrigin:compareMode?undefined:"border-box",backgroundClip:compareMode?undefined:"padding-box, border-box",WebkitBackgroundClip:compareMode?undefined:"padding-box, border-box",backgroundSize:compareMode?undefined:"100% 100%, 300% auto",animation:compareMode?undefined:"helpGradientMove 3s linear infinite",background:compareMode?"var(--accent)":undefined,color:compareMode?"white":"#475569",fontSize:13,fontWeight:700,cursor:"pointer",whiteSpace:"nowrap",flexShrink:0,marginLeft:"auto"}}><Icon name={compareMode?"close":"bar_chart"} size={15} color={compareMode?"white":"#475569"}/>{compareMode?"비교 모드 종료":"정책 비교하기"}</button>
+              <button onClick={toggleCompareMode} style={{display:"flex",alignItems:"center",gap:6,padding:"8px 14px",borderRadius:20,border:compareMode?"none":"1.5px solid transparent",backgroundImage:compareMode?"none":"linear-gradient(var(--accent-bg),var(--accent-bg)),linear-gradient(90deg,var(--accent),#a855f7,#ec4899,var(--accent))",backgroundOrigin:compareMode?undefined:"border-box",backgroundClip:compareMode?undefined:"padding-box, border-box",WebkitBackgroundClip:compareMode?undefined:"padding-box, border-box",backgroundSize:compareMode?undefined:"100% 100%, 300% auto",animation:compareMode?undefined:"helpGradientMove 3s linear infinite",background:compareMode?"var(--accent)":undefined,color:compareMode?"white":"#475569",fontSize:13,fontWeight:700,cursor:"pointer",whiteSpace:"nowrap",flexShrink:0,marginLeft:"auto"}}><Icon name={compareMode?"close":"bar_chart"} size={15} color={compareMode?"white":"#475569"}/>{compareMode?"비교 모드 종료":"정책 비교하기"}</button>
             </div>
             <div style={{background:"#FFFFFF",border:"1px solid #E2E8F0",borderRadius:12,padding:"12px 16px",display:"flex",flexDirection:"column",gap:10,marginTop:4,filter:compareMode?"grayscale(1) opacity(0.55)":"none",transition:"filter 0.2s"}}>
               <div>
@@ -1462,7 +1462,7 @@ function CommunityWriteView({bp,user,policies,onSubmit,onCancel}){
               </>
             )}
             {isReview&&(
-              <ProposalFormRow label="신청한 정책 (선택)">
+              <ProposalFormRow label={<>신청한 정책<br/>(선택)</>}>
                 <PolicyPickerField policies={policies} value={appliedPolicy} onChange={setAppliedPolicy}/>
                 {appliedPolicy&&(
                   <p style={{fontSize:12,margin:"6px 0 0",color:selfVerified?"#15803D":"#9ca3af",fontWeight:selfVerified?700:500}}>
@@ -2922,8 +2922,8 @@ function ProposalWriteView({category,setCategory,title,setTitle,background,setBa
               <button type="button" onClick={runAiCheck} disabled={aiChecking} style={{padding:"9px 16px",borderRadius:20,background:"white",border:"1.5px solid var(--accent)",color:"var(--accent)",fontSize:13,fontWeight:600,cursor:aiChecking?"default":"pointer",opacity:aiChecking?0.6:1,transition:"opacity 0.15s"}}>
                 {aiChecking?"검토 중...":"AI 검토"}
               </button>
-              <button type="submit" style={{padding:"9px 20px",borderRadius:20,background:"var(--accent)",border:"none",color:"white",fontSize:13,fontWeight:600,cursor:"pointer",transition:"opacity 0.15s"}}
-                onMouseEnter={e=>e.currentTarget.style.opacity="0.85"} onMouseLeave={e=>e.currentTarget.style.opacity="1"}
+              <button type="submit" disabled={aiResult&&checkedSignature===signature&&aiResult.profanity} style={{padding:"9px 20px",borderRadius:20,background:(aiResult&&checkedSignature===signature&&aiResult.profanity)?"#E5E7EB":"var(--accent)",border:"none",color:(aiResult&&checkedSignature===signature&&aiResult.profanity)?"#9CA3AF":"white",fontSize:13,fontWeight:600,cursor:(aiResult&&checkedSignature===signature&&aiResult.profanity)?"default":"pointer",transition:"opacity 0.15s"}}
+                onMouseEnter={e=>{if(!(aiResult&&checkedSignature===signature&&aiResult.profanity))e.currentTarget.style.opacity="0.85"}} onMouseLeave={e=>e.currentTarget.style.opacity="1"}
               >제안하기</button>
             </div>
           </form>
@@ -2945,7 +2945,8 @@ const PROPOSAL_GUIDE_STEPS=[
   "카테고리를 고르고 제목·내용을 작성해 제안을 등록해요",
   "등록된 제안은 다른 청년들의 공감투표를 받아요",
   `공감이 ${VOTE_THRESHOLD}건 이상 모이면 담당 부처 매칭이 자동으로 시작돼요`,
-  "담당 부처의 검토가 끝나면 답변이 등록되고 상태가 업데이트돼요",
+  "담당 부처의 검토가 끝나면 답변이 등록되고 '답변완료' 상태로 바뀌어요",
+  "제안이 실제 정책에 반영되면 '반영완료' 상태로 바뀌고 시행 시기까지 안내돼요",
 ];
 
 const PROPOSAL_FAQ=[
@@ -2963,7 +2964,9 @@ const PROPOSAL_ONBOARDING_META=[
   {icon:"sync",        gradient:["#60A5FA","#1D4ED8"], title:"부처 매칭 시작",
     detail:"임계치를 넘으면 제안 상태가 '부처매칭중'으로 바뀌고, 관련 정책을 담당하는 부처가 자동으로 연결돼요."},
   {icon:"check_circle",gradient:["#FBBF24","#B45309"], title:"답변 받기",
-    detail:"검토가 끝나면 '답변완료'로, 실제 정책에 반영되면 '반영완료'로 상태가 바뀌며 시행 시기까지 안내받을 수 있어요."},
+    detail:"담당 부처의 검토가 끝나면 '답변완료' 상태로 바뀌고, 부처의 답변 내용을 확인할 수 있어요."},
+  {icon:"celebration",  gradient:["#34D399","#047857"], title:"정책 반영되기",
+    detail:"답변받은 제안이 채택되어 실제 정책에 반영되면 '반영완료' 상태로 바뀌고, 시행 시기까지 함께 안내받을 수 있어요."},
 ];
 const PROPOSAL_ONBOARDING_STEPS=PROPOSAL_GUIDE_STEPS.map((summary,i)=>({...PROPOSAL_ONBOARDING_META[i],summary}));
 const PROPOSAL_ONBOARDING_TIMELINE_META=PROPOSAL_ONBOARDING_STEPS.map(s=>({label:s.title,icon:s.icon,summary:s.summary,detail:s.detail}));
