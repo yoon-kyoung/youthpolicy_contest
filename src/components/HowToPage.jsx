@@ -152,7 +152,7 @@ function ShotCarousel({ shots, isDesktop }) {
           </div>
         </div>
       </div>
-      <p style={{ margin: '14px 0 0', fontSize: 13.5, fontWeight: 700, color: '#374151', lineHeight: 1.5, textAlign: 'center', minHeight: 40 }}>{shots[idx].caption}</p>
+      <p style={{ margin: '14px 0 0', fontSize: 13.5, color: '#374151', lineHeight: 1.5, textAlign: 'center', minHeight: 40 }}>{shots[idx].caption}</p>
       {total > 1 && (
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10, marginTop: 12 }}>
           <div style={{ display: 'flex', gap: 6 }}>
@@ -179,7 +179,7 @@ function Section({ section, isDesktop, sectionRef }) {
         </div>
         <h3 style={{ fontSize: isDesktop ? 22 : 18, fontWeight: 800, color: '#111827', margin: 0 }}>{section.title}</h3>
       </div>
-      <p style={{ fontSize: 14, color: '#6b7280', margin: '0 0 20px', lineHeight: 1.6 }}>{section.lead}</p>
+      <p style={{ fontSize: 14, fontWeight: 700, color: '#6b7280', margin: '0 0 20px', lineHeight: 1.6 }}>{section.lead}</p>
       <ShotCarousel shots={section.shots} isDesktop={isDesktop} />
     </section>
   )
