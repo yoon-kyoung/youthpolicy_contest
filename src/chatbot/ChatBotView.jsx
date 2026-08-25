@@ -425,7 +425,7 @@ function PrivacyNoticePanel({ bp }) {
           >
             <span style={{
               position: 'absolute', inset: 0, borderRadius: '50%', zIndex: -1,
-              background: 'var(--accent)', animation: 'pulse 1.8s ease-in-out infinite',
+              background: 'var(--accent)', animation: 'pingRing 1.8s cubic-bezier(0,0,0.2,1) infinite',
             }}/>
             <div style={{
               width: 60, height: 60, borderRadius: '50%',
