@@ -818,9 +818,9 @@ export default function ChatBotView({ bp, favIds, onToggleFav, onGoDetail, reset
         }}
         style={{ height:'100%', overflow:'hidden', background:'#ffffff', position:'relative' }}
       >
-        <div style={{position:'absolute',left:'24.9%',top:'52%',width:'28.8vw',aspectRatio:'1',borderRadius:'50%',background:'var(--orb1)',filter:'blur(12vw)',pointerEvents:'none',zIndex:0}}/>
-        <div style={{position:'absolute',left:'43.2%',top:'46%',width:'19.4vw',aspectRatio:'1',borderRadius:'50%',background:'var(--orb2)',filter:'blur(8vw)',pointerEvents:'none',zIndex:0}}/>
-        <div ref={mouseGlowRef} style={{position:'absolute',inset:0,filter:'blur(6vw)',opacity:0.45,pointerEvents:'none',zIndex:0,transition:'background 0.2s ease-out'}}/>
+        <div style={{position:'absolute',left:'24.9%',top:'52%',width:'16vw',aspectRatio:'1',borderRadius:'50%',background:'var(--orb1)',filter:'blur(6vw)',pointerEvents:'none',zIndex:0}}/>
+        <div style={{position:'absolute',left:'43.2%',top:'46%',width:'11vw',aspectRatio:'1',borderRadius:'50%',background:'var(--orb2)',filter:'blur(4vw)',pointerEvents:'none',zIndex:0}}/>
+        <div ref={mouseGlowRef} style={{position:'absolute',inset:0,filter:'blur(3vw)',opacity:0.45,pointerEvents:'none',zIndex:0,transition:'background 0.2s ease-out'}}/>
         {/* Privacy Notice — 오른쪽 하단 고정 (모바일은 본문 텍스트를 가려서 숨김) */}
         {bp!=='mobile'&&<PrivacyNoticePanel bp={bp}/>}
         {/* 실시간 인기 검색어 — 오른쪽 상단 고정 (모바일은 본문 텍스트를 가려서 숨김) */}
