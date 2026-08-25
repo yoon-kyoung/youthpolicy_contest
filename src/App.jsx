@@ -4755,7 +4755,7 @@ export default function App(){
                 <div style={{display:"flex",gap:8,alignItems:"center"}}>
                   {!user&&<FontSizeControl scale={fontScale} onInc={incFont} onDec={decFont}/>}
                   {!user&&<PaletteDots themeKey={themeKey} onChange={setThemeKey}/>}
-                  <button onClick={()=>navigateTo("about")} style={{background:"none",border:"1.5px solid #e2e8f0",cursor:"pointer",color:"#6b7280",fontSize:13,fontWeight:600,padding:"5px 10px",borderRadius:8,transition:"all 0.12s"}}
+                  <button onClick={()=>navigateTo("about")} style={{background:"linear-gradient(90deg,#eff6ff,#f5f3ff,#fdf2f8)",border:"1.5px solid #e2e8f0",cursor:"pointer",color:"#6b7280",fontSize:13,fontWeight:600,padding:"5px 10px",borderRadius:8,transition:"all 0.12s"}}
                     onMouseEnter={e=>{e.currentTarget.style.borderColor="var(--accent)";e.currentTarget.style.color="var(--accent)";}}
                     onMouseLeave={e=>{e.currentTarget.style.borderColor="#e2e8f0";e.currentTarget.style.color="#6b7280";}}
                   >청년ON 알아보기</button>
