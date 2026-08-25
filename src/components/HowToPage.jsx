@@ -1,4 +1,4 @@
-import { useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import Icon from '../styles/Icon'
 import chatbotHome from '../assets/howto/chatbot-home.jpg'
 import chatbotConversation from '../assets/howto/chatbot-conversation.jpg'
@@ -134,10 +134,24 @@ export default function HowToPage({ onBack, bp }) {
   const isDesktop = bp?.isDesktop
   const h = isDesktop ? 56 : 52
   const refs = useRef({})
+  const scrollRef = useRef(null)
+  const [activeId, setActiveId] = useState(SECTIONS[0].id)
 
   const scrollTo = (id) => {
     refs.current[id]?.scrollIntoView({ behavior: 'smooth', block: 'start' })
   }
+
+  useEffect(() => {
+    const root = scrollRef.current
+    if (!root) return
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) setActiveId(entry.target.id.replace('howto-', ''))
+      })
+    }, { root, rootMargin: '-20% 0px -70% 0px', threshold: 0 })
+    SECTIONS.forEach(s => { if (refs.current[s.id]) observer.observe(refs.current[s.id]) })
+    return () => observer.disconnect()
+  }, [])
 
   return (
     <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden', background: '#F5F9FC', fontFamily: "'Pretendard Variable','Apple SD Gothic Neo','Noto Sans KR',sans-serif" }}>
@@ -152,23 +166,31 @@ export default function HowToPage({ onBack, bp }) {
         </div>
       </div>
 
-      <div style={{ flex: 1, overflowY: 'auto' }}>
+      <div ref={scrollRef} style={{ flex: 1, overflowY: 'auto' }}>
         <div style={{ background: 'linear-gradient(135deg,var(--accent-dark),var(--accent))', color: 'white', padding: isDesktop ? '56px 40px 40px' : '36px 20px 28px', textAlign: 'center' }}>
           <span style={{ display: 'inline-block', background: 'rgba(255,255,255,0.2)', border: '1px solid rgba(255,255,255,0.3)', borderRadius: 20, padding: '4px 16px', fontSize: 13, fontWeight: 700, marginBottom: 16 }}>
             <Icon name="help" size={14} color="white" style={{ marginRight: 4, verticalAlign: '-2px' }} />청년ON 사용 방법
           </span>
-          <h2 style={{ fontSize: isDesktop ? 30 : 22, fontWeight: 900, margin: '0 0 10px', lineHeight: 1.35, letterSpacing: '-0.02em' }}>화면마다 실제로 어떤 기능이 있는지<br />하나씩 캡처해서 알려드려요</h2>
+          <h2 style={{ fontSize: isDesktop ? 30 : 22, fontWeight: 900, margin: '0 0 10px', lineHeight: 1.35, letterSpacing: '-0.02em' }}>화면마다 실제로 어떤 기능이 있는지<br />자세하게 알려드려요</h2>
           <p style={{ fontSize: isDesktop ? 14 : 13, opacity: 0.85, maxWidth: 480, margin: '0 auto', lineHeight: 1.7 }}>궁금한 화면을 아래에서 눌러 바로 이동해보세요.</p>
         </div>
 
         <div style={{ position: 'sticky', top: 0, zIndex: 10, background: 'rgba(245,249,252,0.92)', backdropFilter: 'blur(6px)', borderBottom: '1px solid #e5e7eb' }}>
-          <div style={{ maxWidth: 1100, margin: '0 auto', padding: isDesktop ? '12px 40px' : '10px 16px', display: 'flex', gap: 8, overflowX: 'auto' }}>
-            {SECTIONS.map(s => (
-              <button key={s.id} onClick={() => scrollTo(s.id)} style={{ flexShrink: 0, display: 'flex', alignItems: 'center', gap: 5, padding: '7px 14px', borderRadius: 20, border: '1.5px solid #e2e8f0', background: 'white', color: '#374151', fontSize: 13, fontWeight: 600, cursor: 'pointer', whiteSpace: 'nowrap', transition: 'all 0.15s' }}
-                onMouseEnter={e => { e.currentTarget.style.borderColor = 'var(--accent)'; e.currentTarget.style.color = 'var(--accent)' }}
-                onMouseLeave={e => { e.currentTarget.style.borderColor = '#e2e8f0'; e.currentTarget.style.color = '#374151' }}
-              ><Icon name={s.icon} size={14} color="currentColor" />{s.title}</button>
-            ))}
+          <div style={{ maxWidth: 1100, margin: '0 auto', padding: isDesktop ? '10px 40px' : '8px 16px' }}>
+            <div style={{ display: 'flex', overflowX: 'auto', gap: 4, padding: 6, background: '#eef2f7', borderRadius: 12 }}>
+              {SECTIONS.map(s => {
+                const active = activeId === s.id
+                return (
+                  <button key={s.id} onClick={() => scrollTo(s.id)} style={{
+                    flex: '1 0 auto', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6,
+                    padding: '10px 18px', fontSize: 14, lineHeight: 1, cursor: 'pointer', border: 'none', borderRadius: 9,
+                    whiteSpace: 'nowrap', transition: 'all 0.15s',
+                    color: active ? 'var(--accent)' : '#6b7280', fontWeight: active ? 700 : 500,
+                    background: active ? '#ffffff' : 'transparent', boxShadow: active ? '0 1px 4px rgba(0,0,0,0.1)' : 'none',
+                  }}><Icon name={s.icon} size={15} color="currentColor" />{s.title}</button>
+                )
+              })}
+            </div>
           </div>
         </div>
 
