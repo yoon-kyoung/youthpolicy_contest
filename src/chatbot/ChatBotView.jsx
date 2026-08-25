@@ -411,7 +411,7 @@ function PrivacyNoticePanel({ bp }) {
             <div style={{
               position: 'absolute', top: '100%', right: 26, width: 0, height: 0,
               borderLeft: '9px solid transparent', borderRight: '9px solid transparent',
-              borderTop: '9px solid var(--accent-bg)',
+              borderTop: '9px solid var(--accent)',
             }}/>
             <div style={{
               position: 'absolute', top: 'calc(100% - 3px)', right: 26, width: 0, height: 0,

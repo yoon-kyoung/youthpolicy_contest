@@ -151,3 +151,4 @@ fontTools(`pip install fonttools`)로 `TTFont(path)`를 열어 `'fvar' in f`와 
 | `person_remove` | 마이페이지 계정 관리 - 회원 탈퇴 |
 | `sentiment_very_dissatisfied` | 마이페이지 회원 탈퇴 확인 모달 |
 | `business` | 마이페이지 전공 분야 - 경상/경영 |
+| `menu_open` | 데스크톱 사이드바 펼침 상태 - 메뉴 접기 버튼 |
