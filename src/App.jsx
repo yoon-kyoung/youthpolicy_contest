@@ -18,6 +18,7 @@ import { loadPolicies } from "./chatbot/policiesStore";
 import { API_BASE } from "./chatbot/config";
 import { supabase, getDisplayName } from "./supabase";
 import Icon from "./styles/Icon";
+import LegalFooterLinks, { LegalModal } from "./components/LegalModal";
 
 // ─── policies.json → 내부 포맷 변환 ───────────────────────────────────────
 
@@ -3481,6 +3482,7 @@ function SignupPage({setPage,bp}){
   const [showPw,setShowPw]=useState(false);
   const [agreed,setAgreed]=useState(false);
   const [errors,setErrors]=useState({});
+  const [legalModal,setLegalModal]=useState(null);
 
   const set=k=>e=>setForm(prev=>({...prev,[k]:e.target.value}));
 
@@ -3609,10 +3611,11 @@ function SignupPage({setPage,bp}){
                   {agreed&&<Icon name="check" size={13} color="white"/>}
                 </div>
                 <span style={{fontSize:13,color:"#374151",lineHeight:1.6}}>
-                  <span style={{color:"var(--accent)",fontWeight:600,cursor:"pointer"}}>이용약관</span> 및 <span style={{color:"var(--accent)",fontWeight:600,cursor:"pointer"}}>개인정보처리방침</span>에 동의합니다.
+                  <span onClick={e=>{e.preventDefault();e.stopPropagation();setLegalModal("terms");}} style={{color:"var(--accent)",fontWeight:600,cursor:"pointer"}}>이용약관</span> 및 <span onClick={e=>{e.preventDefault();e.stopPropagation();setLegalModal("privacy");}} style={{color:"var(--accent)",fontWeight:600,cursor:"pointer"}}>개인정보처리방침</span>에 동의합니다.
                 </span>
               </label>
               {errors.agreed&&<div style={{...errStyle,marginTop:-8}}>{errors.agreed}</div>}
+              {legalModal&&<LegalModal type={legalModal} onClose={()=>setLegalModal(null)}/>}
               {errors.msg&&<div style={{fontSize:13,color:"#dc2626",background:"#fef2f2",border:"1px solid #fecaca",borderRadius:8,padding:"10px 14px"}}>{errors.msg}</div>}
 
               <button type="submit" disabled={loading} style={{width:"100%",padding:"13px",borderRadius:10,border:"none",background:"var(--accent)",color:"white",fontSize:15,fontWeight:800,cursor:loading?"default":"pointer",marginTop:4,transition:"opacity 0.15s",boxShadow:"0 4px 20px var(--accent-shadow)",opacity:loading?0.7:1}}>
@@ -4343,7 +4346,7 @@ function AboutPage({onBack,bp}){
         </div>
 
         <div style={{textAlign:"center",padding:"24px 18px 32px",background:"#111827",color:"#ffffff",fontSize:12}}>
-          <div>개발자: 최윤경(Choi Yoon Kyoung) · ykchoi1020@gmail.com</div>
+          <LegalFooterLinks/>
           <div style={{marginTop:6,color:"#9ca3af"}}>© 2026 청년ON. All rights reserved.</div>
         </div>
       </div>

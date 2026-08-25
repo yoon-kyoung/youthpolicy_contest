@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import Icon from '../styles/Icon'
+import LegalFooterLinks from './LegalModal'
 import chatbotHome from '../assets/howto/chatbot-home.jpg'
 import chatbotConversation from '../assets/howto/chatbot-conversation.jpg'
 import chatbotTrending from '../assets/howto/chatbot-trending.jpg'
@@ -263,7 +264,7 @@ export default function HowToPage({ onBack, bp }) {
         </div>
 
         <div style={{ textAlign: 'center', padding: '24px 18px 32px', background: '#111827', color: '#ffffff', fontSize: 12 }}>
-          <div>개발자: 최윤경(Choi Yoon Kyoung) · ykchoi1020@gmail.com</div>
+          <LegalFooterLinks />
           <div style={{ marginTop: 6, color: '#9ca3af' }}>© 2026 청년ON. All rights reserved.</div>
         </div>
       </div>
