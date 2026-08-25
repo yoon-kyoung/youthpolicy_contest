@@ -105,7 +105,9 @@ function ShotGrid({ shots, isDesktop }) {
     <div style={{ display: 'grid', gridTemplateColumns: isDesktop ? 'repeat(auto-fit, minmax(260px, 1fr))' : '1fr', gap: 24 }}>
       {shots.map((s, i) => (
         <div key={i} style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-          <img src={s.img} alt={s.caption} style={{ width: '100%', display: 'block', borderRadius: 12, border: '1px solid #e5e7eb', boxShadow: '0 2px 10px rgba(0,0,0,0.06)' }} />
+          <div style={{ aspectRatio: '16 / 10', background: '#f8fafc', borderRadius: 12, border: '1px solid #e5e7eb', boxShadow: '0 2px 10px rgba(0,0,0,0.06)', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <img src={s.img} alt={s.caption} style={{ width: '100%', height: '100%', objectFit: 'contain', display: 'block' }} />
+          </div>
           <p style={{ margin: 0, fontSize: 13.5, color: '#374151', lineHeight: 1.5 }}>{s.caption}</p>
         </div>
       ))}

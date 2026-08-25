@@ -147,3 +147,7 @@ fontTools(`pip install fonttools`)로 `TTFont(path)`를 열어 `'fvar' in f`와 
 | `error` | 정책제안 작성 - AI 검토 경고(부적절한 표현) |
 | `event` | 마이페이지 신청 내역 - 마감임박순 정렬, 마감내역 섹션 |
 | `arrow_downward` | 챗봇 접힌 상태 말풍선 안내 - 펼치기 유도 화살표 |
+| `logout` | 마이페이지 계정 관리 - 로그아웃 |
+| `person_remove` | 마이페이지 계정 관리 - 회원 탈퇴 |
+| `sentiment_very_dissatisfied` | 마이페이지 회원 탈퇴 확인 모달 |
+| `business` | 마이페이지 전공 분야 - 경상/경영 |
