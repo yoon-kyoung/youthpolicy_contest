@@ -2072,7 +2072,7 @@ function CommunityView({bp,user,policies,favIds,onToggleFav,onGoProposal,onGoDet
 
 // ─── 청년정책 제안 페이지 (역제안 · 공감투표) ──────────────────────────────
 
-const VOTE_THRESHOLD=500;
+const VOTE_THRESHOLD=30;
 
 const PROPOSAL_STATUS_TABS=[
   {value:"all",     label:"전체"},
