@@ -3928,7 +3928,7 @@ function Sidebar({page,setPage,favIds,user,open,setOpen,onLogoClick}){
           setNavTooltip(null);
         }}
       >
-        <Icon name="help" size={18} color="#475569"/>
+        <Icon name="help" size={20} style={HELP_ICON_STYLE}/>
         {open&&<span style={{whiteSpace:"nowrap",overflow:"hidden"}}>사용 방법</span>}
       </button>
 
@@ -4439,10 +4439,10 @@ function TopNav({page,setPage,favIds,user,onLogout,themeKey,onThemeChange,fontSc
               {n.page==="mypage"&&favIds.size>0&&<span style={{marginLeft:2,fontSize:11,background:'var(--accent)',color:"#fff",borderRadius:99,padding:"1px 6px"}}>{favIds.size}</span>}
             </button>
           ))}
-          <button onClick={()=>setPage("howto")} title="사용 방법" style={{display:"flex",alignItems:"center",justifyContent:"center",width:32,height:32,marginLeft:4,borderRadius:"50%",border:"none",cursor:"pointer",background:"transparent",color:"#6b7280",transition:"all 0.15s"}}
-            onMouseEnter={e=>{e.currentTarget.style.background="#f8fafc";e.currentTarget.style.color="#111827";}}
-            onMouseLeave={e=>{e.currentTarget.style.background="transparent";e.currentTarget.style.color="#6b7280";}}
-          ><Icon name="help" size={17} color="currentColor"/></button>
+          <button onClick={()=>setPage("howto")} title="사용 방법" style={{display:"flex",alignItems:"center",justifyContent:"center",width:32,height:32,marginLeft:4,borderRadius:"50%",border:"none",cursor:"pointer",background:"transparent",transition:"all 0.15s"}}
+            onMouseEnter={e=>{e.currentTarget.style.background="#f8fafc";}}
+            onMouseLeave={e=>{e.currentTarget.style.background="transparent";}}
+          ><Icon name="help" size={19} style={HELP_ICON_STYLE}/></button>
         </nav>
         <div style={{display:"flex",gap:8,alignItems:"center",marginLeft:8}}>
           {!user&&onFontInc&&<FontSizeControl scale={fontScale} onInc={onFontInc} onDec={onFontDec}/>}
@@ -4479,9 +4479,9 @@ function BottomNav({page,setPage,user}){
           {mainPage===n.page&&<div style={{width:18,height:2.5,background:'var(--accent)',borderRadius:2,marginTop:1}}/>}
         </button>
       ))}
-      <button onClick={()=>setPage("howto")} style={{flex:"0 0 44px",padding:"10px 0 8px",background:"none",border:"none",cursor:"pointer",display:"flex",flexDirection:"column",alignItems:"center",gap:2,color:'#718096',transition:"color 0.15s"}}>
-        <Icon name="help" size={22} color="#718096"/>
-        <span style={{fontSize:10,fontWeight:500}}>?</span>
+      <button onClick={()=>setPage("howto")} style={{flex:"0 0 44px",padding:"10px 0 8px",background:"none",border:"none",cursor:"pointer",display:"flex",flexDirection:"column",alignItems:"center",gap:2,transition:"color 0.15s"}}>
+        <Icon name="help" size={22} style={HELP_ICON_STYLE}/>
+        <span style={{fontSize:10,fontWeight:500,color:'#718096'}}>?</span>
       </button>
     </nav>
   );
@@ -4506,7 +4506,17 @@ const GLOBAL_CSS=`
   @keyframes tickerFade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
   @keyframes guideWiggle{0%,92%,100%{transform:rotate(0deg)}93%{transform:rotate(-6deg)}94.5%{transform:rotate(5deg)}96%{transform:rotate(-4deg)}97.5%{transform:rotate(3deg)}99%{transform:rotate(0deg)}}
   @keyframes pingRing{0%{transform:scale(1);opacity:0.6}75%,100%{transform:scale(1.9);opacity:0}}
+  @keyframes helpGradientMove{0%{background-position:0% 50%}100%{background-position:200% 50%}}
 `;
+
+const HELP_ICON_STYLE={
+  background:'linear-gradient(90deg,var(--accent),#a855f7,#ec4899,var(--accent))',
+  backgroundSize:'300% auto',
+  WebkitBackgroundClip:'text',
+  backgroundClip:'text',
+  color:'transparent',
+  animation:'helpGradientMove 3s linear infinite',
+};
 
 export default function App(){
   const [page,setPage]=useState("chatbot");
@@ -4807,8 +4817,8 @@ export default function App(){
                   >알아보기</button>
                 </div>
                 <div style={{display:"flex",gap:6,alignItems:"center",flexShrink:0}}>
-                  <button onClick={()=>navigateTo("howto")} title="사용 방법" style={{width:28,height:28,borderRadius:"50%",background:"none",border:"none",cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",padding:0,flexShrink:0,color:"#6b7280"}}
-                  ><Icon name="help" size={17} color="currentColor"/></button>
+                  <button onClick={()=>navigateTo("howto")} title="사용 방법" style={{width:28,height:28,borderRadius:"50%",background:"none",border:"none",cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",padding:0,flexShrink:0}}
+                  ><Icon name="help" size={18} style={HELP_ICON_STYLE}/></button>
                   {!user&&<MobileSettingsMenu fontScale={fontScale} onFontInc={incFont} onFontDec={decFont} themeKey={themeKey} onThemeChange={setThemeKey}/>}
                   <div style={{fontSize:12,color:favIds.size>0?"#b45309":"#9ca3af",fontWeight:600,display:"flex",alignItems:"center",gap:3,whiteSpace:"nowrap",flexShrink:0}}><Icon name="star" size={13} color={favIds.size>0?"#FFD200":"#9ca3af"}/>{favIds.size}건</div>
                   {user?.user_metadata?.role==="admin"&&(
