@@ -144,7 +144,7 @@ function ShotCarousel({ shots, isDesktop }) {
           <div style={{ display: 'flex', transform: `translateX(-${idx * 100}%)`, transition: 'transform 0.35s ease' }}>
             {shots.map((s, i) => (
               <div key={i} style={{ flex: '0 0 100%', boxSizing: 'border-box' }}>
-                <div style={{ aspectRatio: '16 / 10', background: '#f8fafc', borderRadius: 12, border: '1px solid #e5e7eb', boxShadow: '0 2px 10px rgba(0,0,0,0.06)', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <div style={{ aspectRatio: '16 / 7', background: '#f8fafc', borderRadius: 12, border: '1px solid #e5e7eb', boxShadow: '0 2px 10px rgba(0,0,0,0.06)', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                   <img src={s.img} alt={s.caption} style={{ width: '100%', height: '100%', objectFit: 'contain', display: 'block' }} />
                 </div>
               </div>
