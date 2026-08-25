@@ -3904,33 +3904,33 @@ function Sidebar({page,setPage,favIds,user,open,setOpen,onLogoClick}){
             </button>
           );
         })}
-      </nav>
 
-      <button
-        onClick={()=>setPage("howto")}
-        style={{
-          display:"flex",alignItems:"center",
-          gap:open?12:0,
-          padding:open?"11px 14px":"11px 0",
-          justifyContent:open?"flex-start":"center",
-          borderRadius:12,border:"none",cursor:"pointer",
-          background:"transparent",color:"#475569",
-          fontSize:14,fontWeight:400,
-          transition:"all 0.15s",textAlign:"left",
-          width:"100%",marginTop:4,borderTop:"1px solid #F1F5F9",paddingTop:15,
-        }}
-        onMouseEnter={e=>{
-          e.currentTarget.style.background="#F8FAFC";
-          if(!open){const r=e.currentTarget.getBoundingClientRect();setNavTooltip({label:"사용 방법",top:r.top+r.height/2,left:r.right+10});}
-        }}
-        onMouseLeave={e=>{
-          e.currentTarget.style.background="transparent";
-          setNavTooltip(null);
-        }}
-      >
-        <Icon name="help" size={20} style={HELP_ICON_STYLE}/>
-        {open&&<span style={{whiteSpace:"nowrap",overflow:"hidden"}}>사용 방법</span>}
-      </button>
+        <button
+          onClick={()=>setPage("howto")}
+          style={{
+            display:"flex",alignItems:"center",
+            gap:open?12:0,
+            padding:open?"11px 14px":"11px 0",
+            justifyContent:open?"flex-start":"center",
+            borderRadius:12,border:"none",cursor:"pointer",
+            background:"transparent",color:"#475569",
+            fontSize:14,fontWeight:400,
+            transition:"all 0.15s",textAlign:"left",
+            width:"100%",position:"relative",
+          }}
+          onMouseEnter={e=>{
+            e.currentTarget.style.background="#F8FAFC";
+            if(!open){const r=e.currentTarget.getBoundingClientRect();setNavTooltip({label:"사용 방법",top:r.top+r.height/2,left:r.right+10});}
+          }}
+          onMouseLeave={e=>{
+            e.currentTarget.style.background="transparent";
+            setNavTooltip(null);
+          }}
+        >
+          <Icon name="help" size={20} style={HELP_ICON_STYLE}/>
+          {open&&<span style={{whiteSpace:"nowrap",overflow:"hidden"}}>사용 방법</span>}
+        </button>
+      </nav>
 
       {open&&(
         <>
