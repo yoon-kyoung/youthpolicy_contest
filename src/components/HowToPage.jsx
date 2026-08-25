@@ -1,11 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
 import Icon from '../styles/Icon'
-import chatbotHome from '../assets/howto/chatbot-home.jpg'
-import chatbotConversation from '../assets/howto/chatbot-conversation.jpg'
-import chatbotTrending from '../assets/howto/chatbot-trending.jpg'
-import chatbotMic from '../assets/howto/chatbot-mic.jpg'
-import chatbotHistory from '../assets/howto/chatbot-history.jpg'
-import chatbotDownload from '../assets/howto/chatbot-download.jpg'
 import searchList from '../assets/howto/search-list.jpg'
 import searchFilters from '../assets/howto/search-filters.jpg'
 import searchMap from '../assets/howto/search-map.jpg'
@@ -35,14 +29,24 @@ const SECTIONS = [
     icon: 'smart_toy',
     title: 'AI 챗봇',
     lead: '나이·지역·관심사를 말하면 AI가 맞는 청년정책을 찾아드려요.',
-    shots: [
-      { img: chatbotHome, caption: '자유롭게 물어보거나, 하단 추천 질문 칩을 눌러 바로 시작할 수 있어요.' },
-      { img: chatbotConversation, caption: '답변에 실제로 언급된 정책만 카드로 정리되고, 후속 질문 칩으로 대화를 이어갈 수 있어요.' },
-      { img: chatbotTrending, caption: '우상단 실시간 인기 정책 검색어를 누르면 해당 정책 상세로 바로 이동해요.' },
-      { img: chatbotMic, caption: '마이크로 음성 질문을 하고, 답변은 스피커 아이콘으로 들을 수 있어요.' },
-      { img: chatbotHistory, caption: '대화목록에서 이전 대화를 다시 열거나 삭제할 수 있어요.' },
-      { img: chatbotDownload, caption: '대화 내용을 txt·Word·PDF 파일로 내려받을 수 있어요.' },
-    ],
+    card: {
+      bg: '#F5F3FF',
+      border: '#EDE0FF',
+      desc: '나이·지역·고민을 자유롭게 말하면 AI가 수백 개 정책 중 나에게 맞는 것만 골라 카드로 보여줘요. 마음에 들면 별표 한 번으로 저장할 수 있어요.',
+      mockup: (
+        <div style={{ background: 'white', borderRadius: 20, padding: 20, boxShadow: '0 1px 4px rgba(0,0,0,0.06)' }}>
+          <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 10 }}>
+            <div style={{ background: 'var(--accent)', color: 'white', borderRadius: '16px 16px 4px 16px', padding: '10px 14px', fontSize: 13, maxWidth: '85%', lineHeight: 1.5 }}>27살 서울 사는데 월세 지원 있을까?</div>
+          </div>
+          <div style={{ display: 'flex', justifyContent: 'flex-start' }}>
+            <div style={{ background: '#F5F3FF', borderRadius: '16px 16px 16px 4px', padding: '12px 14px', fontSize: 13, color: '#374151', maxWidth: '88%' }}>
+              <div style={{ fontWeight: 800, marginBottom: 4 }}>청년 월세 한시 특별지원</div>
+              <div style={{ fontSize: 12, color: '#6b7280' }}>월 최대 20만원 · 최장 12개월</div>
+            </div>
+          </div>
+        </div>
+      ),
+    },
   },
   {
     id: 'search',
@@ -115,6 +119,19 @@ function ShotGrid({ shots, isDesktop }) {
   )
 }
 
+function CardShowcase({ card, isDesktop }) {
+  return (
+    <div style={{
+      display: 'flex', flexDirection: isDesktop ? 'row' : 'column', alignItems: 'center', gap: isDesktop ? 40 : 20,
+      borderRadius: 24, border: `1px solid ${card.border}`, background: card.bg,
+      padding: isDesktop ? '32px 36px' : '22px 20px', boxShadow: '0 1px 3px rgba(0,0,0,0.05)', boxSizing: 'border-box',
+    }}>
+      <p style={{ flex: 1, width: '100%', margin: 0, fontSize: 14, color: '#4b5563', lineHeight: 1.75 }}>{card.desc}</p>
+      <div style={{ flex: 1, width: '100%' }}>{card.mockup}</div>
+    </div>
+  )
+}
+
 function Section({ section, isDesktop, sectionRef }) {
   return (
     <section ref={sectionRef} id={`howto-${section.id}`} style={{ padding: isDesktop ? '40px 0' : '28px 0', borderTop: '1px solid #eef2f7' }}>
@@ -125,7 +142,7 @@ function Section({ section, isDesktop, sectionRef }) {
         <h3 style={{ fontSize: isDesktop ? 22 : 18, fontWeight: 800, color: '#111827', margin: 0 }}>{section.title}</h3>
       </div>
       <p style={{ fontSize: 14, color: '#6b7280', margin: '0 0 20px', lineHeight: 1.6 }}>{section.lead}</p>
-      <ShotGrid shots={section.shots} isDesktop={isDesktop} />
+      {section.card ? <CardShowcase card={section.card} isDesktop={isDesktop} /> : <ShotGrid shots={section.shots} isDesktop={isDesktop} />}
     </section>
   )
 }
