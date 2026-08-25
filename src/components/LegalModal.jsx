@@ -48,7 +48,7 @@ export function LegalModal({ type, onClose }) {
             <Icon name="close" size={15} color="#6b7280" />
           </button>
         </div>
-        <div style={{ padding: '20px 22px', overflowY: 'auto' }}>
+        <div style={{ padding: '20px 22px', overflowY: 'auto', textAlign: 'left' }}>
           {sections.map((s, i) => (
             <div key={i} style={{ marginBottom: i === sections.length - 1 ? 0 : 18 }}>
               <div style={{ fontSize: 13.5, fontWeight: 800, color: '#111827', marginBottom: 6 }}>{s.h}</div>
