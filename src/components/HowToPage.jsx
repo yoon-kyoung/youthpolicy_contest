@@ -100,17 +100,72 @@ const SECTIONS = [
   },
 ]
 
-function ShotGrid({ shots, isDesktop }) {
+function ShotCarousel({ shots, isDesktop }) {
+  const [idx, setIdx] = useState(0)
+  const total = shots.length
+  const touchStartX = useRef(null)
+
+  const goPrev = () => setIdx(i => Math.max(0, i - 1))
+  const goNext = () => setIdx(i => Math.min(total - 1, i + 1))
+
+  const onTouchStart = e => { touchStartX.current = e.touches[0].clientX }
+  const onTouchEnd = e => {
+    if (touchStartX.current == null) return
+    const dx = e.changedTouches[0].clientX - touchStartX.current
+    if (dx > 50) goPrev()
+    else if (dx < -50) goNext()
+    touchStartX.current = null
+  }
+
+  const navBtn = disabled => ({
+    position: 'absolute', top: '50%', transform: 'translateY(-50%)', zIndex: 2,
+    width: isDesktop ? 40 : 34, height: isDesktop ? 40 : 34, borderRadius: '50%',
+    border: '1.5px solid #e5e7eb', background: 'white', color: disabled ? '#d1d5db' : '#374151',
+    cursor: disabled ? 'default' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
+    boxShadow: '0 4px 14px rgba(0,0,0,0.08)', transition: 'all 0.12s',
+  })
+
+  if (total === 0) return null
+
   return (
-    <div style={{ display: 'grid', gridTemplateColumns: isDesktop ? 'repeat(auto-fit, minmax(260px, 1fr))' : '1fr', gap: 24 }}>
-      {shots.map((s, i) => (
-        <div key={i} style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-          <div style={{ aspectRatio: '16 / 10', background: '#f8fafc', borderRadius: 12, border: '1px solid #e5e7eb', boxShadow: '0 2px 10px rgba(0,0,0,0.06)', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <img src={s.img} alt={s.caption} style={{ width: '100%', height: '100%', objectFit: 'contain', display: 'block' }} />
+    <div style={{ maxWidth: isDesktop ? 640 : '100%', margin: '0 auto' }}>
+      <div style={{ position: 'relative' }}>
+        {total > 1 && (
+          <>
+            <button onClick={goPrev} disabled={idx === 0} aria-label="이전 화면" style={{ ...navBtn(idx === 0), left: isDesktop ? -20 : -6 }}>
+              <Icon name="chevron_left" size={isDesktop ? 20 : 16} color="currentColor" />
+            </button>
+            <button onClick={goNext} disabled={idx === total - 1} aria-label="다음 화면" style={{ ...navBtn(idx === total - 1), right: isDesktop ? -20 : -6 }}>
+              <Icon name="chevron_right" size={isDesktop ? 20 : 16} color="currentColor" />
+            </button>
+          </>
+        )}
+        <div style={{ overflow: 'hidden', borderRadius: 12 }} onTouchStart={onTouchStart} onTouchEnd={onTouchEnd}>
+          <div style={{ display: 'flex', transform: `translateX(-${idx * 100}%)`, transition: 'transform 0.35s ease' }}>
+            {shots.map((s, i) => (
+              <div key={i} style={{ flex: '0 0 100%', boxSizing: 'border-box' }}>
+                <div style={{ aspectRatio: '16 / 10', background: '#f8fafc', borderRadius: 12, border: '1px solid #e5e7eb', boxShadow: '0 2px 10px rgba(0,0,0,0.06)', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <img src={s.img} alt={s.caption} style={{ width: '100%', height: '100%', objectFit: 'contain', display: 'block' }} />
+                </div>
+              </div>
+            ))}
           </div>
-          <p style={{ margin: 0, fontSize: 13.5, color: '#374151', lineHeight: 1.5 }}>{s.caption}</p>
         </div>
-      ))}
+      </div>
+      <p style={{ margin: '14px 0 0', fontSize: 13.5, color: '#374151', lineHeight: 1.5, textAlign: 'center', minHeight: 40 }}>{shots[idx].caption}</p>
+      {total > 1 && (
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10, marginTop: 12 }}>
+          <div style={{ display: 'flex', gap: 6 }}>
+            {shots.map((_, i) => (
+              <button key={i} onClick={() => setIdx(i)} aria-label={`${i + 1}번째 화면으로 이동`} style={{
+                width: idx === i ? 18 : 6, height: 6, borderRadius: 3, border: 'none', padding: 0, cursor: 'pointer',
+                background: idx === i ? 'var(--accent)' : '#e2e8f0', transition: 'all 0.2s',
+              }} />
+            ))}
+          </div>
+          <span style={{ fontSize: 12, color: '#9ca3af', fontWeight: 600 }}>{idx + 1} / {total}</span>
+        </div>
+      )}
     </div>
   )
 }
@@ -125,7 +180,7 @@ function Section({ section, isDesktop, sectionRef }) {
         <h3 style={{ fontSize: isDesktop ? 22 : 18, fontWeight: 800, color: '#111827', margin: 0 }}>{section.title}</h3>
       </div>
       <p style={{ fontSize: 14, color: '#6b7280', margin: '0 0 20px', lineHeight: 1.6 }}>{section.lead}</p>
-      <ShotGrid shots={section.shots} isDesktop={isDesktop} />
+      <ShotCarousel shots={section.shots} isDesktop={isDesktop} />
     </section>
   )
 }
