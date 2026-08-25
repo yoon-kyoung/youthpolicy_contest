@@ -128,7 +128,7 @@ function ShotCarousel({ shots, isDesktop }) {
   if (total === 0) return null
 
   return (
-    <div style={{ maxWidth: isDesktop ? 640 : '100%', margin: '0 auto' }}>
+    <div style={{ maxWidth: isDesktop ? 900 : '100%', margin: '0 auto' }}>
       <div style={{ position: 'relative' }}>
         {total > 1 && (
           <>
