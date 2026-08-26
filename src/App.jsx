@@ -1871,6 +1871,7 @@ function CommunityView({bp,user,policies,favIds,onToggleFav,onGoProposal,onGoDet
     if(found){
       setSelectedPost(found);
       if(found.cat)setCatFilter(found.cat);
+      history.replaceState({},"",window.location.pathname);
     }
   },[posts,selectedPost]);
 
@@ -3138,7 +3139,10 @@ function PolicyProposalPage({bp,user,onGoCommunity}){
     const id=new URLSearchParams(window.location.search).get("proposal");
     if(!id||selectedProposal)return;
     const found=proposals.find(p=>String(p.id)===id);
-    if(found)setSelectedProposal(found);
+    if(found){
+      setSelectedProposal(found);
+      history.replaceState({},"",window.location.pathname);
+    }
   },[proposals,selectedProposal]);
 
   const openProposal=useCallback(p=>{
@@ -4740,7 +4744,10 @@ export default function App(){
     const id=new URLSearchParams(window.location.search).get("policy");
     if(!id)return;
     const found=policies.find(p=>p.id===id);
-    if(found)goDetail(found);
+    if(found){
+      goDetail(found);
+      history.replaceState({},"",window.location.pathname);
+    }
   },[policies]);
 
   const viewProps={favIds,onToggleFav:toggleFav,onGoDetail:goDetail,bp,setPage,policies,user};
