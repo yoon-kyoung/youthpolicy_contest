@@ -1,4 +1,4 @@
-function ActivityFeed({ items }) {
+function ActivityFeed({ items, onNavigate }) {
   return (
     <article className="panel-card compact-panel">
       <div className="section-heading">
@@ -8,11 +8,16 @@ function ActivityFeed({ items }) {
       </div>
       <div className="feed-list">
         {items.map((item) => (
-          <div key={`${item.title}-${item.time}`} className="feed-item">
+          <button
+            key={`${item.title}-${item.time}`}
+            type="button"
+            className="feed-item feed-item-clickable"
+            onClick={() => onNavigate?.('policy')}
+          >
             <span className="feed-tag">{item.category}</span>
             <strong>{item.title}</strong>
             <p>{item.time}</p>
-          </div>
+          </button>
         ))}
       </div>
     </article>

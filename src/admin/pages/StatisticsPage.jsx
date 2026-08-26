@@ -20,7 +20,7 @@ import {
   DROPOFF,
   SEVERITY_LABEL,
 } from '../data/statisticsData'
-import { downloadReportAsPdf, downloadReportAsWord, downloadReportAsPpt } from '../exportStatisticsReport'
+import { downloadReportAsPdf, downloadReportAsWord, downloadReportAsPpt, downloadReportAsCsv } from '../exportStatisticsReport'
 
 const SEVERITY_COLOR = { rose: '#EF4444', amber: '#F59E0B', green: '#10B981' }
 const SEVERITY_BG    = { rose: '#FEF2F2', amber: '#FFFBEB', green: '#ECFDF5' }
@@ -41,6 +41,7 @@ function ReportDownloadMenu() {
     setOpen(false)
     if (format === 'pdf') downloadReportAsPdf()
     else if (format === 'word') downloadReportAsWord()
+    else if (format === 'csv') downloadReportAsCsv()
     else if (format === 'ppt') {
       setExporting(true)
       try { await downloadReportAsPpt() } finally { setExporting(false) }
@@ -61,6 +62,7 @@ function ReportDownloadMenu() {
         <div className="report-download-menu">
           <button type="button" onClick={() => handle('pdf')}>PDF</button>
           <button type="button" onClick={() => handle('word')}>Word 문서 (.doc)</button>
+          <button type="button" onClick={() => handle('csv')}>CSV (엑셀)</button>
           <button type="button" onClick={() => handle('ppt')}>PPT (.pptx)</button>
         </div>
       )}

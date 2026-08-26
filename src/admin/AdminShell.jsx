@@ -130,15 +130,29 @@ const dashboardData = {
     { name: '청년 창업 패키지', category: '일자리·창업', region: '경기', target: '예비창업자', owner: '이수민', status: '승인대기', submittedAt: '2026-06-14 17:15', priority: '높음' },
     { name: '청년 문화패스 지원사업', category: '복지·문화', region: '부산', target: '만 19-29세', owner: '정하늘', status: '완료', submittedAt: '2026-06-14 15:50', priority: '낮음' },
   ],
-  trend: [
-    { label: '월', views: 3200, applies: 410 },
-    { label: '화', views: 3560, applies: 438 },
-    { label: '수', views: 3890, applies: 472 },
-    { label: '목', views: 4120, applies: 501 },
-    { label: '금', views: 4410, applies: 548 },
-    { label: '토', views: 3010, applies: 392 },
-    { label: '일', views: 2780, applies: 366 },
-  ],
+  trendByPeriod: {
+    week: [
+      { label: '월', views: 3200, applies: 410 },
+      { label: '화', views: 3560, applies: 438 },
+      { label: '수', views: 3890, applies: 472 },
+      { label: '목', views: 4120, applies: 501 },
+      { label: '금', views: 4410, applies: 548 },
+      { label: '토', views: 3010, applies: 392 },
+      { label: '일', views: 2780, applies: 366 },
+    ],
+    month: [
+      { label: '1주', views: 21400, applies: 2640 },
+      { label: '2주', views: 24800, applies: 2980 },
+      { label: '3주', views: 26900, applies: 3210 },
+      { label: '4주', views: 23100, applies: 2870 },
+    ],
+    quarter: [
+      { label: '1월', views: 89200, applies: 10800 },
+      { label: '2월', views: 96500, applies: 11700 },
+      { label: '3월', views: 104300, applies: 12950 },
+    ],
+  },
+  aiUsage: { calls: 4820, cost: 186000, limit: 300000, usedPct: 62, model: 'solar-pro3' },
   categoryMix: [
     { label: '일자리·창업', value: 34 },
     { label: '주거·금융', value: 25 },
@@ -184,8 +198,23 @@ function NoAccess({ onExit, hasUser }) {
 function AdminShell({ user, onExit }) {
   const [activePage, setActivePage] = useState('dashboard')
   const [authed, setAuthed] = useState(false)
+  const [pendingFocusToken, setPendingFocusToken] = useState(0)
+  const [lastUpdated] = useState(() => new Date())
+  const [notifOpen, setNotifOpen] = useState(false)
 
   if (!authed) return <AdminLogin onLogin={() => setAuthed(true)} onExit={onExit} />
+
+  const pendingCount = dashboardData.reviews.filter(r => r.status !== '완료').length
+  const notifications = [
+    { id: 1, text: '청년 주거안심 지원금 보완요청 처리 대기 중', time: '22분 전' },
+    { id: 2, text: '청년 창업 패키지 승인대기 3일 경과', time: '1시간 전' },
+    { id: 3, text: '교육 카테고리 신규 정책 2건 승인 완료', time: '2시간 전' },
+  ]
+
+  const focusPending = () => {
+    setActivePage('dashboard')
+    setPendingFocusToken(t => t + 1)
+  }
 
   return (
     <div className="admin-root">
@@ -196,11 +225,28 @@ function AdminShell({ user, onExit }) {
           <div className="logo-block">
             <img src={import.meta.env.BASE_URL + 'logo.png'} alt="청년ON" style={{width:32,height:32,borderRadius:8,flexShrink:0}}/>
             <div>
-              <p className="eyebrow">ADMIN CONSOLE</p>
               <h1 className="logo-title">청년ON 관리자</h1>
             </div>
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+            <span className="last-updated">마지막 갱신 {lastUpdated.toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' })}</span>
+            <div style={{ position: 'relative' }}>
+              <button className="header-text-btn notif-bell-btn" type="button" onClick={() => setNotifOpen(v => !v)} aria-label="알림">
+                <Icon name="notifications" size={17} color="currentColor"/>
+                {notifications.length > 0 && <span className="notif-dot" />}
+              </button>
+              {notifOpen && (
+                <div className="notif-panel">
+                  <div className="notif-panel-title">알림 {notifications.length}건</div>
+                  {notifications.map(n => (
+                    <div key={n.id} className="notif-panel-item">
+                      <p>{n.text}</p>
+                      <span>{n.time}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
             <button className="header-text-btn" type="button" onClick={onExit}>
               <Icon name="arrow_back" size={15} color="currentColor"/> 사이트로
             </button>
@@ -210,8 +256,8 @@ function AdminShell({ user, onExit }) {
           </div>
         </header>
         <div className="app-body">
-          <Sidebar items={navigationItems} activePage={activePage} onNavigate={setActivePage} />
-          <MainContent data={dashboardData} activePage={activePage} />
+          <Sidebar items={navigationItems} activePage={activePage} onNavigate={setActivePage} pendingCount={pendingCount} onFocusPending={focusPending} />
+          <MainContent data={dashboardData} activePage={activePage} pendingFocusToken={pendingFocusToken} onNavigate={setActivePage} />
         </div>
       </div>
     </div>

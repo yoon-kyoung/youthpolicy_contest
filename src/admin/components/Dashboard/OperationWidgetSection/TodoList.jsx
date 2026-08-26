@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import Icon from '../../../../styles/Icon'
 
 function TodoList({ items }) {
   const [todos, setTodos] = useState(items)
@@ -11,12 +12,15 @@ function TodoList({ items }) {
     )
   }
 
+  const doneCount = todos.filter(t => t.done).length
+
   return (
     <article className="panel-card compact-panel">
       <div className="section-heading">
         <div>
           <h3>오늘의 할 일</h3>
         </div>
+        <span className="text-muted">{doneCount} / {todos.length} 완료</span>
       </div>
       <div className="todo-list">
         {todos.map((item, index) => (
@@ -26,10 +30,10 @@ function TodoList({ items }) {
             type="button"
             onClick={() => toggleTodo(index)}
           >
-            <span className="todo-check">{item.done ? 'DONE' : 'TODO'}</span>
+            <span className="todo-checkbox">{item.done && <Icon name="check" size={13} color="#ffffff" />}</span>
             <div>
-              <strong>{item.title}</strong>
-              <p>{item.due}</p>
+              <strong style={item.done ? { textDecoration: 'line-through', color: 'var(--muted)' } : undefined}>{item.title}</strong>
+              <p>{item.done ? '완료됨' : item.due}</p>
             </div>
           </button>
         ))}

@@ -20,6 +20,23 @@ function downloadBlob(blob, filename) {
   setTimeout(() => URL.revokeObjectURL(url), 1000)
 }
 
+function csvCell(v) {
+  const s = String(v ?? '')
+  return /[",\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s
+}
+
+// columns: [{ key, label }], rows: [{ [key]: value }]
+export function toCsv(columns, rows) {
+  const header = columns.map((c) => csvCell(c.label)).join(',')
+  const body = rows.map((row) => columns.map((c) => csvCell(row[c.key])).join(',')).join('\n')
+  return '﻿' + header + '\n' + body
+}
+
+export function downloadCsv(filename, columns, rows) {
+  const csv = toCsv(columns, rows)
+  downloadBlob(new Blob([csv], { type: 'text/csv;charset=utf-8' }), filename)
+}
+
 function buildReportBodyHtml() {
   const generatedAt = new Date().toLocaleString('ko-KR')
 
@@ -80,6 +97,38 @@ const TABLE_CSS = `
   th,td{border:1px solid #d1d5db;padding:6px 10px;font-size:13px;text-align:left;}
   th{background:#f3f4f6;}
 `
+
+export function downloadReportAsCsv() {
+  const lines = []
+  lines.push('청년ON 운영 리포트')
+  lines.push(`생성일,${new Date().toLocaleString('ko-KR')}`)
+  lines.push('')
+  lines.push('핵심 지표 (KPI)')
+  lines.push(toCsv(
+    [{ key: 'title', label: '지표' }, { key: 'value', label: '값' }, { key: 'change', label: '전월 대비' }],
+    KPIS,
+  ).replace(/^﻿/, ''))
+  lines.push('')
+  lines.push('월별 방문자·조회·신청 추이')
+  lines.push(toCsv(
+    [{ key: 'month', label: '월' }, { key: 'visitors', label: '방문자' }, { key: 'policyViews', label: '정책 조회' }, { key: 'applications', label: '신청 완료' }],
+    MONTHLY_TREND,
+  ).replace(/^﻿/, ''))
+  lines.push('')
+  lines.push('카테고리별 조회·신청 비교')
+  lines.push(toCsv(
+    [{ key: 'category', label: '카테고리' }, { key: 'views', label: '조회수' }, { key: 'applies', label: '신청수' }],
+    CATEGORY_STATS,
+  ).replace(/^﻿/, ''))
+  lines.push('')
+  lines.push('지역별 회원·조회 현황')
+  lines.push(toCsv(
+    [{ key: 'region', label: '지역' }, { key: 'members', label: '회원수' }, { key: 'policyViews', label: '정책 조회' }],
+    REGION_STATS,
+  ).replace(/^﻿/, ''))
+
+  downloadBlob(new Blob(['﻿' + lines.join('\n')], { type: 'text/csv;charset=utf-8' }), `${safeFileName()}.csv`)
+}
 
 export function downloadReportAsWord() {
   const html = `<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40">

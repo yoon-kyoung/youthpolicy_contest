@@ -43,13 +43,13 @@ const pageConfig = {
   },
 }
 
-function MainContent({ data, activePage }) {
+function MainContent({ data, activePage, pendingFocusToken, onNavigate }) {
   const page = pageConfig[activePage] || pageConfig.dashboard
   const chips = activePage === 'dashboard' ? data.policyCategories : page.chips
 
   return (
     <main className="main-content">
-      {activePage === 'dashboard' && <Dashboard data={data} />}
+      {activePage === 'dashboard' && <Dashboard data={data} pendingFocusToken={pendingFocusToken} onNavigate={onNavigate} />}
       {activePage === 'policy' && <PolicyContentPage />}
       {activePage === 'member' && <MemberPage />}
       {activePage === 'board' && <BoardPage />}

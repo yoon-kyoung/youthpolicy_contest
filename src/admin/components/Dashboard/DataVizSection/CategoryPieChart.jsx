@@ -12,6 +12,8 @@ const TOOLTIP_STYLE = {
 }
 
 function CategoryPieChart({ data }) {
+  const top = [...data].sort((a, b) => b.value - a.value)[0]
+
   return (
     <article className="panel-card chart-card">
       <div className="section-heading">
@@ -42,6 +44,12 @@ function CategoryPieChart({ data }) {
             />
           </PieChart>
         </ResponsiveContainer>
+        {top && (
+          <div className="pie-center-label">
+            <strong>{top.value}%</strong>
+            <span>{top.label}</span>
+          </div>
+        )}
       </div>
       <div className="pie-legend">
         {data.map((item, index) => (

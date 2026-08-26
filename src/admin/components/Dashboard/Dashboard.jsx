@@ -7,6 +7,7 @@ import PolicyReviewTable from './DataVizSection/PolicyReviewTable'
 import TodoList from './OperationWidgetSection/TodoList'
 import ActivityFeed from './OperationWidgetSection/ActivityFeed'
 import AdminMemo from './OperationWidgetSection/AdminMemo'
+import AiUsageWidget from './OperationWidgetSection/AiUsageWidget'
 import AudienceSummarySection from './AudienceInsightSection/AudienceSummarySection'
 import AudienceCategorySection from './AudienceInsightSection/AudienceCategorySection'
 import KeywordsSection from './AudienceInsightSection/KeywordsSection'
@@ -18,6 +19,7 @@ const SECTIONS = [
   { id: 'reviewTable',        label: '심사 현황' },
   { id: 'todos',              label: '오늘 할 일' },
   { id: 'feed',               label: '최근 활동' },
+  { id: 'aiUsage',            label: 'AI 사용량' },
   { id: 'memo',               label: '관리자 메모' },
   { id: 'audienceSummary',    label: '유저 속성' },
   { id: 'audienceCategories', label: '유입 성향' },
@@ -28,25 +30,22 @@ const SECTION_MAP = Object.fromEntries(SECTIONS.map((s) => [s.id, s]))
 
 const TOGGLE_GROUPS = [
   { label: '차트 분석',   ids: ['kpi', 'trendChart', 'pieChart'] },
-  { label: '운영 현황',   ids: ['reviewTable', 'todos', 'feed', 'memo'] },
+  { label: '운영 현황',   ids: ['reviewTable', 'todos', 'feed', 'aiUsage', 'memo'] },
   { label: '오디언스',    ids: ['audienceSummary', 'audienceCategories', 'keywords'] },
 ]
 
 // 초기 순서: 높이가 비슷한 섹션끼리 짝 — 2열 기준 row별 균형
-// Row1: KPI 요약 | 카테고리 분포
-// Row2: 조회 추이 | 심사 현황
-// Row3: 오늘 할 일 | 최근 활동
-// 나머지(off)는 뒤로
 const INITIAL_ORDER = [
   'kpi', 'pieChart',
   'trendChart', 'reviewTable',
   'todos', 'feed',
-  'memo', 'audienceSummary', 'audienceCategories', 'keywords',
+  'aiUsage', 'memo', 'audienceSummary', 'audienceCategories', 'keywords',
 ]
 
 const INITIAL_VIS = {
   kpi: true, trendChart: true, pieChart: true,
   reviewTable: true, todos: true, feed: true,
+  aiUsage: true,
   memo: false, audienceSummary: false, audienceCategories: false, keywords: false,
 }
 
@@ -76,11 +75,12 @@ function DraggableSection({ id, dragging, dragOver, onDragStart, onDragOver, onD
   )
 }
 
-function Dashboard({ data }) {
+function Dashboard({ data, pendingFocusToken, onNavigate }) {
   const [order, setOrder] = useState(INITIAL_ORDER)
   const [vis, setVis] = useState(INITIAL_VIS)
   const [dragging, setDragging] = useState(null)
   const [dragOver, setDragOver] = useState(null)
+  const [period, setPeriod] = useState('week')
 
   const toggle = (id) => setVis((v) => ({ ...v, [id]: !v[id] }))
 
@@ -105,11 +105,12 @@ function Dashboard({ data }) {
   const renderSection = (id) => {
     switch (id) {
       case 'kpi':                return <KpiWidgetSection items={data.kpis} />
-      case 'trendChart':         return <ActivityTrendChart data={data.trend} />
+      case 'trendChart':         return <ActivityTrendChart data={data.trendByPeriod[period]} period={period} onPeriodChange={setPeriod} />
       case 'pieChart':           return <CategoryPieChart data={data.categoryMix} />
-      case 'reviewTable':        return <PolicyReviewTable rows={data.reviews} />
+      case 'reviewTable':        return <PolicyReviewTable rows={data.reviews} focusToken={pendingFocusToken} />
       case 'todos':              return <TodoList items={data.todos} />
-      case 'feed':               return <ActivityFeed items={data.feed} />
+      case 'feed':               return <ActivityFeed items={data.feed} onNavigate={onNavigate} />
+      case 'aiUsage':            return <AiUsageWidget data={data.aiUsage} onNavigate={onNavigate} />
       case 'memo':               return <AdminMemo initialValue={data.memo} />
       case 'audienceSummary':    return <AudienceSummarySection items={data.audienceSummary} />
       case 'audienceCategories': return <AudienceCategorySection items={data.audienceCategories} />
