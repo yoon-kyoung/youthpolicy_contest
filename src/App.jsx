@@ -4620,7 +4620,12 @@ const HELP_ICON_STYLE={
 };
 
 export default function App(){
-  const [page,setPage]=useState("chatbot");
+  const [page,setPage]=useState(()=>{
+    const sp=new URLSearchParams(window.location.search);
+    if(sp.get("post"))return "community";
+    if(sp.get("proposal"))return "proposal";
+    return "chatbot";
+  });
   const [detailPolicy,setDetailPolicy]=useState(null);
   const [fromPage,setFromPage]=useState("chatbot");
   const [favIds,setFavIds]=useLocalStorage("yoa:favs",new Set());
