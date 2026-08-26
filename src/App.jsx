@@ -2077,7 +2077,8 @@ const VOTE_THRESHOLD=30;
 
 const PROPOSAL_STATUS_TABS=[
   {value:"all",     label:"전체"},
-  {value:"pending", label:"답변대기"},
+  {value:"pending", label:"공감투표"},
+  {value:"matching",label:"부처매칭"},
   {value:"answered",label:"답변완료"},
   {value:"adopted", label:"반영완료"},
 ];
@@ -3198,9 +3199,10 @@ function PolicyProposalPage({bp,user,onGoCommunity}){
   },[]);
 
   const statusCounts=useMemo(()=>{
-    const m={all:proposals.length,pending:0,answered:0,adopted:0};
+    const m={all:proposals.length,pending:0,matching:0,answered:0,adopted:0};
     proposals.forEach(p=>{
-      if(p.status==="pending"||p.status==="matching")m.pending++;
+      if(p.status==="pending")m.pending++;
+      else if(p.status==="matching")m.matching++;
       else if(p.status==="answered")m.answered++;
       else if(p.status==="adopted")m.adopted++;
     });
@@ -3216,8 +3218,7 @@ function PolicyProposalPage({bp,user,onGoCommunity}){
 
   const filtered=useMemo(()=>{
     let list=proposals.filter(p=>{
-      if(statusTab==="pending"){if(!(p.status==="pending"||p.status==="matching"))return false;}
-      else if(statusTab!=="all"&&p.status!==statusTab)return false;
+      if(statusTab!=="all"&&p.status!==statusTab)return false;
       if(catFilter==="etc"){if(CATEGORIES.slice(1).some(c=>c.value===p.category))return false;}
       else if(catFilter!=="all"&&p.category!==catFilter)return false;
       return true;
