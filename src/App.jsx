@@ -1964,9 +1964,10 @@ function CommunityView({bp,user,policies,favIds,onToggleFav,onGoProposal,onGoDet
             </div>
           )}
           {!loadingPosts&&catFilter==="후기"&&!search.trim()&&bestReviews.length>0&&(
-            <div style={{display:"flex",flexDirection:"column",gap:8,marginBottom:2}}>
-              <div style={{display:"flex",alignItems:"center",gap:6,fontSize:13,fontWeight:800,color:"#111827",padding:"0 2px"}}>
+            <div style={{display:"flex",flexDirection:"column",gap:8,marginBottom:2,marginTop:14}}>
+              <div style={{display:"flex",alignItems:"center",gap:6,fontSize:13,fontWeight:800,color:"#111827",padding:"0 2px",flexWrap:"wrap"}}>
                 <Icon name="star" fill={1} size={16} color="#F59E0B"/>베스트 후기
+                <span style={{fontSize:11.5,fontWeight:500,color:"#9ca3af",marginLeft:4}}>🔥 지난 한 주, 가장 공감받은 후기예요 (매주 월요일 갱신)</span>
               </div>
               {bestReviews.map((post,i)=>(
                 <div key={post.id} onClick={()=>setSelectedPost(post)} style={{background:"linear-gradient(135deg,#FFFBEB,#ffffff)",borderRadius:16,padding:bp.isDesktop?"20px 24px":"14px 16px",cursor:"pointer",border:"1.5px solid #FDE68A",transition:"transform 0.15s,box-shadow 0.15s"}}
@@ -2001,7 +2002,7 @@ function CommunityView({bp,user,policies,favIds,onToggleFav,onGoProposal,onGoDet
                   </div>
                 </div>
               ))}
-              <div style={{fontSize:13,fontWeight:800,color:"#374151",padding:"6px 2px 0",letterSpacing:"0.02em"}}>전체 후기</div>
+              <div style={{fontSize:13,fontWeight:800,color:"#374151",padding:"22px 2px 0",letterSpacing:"0.02em"}}>전체 후기</div>
             </div>
           )}
           {loadingPosts&&(
