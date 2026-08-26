@@ -220,6 +220,8 @@ const styles = {
     display: 'flex',
     flexDirection: 'column',
     gap: 4,
+    minWidth: 0,
+    overflow: 'hidden',
   },
   dayNum: {
     width: 30,
@@ -240,11 +242,13 @@ const styles = {
     flexDirection: 'column',
     gap: 3,
     width: '100%',
+    minWidth: 0,
   },
   eventBlock: {
     padding: '4px 6px',
     borderRadius: '0 4px 4px 0',
     width: '100%',
+    minWidth: 0,
     boxSizing: 'border-box',
     display: 'flex',
     flexDirection: 'column',
@@ -257,6 +261,7 @@ const styles = {
     textOverflow: 'ellipsis',
     whiteSpace: 'nowrap',
     lineHeight: 1.3,
+    minWidth: 0,
   },
   evMeta: {
     display: 'flex',
