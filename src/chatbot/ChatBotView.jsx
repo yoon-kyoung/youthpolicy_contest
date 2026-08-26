@@ -811,8 +811,8 @@ export default function ChatBotView({ bp, favIds, onToggleFav, onGoDetail, reset
       <div
         style={{ height:'100%', overflow:'hidden', background:'#ffffff', position:'relative' }}
       >
-        <div style={{position:'absolute',left:'29%',top:'49%',width:'17vw',aspectRatio:'1',borderRadius:'50%',background:'var(--orb1)',filter:'blur(3.6vw)',pointerEvents:'none',zIndex:0,animation:'orbSpread 6s ease-in-out infinite'}}/>
-        <div style={{position:'absolute',left:'47%',top:'49%',width:'13vw',aspectRatio:'1',borderRadius:'50%',background:'var(--orb2)',filter:'blur(2.9vw)',pointerEvents:'none',zIndex:0,animation:'orbSpread 6s ease-in-out infinite 1s'}}/>
+        <div style={{position:'absolute',left:'29%',top:'49%',width:'25.5vw',aspectRatio:'1',borderRadius:'50%',background:'var(--orb1)',filter:'blur(5.4vw)',pointerEvents:'none',zIndex:0,animation:'orbSpread 6s ease-in-out infinite'}}/>
+        <div style={{position:'absolute',left:'47%',top:'49%',width:'19.5vw',aspectRatio:'1',borderRadius:'50%',background:'var(--orb2)',filter:'blur(4.4vw)',pointerEvents:'none',zIndex:0,animation:'orbSpread 6s ease-in-out infinite 1s'}}/>
         {/* Privacy Notice — 오른쪽 하단 고정 (모바일은 본문 텍스트를 가려서 숨김) */}
         {bp!=='mobile'&&<PrivacyNoticePanel bp={bp}/>}
         {/* 실시간 인기 검색어 — 오른쪽 상단 고정 (모바일은 본문 텍스트를 가려서 숨김) */}
