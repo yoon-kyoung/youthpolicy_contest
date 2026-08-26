@@ -5,7 +5,7 @@ export const supabase = createClient(
   "sb_publishable_hVWzKf_p3c4zB5OhaYdSRA_Ce6DX9M-"
 );
 
-export const ADMIN_EMAIL = "choco@gmail.com";
+export const ADMIN_EMAIL = "admin@youthon.kr";
 
 export function getDisplayName(user) {
   if (!user) return "";
