@@ -17,7 +17,7 @@ import AdminPage from "./chatbot/AdminPage";
 import AdminShell from "./admin/AdminShell";
 import { loadPolicies } from "./chatbot/policiesStore";
 import { API_BASE } from "./chatbot/config";
-import { supabase, getDisplayName } from "./supabase";
+import { supabase, getDisplayName, ADMIN_EMAIL } from "./supabase";
 import Icon from "./styles/Icon";
 import LegalFooterLinks, { LegalModal } from "./components/LegalModal";
 
@@ -1952,7 +1952,7 @@ function CommunityView({bp,user,policies,favIds,onToggleFav,onGoProposal,onGoDet
               <div style={{flex:1,minWidth:0}}>
                 <div style={{display:"flex",alignItems:"center",gap:7,marginBottom:8}}>
                   <span style={{fontSize:10,fontWeight:800,padding:"3px 8px",borderRadius:20,background:"rgba(255,255,255,0.22)",letterSpacing:"0.02em"}}>NEW</span>
-                  <span style={{fontSize:12,fontWeight:700,opacity:0.85}}>청년정책 역제안</span>
+                  <span style={{fontSize:12,fontWeight:700,opacity:0.85}}>청년정책 제안</span>
                 </div>
                 <div style={{fontSize:bp.isDesktop?16:14,fontWeight:800,lineHeight:1.4,marginBottom:4}}>커뮤니티에서 나눈 이야기, 이제 정책으로 제안해보세요</div>
                 <div style={{fontSize:bp.isDesktop?13:12,opacity:0.8,lineHeight:1.5}}>공감이 모이면 담당 부처에 자동으로 전달돼요</div>
@@ -3081,7 +3081,7 @@ function ProposalGuidePanel({bp,onGoCommunity}){
           {/* 말풍선 안내 */}
           <div style={{position:"absolute",bottom:"100%",right:-8,marginBottom:14,width:"max-content",whiteSpace:"nowrap",padding:"12px 14px",borderRadius:16,background:"#ffffff",border:"2px solid var(--accent-bg)",boxShadow:"0 8px 28px var(--accent-shadow)"}}>
             <div style={{fontSize:13,fontWeight:800,color:"#111827",lineHeight:1.3}}>정책제안 안내</div>
-            <div style={{fontSize:11.5,color:"#6b7280",marginTop:2}}>자주하는 질문</div>
+            <div style={{fontSize:11.5,color:"#6b7280",marginTop:2,display:"flex",alignItems:"center",gap:4}}>자주하는 질문<Icon name="arrow_downward" size={13} color="var(--accent)"/></div>
             <div style={{position:"absolute",top:"100%",right:26,width:0,height:0,borderLeft:"9px solid transparent",borderRight:"9px solid transparent",borderTop:"9px solid var(--accent-bg)"}}/>
             <div style={{position:"absolute",top:"calc(100% - 3px)",right:26,width:0,height:0,borderLeft:"7px solid transparent",borderRight:"7px solid transparent",borderTop:"7px solid #ffffff"}}/>
           </div>
@@ -3865,6 +3865,7 @@ function Sidebar({page,setPage,favIds,user,open,setOpen,onLogoClick}){
   const [mySub,setMySub]=useLocalStorage("yoa:mysub","custom");
   const mainPage=page==="detail"?"":page.split("-")[0];
   const [navTooltip,setNavTooltip]=useState(null);
+  const isAdmin=Boolean(user&&user.email===ADMIN_EMAIL);
 
   const NAV=[
     {id:"chatbot", icon:"auto_awesome", label:"AI 챗봇"},
@@ -3976,18 +3977,6 @@ function Sidebar({page,setPage,favIds,user,open,setOpen,onLogoClick}){
         </button>
       </nav>
 
-      {open&&(
-        <>
-          {user?.user_metadata?.role==="admin"&&(
-            <button onClick={()=>window.location.hash="#admin"} style={{marginTop:10,display:"flex",alignItems:"center",gap:8,padding:"10px 14px",borderRadius:12,border:"1px solid rgba(251,191,36,0.3)",background:"rgba(251,191,36,0.1)",color:"#fbbf24",fontSize:13,fontWeight:700,cursor:"pointer",width:"100%",transition:"all 0.15s"}}
-              onMouseEnter={e=>e.currentTarget.style.background="rgba(251,191,36,0.2)"}
-              onMouseLeave={e=>e.currentTarget.style.background="rgba(251,191,36,0.1)"}
-            ><Icon name="admin_panel_settings" size={16} color="#fbbf24"/> 관리자 대시보드</button>
-          )}
-          <div style={{marginTop:14,fontSize:10,color:"#CBD5E1",textAlign:"center"}}>© 2026 청년ON</div>
-        </>
-      )}
-
       <button
         onClick={()=>setPage("project")}
         style={{
@@ -4015,6 +4004,37 @@ function Sidebar({page,setPage,favIds,user,open,setOpen,onLogoClick}){
         <Icon name="description" size={18} color={mainPage==="project"?"var(--accent)":"#475569"}/>
         {open&&<span style={{whiteSpace:"nowrap",overflow:"hidden"}}>About</span>}
       </button>
+
+      {isAdmin&&(
+        <button
+          onClick={()=>{window.location.hash="#admin";}}
+          style={{
+            display:"flex",alignItems:"center",
+            gap:open?12:0,
+            padding:open?"11px 14px":"11px 0",
+            justifyContent:open?"flex-start":"center",
+            borderRadius:12,border:"none",cursor:"pointer",
+            background:"transparent",color:"#B45309",
+            fontSize:14,fontWeight:400,
+            transition:"all 0.15s",textAlign:"left",
+            width:"100%",position:"relative",
+            marginTop:4,flexShrink:0,
+          }}
+          onMouseEnter={e=>{
+            e.currentTarget.style.background="#FFFBEB";
+            if(!open){const r=e.currentTarget.getBoundingClientRect();setNavTooltip({label:"관리자 대시보드",top:r.top+r.height/2,left:r.right+10});}
+          }}
+          onMouseLeave={e=>{
+            e.currentTarget.style.background="transparent";
+            setNavTooltip(null);
+          }}
+        >
+          <Icon name="admin_panel_settings" size={18} color="#B45309"/>
+          {open&&<span style={{whiteSpace:"nowrap",overflow:"hidden"}}>관리자 대시보드</span>}
+        </button>
+      )}
+
+      {open&&<div style={{marginTop:14,fontSize:10,color:"#64748B",fontWeight:600,textAlign:"center",flexShrink:0}}>© 2026 청년ON</div>}
 
       {/* 축소 시 즐겨찾기 수 뱃지 */}
     </aside>
@@ -4914,7 +4934,7 @@ export default function App(){
                   ><Icon name="help" size={18} style={HELP_ICON_STYLE}/></button>
                   {!user&&<MobileSettingsMenu fontScale={fontScale} onFontInc={incFont} onFontDec={decFont} themeKey={themeKey} onThemeChange={setThemeKey}/>}
                   <div style={{fontSize:12,color:favIds.size>0?"#b45309":"#9ca3af",fontWeight:600,display:"flex",alignItems:"center",gap:3,whiteSpace:"nowrap",flexShrink:0}}><Icon name="star" size={13} color={favIds.size>0?"#FFD200":"#9ca3af"}/>{favIds.size}건</div>
-                  {user?.user_metadata?.role==="admin"&&(
+                  {user?.email===ADMIN_EMAIL&&(
                     <button onClick={()=>window.location.hash="#admin"} style={{padding:"5px 10px",borderRadius:7,border:"1px solid #fde68a",background:"#fffbeb",color:"#b45309",fontSize:12,fontWeight:700,cursor:"pointer",display:"flex",alignItems:"center",flexShrink:0}}><Icon name="admin_panel_settings" size={15} color="#b45309"/></button>
                   )}
                   {user
