@@ -11,13 +11,13 @@ const SECTIONS = [
 ]
 
 const STACK_ITEMS = [
-  { name: 'React + Vite', role: '프론트엔드 프레임워크·빌드 도구', detail: '화면 전체(챗봇·검색·정책제안·커뮤니티·마이페이지·관리자)를 컴포넌트 단위로 구성했어요.' },
-  { name: 'GitHub Pages', role: '프론트엔드 배포', detail: 'main 브랜치에 push하면 GitHub Actions가 자동으로 빌드해 정적 사이트로 배포해요.' },
-  { name: 'Supabase', role: '회원 인증 + 데이터베이스 + 스토리지', detail: '이메일·카카오 로그인, 커뮤니티 게시글·댓글, 정책제안·제안 댓글, 알림, 첨부파일 업로드를 모두 처리해요.' },
-  { name: 'Vercel', role: 'AI 챗봇 백엔드 서버', detail: '챗봇 답변 생성 API를 별도 서버로 분리해 배포했어요. API 키는 서버에만 있어서 프론트에 노출되지 않아요.' },
-  { name: 'Upstage Solar API', role: 'AI 챗봇 답변 생성 (모델: solar-pro3)', detail: '자연어 질문을 이해해 상황에 맞는 청년정책을 골라 추천 답변을 만들어요.' },
-  { name: 'OpenRouter API', role: '정책제안 AI 검토 · 정책 비교 분석 (Nemotron 3 Nano)', detail: '제안 등록 전 부적절한 표현을 검사하고, 선택한 정책들의 차이점을 요약해줘요.' },
-  { name: '온통청년 API', role: '청년정책·청년센터 데이터', detail: '정부(청년정책 통합정보시스템)가 제공하는 전국 청년지원정책과 청년센터 정보를 가져와 사용해요.' },
+  { name: 'React + Vite', role: '프론트엔드 프레임워크·빌드 도구', detail: '화면 전체(챗봇·검색·정책제안·커뮤니티·마이페이지·관리자)를 컴포넌트 단위로 구성했어요.', mark: 'RV', markBg: 'linear-gradient(135deg,#61DAFB,#646CFF)', markColor: '#0B1220' },
+  { name: 'GitHub Pages', role: '프론트엔드 배포', detail: 'main 브랜치에 push하면 GitHub Actions가 자동으로 빌드해 정적 사이트로 배포해요.', mark: 'GH', markBg: '#24292F', markColor: '#ffffff' },
+  { name: 'Supabase', role: '회원 인증 + 데이터베이스 + 스토리지', detail: '이메일·카카오 로그인, 커뮤니티 게시글·댓글, 정책제안·제안 댓글, 알림, 첨부파일 업로드를 모두 처리해요.', mark: 'Sb', markBg: '#3ECF8E', markColor: '#064E3B' },
+  { name: 'Vercel', role: 'AI 챗봇 백엔드 서버', detail: '챗봇 답변 생성 API를 별도 서버로 분리해 배포했어요. API 키는 서버에만 있어서 프론트에 노출되지 않아요.', mark: 'Vc', markBg: '#000000', markColor: '#ffffff' },
+  { name: 'Upstage Solar API', role: 'AI 챗봇 답변 생성 (모델: solar-pro3)', detail: '자연어 질문을 이해해 상황에 맞는 청년정책을 골라 추천 답변을 만들어요.', mark: 'US', markBg: 'linear-gradient(135deg,#FF6B35,#F7931E)', markColor: '#ffffff' },
+  { name: 'OpenRouter API', role: '정책제안 AI 검토 · 정책 비교 분석 (Nemotron 3 Nano)', detail: '제안 등록 전 부적절한 표현을 검사하고, 선택한 정책들의 차이점을 요약해줘요.', mark: 'OR', markBg: 'linear-gradient(135deg,#6366F1,#8B5CF6)', markColor: '#ffffff' },
+  { name: '온통청년 API', role: '청년정책·청년센터 데이터', detail: '정부(청년정책 통합정보시스템)가 제공하는 전국 청년지원정책과 청년센터 정보를 가져와 사용해요.', icon: 'account_balance', markBg: 'var(--accent)', markColor: '#ffffff' },
 ]
 
 const CREDIT_ITEMS = [
@@ -147,12 +147,17 @@ export default function StoryPage({ onBack, bp }) {
           <Section id="stack" icon="apps" title="기술스택별 활용 방식" sectionRef={el => { refs.current.stack = el }} isDesktop={isDesktop}>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
               {STACK_ITEMS.map(s => (
-                <div key={s.name} style={card}>
-                  <div style={{ display: 'flex', alignItems: 'baseline', gap: 8, flexWrap: 'wrap', marginBottom: 4 }}>
-                    <span style={{ fontSize: 14.5, fontWeight: 800, color: '#111827' }}>{s.name}</span>
-                    <span style={{ fontSize: 12, fontWeight: 700, color: 'var(--accent)', background: 'var(--accent-bg)', borderRadius: 20, padding: '2px 10px' }}>{s.role}</span>
+                <div key={s.name} style={{ ...card, display: 'flex', gap: 14, alignItems: 'flex-start' }}>
+                  <div style={{ width: 44, height: 44, borderRadius: 12, background: s.markBg, color: s.markColor, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, fontSize: 14, fontWeight: 800, letterSpacing: '-0.02em' }}>
+                    {s.icon ? <Icon name={s.icon} size={22} color={s.markColor} /> : s.mark}
                   </div>
-                  <p style={{ ...bodyText, color: '#6b7280' }}>{s.detail}</p>
+                  <div style={{ minWidth: 0, flex: 1 }}>
+                    <div style={{ display: 'flex', alignItems: 'baseline', gap: 8, flexWrap: 'wrap', marginBottom: 4 }}>
+                      <span style={{ fontSize: 14.5, fontWeight: 800, color: '#111827' }}>{s.name}</span>
+                      <span style={{ fontSize: 12, fontWeight: 700, color: 'var(--accent)', background: 'var(--accent-bg)', borderRadius: 20, padding: '2px 10px' }}>{s.role}</span>
+                    </div>
+                    <p style={{ ...bodyText, color: '#6b7280' }}>{s.detail}</p>
+                  </div>
                 </div>
               ))}
             </div>
@@ -177,13 +182,22 @@ export default function StoryPage({ onBack, bp }) {
             <div style={{ ...card, marginBottom: 12 }}>
               <p style={bodyText}>정해진 기획을 한 번에 완성하기보다, 실제로 사용해보며 발견한 불편함이나 필요한 기능을 그때그때 요청하고 AI 코딩 도구가 반영한 결과를 바로 확인하는 방식으로 계속 다듬어왔습니다. main 브랜치에 반영되면 GitHub Actions가 자동으로 빌드·배포해, 요청한 내용이 실제 서비스에 곧바로 반영됩니다.</p>
             </div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-              {UPDATE_LOG.map((u, i) => (
-                <div key={i} style={{ display: 'flex', gap: 14, alignItems: 'flex-start', padding: '10px 4px', borderBottom: i < UPDATE_LOG.length - 1 ? '1px solid #f1f5f9' : 'none' }}>
-                  <span style={{ fontSize: 12.5, fontWeight: 700, color: 'var(--accent)', width: isDesktop ? 84 : 64, flexShrink: 0 }}>{u.date}</span>
-                  <span style={{ fontSize: 13.5, color: '#374151', lineHeight: 1.6 }}>{u.text}</span>
-                </div>
-              ))}
+            <div style={{ display: 'flex', flexDirection: 'column' }}>
+              {UPDATE_LOG.map((u, i) => {
+                const isLast = i === UPDATE_LOG.length - 1
+                return (
+                  <div key={i} style={{ display: 'flex', gap: 16 }}>
+                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', flexShrink: 0, width: 14 }}>
+                      <div style={{ width: 12, height: 12, borderRadius: '50%', background: isLast ? '#CBD5E1' : 'var(--accent)', boxShadow: '0 0 0 4px var(--accent-bg)', marginTop: 4, flexShrink: 0 }} />
+                      {!isLast && <div style={{ flex: 1, width: 2, background: '#E2E8F0', marginTop: 2 }} />}
+                    </div>
+                    <div style={{ paddingBottom: isLast ? 0 : 26, minWidth: 0 }}>
+                      <div style={{ fontSize: 12.5, fontWeight: 800, color: 'var(--accent)', marginBottom: 3 }}>{u.date}</div>
+                      <div style={{ fontSize: 13.5, color: '#374151', lineHeight: 1.6 }}>{u.text}</div>
+                    </div>
+                  </div>
+                )
+              })}
             </div>
           </Section>
 

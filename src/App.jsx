@@ -3974,33 +3974,6 @@ function Sidebar({page,setPage,favIds,user,open,setOpen,onLogoClick}){
           <Icon name="help" size={20} style={HELP_ICON_STYLE}/>
           {open&&<span style={{whiteSpace:"nowrap",overflow:"hidden"}}>사용 방법</span>}
         </button>
-
-        <button
-          onClick={()=>setPage("project")}
-          style={{
-            display:"flex",alignItems:"center",
-            gap:open?12:0,
-            padding:open?"11px 14px":"11px 0",
-            justifyContent:open?"flex-start":"center",
-            borderRadius:12,border:"none",cursor:"pointer",
-            background:mainPage==="project"?"var(--accent-bg-active)":"transparent",
-            color:mainPage==="project"?"var(--accent)":"#475569",
-            fontSize:14,fontWeight:mainPage==="project"?700:400,
-            transition:"all 0.15s",textAlign:"left",
-            width:"100%",position:"relative",
-          }}
-          onMouseEnter={e=>{
-            if(mainPage!=="project"){e.currentTarget.style.background="#F8FAFC";}
-            if(!open){const r=e.currentTarget.getBoundingClientRect();setNavTooltip({label:"About",top:r.top+r.height/2,left:r.right+10});}
-          }}
-          onMouseLeave={e=>{
-            if(mainPage!=="project"){e.currentTarget.style.background="transparent";}
-            setNavTooltip(null);
-          }}
-        >
-          <Icon name="description" size={18} color={mainPage==="project"?"var(--accent)":"#475569"}/>
-          {open&&<span style={{whiteSpace:"nowrap",overflow:"hidden"}}>About</span>}
-        </button>
       </nav>
 
       {open&&(
@@ -4014,6 +3987,34 @@ function Sidebar({page,setPage,favIds,user,open,setOpen,onLogoClick}){
           <div style={{marginTop:14,fontSize:10,color:"#CBD5E1",textAlign:"center"}}>© 2026 청년ON</div>
         </>
       )}
+
+      <button
+        onClick={()=>setPage("project")}
+        style={{
+          display:"flex",alignItems:"center",
+          gap:open?12:0,
+          padding:open?"11px 14px":"11px 0",
+          justifyContent:open?"flex-start":"center",
+          borderRadius:12,border:"none",cursor:"pointer",
+          background:mainPage==="project"?"var(--accent-bg-active)":"transparent",
+          color:mainPage==="project"?"var(--accent)":"#475569",
+          fontSize:14,fontWeight:mainPage==="project"?700:400,
+          transition:"all 0.15s",textAlign:"left",
+          width:"100%",position:"relative",
+          marginTop:open?14:8,flexShrink:0,
+        }}
+        onMouseEnter={e=>{
+          if(mainPage!=="project"){e.currentTarget.style.background="#F8FAFC";}
+          if(!open){const r=e.currentTarget.getBoundingClientRect();setNavTooltip({label:"About",top:r.top+r.height/2,left:r.right+10});}
+        }}
+        onMouseLeave={e=>{
+          if(mainPage!=="project"){e.currentTarget.style.background="transparent";}
+          setNavTooltip(null);
+        }}
+      >
+        <Icon name="description" size={18} color={mainPage==="project"?"var(--accent)":"#475569"}/>
+        {open&&<span style={{whiteSpace:"nowrap",overflow:"hidden"}}>About</span>}
+      </button>
 
       {/* 축소 시 즐겨찾기 수 뱃지 */}
     </aside>
