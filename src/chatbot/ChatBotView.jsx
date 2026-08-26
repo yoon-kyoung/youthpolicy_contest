@@ -512,6 +512,8 @@ export default function ChatBotView({ bp, favIds, onToggleFav, onGoDetail, reset
 
   const scrollRef = useRef(null)
   const failStreakRef = useRef(0)
+  const orb1WrapRef = useRef(null)
+  const orb2WrapRef = useRef(null)
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: 'smooth' })
   }, [messages, loading, step])
@@ -809,10 +811,21 @@ export default function ChatBotView({ bp, favIds, onToggleFav, onGoDetail, reset
   if (!started) {
     return (
       <div
+        onMouseMove={e=>{
+          const rect=e.currentTarget.getBoundingClientRect()
+          const dx=((e.clientX-rect.left)/rect.width-0.5)*2
+          const dy=((e.clientY-rect.top)/rect.height-0.5)*2
+          if(orb1WrapRef.current)orb1WrapRef.current.style.transform=`translate(${dx*22}px, ${dy*22}px)`
+          if(orb2WrapRef.current)orb2WrapRef.current.style.transform=`translate(${dx*-14}px, ${dy*-14}px)`
+        }}
         style={{ height:'100%', overflow:'hidden', background:'#ffffff', position:'relative' }}
       >
-        <div style={{position:'absolute',left:'29%',top:'49%',width:'25.5vw',aspectRatio:'1',borderRadius:'50%',background:'var(--orb1)',filter:'blur(5.4vw)',pointerEvents:'none',zIndex:0,animation:'orbSpread 6s ease-in-out infinite'}}/>
-        <div style={{position:'absolute',left:'47%',top:'49%',width:'19.5vw',aspectRatio:'1',borderRadius:'50%',background:'var(--orb2)',filter:'blur(4.4vw)',pointerEvents:'none',zIndex:0,animation:'orbSpread 6s ease-in-out infinite 1s'}}/>
+        <div ref={orb1WrapRef} style={{position:'absolute',left:'29%',top:'42%',width:'25.5vw',aspectRatio:'1',pointerEvents:'none',zIndex:0,transition:'transform 0.4s ease-out'}}>
+          <div style={{width:'100%',height:'100%',borderRadius:'50%',background:'var(--orb1)',filter:'blur(5.4vw)',animation:'orbSpread 6s ease-in-out infinite'}}/>
+        </div>
+        <div ref={orb2WrapRef} style={{position:'absolute',left:'47%',top:'42%',width:'19.5vw',aspectRatio:'1',pointerEvents:'none',zIndex:0,transition:'transform 0.4s ease-out'}}>
+          <div style={{width:'100%',height:'100%',borderRadius:'50%',background:'var(--orb2)',filter:'blur(4.4vw)',animation:'orbSpread 6s ease-in-out infinite 1s'}}/>
+        </div>
         {/* Privacy Notice — 오른쪽 하단 고정 (모바일은 본문 텍스트를 가려서 숨김) */}
         {bp!=='mobile'&&<PrivacyNoticePanel bp={bp}/>}
         {/* 실시간 인기 검색어 — 오른쪽 상단 고정 (모바일은 본문 텍스트를 가려서 숨김) */}
