@@ -4516,6 +4516,7 @@ const GLOBAL_CSS=`
   @keyframes guideWiggle{0%,92%,100%{transform:rotate(0deg)}93%{transform:rotate(-6deg)}94.5%{transform:rotate(5deg)}96%{transform:rotate(-4deg)}97.5%{transform:rotate(3deg)}99%{transform:rotate(0deg)}}
   @keyframes pingRing{0%{transform:scale(1);opacity:0.6}75%,100%{transform:scale(1.9);opacity:0}}
   @keyframes helpGradientMove{0%{background-position:0% 50%}100%{background-position:200% 50%}}
+  @keyframes orbSpread{0%,100%{transform:scale(1);opacity:0.55}50%{transform:scale(1.35);opacity:0.25}}
 `;
 
 const HELP_ICON_STYLE={

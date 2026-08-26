@@ -512,7 +512,6 @@ export default function ChatBotView({ bp, favIds, onToggleFav, onGoDetail, reset
 
   const scrollRef = useRef(null)
   const failStreakRef = useRef(0)
-  const mouseGlowRef = useRef(null)
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: 'smooth' })
   }, [messages, loading, step])
@@ -810,17 +809,10 @@ export default function ChatBotView({ bp, favIds, onToggleFav, onGoDetail, reset
   if (!started) {
     return (
       <div
-        onMouseMove={e=>{
-          const rect=e.currentTarget.getBoundingClientRect()
-          const x=((e.clientX-rect.left)/rect.width)*100
-          const y=((e.clientY-rect.top)/rect.height)*100
-          if(mouseGlowRef.current)mouseGlowRef.current.style.background=`radial-gradient(circle at ${x}% ${y}%, var(--orb1), var(--orb2) 3%, transparent 6%)`
-        }}
         style={{ height:'100%', overflow:'hidden', background:'#ffffff', position:'relative' }}
       >
-        <div style={{position:'absolute',left:'41%',top:'49%',width:'17vw',aspectRatio:'1',borderRadius:'50%',background:'var(--orb1)',filter:'blur(3.6vw)',pointerEvents:'none',zIndex:0}}/>
-        <div style={{position:'absolute',left:'59%',top:'49%',width:'13vw',aspectRatio:'1',borderRadius:'50%',background:'var(--orb2)',filter:'blur(2.9vw)',pointerEvents:'none',zIndex:0}}/>
-        <div ref={mouseGlowRef} style={{position:'absolute',inset:0,filter:'blur(1.4vw)',opacity:0.4,pointerEvents:'none',zIndex:0,transition:'background 0.2s ease-out'}}/>
+        <div style={{position:'absolute',left:'29%',top:'49%',width:'17vw',aspectRatio:'1',borderRadius:'50%',background:'var(--orb1)',filter:'blur(3.6vw)',pointerEvents:'none',zIndex:0,animation:'orbSpread 6s ease-in-out infinite'}}/>
+        <div style={{position:'absolute',left:'47%',top:'49%',width:'13vw',aspectRatio:'1',borderRadius:'50%',background:'var(--orb2)',filter:'blur(2.9vw)',pointerEvents:'none',zIndex:0,animation:'orbSpread 6s ease-in-out infinite 1s'}}/>
         {/* Privacy Notice — 오른쪽 하단 고정 (모바일은 본문 텍스트를 가려서 숨김) */}
         {bp!=='mobile'&&<PrivacyNoticePanel bp={bp}/>}
         {/* 실시간 인기 검색어 — 오른쪽 상단 고정 (모바일은 본문 텍스트를 가려서 숨김) */}
