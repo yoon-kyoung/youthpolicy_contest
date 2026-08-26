@@ -101,8 +101,30 @@ const SECTIONS = [
   },
 ]
 
+function ZoomIcon({ size = 16 }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="10.5" cy="10.5" r="6.5" stroke="currentColor" strokeWidth="2" />
+      <line x1="10.5" y1="7.5" x2="10.5" y2="13.5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+      <line x1="7.5" y1="10.5" x2="13.5" y2="10.5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+      <line x1="15.3" y1="15.3" x2="20" y2="20" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+    </svg>
+  )
+}
+
+function ImageLightbox({ img, caption, onClose }) {
+  return (
+    <div onClick={onClose} style={{ position: 'fixed', inset: 0, background: 'rgba(15,23,42,0.85)', zIndex: 300, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: 24, cursor: 'zoom-out', animation: 'fadeUp 0.15s ease' }}>
+      <button onClick={onClose} aria-label="닫기" style={{ position: 'absolute', top: 20, right: 20, width: 40, height: 40, borderRadius: '50%', border: 'none', background: 'rgba(255,255,255,0.15)', color: 'white', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 20 }}>×</button>
+      <img src={img} alt={caption} onClick={e => e.stopPropagation()} style={{ maxWidth: '100%', maxHeight: '82vh', objectFit: 'contain', borderRadius: 8, boxShadow: '0 12px 48px rgba(0,0,0,0.4)', cursor: 'default' }} />
+      {caption && <p style={{ color: 'white', fontSize: 13.5, marginTop: 16, textAlign: 'center', maxWidth: 640, opacity: 0.85 }}>{caption}</p>}
+    </div>
+  )
+}
+
 function ShotCarousel({ shots, isDesktop }) {
   const [idx, setIdx] = useState(0)
+  const [zoomed, setZoomed] = useState(false)
   const total = shots.length
   const touchStartX = useRef(null)
 
@@ -145,8 +167,15 @@ function ShotCarousel({ shots, isDesktop }) {
           <div style={{ display: 'flex', transform: `translateX(-${idx * 100}%)`, transition: 'transform 0.35s ease' }}>
             {shots.map((s, i) => (
               <div key={i} style={{ flex: '0 0 100%', boxSizing: 'border-box' }}>
-                <div style={{ aspectRatio: '16 / 7', background: '#f8fafc', borderRadius: 12, border: '1px solid #e5e7eb', boxShadow: '0 2px 10px rgba(0,0,0,0.06)', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <div style={{ position: 'relative', aspectRatio: '16 / 7', background: '#f8fafc', borderRadius: 12, border: '1px solid #e5e7eb', boxShadow: '0 2px 10px rgba(0,0,0,0.06)', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                   <img src={s.img} alt={s.caption} style={{ width: '100%', height: '100%', objectFit: 'contain', display: 'block' }} />
+                  {i === idx && (
+                    <button onClick={() => setZoomed(true)} aria-label="이미지 확대" title="이미지 확대"
+                      style={{ position: 'absolute', right: 10, bottom: 10, width: 32, height: 32, borderRadius: '50%', border: 'none', background: 'rgba(17,24,39,0.55)', color: 'white', cursor: 'zoom-in', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'background 0.12s' }}
+                      onMouseEnter={e => e.currentTarget.style.background = 'rgba(17,24,39,0.75)'}
+                      onMouseLeave={e => e.currentTarget.style.background = 'rgba(17,24,39,0.55)'}
+                    ><ZoomIcon size={16} /></button>
+                  )}
                 </div>
               </div>
             ))}
@@ -167,6 +196,7 @@ function ShotCarousel({ shots, isDesktop }) {
           <span style={{ fontSize: 12, color: '#9ca3af', fontWeight: 600 }}>{idx + 1} / {total}</span>
         </div>
       )}
+      {zoomed && <ImageLightbox img={shots[idx].img} caption={shots[idx].caption} onClose={() => setZoomed(false)} />}
     </div>
   )
 }
