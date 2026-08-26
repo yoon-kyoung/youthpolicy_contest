@@ -2,6 +2,7 @@
 import { createPortal } from "react-dom";
 import MyPageContainer from "./components/mypage/MyPageContainer";
 import HowToPage from "./components/HowToPage";
+import StoryPage from "./components/StoryPage";
 import {
   Search, Bot, User, MessageCircle,
   Sparkles, ClipboardList, Calendar,
@@ -3973,6 +3974,33 @@ function Sidebar({page,setPage,favIds,user,open,setOpen,onLogoClick}){
           <Icon name="help" size={20} style={HELP_ICON_STYLE}/>
           {open&&<span style={{whiteSpace:"nowrap",overflow:"hidden"}}>사용 방법</span>}
         </button>
+
+        <button
+          onClick={()=>setPage("project")}
+          style={{
+            display:"flex",alignItems:"center",
+            gap:open?12:0,
+            padding:open?"11px 14px":"11px 0",
+            justifyContent:open?"flex-start":"center",
+            borderRadius:12,border:"none",cursor:"pointer",
+            background:mainPage==="project"?"var(--accent-bg-active)":"transparent",
+            color:mainPage==="project"?"var(--accent)":"#475569",
+            fontSize:14,fontWeight:mainPage==="project"?700:400,
+            transition:"all 0.15s",textAlign:"left",
+            width:"100%",position:"relative",
+          }}
+          onMouseEnter={e=>{
+            if(mainPage!=="project"){e.currentTarget.style.background="#F8FAFC";}
+            if(!open){const r=e.currentTarget.getBoundingClientRect();setNavTooltip({label:"About",top:r.top+r.height/2,left:r.right+10});}
+          }}
+          onMouseLeave={e=>{
+            if(mainPage!=="project"){e.currentTarget.style.background="transparent";}
+            setNavTooltip(null);
+          }}
+        >
+          <Icon name="description" size={18} color={mainPage==="project"?"var(--accent)":"#475569"}/>
+          {open&&<span style={{whiteSpace:"nowrap",overflow:"hidden"}}>About</span>}
+        </button>
       </nav>
 
       {open&&(
@@ -4486,6 +4514,10 @@ function TopNav({page,setPage,favIds,user,onLogout,themeKey,onThemeChange,fontSc
             onMouseEnter={e=>{e.currentTarget.style.background="#f8fafc";}}
             onMouseLeave={e=>{e.currentTarget.style.background="transparent";}}
           ><Icon name="help" size={19} style={HELP_ICON_STYLE}/></button>
+          <button onClick={()=>setPage("project")} title="About" style={{display:"flex",alignItems:"center",justifyContent:"center",width:32,height:32,marginLeft:4,borderRadius:"50%",border:"none",cursor:"pointer",background:"transparent",transition:"all 0.15s"}}
+            onMouseEnter={e=>{e.currentTarget.style.background="#f8fafc";}}
+            onMouseLeave={e=>{e.currentTarget.style.background="transparent";}}
+          ><Icon name="description" size={18} color="#6b7280"/></button>
         </nav>
         <div style={{display:"flex",gap:8,alignItems:"center",marginLeft:8}}>
           {!user&&onFontInc&&<FontSizeControl scale={fontScale} onInc={onFontInc} onDec={onFontDec}/>}
@@ -4525,6 +4557,10 @@ function BottomNav({page,setPage,user}){
       <button onClick={()=>setPage("howto")} style={{flex:"0 0 44px",padding:"10px 0 8px",background:"none",border:"none",cursor:"pointer",display:"flex",flexDirection:"column",alignItems:"center",gap:2,transition:"color 0.15s"}}>
         <Icon name="help" size={22} style={HELP_ICON_STYLE}/>
         <span style={{fontSize:10,fontWeight:500,color:'#718096'}}>?</span>
+      </button>
+      <button onClick={()=>setPage("project")} style={{flex:"0 0 44px",padding:"10px 0 8px",background:"none",border:"none",cursor:"pointer",display:"flex",flexDirection:"column",alignItems:"center",gap:2,transition:"color 0.15s"}}>
+        <Icon name="description" size={20} color="#718096"/>
+        <span style={{fontSize:10,fontWeight:500,color:'#718096'}}>About</span>
       </button>
     </nav>
   );
@@ -4768,6 +4804,18 @@ export default function App(){
         <ThemeStyle color={theme.color} colorDark={theme.colorDark} colorBg={theme.colorBg} colorBgActive={theme.colorBgActive} colorShadow={theme.colorShadow} orbColor1={theme.orbColor1} orbColor2={theme.orbColor2} headerBg={theme.headerBg} bodyBg={theme.bodyBg}/>
         <div style={{flex:1,overflow:"hidden",display:"flex",flexDirection:"column"}}>
           <HowToPage onBack={()=>navigateTo("chatbot")} bp={bp}/>
+        </div>
+      </div>
+    );
+  }
+
+  if(page==="project"){
+    return(
+      <div style={{height:"calc(100vh / var(--font-scale,1))",overflow:"hidden",display:"flex",flexDirection:"column",fontFamily:"'Pretendard Variable','Apple SD Gothic Neo','Noto Sans KR',sans-serif"}}>
+        <style>{GLOBAL_CSS}</style>
+        <ThemeStyle color={theme.color} colorDark={theme.colorDark} colorBg={theme.colorBg} colorBgActive={theme.colorBgActive} colorShadow={theme.colorShadow} orbColor1={theme.orbColor1} orbColor2={theme.orbColor2} headerBg={theme.headerBg} bodyBg={theme.bodyBg}/>
+        <div style={{flex:1,overflow:"hidden",display:"flex",flexDirection:"column"}}>
+          <StoryPage onBack={()=>navigateTo("chatbot")} bp={bp}/>
         </div>
       </div>
     );
