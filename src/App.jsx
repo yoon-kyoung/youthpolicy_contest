@@ -2660,6 +2660,9 @@ function ProposalWriteView({category,setCategory,title,setTitle,background,setBa
   const [aiChecking,setAiChecking]=useState(false);
   const [aiResult,setAiResult]=useState(null);
   const [checkedSignature,setCheckedSignature]=useState(null);
+  const [agreeReuse,setAgreeReuse]=useState(false);
+  const [agreePublic,setAgreePublic]=useState(false);
+  const [agreeTruth,setAgreeTruth]=useState(false);
   const [teamInput,setTeamInput]=useState("");
   const [draftSaved,setDraftSaved]=useState(false);
   const [showPreview,setShowPreview]=useState(false);
@@ -2705,6 +2708,10 @@ function ProposalWriteView({category,setCategory,title,setTitle,background,setBa
     expectedEffect:expectedEffect.trim().length>=PROPOSAL_MIN_LEN.expectedEffect,
   };
   const allLenOk=title.trim()&&lenOk.background&&lenOk.content&&lenOk.expectedEffect;
+  const allAgreed=agreeReuse&&agreePublic&&agreeTruth;
+  const setAllAgree=v=>{setAgreeReuse(v);setAgreePublic(v);setAgreeTruth(v);};
+  const blockedByProfanity=!!(aiResult&&checkedSignature===signature&&aiResult.profanity);
+  const canSubmit=!!(allLenOk&&allAgreed&&!blockedByProfanity);
 
   const runAiCheck=async()=>{
     if(!allLenOk){
@@ -2737,6 +2744,10 @@ function ProposalWriteView({category,setCategory,title,setTitle,background,setBa
     e.preventDefault();
     if(!allLenOk){
       alert(`배경 ${PROPOSAL_MIN_LEN.background}자, 제안내용 ${PROPOSAL_MIN_LEN.content}자, 기대효과 ${PROPOSAL_MIN_LEN.expectedEffect}자 이상 작성해야 제안할 수 있어요.`);
+      return;
+    }
+    if(!allAgreed){
+      alert("필수 이용약관에 모두 동의해야 제안할 수 있어요.");
       return;
     }
     if(!aiPassed){
@@ -2878,6 +2889,28 @@ function ProposalWriteView({category,setCategory,title,setTitle,background,setBa
               <div style={{fontSize:11,color:"#9ca3af",marginTop:4}}>PDF, 이미지, HWP 첨부 가능 (최대 10MB) · HWP는 미리보기 없이 다운로드만 제공돼요</div>
             </ProposalFormRow>
 
+            <ProposalFormRow label="이용약관 동의">
+              <div style={{display:"flex",flexDirection:"column",gap:12}}>
+                {[
+                  {checked:agreeReuse,setChecked:setAgreeReuse,label:"제출한 제안 내용의 2차 활용에 동의합니다.",sub:"(제안 내용은 통계 분석, 정책 연구, 서비스 개선 등에 활용될 수 있습니다)"},
+                  {checked:agreePublic,setChecked:setAgreePublic,label:"제안 내용이 관계 기관의 공공정책 수립·시행 자료로 활용되는 것에 동의합니다."},
+                  {checked:agreeTruth,setChecked:setAgreeTruth,label:"위 작성 내용에 허위 사실이 없음을 확인하며, 제출 전 최종 확인하였습니다."},
+                ].map((t,i)=>(
+                  <label key={i} style={{display:"flex",alignItems:"flex-start",gap:8,cursor:"pointer"}}>
+                    <input type="checkbox" checked={t.checked} onChange={e=>t.setChecked(e.target.checked)} style={{width:16,height:16,marginTop:1,accentColor:"var(--accent)",cursor:"pointer",flexShrink:0}}/>
+                    <span style={{fontSize:13,color:"#374151",lineHeight:1.5}}>
+                      <b>(필수)</b> {t.label}
+                      {t.sub&&<div style={{fontSize:11,color:"#9ca3af",marginTop:2}}>{t.sub}</div>}
+                    </span>
+                  </label>
+                ))}
+                <label style={{display:"flex",alignItems:"center",gap:8,cursor:"pointer",paddingTop:10,borderTop:"1px solid #E2E8F0"}}>
+                  <input type="checkbox" checked={allAgreed} onChange={e=>setAllAgree(e.target.checked)} style={{width:16,height:16,accentColor:"var(--accent)",cursor:"pointer",flexShrink:0}}/>
+                  <span style={{fontSize:13,fontWeight:700,color:"#111827"}}>(전체 동의)</span>
+                </label>
+              </div>
+            </ProposalFormRow>
+
             {aiResult&&checkedSignature===signature&&(
               aiResult.aiAvailable===false?(
                 <div style={{borderRadius:10,padding:"12px 14px",fontSize:12,lineHeight:1.6,background:"#FFFBEB",border:"1.5px solid #FDE68A"}}>
@@ -2923,8 +2956,8 @@ function ProposalWriteView({category,setCategory,title,setTitle,background,setBa
               <button type="button" onClick={runAiCheck} disabled={aiChecking} style={{padding:"9px 16px",borderRadius:20,background:"white",border:"1.5px solid var(--accent)",color:"var(--accent)",fontSize:13,fontWeight:600,cursor:aiChecking?"default":"pointer",opacity:aiChecking?0.6:1,transition:"opacity 0.15s"}}>
                 {aiChecking?"검토 중...":"AI 검토"}
               </button>
-              <button type="submit" disabled={aiResult&&checkedSignature===signature&&aiResult.profanity} style={{padding:"9px 20px",borderRadius:20,background:(aiResult&&checkedSignature===signature&&aiResult.profanity)?"#E5E7EB":"var(--accent)",border:"none",color:(aiResult&&checkedSignature===signature&&aiResult.profanity)?"#9CA3AF":"white",fontSize:13,fontWeight:600,cursor:(aiResult&&checkedSignature===signature&&aiResult.profanity)?"default":"pointer",transition:"opacity 0.15s"}}
-                onMouseEnter={e=>{if(!(aiResult&&checkedSignature===signature&&aiResult.profanity))e.currentTarget.style.opacity="0.85"}} onMouseLeave={e=>e.currentTarget.style.opacity="1"}
+              <button type="submit" disabled={!canSubmit} style={{padding:"9px 20px",borderRadius:20,background:canSubmit?"var(--accent)":"#E5E7EB",border:"none",color:canSubmit?"white":"#9CA3AF",fontSize:13,fontWeight:600,cursor:canSubmit?"pointer":"default",transition:"opacity 0.15s"}}
+                onMouseEnter={e=>{if(canSubmit)e.currentTarget.style.opacity="0.85"}} onMouseLeave={e=>e.currentTarget.style.opacity="1"}
               >제안하기</button>
             </div>
           </form>
