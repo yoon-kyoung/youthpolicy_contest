@@ -136,7 +136,7 @@ export default function MyPageContainer({ supabaseUser, onLogout, initialTab, fa
             <div style={styles.profileInfo}>
               <div style={styles.userName}>{user.displayName}</div>
               <div style={styles.userEmail}>{user.email}</div>
-              <div style={styles.profileMeta}>
+              <div className="hscroll-fade" style={styles.profileMeta}>
                 <MetaItem icon="call" label="전화번호" value={user.phone} />
                 <div style={styles.metaDivider} />
                 <MetaItem icon="calendar_today" label="가입일" value={user.joinDate.replace(/-/g, '.')} />
@@ -281,9 +281,9 @@ function MetaItem({ icon, label, value }) {
 }
 
 const metaItem = {
-  wrap: { display: 'flex', alignItems: 'center', gap: 5, lineHeight: 1 },
-  label: { fontSize: 12, color: '#9ca3af', fontWeight: 500 },
-  value: { fontSize: 13, color: '#374151', fontWeight: 600 },
+  wrap: { display: 'flex', alignItems: 'center', gap: 5, lineHeight: 1, flexShrink: 0, whiteSpace: 'nowrap' },
+  label: { fontSize: 12, color: '#9ca3af', fontWeight: 500, whiteSpace: 'nowrap' },
+  value: { fontSize: 13, color: '#374151', fontWeight: 600, whiteSpace: 'nowrap' },
 }
 
 const styles = {
@@ -343,12 +343,14 @@ const styles = {
     display: 'flex',
     alignItems: 'center',
     gap: 10,
-    flexWrap: 'wrap',
+    flexWrap: 'nowrap',
+    overflowX: 'auto',
     marginTop: 10,
   },
   metaDivider: {
     width: 1,
     height: 13,
+    flexShrink: 0,
     backgroundColor: '#e5e7eb',
   },
   userName: {
