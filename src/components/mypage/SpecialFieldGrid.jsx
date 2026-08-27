@@ -1,4 +1,5 @@
-﻿import Icon from '../../styles/Icon'
+﻿import { useState } from 'react'
+import Icon from '../../styles/Icon'
 
 const FIELDS = [
   { id: 'no_limit',      label: '제한없음' },
@@ -25,6 +26,7 @@ const FIELDS = [
 ]
 
 export default function SpecialFieldGrid({ value, onChange, isMobile }) {
+  const [expanded, setExpanded] = useState(false)
   const toggle = (id) => {
     if (id === 'no_limit') {
       onChange(value.includes('no_limit') ? [] : ['no_limit'])
@@ -35,6 +37,7 @@ export default function SpecialFieldGrid({ value, onChange, isMobile }) {
       : [...value.filter(v => v !== 'no_limit'), id]
     onChange(next)
   }
+  const clamp = isMobile && !expanded
 
   return (
     <div>
@@ -42,7 +45,7 @@ export default function SpecialFieldGrid({ value, onChange, isMobile }) {
         <Icon name="grade" size={15} color="#374151"/>
         특화 분야 <span style={styles.multi}>(복수 선택)</span>
       </label>
-      <div style={styles.group}>
+      <div style={clamp ? { ...styles.group, maxHeight: 74, overflow: 'hidden' } : styles.group}>
         {FIELDS.map(f => {
           const active = value.includes(f.id)
           const s = active ? styles.btnActive : styles.btn
@@ -58,6 +61,12 @@ export default function SpecialFieldGrid({ value, onChange, isMobile }) {
           )
         })}
       </div>
+      {isMobile && (
+        <button type="button" style={styles.moreBtn} onClick={() => setExpanded(v => !v)}>
+          {expanded ? '접기' : '더보기'}
+          <span className="material-symbols-rounded" style={{ fontSize: 13, transform: expanded ? 'rotate(180deg)' : 'none' }}>expand_more</span>
+        </button>
+      )}
     </div>
   )
 }
@@ -104,5 +113,18 @@ const styles = {
     backgroundColor: '#F0F7FF',
     color: '#007FFF',
     fontWeight: 600,
+  },
+  moreBtn: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: 2,
+    marginTop: 8,
+    padding: 0,
+    border: 'none',
+    background: 'none',
+    color: '#007FFF',
+    fontSize: 12,
+    fontWeight: 600,
+    cursor: 'pointer',
   },
 }

@@ -32,17 +32,17 @@ function RowAccordion({ title, icon, count = 0, onSectionSave, defaultOpen = tru
       {/* 헤더 */}
       <button type="button" style={{ ...row.header, padding: isMobile ? '12px 14px' : row.header.padding }} onClick={() => setOpen(v => !v)}>
         <div style={row.left}>
-          <Icon name={icon} size={16} color="#007FFF"/>
-          <span style={row.title}>{title}</span>
-          {count > 0 && (
+          <Icon name={icon} size={isMobile ? 14 : 16} color="#007FFF"/>
+          <span style={isMobile ? { ...row.title, fontSize: 12.5 } : row.title}>{title}</span>
+          {count > 0 && !isMobile && (
             <span style={row.countBadge}>{count}개 설정됨</span>
           )}
         </div>
         <div style={row.right}>
-          <span style={row.toggleHint}>{open ? '접기' : '펼치기'}</span>
+          {!isMobile && <span style={row.toggleHint}>{open ? '접기' : '펼치기'}</span>}
           <span
             className="material-symbols-rounded"
-            style={{ fontSize: 20, color: '#9ca3af', transition: 'transform 0.2s', transform: open ? 'rotate(0deg)' : 'rotate(-90deg)' }}
+            style={{ fontSize: isMobile ? 18 : 20, color: '#9ca3af', transition: 'transform 0.2s', transform: open ? 'rotate(0deg)' : 'rotate(-90deg)' }}
           >
             expand_more
           </span>
@@ -108,9 +108,9 @@ const row = {
     borderBottom: '1px solid #f0f0f0',
     cursor: 'pointer',
   },
-  left: { display: 'flex', alignItems: 'center', gap: 8 },
-  right: { display: 'flex', alignItems: 'center', gap: 6 },
-  title: { fontSize: 14, fontWeight: 700, color: '#374151' },
+  left: { display: 'flex', alignItems: 'center', gap: 8, flex: 1, minWidth: 0 },
+  right: { display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0 },
+  title: { fontSize: 14, fontWeight: 700, color: '#374151', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', minWidth: 0 },
   countBadge: {
     fontSize: 11,
     fontWeight: 600,
