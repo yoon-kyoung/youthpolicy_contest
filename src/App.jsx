@@ -1269,30 +1269,35 @@ function SearchView({favIds,onToggleFav,onGoDetail,bp,policies}){
             </div>
           </div>
           <div style={{borderTop:"1px solid #E2E8F0",paddingTop:8}}>
-            <div style={{fontSize:11,fontWeight:700,color:"#374151",marginBottom:6,display:"flex",alignItems:"center",gap:4}}>중앙부처</div>
+            <div style={{fontSize:11,fontWeight:700,color:"#374151",marginBottom:6,display:"flex",alignItems:"center",gap:4}}>카테고리</div>
             <div style={{display:"flex",flexWrap:"wrap",gap:5}}>
-              {(bp.isMobile&&!ministryExpanded?MINISTRIES.slice(0,7):MINISTRIES).map(m=>(
-                <button key={m} onClick={()=>setMinistry(m)} style={{padding:"3px 9px",borderRadius:20,border:"1.5px solid",borderColor:ministry===m?"var(--accent)":"#E2E8F0",background:ministry===m?"var(--accent)":"#FFFFFF",color:ministry===m?"#FFFFFF":"#475569",fontSize:11,fontWeight:ministry===m?700:400,cursor:"pointer",whiteSpace:"nowrap"}}>{m}</button>
+              {CATEGORIES.map(c=>(
+                <button key={c.value} onClick={()=>setCat(c.value)} style={{padding:"3px 9px",borderRadius:20,border:"1.5px solid",borderColor:cat===c.value?"var(--accent)":"#E2E8F0",background:cat===c.value?"var(--accent)":"#FFFFFF",color:cat===c.value?"#FFFFFF":"#475569",fontSize:11,fontWeight:cat===c.value?700:400,cursor:"pointer",whiteSpace:"nowrap"}}>{c.label}</button>
               ))}
-              {bp.isMobile&&<button onClick={()=>setMinistryExpanded(v=>!v)} style={{display:"flex",alignItems:"center",gap:3,padding:"3px 9px",borderRadius:20,border:"1.5px solid #E2E8F0",background:"#F8FAFC",color:"#475569",fontSize:11,fontWeight:500,cursor:"pointer",whiteSpace:"nowrap"}}>
+            </div>
+          </div>
+          <div style={{borderTop:"1px solid #E2E8F0",paddingTop:8}}>
+            <div style={{fontSize:11,fontWeight:700,color:"#374151",marginBottom:6,display:"flex",alignItems:"center",justifyContent:"space-between",gap:4}}>
+              <span>중앙부처</span>
+              {bp.isMobile&&<button onClick={()=>setMinistryExpanded(v=>!v)} style={{display:"flex",alignItems:"center",gap:3,padding:"2px 8px",borderRadius:20,border:"1.5px solid #E2E8F0",background:"#F8FAFC",color:"#475569",fontSize:11,fontWeight:500,cursor:"pointer",whiteSpace:"nowrap"}}>
                 {ministryExpanded?"접기":"더보기"}<span style={{fontSize:9}}>{ministryExpanded?"▲":"▼"}</span>
               </button>}
             </div>
+            {(!bp.isMobile||ministryExpanded)&&
+              <div style={{display:"flex",flexWrap:"wrap",gap:5}}>
+                {MINISTRIES.map(m=>(
+                  <button key={m} onClick={()=>setMinistry(m)} style={{padding:"3px 9px",borderRadius:20,border:"1.5px solid",borderColor:ministry===m?"var(--accent)":"#E2E8F0",background:ministry===m?"var(--accent)":"#FFFFFF",color:ministry===m?"#FFFFFF":"#475569",fontSize:11,fontWeight:ministry===m?700:400,cursor:"pointer",whiteSpace:"nowrap"}}>{m}</button>
+                ))}
+              </div>
+            }
           </div>
         </div>
       </div>
       {query&&<div style={{fontSize:13,color:"#6b7280",padding:"10px 14px 0"}}>"{query}" 검색 결과</div>}
-      <div style={{padding:"10px 14px 8px",background:"white",borderBottom:"1px solid #f1f5f9"}}>
-        <div style={{display:"flex",flexWrap:"wrap",gap:5,marginBottom:8}}>
-          {CATEGORIES.map(c=>(
-            <button key={c.value} onClick={()=>setCat(c.value)} style={{whiteSpace:"nowrap",flexShrink:0,padding:"5px 10px",borderRadius:20,border:"1.5px solid",cursor:"pointer",borderColor:cat===c.value?"var(--accent)":"#E2E8F0",background:cat===c.value?"var(--accent-bg)":"white",color:cat===c.value?"var(--accent)":"#718096",fontSize:11,fontWeight:cat===c.value?700:500,transition:"all 0.12s"}}>{c.label}</button>
-          ))}
-        </div>
-        <div style={{display:"flex",justifyContent:"flex-end"}}>
-          <select value={sort} onChange={e=>setSort(e.target.value)} style={{flexShrink:0,fontSize:12,border:"1px solid #e2e8f0",borderRadius:8,padding:"5px 8px",background:"white",color:"#374151",outline:"none",fontFamily:"inherit",cursor:"pointer"}}>
-            {SORT_OPTIONS.map(o=><option key={o.value} value={o.value}>{o.label}</option>)}
-          </select>
-        </div>
+      <div style={{display:"flex",justifyContent:"flex-end",padding:"10px 14px 4px",background:"white",borderBottom:"1px solid #f1f5f9"}}>
+        <select value={sort} onChange={e=>setSort(e.target.value)} style={{flexShrink:0,fontSize:12,border:"1px solid #e2e8f0",borderRadius:8,padding:"5px 8px",background:"white",color:"#374151",outline:"none",fontFamily:"inherit",cursor:"pointer"}}>
+          {SORT_OPTIONS.map(o=><option key={o.value} value={o.value}>{o.label}</option>)}
+        </select>
       </div>
       <div style={{padding:"14px 14px 0",display:"grid",gridTemplateColumns:`repeat(${cols},1fr)`,gap:9}}>
         {filtered.length===0
