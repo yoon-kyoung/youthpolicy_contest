@@ -2957,7 +2957,11 @@ function ProposalWriteView({category,setCategory,title,setTitle,background,setBa
               )
             )}
 
-            <div style={{display:"flex",justifyContent:"flex-end",gap:8}}>
+            <div style={{display:"flex",justifyContent:"flex-end",alignItems:"center",gap:8,flexWrap:"wrap",rowGap:8}}>
+              <div style={{display:"inline-flex",alignItems:"center",gap:5,padding:"4px 10px",borderRadius:99,background:"var(--accent-bg)",border:"1px solid #E2E8F0",marginRight:"auto"}}>
+                <Icon name="auto_awesome" size={12} color="var(--accent)"/>
+                <span style={{fontSize:11,fontWeight:700,color:"var(--accent)"}}>Upstage Solar API 기반 AI 검토</span>
+              </div>
               <div style={{position:"relative"}}>
                 <button type="button" onClick={handleSaveDraft} style={{padding:"9px 16px",borderRadius:20,background:"white",border:"1.5px solid #E2E8F0",color:"#374151",fontSize:13,fontWeight:600,cursor:"pointer",transition:"opacity 0.15s"}}>
                   임시저장
