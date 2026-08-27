@@ -584,7 +584,8 @@ function useReveal(threshold=0.12) {
   return [ref,visible];
 }
 
-function HScrollFade({children,style,fadeColor="#ffffff"}){
+function HScrollFade({children,style={},fadeColor="#ffffff"}){
+  const {flex,minWidth,...innerStyle}=style;
   const ref=useRef(null);
   const [canScrollRight,setCanScrollRight]=useState(false);
   const check=useCallback(()=>{
@@ -601,8 +602,8 @@ function HScrollFade({children,style,fadeColor="#ffffff"}){
     return()=>{el.removeEventListener("scroll",check);window.removeEventListener("resize",check);};
   },[check]);
   return(
-    <div style={{position:"relative",minWidth:0}}>
-      <div ref={ref} className="hscroll-fade" style={{display:"flex",overflowX:"auto",scrollbarWidth:"none",msOverflowStyle:"none",...style}}>{children}</div>
+    <div style={{position:"relative",minWidth:minWidth??0,flex}}>
+      <div ref={ref} className="hscroll-fade" style={{display:"flex",overflowX:"auto",scrollbarWidth:"none",msOverflowStyle:"none",...innerStyle}}>{children}</div>
       {canScrollRight&&<div style={{position:"absolute",top:0,right:0,bottom:0,width:28,pointerEvents:"none",background:`linear-gradient(to right, rgba(255,255,255,0), ${fadeColor})`}}/>}
     </div>
   );
