@@ -602,7 +602,7 @@ function HScrollFade({children,style,fadeColor="#ffffff"}){
   },[check]);
   return(
     <div style={{position:"relative",minWidth:0}}>
-      <div ref={ref} style={{display:"flex",overflowX:"auto",...style}}>{children}</div>
+      <div ref={ref} className="hscroll-fade" style={{display:"flex",overflowX:"auto",scrollbarWidth:"none",msOverflowStyle:"none",...style}}>{children}</div>
       {canScrollRight&&<div style={{position:"absolute",top:0,right:0,bottom:0,width:28,pointerEvents:"none",background:`linear-gradient(to right, rgba(255,255,255,0), ${fadeColor})`}}/>}
     </div>
   );
@@ -4619,6 +4619,7 @@ const GLOBAL_CSS=`
   ::-webkit-scrollbar-thumb{background:#d1d5db;border-radius:4px;}
   ::-webkit-scrollbar-track{background:transparent;}
   .proposal-onboarding-scroll::-webkit-scrollbar{display:none;}
+  .hscroll-fade::-webkit-scrollbar{display:none;}
   input[type=search]::-webkit-search-cancel-button{-webkit-appearance:none;}
   @keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
   @keyframes floatOrb{0%,100%{transform:translate(0,0)}50%{transform:translate(10px,-14px)}}
@@ -4948,7 +4949,7 @@ export default function App(){
           ?<TopNav page={page} setPage={navigateToTab} favIds={favIds} user={user} onLogout={handleLogout} themeKey={themeKey} onThemeChange={setThemeKey} fontScale={fontScale} onFontInc={incFont} onFontDec={decFont} onLogoClick={goHome}/>
           :(
             <header style={{background:'var(--header-bg,white)',borderBottom:"1px solid #e5e7eb",padding:"0 16px",position:"sticky",top:0,zIndex:50}}>
-              <div style={{height:52,display:"flex",alignItems:"center",justifyContent:"space-between",gap:4}}>
+              <div style={{height:52,display:"flex",alignItems:"center",justifyContent:"space-between",gap:14}}>
                 <div style={{display:"flex",alignItems:"center",gap:4,minWidth:0,flexShrink:1}}>
                   <button onClick={goHome} style={{display:"flex",alignItems:"center",gap:8,background:"none",border:"none",cursor:"pointer",padding:0,flexShrink:0}}>
                     <img src={import.meta.env.BASE_URL + 'logo.png'} alt="청년ON" style={{width:30,height:30,borderRadius:9,flexShrink:0}}/>
