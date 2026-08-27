@@ -826,11 +826,11 @@ export default function ChatBotView({ bp, favIds, onToggleFav, onGoDetail, reset
         }}
         style={{ height:'100%', overflow:'hidden', background:'#ffffff', position:'relative' }}
       >
-        <div ref={orb1WrapRef} style={{position:'absolute',left:'29%',top:'34%',width:bp==='mobile'?'38.25vw':'25.5vw',aspectRatio:'1',pointerEvents:'none',zIndex:0,transition:'transform 0.4s ease-out'}}>
-          <div style={{width:'100%',height:'100%',borderRadius:'50%',background:'var(--orb1)',filter:bp==='mobile'?'blur(8.1vw)':'blur(5.4vw)',animation:'orbSpread 6s ease-in-out infinite'}}/>
+        <div ref={orb1WrapRef} style={{position:'absolute',left:'29%',top:'34%',width:bp==='mobile'?'58vw':'25.5vw',aspectRatio:'1',pointerEvents:'none',zIndex:0,transition:'transform 0.4s ease-out'}}>
+          <div style={{width:'100%',height:'100%',borderRadius:'50%',background:'var(--orb1)',filter:bp==='mobile'?'blur(14vw)':'blur(5.4vw)',animation:'orbSpread 6s ease-in-out infinite'}}/>
         </div>
-        <div ref={orb2WrapRef} style={{position:'absolute',left:'47%',top:'34%',width:bp==='mobile'?'29.25vw':'19.5vw',aspectRatio:'1',pointerEvents:'none',zIndex:0,transition:'transform 0.4s ease-out'}}>
-          <div style={{width:'100%',height:'100%',borderRadius:'50%',background:'var(--orb2)',filter:bp==='mobile'?'blur(6.6vw)':'blur(4.4vw)',animation:'orbSpread 6s ease-in-out infinite 1s'}}/>
+        <div ref={orb2WrapRef} style={{position:'absolute',left:'47%',top:'34%',width:bp==='mobile'?'45vw':'19.5vw',aspectRatio:'1',pointerEvents:'none',zIndex:0,transition:'transform 0.4s ease-out'}}>
+          <div style={{width:'100%',height:'100%',borderRadius:'50%',background:'var(--orb2)',filter:bp==='mobile'?'blur(11vw)':'blur(4.4vw)',animation:'orbSpread 6s ease-in-out infinite 1s'}}/>
         </div>
         {/* Privacy Notice — 오른쪽 하단 고정 (모바일은 본문 텍스트를 가려서 숨김) */}
         {bp!=='mobile'&&<PrivacyNoticePanel bp={bp}/>}
