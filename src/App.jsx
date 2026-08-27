@@ -1282,15 +1282,17 @@ function SearchView({favIds,onToggleFav,onGoDetail,bp,policies}){
         </div>
       </div>
       {query&&<div style={{fontSize:13,color:"#6b7280",padding:"10px 14px 0"}}>"{query}" 검색 결과</div>}
-      <div style={{display:"flex",alignItems:"center",gap:8,padding:"10px 14px 4px",background:"white",borderBottom:"1px solid #f1f5f9"}}>
-        <HScrollFade style={{gap:5,flex:1}} fadeColor="#ffffff">
+      <div style={{padding:"10px 14px 8px",background:"white",borderBottom:"1px solid #f1f5f9"}}>
+        <div style={{display:"flex",flexWrap:"wrap",gap:5,marginBottom:8}}>
           {CATEGORIES.map(c=>(
             <button key={c.value} onClick={()=>setCat(c.value)} style={{whiteSpace:"nowrap",flexShrink:0,padding:"5px 10px",borderRadius:20,border:"1.5px solid",cursor:"pointer",borderColor:cat===c.value?"var(--accent)":"#E2E8F0",background:cat===c.value?"var(--accent-bg)":"white",color:cat===c.value?"var(--accent)":"#718096",fontSize:11,fontWeight:cat===c.value?700:500,transition:"all 0.12s"}}>{c.label}</button>
           ))}
-        </HScrollFade>
-        <select value={sort} onChange={e=>setSort(e.target.value)} style={{flexShrink:0,fontSize:12,border:"1px solid #e2e8f0",borderRadius:8,padding:"5px 8px",background:"white",color:"#374151",outline:"none",fontFamily:"inherit",cursor:"pointer"}}>
-          {SORT_OPTIONS.map(o=><option key={o.value} value={o.value}>{o.label}</option>)}
-        </select>
+        </div>
+        <div style={{display:"flex",justifyContent:"flex-end"}}>
+          <select value={sort} onChange={e=>setSort(e.target.value)} style={{flexShrink:0,fontSize:12,border:"1px solid #e2e8f0",borderRadius:8,padding:"5px 8px",background:"white",color:"#374151",outline:"none",fontFamily:"inherit",cursor:"pointer"}}>
+            {SORT_OPTIONS.map(o=><option key={o.value} value={o.value}>{o.label}</option>)}
+          </select>
+        </div>
       </div>
       <div style={{padding:"14px 14px 0",display:"grid",gridTemplateColumns:`repeat(${cols},1fr)`,gap:9}}>
         {filtered.length===0
