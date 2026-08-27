@@ -311,7 +311,7 @@ const styles = {
   profileRow: {
     display: 'flex',
     alignItems: 'flex-start',
-    gap: 16,
+    gap: 20,
   },
   accountMenu: {
     marginTop: 20,
@@ -363,6 +363,9 @@ const styles = {
     fontSize: 13,
     color: '#9ca3af',
     lineHeight: 1.4,
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+    whiteSpace: 'nowrap',
   },
   tabContainer: {
     borderRadius: 16,
