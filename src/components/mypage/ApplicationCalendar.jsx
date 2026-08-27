@@ -20,8 +20,9 @@ const BASE_YEAR  = now.getFullYear()
 const BASE_MONTH = now.getMonth() + 1  // 1-indexed
 const TODAY      = now.getDate()
 
-export default function ApplicationCalendar({ policies, favIds, onGoDetail }) {
+export default function ApplicationCalendar({ policies, favIds, onGoDetail, isMobile }) {
   const [offset, setOffset] = useState(0)
+  const [expandedDays, setExpandedDays] = useState(() => new Set())
   const statuses = loadLS('yoa:apply-status')
   const memos    = loadLS('yoa:apply-memo')
 
@@ -63,7 +64,7 @@ export default function ApplicationCalendar({ policies, favIds, onGoDetail }) {
   const hasEvents = Object.keys(markedDays).length > 0
 
   return (
-    <div style={styles.card} data-tour="calendar">
+    <div style={isMobile ? { ...styles.card, padding: '14px 12px' } : styles.card} data-tour="calendar">
       {/* 헤더 */}
       <div style={styles.header}>
         <button type="button" style={styles.navBtn} onClick={() => setOffset(o => o - 1)}>
@@ -96,16 +97,18 @@ export default function ApplicationCalendar({ policies, favIds, onGoDetail }) {
           if (!day) return <div key={`e-${i}`} style={styles.emptyCell} />
 
           const events  = markedDays[day] || []
+          const dayKey  = `${displayYear}-${displayMonth}-${day}`
           const isToday = isCurrentMonth && day === TODAY
           const dow     = i % 7   // 0=월 … 5=토 6=일
           const isSat   = dow === 5
           const isSun   = dow === 6
 
           return (
-            <div key={day} style={styles.cell}>
+            <div key={day} style={isMobile ? { ...styles.cell, padding: '4px 2px 6px' } : styles.cell}>
               <span
                 style={{
                   ...styles.dayNum,
+                  ...(isMobile ? { width: 24, height: 24, fontSize: 12.5 } : null),
                   color: isToday ? '#ffffff' : isSun ? '#ef4444' : isSat ? '#007FFF' : '#374151',
                   backgroundColor: isToday ? '#007FFF' : 'transparent',
                 }}
@@ -113,40 +116,55 @@ export default function ApplicationCalendar({ policies, favIds, onGoDetail }) {
                 {day}
               </span>
 
-              {events.length > 0 && (
-                <div style={styles.events}>
-                  {events.map((ev, idx) => {
-                    const isDeadline = ev.eventType === 'deadline'
-                    const eventColor = isDeadline ? '#ef4444' : '#16a34a'
-                    const eventBg    = isDeadline ? '#FEF2F2' : '#F0FDF4'
-                    const st         = STATUS_MAP[statuses[ev.id]] || STATUS_MAP.ready
-                    const memo       = memos[ev.id] || ''
-                    return (
-                      <div
-                        key={idx}
-                        onClick={() => onGoDetail?.(ev)}
-                        style={{
-                          ...styles.eventBlock,
-                          backgroundColor: eventBg,
-                          borderLeft: `3px solid ${eventColor}`,
-                          cursor: onGoDetail ? 'pointer' : 'default',
-                        }}
-                        title={`${ev.title} ${isDeadline ? '마감' : '신청 시작'}`}
+              {events.length > 0 && (() => {
+                const isExpanded = expandedDays.has(dayKey)
+                const maxVisible = isMobile && !isExpanded ? 1 : events.length
+                const shown = events.slice(0, maxVisible)
+                const extra = events.length - shown.length
+                return (
+                  <div style={styles.events}>
+                    {shown.map((ev, idx) => {
+                      const isDeadline = ev.eventType === 'deadline'
+                      const eventColor = isDeadline ? '#ef4444' : '#16a34a'
+                      const eventBg    = isDeadline ? '#FEF2F2' : '#F0FDF4'
+                      const st         = STATUS_MAP[statuses[ev.id]] || STATUS_MAP.ready
+                      const memo       = memos[ev.id] || ''
+                      return (
+                        <div
+                          key={idx}
+                          onClick={() => onGoDetail?.(ev)}
+                          style={{
+                            ...styles.eventBlock,
+                            backgroundColor: eventBg,
+                            borderLeft: `3px solid ${eventColor}`,
+                            cursor: onGoDetail ? 'pointer' : 'default',
+                          }}
+                          title={`${ev.title} ${isDeadline ? '마감' : '신청 시작'}`}
+                        >
+                          <span style={{ ...styles.evTitle, color: eventColor }}>
+                            {ev.title} {isDeadline ? '마감' : '신청 시작'}
+                          </span>
+                          {isDeadline && (
+                            <div style={styles.evMeta}>
+                              <span style={{ ...styles.evStatus, color: st.color }}>● {st.label}</span>
+                              {memo && <span style={styles.evMemo}>{memo}</span>}
+                            </div>
+                          )}
+                        </div>
+                      )
+                    })}
+                    {extra > 0 && (
+                      <button
+                        type="button"
+                        style={styles.moreBtn}
+                        onClick={() => setExpandedDays(prev => new Set(prev).add(dayKey))}
                       >
-                        <span style={{ ...styles.evTitle, color: eventColor }}>
-                          {ev.title} {isDeadline ? '마감' : '신청 시작'}
-                        </span>
-                        {isDeadline && (
-                          <div style={styles.evMeta}>
-                            <span style={{ ...styles.evStatus, color: st.color }}>● {st.label}</span>
-                            {memo && <span style={styles.evMemo}>{memo}</span>}
-                          </div>
-                        )}
-                      </div>
-                    )
-                  })}
-                </div>
-              )}
+                        +{extra}
+                      </button>
+                    )}
+                  </div>
+                )
+              })()}
             </div>
           )
         })}
@@ -284,6 +302,18 @@ const styles = {
     textOverflow: 'ellipsis',
     whiteSpace: 'nowrap',
     lineHeight: 1.3,
+  },
+  moreBtn: {
+    alignSelf: 'flex-start',
+    padding: '1px 6px',
+    borderRadius: 8,
+    border: 'none',
+    backgroundColor: '#f1f5f9',
+    color: '#64748b',
+    fontSize: 10,
+    fontWeight: 700,
+    cursor: 'pointer',
+    lineHeight: 1.4,
   },
   noData: {
     display: 'flex',

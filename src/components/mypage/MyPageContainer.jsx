@@ -247,7 +247,7 @@ export default function MyPageContainer({ supabaseUser, onLogout, initialTab, fa
         )}
 
         {/* 달력 — 탭과 무관하게 항상 표시 */}
-        <ApplicationCalendar policies={policies} favIds={favIds} onGoDetail={onGoDetail} />
+        <ApplicationCalendar policies={policies} favIds={favIds} onGoDetail={onGoDetail} isMobile={isMobile} />
 
         {/* 탭 + 콘텐츠 */}
         <div style={styles.tabContainer}>
