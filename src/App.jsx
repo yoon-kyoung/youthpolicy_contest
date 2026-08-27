@@ -2134,7 +2134,7 @@ function proposalTimelineStates(status){
 }
 const PROPOSAL_TIMELINE_META=PROPOSAL_TIMELINE_STEPS.map((label,i)=>({label,icon:PROPOSAL_TIMELINE_ICONS[i],detail:PROPOSAL_TIMELINE_DESC[i]}));
 
-function ProposalTimelineWidget({steps,states,title="진행 상태",clickFill=false,children}){
+function ProposalTimelineWidget({steps,states,title="진행 상태",clickFill=false,bp,children}){
   const [openIndex,setOpenIndex]=useState(null);
   const clickedFilled=i=>clickFill&&openIndex!=null&&i<=openIndex;
   return(
@@ -2155,7 +2155,7 @@ function ProposalTimelineWidget({steps,states,title="진행 상태",clickFill=fa
               </button>
               <span style={{fontSize:11,marginTop:6,fontWeight:(st==="current"||isOpen)?700:600,color:isFilled?"#374151":"#94a3b8",textAlign:"center"}}>{step.label}</span>
               {clickFill&&st==="current"&&openIndex==null&&(
-                <div style={{position:"absolute",top:"100%",left:"50%",transform:"translateX(-50%)",marginTop:10,background:"#1f2937",color:"white",borderRadius:8,padding:"5px 8px",fontSize:9.5,fontWeight:600,width:88,whiteSpace:"normal",textAlign:"center",lineHeight:1.35,boxShadow:"0 2px 8px rgba(0,0,0,0.18)",animation:"fadeUp 0.3s ease",zIndex:2}}>
+                <div style={bp?.isMobile?{position:"absolute",top:"100%",left:"50%",transform:"translateX(-50%)",marginTop:10,background:"#1f2937",color:"white",borderRadius:8,padding:"5px 8px",fontSize:9.5,fontWeight:600,width:88,whiteSpace:"normal",textAlign:"center",lineHeight:1.35,boxShadow:"0 2px 8px rgba(0,0,0,0.18)",animation:"fadeUp 0.3s ease",zIndex:2}:{position:"absolute",top:"100%",left:"50%",transform:"translateX(-50%)",marginTop:10,background:"#1f2937",color:"white",borderRadius:8,padding:"6px 10px",fontSize:11,fontWeight:600,width:"max-content",whiteSpace:"nowrap",textAlign:"center",lineHeight:1.4,boxShadow:"0 2px 8px rgba(0,0,0,0.18)",animation:"fadeUp 0.3s ease",zIndex:2}}>
                   <div style={{position:"absolute",bottom:"100%",left:"50%",transform:"translateX(-50%)",width:0,height:0,borderLeft:"5px solid transparent",borderRight:"5px solid transparent",borderBottom:"5px solid #1f2937"}}/>
                   아이콘을 클릭해서 상세 내용을 확인해보세요!
                 </div>
@@ -2333,7 +2333,7 @@ function ProposalDetailView({proposal,user,onVote,onUpdate,onBack,bp}){
         <div style={{maxWidth:820,margin:"0 auto",display:"flex",flexDirection:"column",gap:16}}>
 
           {/* 상태 타임라인 */}
-          <ProposalTimelineWidget steps={PROPOSAL_TIMELINE_META} states={timeline}>
+          <ProposalTimelineWidget steps={PROPOSAL_TIMELINE_META} states={timeline} bp={bp}>
             {proposal.status==="pending"&&(
               <div style={{marginTop:16}}>
                 <div style={{height:6,borderRadius:20,background:"#F1F5F9",overflow:"hidden"}}>
@@ -3020,15 +3020,15 @@ function ProposalOnboardingCarousel({bp}){
   const sidePad=bp.isDesktop?24:16;
 
   return(
-    <div style={{background:"white",borderRadius:16,border:"1.5px solid #E2E8F0",padding:"18px 0 46px",overflow:"hidden"}}>
+    <div style={{background:"white",borderRadius:16,border:"1.5px solid #E2E8F0",padding:"18px 0 16px",overflow:"hidden"}}>
       <div style={{padding:`0 ${sidePad}px 14px`,display:"flex",alignItems:"center",gap:7}}>
         <Icon name="edit_note" size={17} color="var(--accent)"/>
         <div style={{fontSize:bp.isDesktop?16:15,fontWeight:800,color:"#111827"}}>정책제안 이렇게 진행돼요</div>
       </div>
-      <div className="proposal-onboarding-scroll" style={{display:"flex",overflowX:"auto",scrollSnapType:"x mandatory",WebkitOverflowScrolling:"touch",scrollbarWidth:"none"}}>
+      <div className="proposal-onboarding-scroll" style={{display:"flex",overflowX:"auto",scrollSnapType:"x mandatory",WebkitOverflowScrolling:"touch",scrollbarWidth:"none",paddingBottom:bp.isMobile?58:40}}>
         {PROPOSAL_ONBOARDING_STEPS.map((step,i)=>(
           <div key={step.title} style={{flex:"0 0 100%",width:"100%",boxSizing:"border-box",scrollSnapAlign:"start",padding:`0 ${sidePad}px`,display:"flex",flexDirection:"column"}}>
-            <ProposalTimelineWidget steps={PROPOSAL_ONBOARDING_TIMELINE_META} states={PROPOSAL_ONBOARDING_TIMELINE_META.map((_,idx)=>idx<i?"done":idx===i?"current":"upcoming")} clickFill/>
+            <ProposalTimelineWidget steps={PROPOSAL_ONBOARDING_TIMELINE_META} states={PROPOSAL_ONBOARDING_TIMELINE_META.map((_,idx)=>idx<i?"done":idx===i?"current":"upcoming")} clickFill bp={bp}/>
           </div>
         ))}
       </div>

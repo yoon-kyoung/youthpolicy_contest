@@ -1095,7 +1095,7 @@ export default function ChatBotView({ bp, favIds, onToggleFav, onGoDetail, reset
 
         {mode==='chat'&&!reachedLimit&&(
           <>
-            {models.length > 1 && (
+            {models.length > 1 ? (
               <div style={{display:'flex',alignItems:'center',gap:8,marginBottom:8}}>
                 <span style={{fontSize:12,color:C.mutedText}}>모델</span>
                 <select
@@ -1112,6 +1112,11 @@ export default function ChatBotView({ bp, favIds, onToggleFav, onGoDetail, reset
                     <option key={m.id} value={m.id}>{m.label}</option>
                   ))}
                 </select>
+              </div>
+            ) : model.toLowerCase().includes('solar') && (
+              <div style={{display:'inline-flex',alignItems:'center',gap:5,padding:'4px 10px',borderRadius:99,background:'var(--accent-bg)',border:`1px solid ${C.borderGray}`,marginBottom:8}}>
+                <Icon name="auto_awesome" size={12} color={C.primary}/>
+                <span style={{fontSize:11,fontWeight:700,color:C.primary}}>Upstage Solar API 기반 답변</span>
               </div>
             )}
             {showOptions && (
