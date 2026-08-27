@@ -1,6 +1,30 @@
-import { useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import Icon from '../styles/Icon'
 import LegalFooterLinks from './LegalModal'
+
+function TabScrollFade({ children }) {
+  const ref = useRef(null)
+  const [canScrollRight, setCanScrollRight] = useState(false)
+  const check = useCallback(() => {
+    const el = ref.current
+    if (!el) return
+    setCanScrollRight(el.scrollWidth - el.clientWidth - el.scrollLeft > 4)
+  }, [])
+  useEffect(() => {
+    check()
+    const el = ref.current
+    if (!el) return
+    el.addEventListener('scroll', check, { passive: true })
+    window.addEventListener('resize', check)
+    return () => { el.removeEventListener('scroll', check); window.removeEventListener('resize', check) }
+  }, [check])
+  return (
+    <div style={{ position: 'relative', minWidth: 0 }}>
+      <div ref={ref} style={{ display: 'flex', overflowX: 'auto', gap: 4, padding: 6, background: '#eef2f7', borderRadius: 12 }}>{children}</div>
+      {canScrollRight && <div style={{ position: 'absolute', top: 0, right: 0, bottom: 0, width: 28, pointerEvents: 'none', borderRadius: '0 12px 12px 0', background: 'linear-gradient(to right, rgba(238,242,247,0), #eef2f7)' }} />}
+    </div>
+  )
+}
 
 const SECTIONS = [
   { id: 'motive', icon: 'edit_note', title: '만들게 된 동기' },
@@ -15,8 +39,7 @@ const STACK_ITEMS = [
   { name: 'GitHub Pages', role: '프론트엔드 배포', detail: 'main 브랜치에 push하면 GitHub Actions가 자동으로 빌드해 정적 사이트로 배포해요.', mark: 'GH', markBg: '#24292F', markColor: '#ffffff' },
   { name: 'Supabase', role: '회원 인증 + 데이터베이스 + 스토리지', detail: '이메일·카카오 로그인, 커뮤니티 게시글·댓글, 정책제안·제안 댓글, 알림, 첨부파일 업로드를 모두 처리해요.', mark: 'Sb', markBg: '#3ECF8E', markColor: '#064E3B' },
   { name: 'Vercel', role: 'AI 챗봇 백엔드 서버', detail: '챗봇 답변 생성 API를 별도 서버로 분리해 배포했어요. API 키는 서버에만 있어서 프론트에 노출되지 않아요.', mark: 'Vc', markBg: '#000000', markColor: '#ffffff' },
-  { name: 'Upstage Solar API', role: 'AI 챗봇 답변 생성 (모델: solar-pro3)', detail: '자연어 질문을 이해해 상황에 맞는 청년정책을 골라 추천 답변을 만들어요.', mark: 'US', markBg: 'linear-gradient(135deg,#FF6B35,#F7931E)', markColor: '#ffffff' },
-  { name: 'OpenRouter API', role: '정책제안 AI 검토 · 정책 비교 분석 (Nemotron 3 Nano)', detail: '제안 등록 전 부적절한 표현을 검사하고, 선택한 정책들의 차이점을 요약해줘요.', mark: 'OR', markBg: 'linear-gradient(135deg,#6366F1,#8B5CF6)', markColor: '#ffffff' },
+  { name: 'Upstage Solar API', role: 'AI 챗봇·정책제안 검토·정책 비교 (모델: solar-pro3)', detail: '자연어 질문을 이해해 상황에 맞는 청년정책을 추천하고, 정책제안 등록 전 부적절한 표현을 검사하고, 선택한 정책들의 차이점을 요약해줘요.', mark: 'US', markBg: 'linear-gradient(135deg,#FF6B35,#F7931E)', markColor: '#ffffff' },
   { name: '온통청년 API', role: '청년정책·청년센터 데이터', detail: '정부(청년정책 통합정보시스템)가 제공하는 전국 청년지원정책과 청년센터 정보를 가져와 사용해요.', icon: 'account_balance', markBg: 'var(--accent)', markColor: '#ffffff' },
 ]
 
@@ -25,7 +48,7 @@ const CREDIT_ITEMS = [
   { name: 'Pretendard Variable', source: 'orioncactus/Pretendard (길형진 제작)', license: 'SIL Open Font License 1.1', note: '화면 전체 본문·제목에 사용한 한글 웹폰트예요. 오픈소스로 배포되어 상업적 사용도 자유로워요.' },
   { name: 'Material Symbols (Rounded / Outlined)', source: 'Google Fonts', license: 'Apache License 2.0', note: '모든 아이콘은 이모지 대신 구글의 Material Symbols만 사용해요. 실제 쓰는 아이콘만 서브셋으로 추려 폰트 용량을 최소화했어요.' },
   { name: '사용법 페이지 스크린샷', source: '청년ON 자체 제작', license: '자체 저작물', note: '"사용 방법" 페이지의 화면 캡처는 전부 이 서비스를 직접 촬영한 이미지예요.' },
-  { name: 'Upstage Solar / OpenRouter', source: '업스테이지, OpenRouter', license: '각 사 API 이용약관에 따름', note: 'AI 모델 자체를 배포하지 않고, 각 제공사의 API를 호출해 응답만 받아와요.' },
+  { name: 'Upstage Solar API', source: '업스테이지', license: '이용약관에 따름', note: 'AI 모델 자체를 배포하지 않고, 업스테이지의 API를 호출해 응답만 받아와요.' },
 ]
 
 const UPDATE_LOG = [
@@ -100,7 +123,7 @@ export default function StoryPage({ onBack, bp }) {
 
         <div style={{ position: 'sticky', top: 0, zIndex: 10, background: 'rgba(245,249,252,0.92)', backdropFilter: 'blur(6px)', borderBottom: '1px solid #e5e7eb' }}>
           <div style={{ maxWidth: 1100, margin: '0 auto', padding: isDesktop ? '10px 40px' : '8px 16px' }}>
-            <div style={{ display: 'flex', overflowX: 'auto', gap: 4, padding: 6, background: '#eef2f7', borderRadius: 12 }}>
+            <TabScrollFade>
               {SECTIONS.map(s => {
                 const active = activeId === s.id
                 return (
@@ -113,7 +136,7 @@ export default function StoryPage({ onBack, bp }) {
                   }}><Icon name={s.icon} size={15} color="currentColor" />{s.title}</button>
                 )
               })}
-            </div>
+            </TabScrollFade>
           </div>
         </div>
 
