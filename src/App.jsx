@@ -3355,11 +3355,11 @@ function PolicyProposalPage({bp,user,onGoCommunity}){
               )}
             </div>
 
-            <div style={{background:"white",borderRadius:"0 0 16px 16px",padding:"12px 16px",display:"flex",gap:5,flexWrap:"wrap",alignItems:"center"}}>
+            <div style={{background:"white",borderRadius:"0 0 16px 16px",padding:bp.isMobile?"8px 10px":"12px 16px",display:"flex",gap:5,flexWrap:"wrap",alignItems:"center"}}>
               {PROPOSAL_CATEGORY_FILTERS.map(c=>(
-                <button key={c.value} onClick={()=>setCatFilter(c.value)} style={{padding:"4px 10px",borderRadius:20,border:"1.5px solid",borderColor:catFilter===c.value?"var(--accent)":"#E2E8F0",background:catFilter===c.value?"var(--accent)":"white",color:catFilter===c.value?"white":"#475569",fontSize:12,fontWeight:catFilter===c.value?700:400,cursor:"pointer",transition:"all 0.12s",whiteSpace:"nowrap"}}>{c.label}</button>
+                <button key={c.value} onClick={()=>setCatFilter(c.value)} style={{padding:bp.isMobile?"3px 8px":"4px 10px",borderRadius:20,border:"1.5px solid",borderColor:catFilter===c.value?"var(--accent)":"#E2E8F0",background:catFilter===c.value?"var(--accent)":"white",color:catFilter===c.value?"white":"#475569",fontSize:bp.isMobile?10.5:12,fontWeight:catFilter===c.value?700:400,cursor:"pointer",transition:"all 0.12s",whiteSpace:"nowrap"}}>{c.label}</button>
               ))}
-              <select value={sort} onChange={e=>setSort(e.target.value)} style={{fontSize:12,border:"1px solid #e2e8f0",borderRadius:8,padding:"5px 8px",background:"white",color:"#374151",outline:"none",fontFamily:"inherit",cursor:"pointer",flexShrink:0,marginLeft:"auto"}}>
+              <select value={sort} onChange={e=>setSort(e.target.value)} style={{fontSize:bp.isMobile?11:12,border:"1px solid #e2e8f0",borderRadius:8,padding:bp.isMobile?"4px 6px":"5px 8px",background:"white",color:"#374151",outline:"none",fontFamily:"inherit",cursor:"pointer",flexShrink:0,marginLeft:"auto"}}>
                 {PROPOSAL_SORTS.map(o=><option key={o.value} value={o.value}>{o.label}</option>)}
               </select>
             </div>
