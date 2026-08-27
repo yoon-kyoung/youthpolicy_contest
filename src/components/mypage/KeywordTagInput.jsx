@@ -3,7 +3,7 @@ import Icon from '../../styles/Icon'
 
 const SUGGESTIONS = ['IT', '서울', '재택', '정규직', '스타트업', '공공기관', '중소기업', '연구직']
 
-export default function KeywordTagInput({ value, onChange }) {
+export default function KeywordTagInput({ value, onChange, isMobile }) {
   const [input, setInput] = useState('')
   const [focused, setFocused] = useState(false)
 
@@ -38,15 +38,15 @@ export default function KeywordTagInput({ value, onChange }) {
       {/* 가로형 입력 영역 */}
       <div style={styles.inputRow}>
         {/* 태그 + 인풋 인라인 박스 */}
-        <div style={{ ...styles.tagBox, borderColor: focused ? '#007FFF' : '#d1d5db' }}>
+        <div style={{ ...styles.tagBox, ...(isMobile ? { padding: '6px 10px', minHeight: 38 } : null), borderColor: focused ? '#007FFF' : '#d1d5db' }}>
           {value.map(kw => (
-            <span key={kw} style={styles.tag}>
+            <span key={kw} style={isMobile ? { ...styles.tag, padding: '3px 8px', fontSize: 12 } : styles.tag}>
               {kw}
               <button type="button" style={styles.tagRemove} onClick={() => remove(kw)}>×</button>
             </span>
           ))}
           <input
-            style={styles.inlineInput}
+            style={isMobile ? { ...styles.inlineInput, fontSize: 13 } : styles.inlineInput}
             value={input}
             onChange={e => setInput(e.target.value)}
             onKeyDown={handleKeyDown}
@@ -58,7 +58,7 @@ export default function KeywordTagInput({ value, onChange }) {
         </div>
         <button
           type="button"
-          style={input.trim() ? styles.addBtn : styles.addBtnDisabled}
+          style={isMobile ? { ...(input.trim() ? styles.addBtn : styles.addBtnDisabled), padding: '8px 14px', fontSize: 12 } : (input.trim() ? styles.addBtn : styles.addBtnDisabled)}
           onClick={() => add()}
           disabled={!input.trim()}
         >
@@ -71,7 +71,7 @@ export default function KeywordTagInput({ value, onChange }) {
         <div style={styles.suggestions}>
           <span style={styles.suggestionLabel}>추천</span>
           {unusedSuggestions.map(s => (
-            <button key={s} type="button" style={styles.suggestionChip} onClick={() => add(s)}>
+            <button key={s} type="button" style={isMobile ? { ...styles.suggestionChip, padding: '3px 10px', fontSize: 11 } : styles.suggestionChip} onClick={() => add(s)}>
               + {s}
             </button>
           ))}

@@ -1,16 +1,16 @@
 import Icon from '../../styles/Icon'
 
-export default function AgeInput({ value, onChange }) {
+export default function AgeInput({ value, onChange, isMobile }) {
   return (
     <div>
-      <label style={styles.label}>
+      <label style={isMobile ? { ...styles.label, fontSize: 13 } : styles.label}>
         <Icon name="cake" size={15} color="#374151"/>
         연령
       </label>
       <div style={styles.row}>
         <input
           type="number"
-          style={styles.input}
+          style={isMobile ? { ...styles.input, padding: '8px 10px', fontSize: 13 } : styles.input}
           value={value}
           onChange={e => onChange(e.target.value)}
           placeholder="만 나이 입력"

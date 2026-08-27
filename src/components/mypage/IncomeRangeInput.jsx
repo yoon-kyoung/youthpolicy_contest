@@ -1,16 +1,17 @@
 import Icon from '../../styles/Icon'
 
-export default function IncomeRangeInput({ min, max, onChangeMin, onChangeMax }) {
+export default function IncomeRangeInput({ min, max, onChangeMin, onChangeMax, isMobile }) {
+  const inputStyle = isMobile ? { ...styles.input, padding: '8px 10px', fontSize: 13 } : styles.input
   return (
     <div>
-      <label style={styles.label}>
+      <label style={isMobile ? { ...styles.label, fontSize: 13 } : styles.label}>
         <Icon name="payments" size={15} color="#374151"/>
         연 소득
       </label>
       <div style={styles.row}>
         <input
           type="number"
-          style={styles.input}
+          style={inputStyle}
           value={min}
           onChange={e => onChangeMin(e.target.value)}
           placeholder="최소"
@@ -19,7 +20,7 @@ export default function IncomeRangeInput({ min, max, onChangeMin, onChangeMax })
         <span style={styles.tilde}>~</span>
         <input
           type="number"
-          style={styles.input}
+          style={inputStyle}
           value={max}
           onChange={e => onChangeMax(e.target.value)}
           placeholder="최대"

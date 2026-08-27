@@ -13,25 +13,26 @@ const FIELDS = [
   { id: 'architecture', label: '건축/도시' },
 ]
 
-export default function MajorFieldGrid({ value, onChange }) {
+export default function MajorFieldGrid({ value, onChange, isMobile }) {
   const toggle = (id) => {
     onChange(value.includes(id) ? value.filter(v => v !== id) : [...value, id])
   }
 
   return (
     <div>
-      <label style={styles.label}>
+      <label style={isMobile ? { ...styles.label, fontSize: 13 } : styles.label}>
         <Icon name="menu_book" size={15} color="#374151"/>
         전공 분야 <span style={styles.multi}>(복수 선택)</span>
       </label>
       <div style={styles.group}>
         {FIELDS.map(f => {
           const active = value.includes(f.id)
+          const s = active ? styles.btnActive : styles.btn
           return (
             <button
               key={f.id}
               type="button"
-              style={active ? styles.btnActive : styles.btn}
+              style={isMobile ? { ...s, padding: '7px 12px', fontSize: 11.5 } : s}
               onClick={() => toggle(f.id)}
             >
               {f.label}

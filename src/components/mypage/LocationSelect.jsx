@@ -25,22 +25,23 @@ const SIGUNGU_MAP = {
   '제주': ['서귀포시','제주시'],
 }
 
-export default function LocationSelect({ sido, sigungu, onChangeSido, onChangeSigungu }) {
+export default function LocationSelect({ sido, sigungu, onChangeSido, onChangeSigungu, isMobile }) {
   const sigunguList = SIGUNGU_MAP[sido] || []
+  const selectStyle = isMobile ? { ...styles.select, padding: '8px 10px', fontSize: 13 } : styles.select
 
   return (
     <div>
-      <label style={styles.label}>
+      <label style={isMobile ? { ...styles.label, fontSize: 13 } : styles.label}>
         <Icon name="location_on" size={15} color="#374151"/>
         관심 지역
       </label>
       <div style={styles.row}>
-        <select style={styles.select} value={sido} onChange={e => onChangeSido(e.target.value)}>
+        <select style={selectStyle} value={sido} onChange={e => onChangeSido(e.target.value)}>
           <option value="">시/도 선택</option>
           {SIDO_LIST.map(s => <option key={s} value={s}>{s}</option>)}
         </select>
         <select
-          style={{ ...styles.select, color: !sido ? '#9ca3af' : '#111827' }}
+          style={{ ...selectStyle, color: !sido ? '#9ca3af' : '#111827' }}
           value={sigungu}
           onChange={e => onChangeSigungu(e.target.value)}
           disabled={!sido}

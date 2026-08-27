@@ -47,7 +47,7 @@ function deadlineColor(deadline) {
   return '#9ca3af'
 }
 
-export default function SavedPoliciesTab({ policies, favIds, onToggleFav, onGoDetail }) {
+export default function SavedPoliciesTab({ policies, favIds, onToggleFav, onGoDetail, isMobile }) {
   const saved = (policies || []).filter(p => favIds?.has(p.id))
   const [pendingIds, setPendingIds] = useState(new Set())
   const timerRefs = useRef({})
@@ -173,9 +173,9 @@ export default function SavedPoliciesTab({ policies, favIds, onToggleFav, onGoDe
   }
 
   return (
-    <div style={styles.wrap}>
+    <div style={isMobile ? { ...styles.wrap, padding: 14 } : styles.wrap}>
       <div style={styles.header}>
-        <span style={styles.title}>
+        <span style={isMobile ? { ...styles.title, fontSize: 14 } : styles.title}>
           <Icon name="bookmark" size={16} color="#111827" style={{ marginRight: 6 }} />
           저장한 정책
         </span>
@@ -183,7 +183,7 @@ export default function SavedPoliciesTab({ policies, favIds, onToggleFav, onGoDe
           <button
             type="button"
             onClick={resetToDeadlineOrder}
-            style={styles.sortBtn}
+            style={isMobile ? { ...styles.sortBtn, padding: '4px 8px', fontSize: 10 } : styles.sortBtn}
             title="마감기한이 임박한 순서로 다시 정렬"
             onMouseEnter={e => { e.currentTarget.style.borderColor = '#007FFF'; e.currentTarget.style.color = '#007FFF' }}
             onMouseLeave={e => { e.currentTarget.style.borderColor = '#e2e8f0'; e.currentTarget.style.color = '#6b7280' }}
@@ -203,27 +203,29 @@ export default function SavedPoliciesTab({ policies, favIds, onToggleFav, onGoDe
           return (
             <div
               key={p.id}
-              draggable
+              draggable={!isMobile}
               onDragStart={() => handleDragStart(p.id)}
               onDragOver={(e) => handleDragOver(e, p.id)}
               onDrop={() => handleDrop(p.id)}
               onDragEnd={handleDragEnd}
               style={{
                 ...styles.item,
+                ...(isMobile ? { padding: '8px 10px', gap: 6 } : null),
                 opacity: isPending ? 0.55 : 1,
                 boxShadow: isDragOver ? 'inset 0 0 0 2px #007FFF' : 'none',
                 transition: 'opacity 0.2s, box-shadow 0.1s',
               }}
             >
               <div style={styles.itemLeft}>
-                <Icon name="drag_indicator" size={16} color="#cbd5e1" style={styles.dragHandle} />
+                {!isMobile && <Icon name="drag_indicator" size={16} color="#cbd5e1" style={styles.dragHandle} />}
                 <span style={styles.rank}>{idx + 1}</span>
-                <span style={{ ...styles.badge, backgroundColor: c.bg, color: c.text }}>
+                <span style={isMobile ? { ...styles.badge, padding: '2px 6px', fontSize: 10, backgroundColor: c.bg, color: c.text } : { ...styles.badge, backgroundColor: c.bg, color: c.text }}>
                   {c.label}
                 </span>
                 <span
                   style={{
                     ...styles.itemTitle,
+                    ...(isMobile ? { fontSize: 12.5 } : null),
                     cursor: onGoDetail ? 'pointer' : 'default',
                     textDecoration: onGoDetail ? 'underline' : 'none',
                     textDecorationColor: '#cbd5e1',

@@ -270,7 +270,7 @@ export default function MyPageContainer({ supabaseUser, onLogout, initialTab, fa
               />
             )}
             {activeTab === 'saved' && (
-              <SavedPoliciesTab policies={policies} favIds={favIds} onToggleFav={onToggleFav} onGoDetail={onGoDetail} />
+              <SavedPoliciesTab policies={policies} favIds={favIds} onToggleFav={onToggleFav} onGoDetail={onGoDetail} isMobile={isMobile} />
             )}
             {activeTab === 'myposts' && (
               <MyPostsTab userId={supabaseUser?.id} onNavigate={onNavigate} />

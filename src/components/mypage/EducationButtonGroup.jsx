@@ -13,21 +13,22 @@ const OPTIONS = [
   '기타',
 ]
 
-export default function EducationButtonGroup({ value, onChange }) {
+export default function EducationButtonGroup({ value, onChange, isMobile }) {
   return (
     <div>
-      <label style={styles.label}>
+      <label style={isMobile ? { ...styles.label, fontSize: 13 } : styles.label}>
         <Icon name="school" size={15} color="#374151"/>
         학력
       </label>
       <div style={styles.group}>
         {OPTIONS.map(opt => {
           const active = value === opt
+          const s = active ? styles.btnActive : styles.btn
           return (
             <button
               key={opt}
               type="button"
-              style={active ? styles.btnActive : styles.btn}
+              style={isMobile ? { ...s, padding: '6px 12px', fontSize: 11.5 } : s}
               onClick={() => onChange(active ? '' : opt)}
             >
               {opt}

@@ -2,21 +2,22 @@
 
 const OPTIONS = ['미혼', '기혼', '이혼', '사별']
 
-export default function MaritalStatusButtonGroup({ value, onChange }) {
+export default function MaritalStatusButtonGroup({ value, onChange, isMobile }) {
   return (
     <div>
-      <label style={styles.label}>
+      <label style={isMobile ? { ...styles.label, fontSize: 13 } : styles.label}>
         <Icon name="favorite" size={15} color="#374151"/>
         혼인 여부
       </label>
       <div style={styles.group}>
         {OPTIONS.map(opt => {
           const active = value === opt
+          const s = active ? styles.btnActive : styles.btn
           return (
             <button
               key={opt}
               type="button"
-              style={active ? styles.btnActive : styles.btn}
+              style={isMobile ? { ...s, padding: '6px 14px', fontSize: 12.5 } : s}
               onClick={() => onChange(active ? '' : opt)}
             >
               {opt}

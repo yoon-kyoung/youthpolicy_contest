@@ -248,23 +248,25 @@ export default function PreferenceTab({ prefs, onChange, onSave, refreshKey, use
             sigungu={prefs.sigungu}
             onChangeSido={v => onChange(p => ({ ...p, sido: v, sigungu: '' }))}
             onChangeSigungu={update('sigungu')}
+            isMobile={isMobile}
           />
           <Divider />
-          <AgeInput value={prefs.age} onChange={update('age')} />
+          <AgeInput value={prefs.age} onChange={update('age')} isMobile={isMobile} />
           <Divider />
-          <MaritalStatusButtonGroup value={prefs.maritalStatus} onChange={update('maritalStatus')} />
+          <MaritalStatusButtonGroup value={prefs.maritalStatus} onChange={update('maritalStatus')} isMobile={isMobile} />
           <Divider />
           <IncomeRangeInput
             min={prefs.incomeMin}
             max={prefs.incomeMax}
             onChangeMin={update('incomeMin')}
             onChangeMax={update('incomeMax')}
+            isMobile={isMobile}
           />
         </div>
         <div style={colLastStyle}>
-          <EducationButtonGroup value={prefs.education} onChange={update('education')} />
+          <EducationButtonGroup value={prefs.education} onChange={update('education')} isMobile={isMobile} />
           <Divider />
-          <EmploymentStatusButtonGroup value={prefs.employmentStatus} onChange={update('employmentStatus')} />
+          <EmploymentStatusButtonGroup value={prefs.employmentStatus} onChange={update('employmentStatus')} isMobile={isMobile} />
         </div>
       </RowAccordion>
 
@@ -277,21 +279,21 @@ export default function PreferenceTab({ prefs, onChange, onSave, refreshKey, use
         isMobile={isMobile}
       >
         <div style={colStyle}>
-          <MajorFieldGrid value={prefs.majorFields} onChange={update('majorFields')} />
+          <MajorFieldGrid value={prefs.majorFields} onChange={update('majorFields')} isMobile={isMobile} />
         </div>
         <div style={colLastStyle}>
-          <SpecialFieldGrid value={prefs.specialFields} onChange={update('specialFields')} />
+          <SpecialFieldGrid value={prefs.specialFields} onChange={update('specialFields')} isMobile={isMobile} />
         </div>
       </RowAccordion>
 
       {/* 선택 키워드 — 항상 노출 */}
       <div style={{ ...styles.keywordCard, padding: isMobile ? '16px 14px' : styles.keywordCard.padding }}>
-        <KeywordTagInput value={prefs.keywords} onChange={update('keywords')} />
+        <KeywordTagInput value={prefs.keywords} onChange={update('keywords')} isMobile={isMobile} />
       </div>
 
       {/* 전체 저장 버튼 */}
       <button
-        style={saveState === 'saved' ? styles.saveBtnSaved : styles.saveBtn}
+        style={{ ...(saveState === 'saved' ? styles.saveBtnSaved : styles.saveBtn), ...(isMobile ? { padding: '11px 0', fontSize: 14 } : null) }}
         onClick={handleSave}
         type="button"
       >
@@ -302,7 +304,7 @@ export default function PreferenceTab({ prefs, onChange, onSave, refreshKey, use
       </button>
 
       {/* 정책 미리보기 */}
-      <PolicyPreviewSection refreshKey={refreshKey} userName={userName} />
+      <PolicyPreviewSection refreshKey={refreshKey} userName={userName} isMobile={isMobile} />
     </div>
   )
 }

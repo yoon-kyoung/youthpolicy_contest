@@ -72,7 +72,7 @@ const MOCK_POLICIES = [
   },
 ]
 
-export default function PolicyPreviewSection({ refreshKey = 0, userName }) {
+export default function PolicyPreviewSection({ refreshKey = 0, userName, isMobile }) {
   const [loading, setLoading] = useState(false)
   const prevKey = useRef(0)
 
@@ -89,7 +89,7 @@ export default function PolicyPreviewSection({ refreshKey = 0, userName }) {
       <div style={styles.header}>
         <div style={styles.titleRow}>
           <Icon name="auto_awesome" size={20} color="#007FFF"/>
-          <span style={styles.title}>{userName ? `${userName}님이 관심 있을법한 정책` : '맞춤 정책 미리보기'}</span>
+          <span style={isMobile ? { ...styles.title, fontSize: 15 } : styles.title}>{userName ? `${userName}님이 관심 있을법한 정책` : '맞춤 정책 미리보기'}</span>
         </div>
         <p style={styles.subtitle}>
           {loading
@@ -105,11 +105,11 @@ export default function PolicyPreviewSection({ refreshKey = 0, userName }) {
           ))}
         </div>
       ) : (
-        <div style={styles.grid}>
+        <div style={isMobile ? { ...styles.grid, gridTemplateColumns: '1fr' } : styles.grid}>
           {MOCK_POLICIES.map(p => {
             const c = CAT[p.category]
             return (
-              <div key={p.id} style={styles.card}>
+              <div key={p.id} style={isMobile ? { ...styles.card, padding: '14px 16px', gap: 8 } : styles.card}>
                 <div style={styles.cardTop}>
                   <span style={{ ...styles.catBadge, backgroundColor: c.bg, color: c.text, borderColor: c.border }}>
                     {c.label}
@@ -119,8 +119,8 @@ export default function PolicyPreviewSection({ refreshKey = 0, userName }) {
                     {' '}{p.deadline}
                   </span>
                 </div>
-                <div style={styles.cardTitle}>{p.title}</div>
-                <div style={styles.cardSummary}>{p.summary}</div>
+                <div style={isMobile ? { ...styles.cardTitle, fontSize: 14 } : styles.cardTitle}>{p.title}</div>
+                <div style={isMobile ? { ...styles.cardSummary, fontSize: 12.5 } : styles.cardSummary}>{p.summary}</div>
                 <div style={styles.cardMeta}>
                   <span style={styles.metaItem}>
                     <span className="material-symbols-rounded" style={{ fontSize: 13, color: '#9ca3af' }}>business</span>
@@ -131,7 +131,7 @@ export default function PolicyPreviewSection({ refreshKey = 0, userName }) {
                     {p.target}
                   </span>
                 </div>
-                <button style={styles.detailBtn} type="button">
+                <button style={isMobile ? { ...styles.detailBtn, padding: '7px 0', fontSize: 12 } : styles.detailBtn} type="button">
                   자세히 보기
                   <span className="material-symbols-rounded" style={{ fontSize: 14 }}>chevron_right</span>
                 </button>
