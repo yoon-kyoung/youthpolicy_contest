@@ -518,6 +518,12 @@ export default function ChatBotView({ bp, favIds, onToggleFav, onGoDetail, reset
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: 'smooth' })
   }, [messages, loading, step])
 
+  // 메시지 등장 애니메이션이 끝난 뒤에는 animation 속성을 제거한다.
+  // (CSS 애니메이션이 계속 적용된 상태로 남으면 해당 말풍선이 별도 스택 컨텍스트로 승격되어,
+  //  다운로드 드롭다운처럼 z-index가 더 높은 다른 요소 위를 덮어버리는 문제가 있었음)
+  const [animDoneIdx, setAnimDoneIdx] = useState(() => new Set())
+  useEffect(() => { setAnimDoneIdx(new Set()) }, [sessionId])
+
   useEffect(() => {
     loadPolicies()
       .then(() => setReady(true))
@@ -998,7 +1004,9 @@ export default function ChatBotView({ bp, favIds, onToggleFav, onGoDetail, reset
       {/* 메시지 영역 */}
       <div ref={scrollRef} style={{flex:1,overflowY:'auto',padding:pad}}>
         {messages.slice(1).map((msg, i) => (
-          <div key={i} style={{animation:'fadeUp 0.25s ease',marginBottom:12}}>
+          <div key={i} style={{animation:animDoneIdx.has(i)?'none':'fadeUp 0.25s ease',marginBottom:12}}
+            onAnimationEnd={()=>setAnimDoneIdx(prev=>prev.has(i)?prev:new Set(prev).add(i))}
+          >
             <div style={{
               display:'flex',alignItems:'flex-start',gap:10,
               justifyContent:msg.from==='user'?'flex-end':'flex-start',
