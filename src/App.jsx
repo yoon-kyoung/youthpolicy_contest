@@ -3340,7 +3340,7 @@ function PolicyProposalPage({bp,user,onGoCommunity}){
             <div style={{display:"flex",alignItems:"center",gap:bp.isMobile?3:8,borderBottom:"1px solid #e5e7eb",background:"white",borderRadius:"16px 16px 0 0",padding:bp.isMobile?"0 6px":"0 12px"}}>
               <HScrollFade style={{gap:0,flex:1}} fadeColor="#ffffff">
                 {PROPOSAL_STATUS_TABS.map(t=>(
-                  <button key={t.value} onClick={()=>setStatusTab(t.value)} style={{flexShrink:0,padding:bp.isDesktop?"13px 16px":bp.isMobile?"10px 3px":"11px 10px",border:"none",background:"none",cursor:"pointer",whiteSpace:"nowrap",fontSize:bp.isDesktop?14:10.5,fontWeight:statusTab===t.value?700:500,color:statusTab===t.value?"#111827":"#9ca3af",borderBottom:`2.5px solid ${statusTab===t.value?"#111827":"transparent"}`,transition:"all 0.15s"}}>{t.label}{!bp.isMobile&&<span style={{opacity:0.6,fontSize:9.5}}> ({statusCounts[t.value]??0})</span>}</button>
+                  <button key={t.value} onClick={()=>setStatusTab(t.value)} style={{flex:bp.isMobile?"1 1 0":"0 0 auto",padding:bp.isDesktop?"13px 16px":bp.isMobile?"10px 3px":"11px 10px",border:"none",background:"none",cursor:"pointer",whiteSpace:"nowrap",fontSize:bp.isDesktop?14:10.5,fontWeight:statusTab===t.value?700:500,color:statusTab===t.value?"#111827":"#9ca3af",borderBottom:`2.5px solid ${statusTab===t.value?"#111827":"transparent"}`,transition:"all 0.15s"}}>{t.label}{!bp.isMobile&&<span style={{opacity:0.6,fontSize:9.5}}> ({statusCounts[t.value]??0})</span>}</button>
                 ))}
               </HScrollFade>
               {bp.isMobile ? (
