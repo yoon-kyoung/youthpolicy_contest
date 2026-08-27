@@ -1003,6 +1003,8 @@ function SearchView({favIds,onToggleFav,onGoDetail,bp,policies}){
   const [employmentStatus,setEmploymentStatus]=useLocalStorage("yoa:search:employmentStatus","제한없음");
   const [showRegionMap,setShowRegionMap]=useState(false);
   const [showMoreFilters,setShowMoreFilters]=useState(false);
+  const [regionExpanded,setRegionExpanded]=useState(false);
+  const [ministryExpanded,setMinistryExpanded]=useState(false);
   const [presets,setPresets]=useLocalStorage("yoa:search:presets",[]);
   const [savingPreset,setSavingPreset]=useState(false);
   const [presetName,setPresetName]=useState("");
@@ -1255,9 +1257,12 @@ function SearchView({favIds,onToggleFav,onGoDetail,bp,policies}){
           <div>
             <div style={{fontSize:11,fontWeight:700,color:"#374151",marginBottom:6,display:"flex",alignItems:"center",gap:4}}>지역</div>
             <div style={{display:"flex",flexWrap:"wrap",gap:5}}>
-              {REGIONS.map(r=>(
+              {(bp.isMobile&&!regionExpanded?REGIONS.slice(0,7):REGIONS).map(r=>(
                 <button key={r} onClick={()=>setRegion(r)} style={{padding:"3px 9px",borderRadius:20,border:"1.5px solid",borderColor:region===r?"var(--accent)":"#E2E8F0",background:region===r?"var(--accent)":"#FFFFFF",color:region===r?"#FFFFFF":"#475569",fontSize:11,fontWeight:region===r?700:400,cursor:"pointer",whiteSpace:"nowrap"}}>{r}</button>
               ))}
+              {bp.isMobile&&<button onClick={()=>setRegionExpanded(v=>!v)} style={{display:"flex",alignItems:"center",gap:3,padding:"3px 9px",borderRadius:20,border:"1.5px solid #E2E8F0",background:"#F8FAFC",color:"#475569",fontSize:11,fontWeight:500,cursor:"pointer",whiteSpace:"nowrap"}}>
+                {regionExpanded?"접기":"더보기"}<span style={{fontSize:9}}>{regionExpanded?"▲":"▼"}</span>
+              </button>}
               <button onClick={()=>setShowRegionMap(true)} style={{display:"flex",alignItems:"center",gap:3,padding:"3px 9px",borderRadius:20,border:"1.5px solid #E2E8F0",background:"#FFFFFF",color:"#475569",fontSize:11,fontWeight:400,cursor:"pointer",whiteSpace:"nowrap"}}>
                 <Icon name="map" size={12} color="#475569"/>지도로 보기
               </button>
@@ -1266,9 +1271,12 @@ function SearchView({favIds,onToggleFav,onGoDetail,bp,policies}){
           <div style={{borderTop:"1px solid #E2E8F0",paddingTop:8}}>
             <div style={{fontSize:11,fontWeight:700,color:"#374151",marginBottom:6,display:"flex",alignItems:"center",gap:4}}>중앙부처</div>
             <div style={{display:"flex",flexWrap:"wrap",gap:5}}>
-              {MINISTRIES.map(m=>(
+              {(bp.isMobile&&!ministryExpanded?MINISTRIES.slice(0,7):MINISTRIES).map(m=>(
                 <button key={m} onClick={()=>setMinistry(m)} style={{padding:"3px 9px",borderRadius:20,border:"1.5px solid",borderColor:ministry===m?"var(--accent)":"#E2E8F0",background:ministry===m?"var(--accent)":"#FFFFFF",color:ministry===m?"#FFFFFF":"#475569",fontSize:11,fontWeight:ministry===m?700:400,cursor:"pointer",whiteSpace:"nowrap"}}>{m}</button>
               ))}
+              {bp.isMobile&&<button onClick={()=>setMinistryExpanded(v=>!v)} style={{display:"flex",alignItems:"center",gap:3,padding:"3px 9px",borderRadius:20,border:"1.5px solid #E2E8F0",background:"#F8FAFC",color:"#475569",fontSize:11,fontWeight:500,cursor:"pointer",whiteSpace:"nowrap"}}>
+                {ministryExpanded?"접기":"더보기"}<span style={{fontSize:9}}>{ministryExpanded?"▲":"▼"}</span>
+              </button>}
             </div>
           </div>
         </div>
@@ -2147,7 +2155,7 @@ function ProposalTimelineWidget({steps,states,title="진행 상태",clickFill=fa
               </button>
               <span style={{fontSize:11,marginTop:6,fontWeight:(st==="current"||isOpen)?700:600,color:isFilled?"#374151":"#94a3b8",textAlign:"center"}}>{step.label}</span>
               {clickFill&&st==="current"&&openIndex==null&&(
-                <div style={{position:"relative",marginTop:10,background:"#1f2937",color:"white",borderRadius:8,padding:"6px 10px",fontSize:11,fontWeight:600,width:"max-content",whiteSpace:"nowrap",textAlign:"center",lineHeight:1.4,boxShadow:"0 2px 8px rgba(0,0,0,0.18)",animation:"fadeUp 0.3s ease",zIndex:2}}>
+                <div style={{position:"absolute",top:"100%",left:"50%",transform:"translateX(-50%)",marginTop:10,background:"#1f2937",color:"white",borderRadius:8,padding:"5px 8px",fontSize:9.5,fontWeight:600,width:88,whiteSpace:"normal",textAlign:"center",lineHeight:1.35,boxShadow:"0 2px 8px rgba(0,0,0,0.18)",animation:"fadeUp 0.3s ease",zIndex:2}}>
                   <div style={{position:"absolute",bottom:"100%",left:"50%",transform:"translateX(-50%)",width:0,height:0,borderLeft:"5px solid transparent",borderRight:"5px solid transparent",borderBottom:"5px solid #1f2937"}}/>
                   아이콘을 클릭해서 상세 내용을 확인해보세요!
                 </div>
@@ -3012,7 +3020,7 @@ function ProposalOnboardingCarousel({bp}){
   const sidePad=bp.isDesktop?24:16;
 
   return(
-    <div style={{background:"white",borderRadius:16,border:"1.5px solid #E2E8F0",padding:"18px 0 16px",overflow:"hidden"}}>
+    <div style={{background:"white",borderRadius:16,border:"1.5px solid #E2E8F0",padding:"18px 0 46px",overflow:"hidden"}}>
       <div style={{padding:`0 ${sidePad}px 14px`,display:"flex",alignItems:"center",gap:7}}>
         <Icon name="edit_note" size={17} color="var(--accent)"/>
         <div style={{fontSize:bp.isDesktop?16:15,fontWeight:800,color:"#111827"}}>정책제안 이렇게 진행돼요</div>
@@ -3314,15 +3322,21 @@ function PolicyProposalPage({bp,user,onGoCommunity}){
           </div>
 
           <div>
-            <div style={{display:"flex",alignItems:"center",gap:8,borderBottom:"1px solid #e5e7eb",background:"white",borderRadius:"16px 16px 0 0",padding:"0 12px"}}>
+            <div style={{display:"flex",alignItems:"center",gap:bp.isMobile?3:8,borderBottom:"1px solid #e5e7eb",background:"white",borderRadius:"16px 16px 0 0",padding:bp.isMobile?"0 6px":"0 12px"}}>
               <HScrollFade style={{gap:0,flex:1}} fadeColor="#ffffff">
                 {PROPOSAL_STATUS_TABS.map(t=>(
-                  <button key={t.value} onClick={()=>setStatusTab(t.value)} style={{flexShrink:0,padding:bp.isDesktop?"13px 16px":"11px 10px",border:"none",background:"none",cursor:"pointer",whiteSpace:"nowrap",fontSize:bp.isDesktop?14:12,fontWeight:statusTab===t.value?700:500,color:statusTab===t.value?"#111827":"#9ca3af",borderBottom:`2.5px solid ${statusTab===t.value?"#111827":"transparent"}`,transition:"all 0.15s"}}>{t.label} <span style={{opacity:0.6,fontSize:11}}>({statusCounts[t.value]??0})</span></button>
+                  <button key={t.value} onClick={()=>setStatusTab(t.value)} style={{flexShrink:0,padding:bp.isDesktop?"13px 16px":bp.isMobile?"10px 3px":"11px 10px",border:"none",background:"none",cursor:"pointer",whiteSpace:"nowrap",fontSize:bp.isDesktop?14:10.5,fontWeight:statusTab===t.value?700:500,color:statusTab===t.value?"#111827":"#9ca3af",borderBottom:`2.5px solid ${statusTab===t.value?"#111827":"transparent"}`,transition:"all 0.15s"}}>{t.label} <span style={{opacity:0.6,fontSize:9.5}}>({statusCounts[t.value]??0})</span></button>
                 ))}
               </HScrollFade>
-              <button type="button" onClick={()=>setShowForm(true)} style={{padding:bp.isMobile?"8px 14px":"9px 20px",borderRadius:20,background:"var(--accent)",border:"none",color:"white",fontSize:bp.isMobile?12:13,fontWeight:600,cursor:"pointer",transition:"opacity 0.15s",flexShrink:0,whiteSpace:"nowrap",marginLeft:"auto"}}
-                onMouseEnter={e=>e.currentTarget.style.opacity="0.85"} onMouseLeave={e=>e.currentTarget.style.opacity="1"}
-              >+ 정책 제안하기</button>
+              {bp.isMobile ? (
+                <button type="button" onClick={()=>setShowForm(true)} title="정책 제안하기" style={{width:26,height:26,borderRadius:"50%",background:"var(--accent)",border:"none",color:"white",fontSize:15,fontWeight:700,lineHeight:1,cursor:"pointer",transition:"opacity 0.15s",flexShrink:0,marginLeft:"auto",display:"flex",alignItems:"center",justifyContent:"center",padding:0}}
+                  onMouseEnter={e=>e.currentTarget.style.opacity="0.85"} onMouseLeave={e=>e.currentTarget.style.opacity="1"}
+                >+</button>
+              ) : (
+                <button type="button" onClick={()=>setShowForm(true)} style={{padding:"9px 20px",borderRadius:20,background:"var(--accent)",border:"none",color:"white",fontSize:13,fontWeight:600,cursor:"pointer",transition:"opacity 0.15s",flexShrink:0,whiteSpace:"nowrap",marginLeft:"auto"}}
+                  onMouseEnter={e=>e.currentTarget.style.opacity="0.85"} onMouseLeave={e=>e.currentTarget.style.opacity="1"}
+                >+ 정책 제안하기</button>
+              )}
             </div>
 
             <div style={{background:"white",borderRadius:"0 0 16px 16px",padding:"12px 16px",display:"flex",gap:5,flexWrap:"wrap",alignItems:"center"}}>
@@ -4580,14 +4594,6 @@ function BottomNav({page,setPage,user}){
           {mainPage===n.page&&<div style={{width:18,height:2.5,background:'var(--accent)',borderRadius:2,marginTop:1}}/>}
         </button>
       ))}
-      <button onClick={()=>setPage("howto")} style={{flex:"0 0 44px",padding:"10px 0 8px",background:"none",border:"none",cursor:"pointer",display:"flex",flexDirection:"column",alignItems:"center",gap:2,transition:"color 0.15s"}}>
-        <Icon name="help" size={22} style={HELP_ICON_STYLE}/>
-        <span style={{fontSize:10,fontWeight:500,color:'#718096'}}>?</span>
-      </button>
-      <button onClick={()=>setPage("project")} style={{flex:"0 0 44px",padding:"10px 0 8px",background:"none",border:"none",cursor:"pointer",display:"flex",flexDirection:"column",alignItems:"center",gap:2,transition:"color 0.15s"}}>
-        <Icon name="description" size={20} color="#718096"/>
-        <span style={{fontSize:10,fontWeight:500,color:'#718096'}}>About</span>
-      </button>
     </nav>
   );
 }
@@ -4945,6 +4951,8 @@ export default function App(){
                 <div style={{display:"flex",gap:6,alignItems:"center",flexShrink:0}}>
                   <button onClick={()=>navigateTo("howto")} title="사용 방법" style={{width:28,height:28,borderRadius:"50%",background:"none",border:"none",cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",padding:0,flexShrink:0}}
                   ><Icon name="help" size={18} style={HELP_ICON_STYLE}/></button>
+                  <button onClick={()=>navigateTo("project")} title="About" style={{width:28,height:28,borderRadius:"50%",background:"none",border:"none",cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",padding:0,flexShrink:0}}
+                  ><Icon name="description" size={17} color="#374151"/></button>
                   {!user&&<MobileSettingsMenu fontScale={fontScale} onFontInc={incFont} onFontDec={decFont} themeKey={themeKey} onThemeChange={setThemeKey}/>}
                   <div style={{fontSize:12,color:favIds.size>0?"#b45309":"#9ca3af",fontWeight:600,display:"flex",alignItems:"center",gap:3,whiteSpace:"nowrap",flexShrink:0}}><Icon name="star" size={13} color={favIds.size>0?"#FFD200":"#9ca3af"}/>{favIds.size}건</div>
                   {user?.email===ADMIN_EMAIL&&(
