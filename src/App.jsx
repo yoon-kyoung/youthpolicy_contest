@@ -2160,7 +2160,11 @@ function ProposalTimelineWidget({steps,states,title="진행 상태",clickFill=fa
               <button type="button" onClick={()=>setOpenIndex(prev=>prev===i?null:i)} style={{width:30,height:30,borderRadius:"50%",background:isFilled?"var(--accent)":"#f1f5f9",display:"flex",alignItems:"center",justifyContent:"center",zIndex:1,position:"relative",animation:isPulsing?"pulse 1.4s infinite":"none",border:isFilled?"none":"1.5px solid #e2e8f0",boxShadow:isOpen?"0 0 0 3px var(--accent-bg)":"none",flexShrink:0,padding:0,cursor:"pointer",transition:"background 0.2s,border 0.2s,box-shadow 0.2s"}}>
                 <Icon name={step.icon} size={15} color={isFilled?"white":"#94a3b8"}/>
               </button>
-              <span style={{fontSize:11,marginTop:6,fontWeight:(st==="current"||isOpen)?700:600,color:isFilled?"#374151":"#94a3b8",textAlign:"center"}}>{step.label}</span>
+              <span style={{fontSize:11,marginTop:6,fontWeight:(st==="current"||isOpen)?700:600,color:isFilled?"#374151":"#94a3b8",textAlign:"center"}}>
+                {step.label.includes(" ")
+                  ?<>{step.label.slice(0,step.label.lastIndexOf(" "))}<br/>{step.label.slice(step.label.lastIndexOf(" ")+1)}</>
+                  :step.label}
+              </span>
               {clickFill&&st==="current"&&openIndex==null&&(
                 <div style={bp?.isMobile?{position:"absolute",top:"100%",left:"50%",transform:"translateX(-50%)",marginTop:10,background:"#1f2937",color:"white",borderRadius:8,padding:"5px 8px",fontSize:9.5,fontWeight:600,width:88,whiteSpace:"normal",textAlign:"center",lineHeight:1.35,boxShadow:"0 2px 8px rgba(0,0,0,0.18)",animation:"fadeUp 0.3s ease",zIndex:2}:{position:"absolute",top:"100%",left:"50%",transform:"translateX(-50%)",marginTop:10,background:"#1f2937",color:"white",borderRadius:8,padding:"6px 10px",fontSize:11,fontWeight:600,width:"max-content",whiteSpace:"nowrap",textAlign:"center",lineHeight:1.4,boxShadow:"0 2px 8px rgba(0,0,0,0.18)",animation:"fadeUp 0.3s ease",zIndex:2}}>
                   <div style={{position:"absolute",bottom:"100%",left:"50%",transform:"translateX(-50%)",width:0,height:0,borderLeft:"5px solid transparent",borderRight:"5px solid transparent",borderBottom:"5px solid #1f2937"}}/>
