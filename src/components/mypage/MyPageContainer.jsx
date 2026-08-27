@@ -48,7 +48,18 @@ function isPrefsEmpty(p) {
     p.specialFields.length === 0 && p.keywords.length === 0
 }
 
+function useIsMobile() {
+  const [isMobile, setIsMobile] = useState(() => typeof window !== 'undefined' && window.innerWidth < 768)
+  useEffect(() => {
+    const onResize = () => setIsMobile(window.innerWidth < 768)
+    window.addEventListener('resize', onResize)
+    return () => window.removeEventListener('resize', onResize)
+  }, [])
+  return isMobile
+}
+
 export default function MyPageContainer({ supabaseUser, onLogout, initialTab, favIds, policies, onToggleFav, onGoDetail, onNavigate }) {
+  const isMobile = useIsMobile()
   const [activeTab, setActiveTab] = useState(initialTab || 'prefs')
 
   const initialUser = supabaseUser ? {
@@ -125,7 +136,7 @@ export default function MyPageContainer({ supabaseUser, onLogout, initialTab, fa
   }
 
   return (
-    <div style={styles.page}>
+    <div style={{ ...styles.page, padding: isMobile ? '16px 12px 60px' : styles.page.padding }}>
       <div style={styles.inner}>
         <PageHeader />
 
@@ -241,7 +252,7 @@ export default function MyPageContainer({ supabaseUser, onLogout, initialTab, fa
         {/* 탭 + 콘텐츠 */}
         <div style={styles.tabContainer}>
           <TabBar active={activeTab} onChange={setActiveTab} />
-          <div style={styles.tabContent}>
+          <div style={{ ...styles.tabContent, padding: isMobile ? '14px' : styles.tabContent.padding }}>
             {activeTab === 'info' && (
               <UserInfoTab user={user} onUpdateUser={setUser} favIds={favIds} policies={policies} onGoDetail={onGoDetail} onToggleFav={onToggleFav} />
             )}
@@ -250,6 +261,7 @@ export default function MyPageContainer({ supabaseUser, onLogout, initialTab, fa
                 prefs={prefs}
                 onChange={setPrefs}
                 userName={user.displayName}
+                isMobile={isMobile}
                 onSave={() => {
                   try { localStorage.setItem('yoa:prefs', JSON.stringify(prefs)) } catch {}
                   setRefreshKey(k => k + 1)

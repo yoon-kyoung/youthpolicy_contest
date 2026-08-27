@@ -16,7 +16,7 @@ import PolicyPreviewSection from './PolicyPreviewSection'
  * - count: 헤더에 표시할 설정된 항목 수 (0이면 배지 숨김)
  * - onSectionSave: 세부 저장 콜백
  */
-function RowAccordion({ title, icon, count = 0, onSectionSave, defaultOpen = true, children }) {
+function RowAccordion({ title, icon, count = 0, onSectionSave, defaultOpen = true, isMobile, children }) {
   const [open, setOpen] = useState(defaultOpen)
   const [secSave, setSecSave] = useState('idle')
 
@@ -30,7 +30,7 @@ function RowAccordion({ title, icon, count = 0, onSectionSave, defaultOpen = tru
   return (
     <div style={row.wrap}>
       {/* 헤더 */}
-      <button type="button" style={row.header} onClick={() => setOpen(v => !v)}>
+      <button type="button" style={{ ...row.header, padding: isMobile ? '12px 14px' : row.header.padding }} onClick={() => setOpen(v => !v)}>
         <div style={row.left}>
           <Icon name={icon} size={16} color="#007FFF"/>
           <span style={row.title}>{title}</span>
@@ -52,7 +52,7 @@ function RowAccordion({ title, icon, count = 0, onSectionSave, defaultOpen = tru
       {/* 콘텐츠 */}
       {open && (
         <>
-          <div style={row.body}>
+          <div style={{ ...row.body, gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr' }}>
             {children}
           </div>
 
@@ -188,23 +188,30 @@ const row = {
   },
 }
 
-const colStyle = {
-  padding: '20px',
-  display: 'flex',
-  flexDirection: 'column',
-  gap: 18,
-  borderRight: '1px solid #f3f4f6',
+function getColStyle(isMobile) {
+  return {
+    padding: isMobile ? '16px' : '20px',
+    display: 'flex',
+    flexDirection: 'column',
+    gap: 18,
+    borderRight: isMobile ? 'none' : '1px solid #f3f4f6',
+    borderBottom: isMobile ? '1px solid #f3f4f6' : 'none',
+  }
 }
 
-const colLastStyle = {
-  padding: '20px',
-  display: 'flex',
-  flexDirection: 'column',
-  gap: 18,
+function getColLastStyle(isMobile) {
+  return {
+    padding: isMobile ? '16px' : '20px',
+    display: 'flex',
+    flexDirection: 'column',
+    gap: 18,
+  }
 }
 
-export default function PreferenceTab({ prefs, onChange, onSave, refreshKey, userName }) {
+export default function PreferenceTab({ prefs, onChange, onSave, refreshKey, userName, isMobile }) {
   const [saveState, setSaveState] = useState('idle')
+  const colStyle = getColStyle(isMobile)
+  const colLastStyle = getColLastStyle(isMobile)
 
   const update = (field) => (value) => {
     onChange(prev => ({ ...prev, [field]: value }))
@@ -233,6 +240,7 @@ export default function PreferenceTab({ prefs, onChange, onSave, refreshKey, use
         icon="tune"
         count={count1}
         onSectionSave={onSave}
+        isMobile={isMobile}
       >
         <div style={colStyle}>
           <LocationSelect
@@ -266,6 +274,7 @@ export default function PreferenceTab({ prefs, onChange, onSave, refreshKey, use
         icon="category"
         count={count2}
         onSectionSave={onSave}
+        isMobile={isMobile}
       >
         <div style={colStyle}>
           <MajorFieldGrid value={prefs.majorFields} onChange={update('majorFields')} />
@@ -276,7 +285,7 @@ export default function PreferenceTab({ prefs, onChange, onSave, refreshKey, use
       </RowAccordion>
 
       {/* 선택 키워드 — 항상 노출 */}
-      <div style={styles.keywordCard}>
+      <div style={{ ...styles.keywordCard, padding: isMobile ? '16px 14px' : styles.keywordCard.padding }}>
         <KeywordTagInput value={prefs.keywords} onChange={update('keywords')} />
       </div>
 
