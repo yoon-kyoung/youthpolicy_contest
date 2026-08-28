@@ -1270,28 +1270,28 @@ function SearchView({favIds,onToggleFav,onGoDetail,bp,policies}){
             </div>
           </div>
           <div style={{borderTop:"1px solid #E2E8F0",paddingTop:8}}>
-            <div style={{fontSize:11,fontWeight:700,color:"#374151",marginBottom:6,display:"flex",alignItems:"center",gap:4}}>카테고리</div>
+            <div style={{fontSize:11,fontWeight:700,color:"#374151",marginBottom:6,display:"flex",alignItems:"center",justifyContent:"space-between",gap:4}}>
+              <span>카테고리</span>
+              {bp.isMobile&&<button onClick={()=>setMinistryExpanded(v=>!v)} style={{display:"flex",alignItems:"center",gap:3,padding:"2px 8px",borderRadius:20,border:"1.5px solid #E2E8F0",background:"#F8FAFC",color:"#475569",fontSize:11,fontWeight:500,cursor:"pointer",whiteSpace:"nowrap"}}>
+                {ministryExpanded?"접기":"더보기"}<span style={{fontSize:9}}>{ministryExpanded?"▲":"▼"}</span>
+              </button>}
+            </div>
             <div style={{display:"flex",flexWrap:"wrap",gap:5}}>
               {CATEGORIES.map(c=>(
                 <button key={c.value} onClick={()=>setCat(c.value)} style={{padding:"3px 9px",borderRadius:20,border:"1.5px solid",borderColor:cat===c.value?"var(--accent)":"#E2E8F0",background:cat===c.value?"var(--accent)":"#FFFFFF",color:cat===c.value?"#FFFFFF":"#475569",fontSize:11,fontWeight:cat===c.value?700:400,cursor:"pointer",whiteSpace:"nowrap"}}>{c.label}</button>
               ))}
             </div>
           </div>
-          <div style={{borderTop:"1px solid #E2E8F0",paddingTop:8}}>
-            <div style={{fontSize:11,fontWeight:700,color:"#374151",marginBottom:6,display:"flex",alignItems:"center",justifyContent:"space-between",gap:4}}>
-              <span>중앙부처</span>
-              {bp.isMobile&&<button onClick={()=>setMinistryExpanded(v=>!v)} style={{display:"flex",alignItems:"center",gap:3,padding:"2px 8px",borderRadius:20,border:"1.5px solid #E2E8F0",background:"#F8FAFC",color:"#475569",fontSize:11,fontWeight:500,cursor:"pointer",whiteSpace:"nowrap"}}>
-                {ministryExpanded?"접기":"더보기"}<span style={{fontSize:9}}>{ministryExpanded?"▲":"▼"}</span>
-              </button>}
-            </div>
-            {(!bp.isMobile||ministryExpanded)&&
+          {(!bp.isMobile||ministryExpanded)&&
+            <div style={{borderTop:"1px solid #E2E8F0",paddingTop:8}}>
+              <div style={{fontSize:11,fontWeight:700,color:"#374151",marginBottom:6,display:"flex",alignItems:"center",gap:4}}>중앙부처</div>
               <div style={{display:"flex",flexWrap:"wrap",gap:5}}>
                 {MINISTRIES.map(m=>(
                   <button key={m} onClick={()=>setMinistry(m)} style={{padding:"3px 9px",borderRadius:20,border:"1.5px solid",borderColor:ministry===m?"var(--accent)":"#E2E8F0",background:ministry===m?"var(--accent)":"#FFFFFF",color:ministry===m?"#FFFFFF":"#475569",fontSize:11,fontWeight:ministry===m?700:400,cursor:"pointer",whiteSpace:"nowrap"}}>{m}</button>
                 ))}
               </div>
-            }
-          </div>
+            </div>
+          }
         </div>
       </div>
       {query&&<div style={{fontSize:13,color:"#6b7280",padding:"10px 14px 0"}}>"{query}" 검색 결과</div>}
