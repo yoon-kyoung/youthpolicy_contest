@@ -1270,16 +1270,14 @@ function SearchView({favIds,onToggleFav,onGoDetail,bp,policies}){
             </div>
           </div>
           <div style={{borderTop:"1px solid #E2E8F0",paddingTop:8}}>
-            <div style={{fontSize:11,fontWeight:700,color:"#374151",marginBottom:6,display:"flex",alignItems:"center",justifyContent:"space-between",gap:4}}>
-              <span>카테고리</span>
-              {bp.isMobile&&<button onClick={()=>setMinistryExpanded(v=>!v)} style={{display:"flex",alignItems:"center",gap:3,padding:"2px 8px",borderRadius:20,border:"1.5px solid #E2E8F0",background:"#F8FAFC",color:"#475569",fontSize:11,fontWeight:500,cursor:"pointer",whiteSpace:"nowrap"}}>
-                {ministryExpanded?"접기":"더보기"}<span style={{fontSize:9}}>{ministryExpanded?"▲":"▼"}</span>
-              </button>}
-            </div>
+            <div style={{fontSize:11,fontWeight:700,color:"#374151",marginBottom:6,display:"flex",alignItems:"center",gap:4}}>카테고리</div>
             <div style={{display:"flex",flexWrap:"wrap",gap:5}}>
               {CATEGORIES.map(c=>(
                 <button key={c.value} onClick={()=>setCat(c.value)} style={{padding:"3px 9px",borderRadius:20,border:"1.5px solid",borderColor:cat===c.value?"var(--accent)":"#E2E8F0",background:cat===c.value?"var(--accent)":"#FFFFFF",color:cat===c.value?"#FFFFFF":"#475569",fontSize:11,fontWeight:cat===c.value?700:400,cursor:"pointer",whiteSpace:"nowrap"}}>{c.label}</button>
               ))}
+              {bp.isMobile&&<button onClick={()=>setMinistryExpanded(v=>!v)} style={{display:"flex",alignItems:"center",gap:3,padding:"2px 8px",borderRadius:20,border:"1.5px solid #E2E8F0",background:"#F8FAFC",color:"#475569",fontSize:11,fontWeight:500,cursor:"pointer",whiteSpace:"nowrap",marginLeft:"auto"}}>
+                {ministryExpanded?"접기":"더보기"}<span style={{fontSize:9}}>{ministryExpanded?"▲":"▼"}</span>
+              </button>}
             </div>
           </div>
           {(!bp.isMobile||ministryExpanded)&&
