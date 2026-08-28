@@ -1261,12 +1261,12 @@ function SearchView({favIds,onToggleFav,onGoDetail,bp,policies}){
               {(bp.isMobile&&!regionExpanded?REGIONS.slice(0,7):REGIONS).map(r=>(
                 <button key={r} onClick={()=>setRegion(r)} style={{padding:"3px 9px",borderRadius:20,border:"1.5px solid",borderColor:region===r?"var(--accent)":"#E2E8F0",background:region===r?"var(--accent)":"#FFFFFF",color:region===r?"#FFFFFF":"#475569",fontSize:11,fontWeight:region===r?700:400,cursor:"pointer",whiteSpace:"nowrap"}}>{r}</button>
               ))}
-              {bp.isMobile&&<button onClick={()=>setRegionExpanded(v=>!v)} style={{display:"flex",alignItems:"center",gap:3,padding:"3px 9px",borderRadius:20,border:"1.5px solid #E2E8F0",background:"#F8FAFC",color:"#475569",fontSize:11,fontWeight:500,cursor:"pointer",whiteSpace:"nowrap"}}>
-                {regionExpanded?"접기":"더보기"}<span style={{fontSize:9}}>{regionExpanded?"▲":"▼"}</span>
-              </button>}
               <button onClick={()=>setShowRegionMap(true)} style={{display:"flex",alignItems:"center",gap:3,padding:"3px 9px",borderRadius:20,border:"1.5px solid #E2E8F0",background:"#FFFFFF",color:"#475569",fontSize:11,fontWeight:400,cursor:"pointer",whiteSpace:"nowrap"}}>
                 <Icon name="map" size={12} color="#475569"/>지도로 보기
               </button>
+              {bp.isMobile&&<button onClick={()=>setRegionExpanded(v=>!v)} style={{display:"flex",alignItems:"center",gap:3,padding:"3px 9px",borderRadius:20,border:"1.5px solid #E2E8F0",background:"#F8FAFC",color:"#475569",fontSize:11,fontWeight:500,cursor:"pointer",whiteSpace:"nowrap",marginLeft:"auto"}}>
+                {regionExpanded?"접기":"더보기"}<span style={{fontSize:9}}>{regionExpanded?"▲":"▼"}</span>
+              </button>}
             </div>
           </div>
           <div style={{borderTop:"1px solid #E2E8F0",paddingTop:8}}>
