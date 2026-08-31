@@ -26,6 +26,9 @@ function TabScrollFade({ children }) {
   )
 }
 
+// 시연영상 URL이 준비되면 여기에 mp4/embed 링크를 넣으면 자동으로 플레이어가 노출됩니다.
+const DEMO_VIDEO_URL = ''
+
 const SECTIONS = [
   { id: 'motive', icon: 'edit_note', title: '만들게 된 동기' },
   { id: 'ai', icon: 'smart_toy', title: 'AI 도구 활용' },
@@ -73,6 +76,50 @@ function Section({ id, icon, title, children, sectionRef, isDesktop }) {
   )
 }
 
+function DemoVideoSection({ isDesktop }) {
+  return (
+    <div style={{ background: 'white', padding: isDesktop ? '40px 40px 8px' : '24px 18px 4px' }}>
+      <div style={{ maxWidth: 900, margin: '0 auto' }}>
+        <div style={{ textAlign: 'center', marginBottom: isDesktop ? 20 : 16 }}>
+          <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: 12.5, fontWeight: 700, color: 'var(--accent)', background: 'var(--accent-bg)', borderRadius: 20, padding: '4px 14px', marginBottom: 10 }}>
+            <Icon name="description" size={13} color="var(--accent)" />시연영상
+          </span>
+          <h2 style={{ fontSize: isDesktop ? 24 : 19, fontWeight: 900, color: '#111827', margin: 0, letterSpacing: '-0.02em' }}>청년ON, 화면으로 먼저 만나보세요</h2>
+        </div>
+
+        <div style={{
+          position: 'relative', width: '100%', aspectRatio: '16 / 9', borderRadius: isDesktop ? 20 : 16,
+          overflow: 'hidden', background: 'linear-gradient(135deg,var(--accent-dark),var(--accent))',
+          boxShadow: '0 12px 32px var(--accent-shadow)',
+        }}>
+          {DEMO_VIDEO_URL ? (
+            <video src={DEMO_VIDEO_URL} controls style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+          ) : (
+            <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 14, color: 'white' }}>
+              <div style={{
+                width: isDesktop ? 68 : 54, height: isDesktop ? 68 : 54, borderRadius: '50%',
+                background: 'rgba(255,255,255,0.22)', border: '1.5px solid rgba(255,255,255,0.5)',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+              }}>
+                <div style={{
+                  width: 0, height: 0, marginLeft: 4,
+                  borderTop: `${isDesktop ? 12 : 10}px solid transparent`,
+                  borderBottom: `${isDesktop ? 12 : 10}px solid transparent`,
+                  borderLeft: `${isDesktop ? 20 : 16}px solid white`,
+                }} />
+              </div>
+              <div style={{ textAlign: 'center' }}>
+                <div style={{ fontSize: isDesktop ? 15 : 13.5, fontWeight: 800 }}>시연영상 준비 중이에요</div>
+                <div style={{ fontSize: isDesktop ? 13 : 12, opacity: 0.85, marginTop: 4 }}>완성되는 대로 이 자리에서 바로 보실 수 있어요</div>
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  )
+}
+
 export default function StoryPage({ onBack, bp }) {
   const isDesktop = bp?.isDesktop
   const h = isDesktop ? 56 : 52
@@ -113,7 +160,9 @@ export default function StoryPage({ onBack, bp }) {
       </div>
 
       <div ref={scrollRef} style={{ flex: 1, overflowY: 'auto' }}>
-        <div style={{ background: 'linear-gradient(135deg,var(--accent-dark),var(--accent))', color: 'white', padding: isDesktop ? '56px 40px 40px' : '36px 20px 28px', textAlign: 'center' }}>
+        <DemoVideoSection isDesktop={isDesktop} />
+
+        <div style={{ background: 'linear-gradient(135deg,var(--accent-dark),var(--accent))', color: 'white', padding: isDesktop ? '40px 40px 40px' : '28px 20px 28px', marginTop: isDesktop ? 32 : 22, textAlign: 'center' }}>
           <span style={{ display: 'inline-block', background: 'rgba(255,255,255,0.2)', border: '1px solid rgba(255,255,255,0.3)', borderRadius: 20, padding: '4px 16px', fontSize: 13, fontWeight: 700, marginBottom: 16 }}>
             <Icon name="description" size={14} color="white" style={{ marginRight: 4, verticalAlign: '-2px' }} />About 청년ON
           </span>
