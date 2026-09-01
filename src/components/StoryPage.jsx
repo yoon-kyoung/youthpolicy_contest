@@ -47,7 +47,6 @@ const CREDIT_ITEMS = [
   { name: '온통청년 청년정책 데이터', source: '청년정책 통합정보시스템 (youthcenter.go.kr) · 대한민국 정부 공공 API', license: '공공데이터', note: '정책 제목·대상·기간·신청방법 등 원문 데이터를 그대로 가져와 서비스에 노출해요. 실제 신청 전에는 반드시 원문 공고를 확인해달라는 안내를 항상 함께 보여줘요.' },
   { name: 'Pretendard Variable', source: 'orioncactus/Pretendard (길형진 제작)', license: 'SIL Open Font License 1.1', note: '화면 전체 본문·제목에 사용한 한글 웹폰트예요. 오픈소스로 배포되어 상업적 사용도 자유로워요.' },
   { name: 'Material Symbols (Rounded / Outlined)', source: 'Google Fonts', license: 'Apache License 2.0', note: '모든 아이콘은 이모지 대신 구글의 Material Symbols만 사용해요. 실제 쓰는 아이콘만 서브셋으로 추려 폰트 용량을 최소화했어요.' },
-  { name: '사용법 페이지 스크린샷', source: '청년ON 자체 제작', license: '자체 저작물', note: '"사용 방법" 페이지의 화면 캡처는 전부 이 서비스를 직접 촬영한 이미지예요.' },
   { name: 'Upstage Solar API', source: '업스테이지', license: '이용약관에 따름', note: 'AI 모델 자체를 배포하지 않고, 업스테이지의 API를 호출해 응답만 받아와요.' },
 ]
 
