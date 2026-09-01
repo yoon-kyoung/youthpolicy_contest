@@ -3733,10 +3733,21 @@ function notifTimeAgo(iso){
 
 const NOTIF_TYPE_ICON={comment_post:"chat_bubble",comment_proposal:"chat_bubble",proposal_status:"campaign",policy_deadline:"alarm",best_answer:"star"};
 
+const MOCK_NOTIFICATIONS=[
+  {id:"mock-1",type:"comment_post",title:"커뮤니티 후기에 새 댓글이 달렸어요",body:"저도 이번에 청년내일저축계좌 신청해보려고요, 후기 감사해요!",link_type:null,link_id:null,read:false,created_at:new Date(Date.now()-12*60000).toISOString()},
+  {id:"mock-2",type:"proposal_status",title:"내 제안이 부처매칭중으로 전환됐어요",body:"청년 교통비 지원 확대 제안 · 공감 512표 달성",link_type:null,link_id:null,read:false,created_at:new Date(Date.now()-3*3600000).toISOString()},
+  {id:"mock-3",type:"policy_deadline",title:"관심 정책 마감이 얼마 안 남았어요",body:"청년 월세 특별지원 · D-2",link_type:null,link_id:null,read:false,created_at:new Date(Date.now()-5*3600000).toISOString()},
+  {id:"mock-4",type:"comment_proposal",title:"정책제안에 새 댓글이 달렸어요",body:"'대학생 인턴 교통비 지원' 제안에 소관부처 답변이 등록됐어요",link_type:null,link_id:null,read:true,created_at:new Date(Date.now()-26*3600000).toISOString()},
+  {id:"mock-5",type:"best_answer",title:"내 글이 베스트 후기로 선정됐어요",body:"국민취업지원제도 1유형 후기 · 공감 34",link_type:null,link_id:null,read:true,created_at:new Date(Date.now()-3*86400000).toISOString()},
+];
+
 function NotificationBell({user,favIds,policies,onNavigate}){
   const [items,setItems]=useState([]);
+  const [mockItems,setMockItems]=useState(MOCK_NOTIFICATIONS);
   const [open,setOpen]=useState(false);
   const ref=useRef(null);
+  const usingMock=items.length===0;
+  const displayItems=usingMock?mockItems:items;
 
   const fetchNotifs=useCallback(async()=>{
     const{data}=await supabase.from("notifications").select("*").eq("user_id",user.id).order("created_at",{ascending:false}).limit(30);
@@ -3771,19 +3782,27 @@ function NotificationBell({user,favIds,policies,onNavigate}){
       }));
   },[favIds,policies]);
 
-  const merged=[...deadlineReminders,...items];
-  const unreadCount=items.filter(n=>!n.read).length;
+  const merged=[...deadlineReminders,...displayItems];
+  const unreadCount=displayItems.filter(n=>!n.read).length;
 
   const handleClickItem=n=>{
     if(n.created_at&&!n.read){
-      setItems(prev=>prev.map(x=>x.id===n.id?{...x,read:true}:x));
-      supabase.from("notifications").update({read:true}).eq("id",n.id);
+      if(usingMock){
+        setMockItems(prev=>prev.map(x=>x.id===n.id?{...x,read:true}:x));
+      }else{
+        setItems(prev=>prev.map(x=>x.id===n.id?{...x,read:true}:x));
+        supabase.from("notifications").update({read:true}).eq("id",n.id);
+      }
     }
     setOpen(false);
     if(n.link_type&&n.link_id)onNavigate(n.link_type,n.link_id);
   };
 
   const handleMarkAllRead=()=>{
+    if(usingMock){
+      setMockItems(prev=>prev.map(x=>({...x,read:true})));
+      return;
+    }
     const unreadIds=items.filter(n=>!n.read).map(n=>n.id);
     if(!unreadIds.length)return;
     setItems(prev=>prev.map(x=>({...x,read:true})));
